@@ -8,7 +8,7 @@ ancient-empire 是项目远古帝国网页版 的后端项目(现在该项目在
 
 # 持久层框架
 
-使用的到的其他技术有mybatis-plus 作为持久层框架
+项目使用mybatis-plus 作为持久层框架
 
 https://mp.baomidou.com
 
