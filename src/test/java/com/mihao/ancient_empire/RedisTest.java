@@ -2,6 +2,7 @@ package com.mihao.ancient_empire;
 
 import com.mihao.ancient_empire.common.util.JacksonUtil;
 import com.mihao.ancient_empire.common.util.RedisHelper;
+import com.mihao.ancient_empire.common.util.RespHelper;
 import com.mihao.ancient_empire.common.vo.test_dto.Dog;
 import com.mihao.ancient_empire.constant.RedisKey;
 import com.mihao.ancient_empire.dto.auth_dto.RegisterDto;
@@ -41,5 +42,14 @@ public class RedisTest {
         System.out.println(redisHelper.isHaveKey(RedisKey.USER_INFO_ + "ther2"));
         redisHelper.delKey(RedisKey.USER_INFO_ + "ther2");
         System.out.println(redisHelper.isHaveKey(RedisKey.USER_INFO_ + "ther2"));
+    }
+
+    @Test
+    public void name3() {
+        redisHelper.set("222", "vvv");
+        System.out.println(redisHelper.get("222"));
+        redisHelper.hSet("111", "key1", "value2", 100);
+//        redisTemplate.opsForValue().set("222","vvv");
+//        System.out.println(redisTemplate.hasKey("222"));
     }
 }

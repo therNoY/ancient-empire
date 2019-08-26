@@ -3,9 +3,13 @@ package com.mihao.ancient_empire.dto;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
-public class Army {
+public class Army implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private Integer id;
     // 颜色
     @NotEmpty(message = "颜色不能为空")
@@ -21,6 +25,10 @@ public class Army {
     @NotNull(message = "顺序不能为空")
     @DecimalMin("0")
     private Integer order;
+    // 当前的人口
+    private Integer pop;
+    // 单位类型 user ai no
+    private String type;
 
     public Integer getId() {
         return id;
@@ -68,5 +76,21 @@ public class Army {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public Integer getPop() {
+        return pop;
+    }
+
+    public void setPop(Integer pop) {
+        this.pop = pop;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

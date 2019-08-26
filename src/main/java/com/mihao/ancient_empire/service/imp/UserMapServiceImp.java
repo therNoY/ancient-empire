@@ -214,7 +214,7 @@ public class UserMapServiceImp implements UserMapService {
     @Override
     public UserMap getEncounterMapById(String uuid) {
         UserMap userMap = userMapRepository.getFirstByUuid(uuid);
-        if (userMap.getCreateUserId() != UserEnum.ADMIN.getId() || MapEnum.ENCOUNTER.getType().equals(userMap.getType())) {
+        if (userMap.getCreateUserId() != UserEnum.ADMIN.getId() || !MapEnum.ENCOUNTER.getType().equals(userMap.getType())) {
             // 不是遭遇地图
             return null;
         }

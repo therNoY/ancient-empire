@@ -136,7 +136,7 @@ public class UserMapController {
      * 获取遭遇战地图
      * 遭遇战地图定义 admin 创建 type 是 encounter
      */
-    @GetMapping("/api/encounterMap")
+    @GetMapping("/encounterMap")
     public RespJson getEncounterMap() {
         List<UserMap> encounterMaps = userMapService.getEncounterMaps();
         return RespHelper.successResJson(encounterMaps);
@@ -146,7 +146,7 @@ public class UserMapController {
      * 获取遭遇战地图的 可选则的设定
      * // 包括 初始金额,最大金额 初始人口,最大人口, 所有队伍
      */
-    @GetMapping("/api/encounter/initSetting")
+    @GetMapping("/encounter/initSetting")
     public RespJson getEncounterInitSetting(@RequestParam String uuid) {
         List<String> colors = userMapService.getInitArmy(uuid);
         return RespHelper.successResJson(colors);

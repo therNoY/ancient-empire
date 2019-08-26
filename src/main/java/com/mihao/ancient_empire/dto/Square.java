@@ -1,9 +1,12 @@
 package com.mihao.ancient_empire.dto;
 
+import java.io.Serializable;
+
 /**
  * 这是一个基础类 所有的元素都继承自改类
  */
-public abstract class Square {
+public abstract class Square implements Serializable {
+    private static final long serialVersionUID = 1L;
     // 方块的ID
     protected Integer id;
     // 方块的名字

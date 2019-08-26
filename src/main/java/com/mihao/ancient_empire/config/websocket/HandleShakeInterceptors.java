@@ -29,7 +29,7 @@ public class HandleShakeInterceptors implements HandshakeInterceptor {
      * @return
      * @throws Exception
      */
-
+    @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         HttpServletRequest h = ((ServletServerHttpRequest) request).getServletRequest();
@@ -46,6 +46,7 @@ public class HandleShakeInterceptors implements HandshakeInterceptor {
      * @param wsHandler
      * @param exception
      */
+    @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                WebSocketHandler wsHandler, Exception exception) {
         logger.info("握手之后");

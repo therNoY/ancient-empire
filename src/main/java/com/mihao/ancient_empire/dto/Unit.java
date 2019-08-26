@@ -2,10 +2,14 @@ package com.mihao.ancient_empire.dto;
 
 import com.mihao.ancient_empire.common.util.StringUtil;
 
+import java.io.Serializable;
+
 /**
  * 单位类 用来渲染地图 和 返回前端的 不包含 单位的基本信息
  */
-public class Unit{
+public class Unit implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
     // 类型
@@ -26,6 +30,9 @@ public class Unit{
     private String status;
     // 经验值
     private Integer experience;
+
+    public Unit() {
+    }
 
     public Unit(String type, Integer row, Integer column) {
         this.type = type;

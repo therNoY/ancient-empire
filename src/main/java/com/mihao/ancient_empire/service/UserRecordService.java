@@ -7,5 +7,9 @@ import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import java.util.List;
 
 public interface UserRecordService {
-    UserRecord initMapRecord(ReqInitMapDto reqInitMapDto);
+    String initMapRecord(ReqInitMapDto reqInitMapDto);
+
+    void initMap();
+
+    UserRecord getRecordById(String uuid);
 }

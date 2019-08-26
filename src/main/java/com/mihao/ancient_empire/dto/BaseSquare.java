@@ -1,7 +1,9 @@
 package com.mihao.ancient_empire.dto;
 
-public class BaseSquare {
+import java.io.Serializable;
 
+public class BaseSquare implements Serializable {
+    private static final long serialVersionUID = 1L;
     protected String color;
     protected String type;
 

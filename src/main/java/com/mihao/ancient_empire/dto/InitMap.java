@@ -1,12 +1,13 @@
 package com.mihao.ancient_empire.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 地图类
  */
-public class InitMap {
-
+public class InitMap implements Serializable {
+    private static final long serialVersionUID = 1L;
     // 宽
     private Integer row;
     // 高

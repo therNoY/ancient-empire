@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,15 +24,15 @@ public class JacksonUtil {
     private static ObjectMapper mapper = new ObjectMapper();
 
     static {
-        mapper.enable(SerializationFeature.INDENT_OUTPUT); //化化输出
-        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); //序列化空的 POPJ
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); //不将date转化成timestamp
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); //忽略未知属性
-        mapper.disable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT); //不将空转化为null
-        mapper.disable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES); //允许没有引号的字段名（非标准）
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-        mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+//        mapper.enable(SerializationFeature.INDENT_OUTPUT); //化化输出
+//        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); //序列化空的 POPJ
+//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); //不将date转化成timestamp
+//        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); //忽略未知属性
+//        mapper.disable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT); //不将空转化为null
+//        mapper.disable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES); //允许没有引号的字段名（非标准）
+//        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+//        mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+//        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
     }
 
     public static ObjectMapper getDefaultMapper() {
@@ -144,5 +145,20 @@ public class JacksonUtil {
             log.error("json to map error:" + json, e);
             return null;
         }
+    }
+
+    public static <T> T mapToBean(Object object, Class<T> clazz) {
+        return mapToBean(object, clazz, null);
+    }
+
+    public static <T> T mapToBean(Object object, Class<T> clazz, ObjectMapper objectMapper) {
+        if (object != null && object instanceof LinkedHashMap) {
+            String json = toJson(object);
+            return jsonToBean(json, clazz);
+        }else {
+            log.error("不是map");
+            return null;
+        }
+
     }
 }

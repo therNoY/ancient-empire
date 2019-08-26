@@ -12,10 +12,9 @@ public class ReqInitMapDto {
     @DecimalMin(value = "500", message = "初始金额要大于500")
     private Integer money;
     @NotEmpty(message = "地图Id 不能为空")
-    private String uuid;
-    @NotEmpty(message = "军队不能为空")
-    List<Army> armyList;
-
+    private String mapId;
+    @NotEmpty(message = "队伍不能为空")
+    private List<Army> armyList;
     public Integer getMaxPop() {
         return maxPop;
     }
@@ -24,8 +23,8 @@ public class ReqInitMapDto {
         this.maxPop = maxPop;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getMapId() {
+        return mapId;
     }
 
     public Integer getMoney() {
@@ -36,8 +35,8 @@ public class ReqInitMapDto {
         this.money = money;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setMapId(String mapId) {
+        this.mapId = mapId;
     }
 
     public List<Army> getArmyList() {

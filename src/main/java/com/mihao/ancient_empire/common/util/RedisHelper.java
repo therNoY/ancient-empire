@@ -541,6 +541,7 @@ public class RedisHelper {
     public long lRemove(String key, long count, Object value) {
         try {
             Long remove = redisTemplate.opsForList().remove(key, count, value);
+
             return remove;
         } catch (Exception e) {
             e.printStackTrace();
