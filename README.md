@@ -26,8 +26,12 @@ https://www.rabbitmq.com/
 
 # 数据库/缓存
 
-数据库使用了mysql mongoDB 缓存使用了reids
-(都是有具体的使用场景, 不为单纯的凑出所有的主流技术)
+数据库使用了mysql， mongoDB。 缓存使用了reids。
+
+使用mysql 存储游戏基础数据 mongoDB 存储 地图 存档信息(包含的信息比较多,是一个大的json)
+
+使用redis 作为中间缓存
+
 
 
 # 其他技术
