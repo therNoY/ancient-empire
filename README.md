@@ -1,6 +1,12 @@
 # ancient-empire 说明
 
-ancient-empire 是项目远古帝国网页版 的后端项目(现在该项目在持续开发中)
+ancient-empire 是项目远古帝国网页版 的后端项目(现在该项目在持续开发中.......)
+
+# ancient-empire 前端项目地址
+https://github.com/therNoY/ancient-empire-web/
+
+现在还没有开发完成, 只有部分截图 不能体验截图在前端项目可看
+
 
 # 技术框架
 
@@ -31,7 +37,6 @@ https://www.rabbitmq.com/
 使用mysql 存储游戏基础数据 mongoDB 存储 地图 存档信息(包含的信息比较多,是一个大的json)
 
 使用redis 作为中间缓存
-
 
 
 # 其他技术
