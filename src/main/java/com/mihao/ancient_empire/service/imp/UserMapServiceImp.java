@@ -14,6 +14,7 @@ import com.mihao.ancient_empire.entity.mongo.UserMap;
 import com.mihao.ancient_empire.mongo.dao.UserMapRepository;
 import com.mihao.ancient_empire.service.UserMapService;
 import com.mihao.ancient_empire.util.AuthUtil;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -198,8 +199,10 @@ public class UserMapServiceImp implements UserMapService {
         });
         if (colors.size() < maxArmy) {
             regions.forEach(baseSquare -> {
-                if (!colors.contains(baseSquare.getColor())) {
-                    colors.add(baseSquare.getColor());
+                if ((baseSquare.getType().equals("castle") || baseSquare.getType().equals("town")) && !colors.contains(baseSquare.getColor())) {
+                    if (Strings.isNotBlank(baseSquare.getColor())) {
+                        colors.add(baseSquare.getColor());
+                    }
                 }
             });
         }

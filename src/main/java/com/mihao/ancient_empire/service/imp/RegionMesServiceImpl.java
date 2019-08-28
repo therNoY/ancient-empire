@@ -54,4 +54,17 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDao, RegionMes> i
         List<RegionMes> regionMesList = regionMesDao.selectList(wrapper);
         return regionMesList;
     }
+
+    /**
+     * 获取region by type
+     * @param type
+     * @return
+     */
+    @Override
+    @Cacheable(RedisKey.REGION_MES)
+    public RegionMes getRegionByType(String type) {
+        QueryWrapper wrapper = new QueryWrapper<>().eq("type", type);
+        RegionMes regionMes = regionMesDao.selectOne(wrapper);
+        return regionMes;
+    }
 }

@@ -86,6 +86,10 @@ public class Unit implements Serializable {
         this.column = column;
     }
 
+    public Boolean isDead() {
+        return getDead();
+    }
+
     public Boolean getDead() {
         return isDead;
     }

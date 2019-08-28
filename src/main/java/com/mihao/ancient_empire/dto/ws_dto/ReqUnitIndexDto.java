@@ -4,6 +4,14 @@ public class ReqUnitIndexDto {
     private Integer armyIndex; // 军队的位置
     private Integer index; // 单位的位置
 
+    public ReqUnitIndexDto() {
+    }
+
+    public ReqUnitIndexDto(Integer armyIndex, Integer index) {
+        this.armyIndex = armyIndex;
+        this.index = index;
+    }
+
     public Integer getArmyIndex() {
         return armyIndex;
     }

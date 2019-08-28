@@ -41,4 +41,9 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDao, UnitLe
     public void saveUnitLevelMesList(UnitLevelMes unitLevelMes) {
         unitLevelMesDao.updateById(unitLevelMes);
     }
+
+    @Override
+    public int getSpeedByUnit(String type, Integer level) {
+        return unitLevelMesDao.getSpeedByUnit(type, level);
+    }
 }

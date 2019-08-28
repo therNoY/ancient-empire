@@ -2,9 +2,12 @@ package com.mihao.ancient_empire.websocket;
 
 import com.mihao.ancient_empire.common.util.JacksonUtil;
 import com.mihao.ancient_empire.common.util.RedisHelper;
+import com.mihao.ancient_empire.constant.WSPath;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Region;
+import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
+import com.mihao.ancient_empire.util.WsRespHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,57 +32,51 @@ public class WebSocketController {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    SimpUserRegistry simpUserRegistry;
-    @Autowired
-    RedisHelper redisHelper;
-    @Autowired
     WebSocketService webSocketService;
-
     @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
-
-    @RequestMapping("hello")
-    @ResponseBody
-    public String getRegion(@RequestParam String code) {
-        Region region = new Region();
-        region.setName("山头");
-        region.setBuffer(15);
-        if ("1".equals(code)) {
-            simpMessagingTemplate.convertAndSend("/topic/nf",region);
-        }else {
-            simpMessagingTemplate.convertAndSend("/queue/chat",region);
-        }
-        return "推送成功";
-    }
 
     /**
      * 获取移动区域
      * @param principal
      * @param msg
      */
-    @MessageMapping("/getMoveArea")
+    @MessageMapping("/ws/getMoveArea")
     public void getMoveArea(Principal principal, String msg) {
         log.info("从 {} getMoveArea收到的信息{}",principal.getName(), msg);
         ReqUnitIndexDto unitIndexDto = JacksonUtil.jsonToBean(msg, ReqUnitIndexDto.class);
         if (unitIndexDto != null) {
             List<Position> areas = webSocketService.getMoveArea(principal.getName(), unitIndexDto);
-            simpMessagingTemplate.convertAndSendToUser(principal.getName(), "/queue/user", areas);
+            simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                    WSPath.TOPIC_USER, WsRespHelper.init("moveAreas", areas));
         }else {
             log.error("{} 解析错误", msg);
         }
-//        simpMessagingTemplate.convertAndSend("/topic/room/" + principal.getName(), "replayMesToRoom");
     }
 
-
-    @MessageMapping("/marco")
-    public void handleChat(Principal principal, String msg) {
-        Region region = new Region();
-        region.setName(principal.getName());
-        Set set = simpUserRegistry.getUsers();
-        region.setBuffer(0);
-        // 发送系统消息
-        simpMessagingTemplate.convertAndSend("/topic/marco", region);
-        // 单独发送消息
-        simpMessagingTemplate.convertAndSendToUser(principal.getName(), "/queue/marco", region);
+    /**
+     * 获取移动路线
+     * @param principal
+     * @param msg
+     */
+    @MessageMapping("/ws/getMovePath")
+    public void getMovePath(Principal principal, String msg) {
+        log.info("从 {} getMovePath 收到的信息{}",principal.getName(), msg);
+        ReqMoveDto moveDto = JacksonUtil.jsonToBean(msg, ReqMoveDto.class);
+        if (moveDto != null) {
+            List<Position> movePath = webSocketService.getMovePath(moveDto);
+            simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                    WSPath.TOPIC_USER, WsRespHelper.init("movePath", movePath));
+        }else {
+            log.error("{} 解析错误", msg);
+        }
     }
+
+    @MessageMapping("/ws/test")
+    public void test(Principal principal, String msg) {
+        log.info("从 {} getMoveArea收到的信息{}",principal.getName(), msg);
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(), WSPath.TOPIC_USER, "replayMesToUser");
+        simpMessagingTemplate.convertAndSend(WSPath.TOPIC_ROOM + principal.getName(), "replayMesToRoom");
+    }
+
 }

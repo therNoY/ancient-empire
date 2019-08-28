@@ -77,6 +77,13 @@ public class UserRecordServiceImp implements UserRecordService {
         userRecord.setArmyList(armyList);
         String uuid = StringUtil.getUUID();
         userRecord.setUuid(uuid);
+        userRecord.setCurrentRound(1);
+        for (Army army : armyList) {
+            if (army.getOrder() == 1) {
+                userRecord.setCurrColor(army.getColor());
+                break;
+            }
+        }
         // 4.将record设置到缓存(后续可能放到redis)中 并且通知rabbitMQ 消费这条记录
         redisHelper.set(RedisKey.USER_RECORD_ + uuid, userRecord, 60l);
         mqHelper.sendMongoCdr(MqMethodEnum.ADD_RECORD, userRecord);
@@ -101,7 +108,7 @@ public class UserRecordServiceImp implements UserRecordService {
         if ((userRecord = redisHelper.getObject(RedisKey.USER_RECORD_ + uuid, UserRecord.class)) == null) {
             log.info("从mongo获取 {} 的信息", uuid);
             Optional<UserRecord> optional = userRecordRepository.findById(uuid);
-            if (optional != null && optional.get() != null) {
+            if (optional.isPresent()) {
                 userRecord = optional.get();
             }
         }

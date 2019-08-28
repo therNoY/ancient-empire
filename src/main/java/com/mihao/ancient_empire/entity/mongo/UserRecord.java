@@ -28,6 +28,10 @@ public class UserRecord implements Serializable {
     private Integer createUserId;
     // 创建时间
     private String createTime;
+    // 当前回合数
+    private Integer currentRound;
+    // 当前行动的军队color
+    private String currColor;
     // 是否保存 未保存的存档最多有一个
     private boolean isUnSave;
 
@@ -94,5 +98,21 @@ public class UserRecord implements Serializable {
 
     public void setArmyList(List<Army> armyList) {
         this.armyList = armyList;
+    }
+
+    public String getCurrColor() {
+        return currColor;
+    }
+
+    public void setCurrColor(String currColor) {
+        this.currColor = currColor;
+    }
+
+    public Integer getCurrentRound() {
+        return currentRound;
+    }
+
+    public void setCurrentRound(Integer currentRound) {
+        this.currentRound = currentRound;
     }
 }

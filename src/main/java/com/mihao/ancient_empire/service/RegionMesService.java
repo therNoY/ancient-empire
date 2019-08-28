@@ -23,4 +23,5 @@ public interface RegionMesService extends IService<RegionMes> {
 
     List<RegionMes> getEnableRegionByUserId(Integer id);
 
+    RegionMes getRegionByType(String type);
 }

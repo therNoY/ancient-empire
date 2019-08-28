@@ -18,4 +18,8 @@ public class RedisKey{
     public static final String USER_RECORD = "userRecord";
     public static final String USER_RECORD_ = "userRecord::";
 
+    // 地形信息
+    public static final String REGION_MES = "regionMes";
+    public static final String REGION_MES_ = "regionMes::";
+
 }
