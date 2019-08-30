@@ -85,7 +85,7 @@ public class UserRecordServiceImp implements UserRecordService {
             }
         }
         // 4.将record设置到缓存(后续可能放到redis)中 并且通知rabbitMQ 消费这条记录
-        redisHelper.set(RedisKey.USER_RECORD_ + uuid, userRecord, 60l);
+        redisHelper.set(RedisKey.USER_RECORD_ + uuid, userRecord, 5 * 60l);
         mqHelper.sendMongoCdr(MqMethodEnum.ADD_RECORD, userRecord);
         return uuid;
     }
@@ -98,7 +98,7 @@ public class UserRecordServiceImp implements UserRecordService {
     }
 
     /**
-     * 获取 recordId
+     * 获取 Record By uuid
      * @param uuid
      * @return
      */

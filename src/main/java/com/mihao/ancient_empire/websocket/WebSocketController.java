@@ -1,30 +1,22 @@
 package com.mihao.ancient_empire.websocket;
 
+import com.mihao.ancient_empire.common.annotation.ExecuteTime;
 import com.mihao.ancient_empire.common.util.JacksonUtil;
-import com.mihao.ancient_empire.common.util.RedisHelper;
 import com.mihao.ancient_empire.constant.WSPath;
+import com.mihao.ancient_empire.constant.WsMethodEnum;
 import com.mihao.ancient_empire.dto.Position;
-import com.mihao.ancient_empire.dto.Region;
 import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.jws.WebService;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Controller
 public class WebSocketController {
@@ -41,6 +33,7 @@ public class WebSocketController {
      * @param principal
      * @param msg
      */
+    @ExecuteTime(maxTime = 200)
     @MessageMapping("/ws/getMoveArea")
     public void getMoveArea(Principal principal, String msg) {
         log.info("从 {} getMoveArea收到的信息{}",principal.getName(), msg);
@@ -48,7 +41,7 @@ public class WebSocketController {
         if (unitIndexDto != null) {
             List<Position> areas = webSocketService.getMoveArea(principal.getName(), unitIndexDto);
             simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                    WSPath.TOPIC_USER, WsRespHelper.init("moveAreas", areas));
+                    WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_AREAS.getType(), areas));
         }else {
             log.error("{} 解析错误", msg);
         }
@@ -59,6 +52,7 @@ public class WebSocketController {
      * @param principal
      * @param msg
      */
+    @ExecuteTime
     @MessageMapping("/ws/getMovePath")
     public void getMovePath(Principal principal, String msg) {
         log.info("从 {} getMovePath 收到的信息{}",principal.getName(), msg);
@@ -66,7 +60,7 @@ public class WebSocketController {
         if (moveDto != null) {
             List<Position> movePath = webSocketService.getMovePath(moveDto);
             simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                    WSPath.TOPIC_USER, WsRespHelper.init("movePath", movePath));
+                    WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_PATH.getType(), movePath));
         }else {
             log.error("{} 解析错误", msg);
         }

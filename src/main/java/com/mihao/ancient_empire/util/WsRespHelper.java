@@ -4,7 +4,7 @@ import com.mihao.ancient_empire.dto.ws_dto.WSRespDto;
 
 public class WsRespHelper {
 
-    public static WSRespDto init(String method, Object value) {
+    public static WSRespDto success(String method, Object value) {
         return new WSRespDto(method, value);
     }
 }

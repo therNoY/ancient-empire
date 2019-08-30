@@ -81,19 +81,28 @@ public class Base64Test {
     }
 
     @Test
-    public void name2() {
-        String base64Url = "adTNjdXNlcjEyMwo=";
-        base64Url = base64Url.substring(0, base64Url.indexOf("/"));
-        System.out.println(base64Url);
+    public void name2() throws IOException {
+        String base64Url = "aHR0cDovLzEwLjAuMTEuMTU0OjgwODAvcmVjb3JkZXJmaWxlc2VydmVyL3Jlc291cmNlcy8yMDE5LTA4LTI5L3dlYmNoYXRfZmlsZS9kM2UxYTNkNDkxMGU0YjJmYTg4MjU5YjQxOGYzZjZhNOaVmeeItjEuanBn";
+        String s = new String(new BASE64Decoder().decodeBuffer(base64Url), "UTF-8");
+        System.out.println(s);
     }
 
     @Test
     public void name3() throws IOException {
-        String base64Url = "aHR0cDovLzEwLjAuMTEuMTU0OjgwODAvcmVjb3JkZXJmaWxlc2VydmVyL3Jlc291cmNlcy8yMDE5LTA4LTE0L3dlYmNoYXRfZmlsZS8lRTYlQjUlOEIlRTglQUYlOTUlRTYlOTYlODclRTQlQkIlQjYudHh0/测试文件.txt";
+        String base64Url = "aHR0cDovLzEwLjAuMTEuMTU0OjgwODAvcmVjb3JkZXJmaWxlc2VydmVyL3Jlc291cmNlcy8yMDE5LTA4LTI5L3dlYmNoYXRfZmlsZS8lRTYlQjUlOEIlRTglQUYlOTUlRTklOTclQUUlRTQlQkIlQjcudHh0";
         base64Url = base64Url.substring(0, base64Url.indexOf("/"));
         String ecodeS = "aHR0cDovLzEwLjAuMTEuMTU0OjgwODAvcmVjb3JkZXJmaWxlc2VydmVyL3Jlc291cmNlcy8yMDE5LTA4LTE0L3dlYmNoYXRfZmlsZS8lRTYlQjUlOEIlRTglQUYlOTUlRTYlOTYlODclRTQlQkIlQjYudHh0";
         ecodeS.replace("\r", "").replace("\n", "");
         String s = new String(new BASE64Decoder().decodeBuffer(base64Url), "UTF-8");
         System.out.println(s);
+    }
+
+    @Test
+    public void name4() {
+        String fileUrl = "AAAAAAAAAcdBB";
+        if (fileUrl.indexOf("&") > 0) {
+            fileUrl = fileUrl.substring(0, fileUrl.indexOf("&"));
+        }
+        System.out.println(fileUrl);
     }
 }

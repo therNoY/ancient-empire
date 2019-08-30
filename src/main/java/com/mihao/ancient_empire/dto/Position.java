@@ -13,6 +13,12 @@ public class Position {
     public Position() {
     }
 
+    public Position(Position p) {
+        this.row = p.getRow();
+        this.column = p.getColumn();
+    }
+
+
     public Position(Integer row, Integer column) {
         this.row = row;
         this.column = column;
@@ -31,12 +37,21 @@ public class Position {
             Position p1 = (Position) obj;
             if (this.row == p1.getRow() && this.column == p1.getColumn()) {
                 // 如果当前的剩剩余移动力比较小就不算了
-                if (p1.getLastMove() > this.lastMove) {
+                if (p1.getLastMove() != null && this.lastMove != null) {
+                    if ( p1.getLastMove() > this.lastMove) {
+                        return true;
+                    }
+                }else {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 100 * this.row + this.column;
     }
 
     public Integer getRow() {
