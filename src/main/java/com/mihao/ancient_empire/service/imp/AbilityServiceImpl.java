@@ -1,0 +1,34 @@
+package com.mihao.ancient_empire.service.imp;
+
+import com.mihao.ancient_empire.constant.RedisKey;
+import com.mihao.ancient_empire.entity.Ability;
+import com.mihao.ancient_empire.dao.AbilityDao;
+import com.mihao.ancient_empire.service.AbilityService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * <p>
+ * 单位信息表 服务实现类
+ * </p>
+ *
+ * @author mihao
+ * @since 2019-08-31
+ */
+@Service
+public class AbilityServiceImpl extends ServiceImpl<AbilityDao, Ability> implements AbilityService {
+
+
+    @Autowired
+    AbilityDao abilityDao;
+
+    @Cacheable(RedisKey.UNIT_ABILITY)
+    @Override
+    public List<Ability> getUnitAbilityList(Integer id) {
+        return abilityDao.getUnitAbilityList(id);
+    }
+}

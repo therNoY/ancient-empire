@@ -3,6 +3,7 @@ package com.mihao.ancient_empire.controller;
 
 import com.mihao.ancient_empire.common.util.RespHelper;
 import com.mihao.ancient_empire.common.vo.RespJson;
+import com.mihao.ancient_empire.constant.MapEnum;
 import com.mihao.ancient_empire.dto.RespUserMapDao;
 import com.mihao.ancient_empire.dto.map_dto.ReqSimpleDrawing;
 import com.mihao.ancient_empire.dto.map_dto.RespSimpleDrawing;
@@ -117,7 +118,13 @@ public class UserMapController {
         if (map != null){
             return RespHelper.errResJson(42000);
         }
-        userMapService.saveMap(userMap);
+        // 管理员创建地图默认是遭遇战地图
+        if (AuthUtil.getAuthId().equals(1)) {
+            userMap.setType(MapEnum.ENCOUNTER.getType());
+            userMapService.saveMap(userMap);
+        }else {
+            userMapService.saveMap(userMap);
+        }
         return RespHelper.successResJson();
     }
 

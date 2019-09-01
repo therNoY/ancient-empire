@@ -6,6 +6,7 @@ import com.mihao.ancient_empire.constant.MqMethodEnum;
 import com.mihao.ancient_empire.constant.RedisKey;
 import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.InitMap;
+import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.map_dto.ReqInitMapDto;
 import com.mihao.ancient_empire.entity.mongo.UserMap;
@@ -78,6 +79,10 @@ public class UserRecordServiceImp implements UserRecordService {
         String uuid = StringUtil.getUUID();
         userRecord.setUuid(uuid);
         userRecord.setCurrentRound(1);
+        // TODO 测试
+        if (userMap.getMapName().startsWith("测试地图")) {
+            userRecord.setTomb(Arrays.asList(new Position(9, 7)));
+        }
         for (Army army : armyList) {
             if (army.getOrder() == 1) {
                 userRecord.setCurrColor(army.getColor());

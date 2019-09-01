@@ -22,4 +22,12 @@ public class RedisKey{
     public static final String REGION_MES = "regionMes";
     public static final String REGION_MES_ = "regionMes::";
 
+    // 地形信息
+    public static final String UNIT_MES = "unitMes";
+    public static final String UNIT_MES_ = "unitMes::";
+
+    // 单位能力
+    public static final String UNIT_ABILITY = "unitAbility";
+    public static final String UNIT_ABILITY_ = "unitAbility::";
+
 }

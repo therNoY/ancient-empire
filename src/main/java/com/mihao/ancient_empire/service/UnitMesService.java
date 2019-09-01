@@ -22,4 +22,6 @@ public interface UnitMesService extends IService<UnitMes> {
     void saveUnitMes(UnitMes unitMes);
 
     List<UnitMes> getEnableUnitByUserId(Integer id);
+
+    UnitMes getByType(String type);
 }

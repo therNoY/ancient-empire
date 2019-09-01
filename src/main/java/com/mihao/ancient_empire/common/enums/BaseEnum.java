@@ -2,6 +2,7 @@ package com.mihao.ancient_empire.common.enums;
 
 public interface BaseEnum {
 
+
     /**
      * 单位枚举 获取驼峰命名的type
      * @return

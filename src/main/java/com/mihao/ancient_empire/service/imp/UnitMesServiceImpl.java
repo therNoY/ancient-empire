@@ -92,4 +92,16 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
         List<UnitMes> unitMes = unitMesDao.selectList(wrapper);
         return unitMes;
     }
+
+    /**
+     * 获取单位信息byTyoe
+     * @return
+     * @param type
+     */
+    @Cacheable(RedisKey.UNIT_MES)
+    @Override
+    public UnitMes getByType(String type) {
+        UnitMes unitMes = unitMesDao.selectOne(new QueryWrapper<UnitMes>().eq("type", type));
+        return unitMes;
+    }
 }

@@ -2,6 +2,7 @@ package com.mihao.ancient_empire.entity.mongo;
 
 import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.InitMap;
+import com.mihao.ancient_empire.dto.Position;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -22,6 +23,8 @@ public class UserRecord implements Serializable {
     private InitMap initMap;
     //包含所有的军队信息
     private List<Army> armyList;
+    // 包含的坟墓
+    private List<Position> tomb;
     // 记录的名字
     private String recordName;
     // 创建者Id
@@ -114,5 +117,13 @@ public class UserRecord implements Serializable {
 
     public void setCurrentRound(Integer currentRound) {
         this.currentRound = currentRound;
+    }
+
+    public List<Position> getTomb() {
+        return tomb;
+    }
+
+    public void setTomb(List<Position> tomb) {
+        this.tomb = tomb;
     }
 }

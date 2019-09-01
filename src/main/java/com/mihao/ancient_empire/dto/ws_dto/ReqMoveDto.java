@@ -6,9 +6,19 @@ import java.util.List;
 
 public class ReqMoveDto {
 
+    private Integer currentUnitIndex;
     private Position currentPoint;
     private Position aimPoint;
     private List<Position> positions;
+
+
+    public Integer getCurrentUnitIndex() {
+        return currentUnitIndex;
+    }
+
+    public void setCurrentUnitIndex(Integer currentUnitIndex) {
+        this.currentUnitIndex = currentUnitIndex;
+    }
 
     public Position getCurrentPoint() {
         return currentPoint;

@@ -1,0 +1,88 @@
+{
+  "currentPoint": {
+    "row": 8,
+    "column": 10
+  },
+  "aimPoint": {
+    "row": 7,
+    "column": 9
+  },
+  "positions": [
+    {
+      "row": 8,
+      "column": 11
+    },
+    {
+      "row": 7,
+      "column": 11
+    },
+    {
+      "row": 6,
+      "column": 11
+    },
+    {
+      "row": 5,
+      "column": 11
+    },
+    {
+      "row": 6,
+      "column": 12
+    },
+    {
+      "row": 6,
+      "column": 10
+    },
+    {
+      "row": 5,
+      "column": 10
+    },
+    {
+      "row": 6,
+      "column": 9
+    },
+    {
+      "row": 7,
+      "column": 9
+    },
+    {
+      "row": 7,
+      "column": 12
+    },
+    {
+      "row": 7,
+      "column": 13
+    },
+    {
+      "row": 8,
+      "column": 12
+    },
+    {
+      "row": 8,
+      "column": 13
+    },
+    {
+      "row": 7,
+      "column": 13
+    },
+    {
+      "row": 9,
+      "column": 13
+    },
+    {
+      "row": 9,
+      "column": 12
+    },
+    {
+      "row": 9,
+      "column": 11
+    },
+    {
+      "row": 9,
+      "column": 12
+    },
+    {
+      "row": 10,
+      "column": 11
+    }
+  ]
+}

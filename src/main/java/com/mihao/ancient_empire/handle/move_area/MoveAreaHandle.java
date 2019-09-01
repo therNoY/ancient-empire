@@ -1,6 +1,8 @@
-package com.mihao.ancient_empire.websocket.service;
+package com.mihao.ancient_empire.handle.move_area;
 
+import com.mihao.ancient_empire.common.util.EnumUtil;
 import com.mihao.ancient_empire.common.vo.MyException;
+import com.mihao.ancient_empire.constant.AbilityEnum;
 import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.BaseSquare;
 import com.mihao.ancient_empire.dto.Position;
@@ -18,27 +20,21 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class MoveAreaService {
-
+public class MoveAreaHandle{
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     public ApplicationContext ac;
-    private UserRecord userRecord = null;
-    private int armyIndex;
-    private int index;
-    private Army army = null;
-    private Unit unit = null;
-    private List<BaseSquare> regionList = null;
-    private int mapRow;
-    private int mapColumn;
-    private RegionMesService regionMesService;
-    private UnitLevelMesService unitLevelMesService;
+    protected UserRecord userRecord = null;
+    protected Army army = null;
+    protected Unit unit = null;
+    protected List<BaseSquare> regionList = null;
+    protected int mapRow;
+    protected int mapColumn;
+    protected RegionMesService regionMesService;
+    protected UnitLevelMesService unitLevelMesService;
 
-    public MoveAreaService(UserRecord userRecord, ReqUnitIndexDto unitIndex, ApplicationContext ac) {
+    protected MoveAreaHandle(UserRecord userRecord, ReqUnitIndexDto unitIndex, ApplicationContext ac) {
         this.userRecord = userRecord;
-        this.armyIndex = unitIndex.getArmyIndex();
-        this.index = unitIndex.getIndex();
         this.army = userRecord.getArmyList().get(unitIndex.getArmyIndex());
         this.unit = this.army.getUnits().get(unitIndex.getIndex());
         this.regionList = this.userRecord.getInitMap().getRegions();
@@ -49,17 +45,45 @@ public class MoveAreaService {
         this.unitLevelMesService = ac.getBean(UnitLevelMesService.class);
     }
 
+    /**
+     * 根据单位的 能力选择相应的能力处理器
+     * @param abilityType
+     * @return
+     */
+    public static MoveAreaHandle initActionHandle(String abilityType, UserRecord userRecord, ReqUnitIndexDto unitIndex, ApplicationContext ac) {
+        AbilityEnum type = EnumUtil.valueOf(AbilityEnum.class, abilityType);
+        switch (type) {
+            case FLY:
+                return new flyMoveHandle(userRecord, unitIndex, ac);
+            case WATER_CLOSE:
+                return new waterMoveHandle(userRecord, unitIndex, ac);
+            case HILL_CLOSE:
+                return new hillMoveHandle(userRecord, unitIndex, ac);
+            case FOREST_CLOSE:
+                return new forestMoveHandle(userRecord, unitIndex, ac);
+            default:
+                return null;
+        }
+    }
+
+    public static MoveAreaHandle getDefaultHandle(UserRecord userRecord, ReqUnitIndexDto unitIndex, ApplicationContext ac) {
+        return new MoveAreaHandle(userRecord, unitIndex, ac);
+    }
 
     public List<Position> getMovePosition() {
-        log.info("需要查询的单位移动返回 {}", unit);
+        log.info("查询普单位{}移动范围", unit.getType());
         int speed = unitLevelMesService.getSpeedByUnit(unit.getType(), unit.getLevel());
         List<Position> positions = new ArrayList<>();
-        getWalkPosition(positions, new Position(unit.getRow(), unit.getColumn(), speed, -1));
-        //  去掉有友方单位的可移动地方 感觉不过滤也可以
+        getMovePosition(positions, new Position(unit.getRow(), unit.getColumn(), speed, -1));
         return positions;
     }
 
-    public void getWalkPosition(List<Position> positions, Position position) {
+    /**
+     * 查询普通单位的移动路径
+     * @param positions
+     * @param position
+     */
+    public void getMovePosition(List<Position> positions, Position position) {
         // 只有当前节点剩余移动力大于1的时候才能找
         if (position.getLastMove() <= 0) {
             return;
@@ -75,7 +99,7 @@ public class MoveAreaService {
                     if (!positions.contains(nPosition)) {
                         nPosition.setDirection(Event.UP);
                         positions.add(nPosition);
-                        getWalkPosition(positions, nPosition);
+                        getMovePosition(positions, nPosition);
                     }
                 }
             }
@@ -91,7 +115,7 @@ public class MoveAreaService {
                     if (!positions.contains(nPosition)) {
                         nPosition.setDirection(Event.RIGHT);
                         positions.add(nPosition);
-                        getWalkPosition(positions, nPosition);
+                        getMovePosition(positions, nPosition);
                     }
 
                 }
@@ -109,7 +133,7 @@ public class MoveAreaService {
                     if (!positions.contains(nPosition)) {
                         nPosition.setDirection(Event.DOWN);
                         positions.add(nPosition);
-                        getWalkPosition(positions, nPosition);
+                        getMovePosition(positions, nPosition);
                     }
                 }
             }
@@ -125,7 +149,7 @@ public class MoveAreaService {
                     if (!positions.contains(nPosition)) {
                         nPosition.setDirection(Event.LEFT);
                         positions.add(nPosition);
-                        getWalkPosition(positions, nPosition);
+                        getMovePosition(positions, nPosition);
                     }
                 }
             }
@@ -157,4 +181,6 @@ public class MoveAreaService {
             throw new MyException("服务器错误");
         return regionMes.getDeplete();
     }
+
+
 }
