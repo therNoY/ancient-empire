@@ -75,9 +75,9 @@ public class WebSocketService implements ApplicationContextAware {
         }
 
         for (Ability ab : abilityList) {
-            MoveAreaHandle moveAreaHandle = MoveAreaHandle.initActionHandle(ab.getType(), userRecord, unitIndex, ac);
+            MoveAreaHandle moveAreaHandle = MoveAreaHandle.initActionHandle(ab.getType());
             if (moveAreaHandle != null) {
-                List<Position> abMove = moveAreaHandle.getMovePosition();
+                List<Position> abMove = moveAreaHandle.getMoveArea(userRecord, unitIndex);
                 if (abMove != null) {
                     positions.addAll(abMove);
                 }
@@ -85,8 +85,8 @@ public class WebSocketService implements ApplicationContextAware {
         }
         // 如果单位没有有效能力
         if (positions.size() == 0) {
-            MoveAreaHandle defaultHandle = MoveAreaHandle.getDefaultHandle(userRecord, unitIndex, ac);
-            positions.addAll(defaultHandle.getMovePosition());
+            MoveAreaHandle defaultHandle = MoveAreaHandle.getDefaultHandle();
+            positions.addAll(defaultHandle.getMoveArea(userRecord, unitIndex));
         }
         // 去重
         List<Position> moveArea = new ArrayList<>();

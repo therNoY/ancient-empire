@@ -1,17 +1,21 @@
 package com.mihao.ancient_empire;
 
 import com.mihao.ancient_empire.service.UserRecordService;
+import com.mihao.ancient_empire.util.SpringContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
  * 项目需要初始化的数据 比如读取全局的配置文件
  */
 @Component
-public class InitApplication implements CommandLineRunner {
+public class InitApplication implements CommandLineRunner, ApplicationContextAware {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -34,5 +38,10 @@ public class InitApplication implements CommandLineRunner {
      */
     private void initAdminSetting() {
         log.info("获取用户个性化设计.....");
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        SpringContextHolder.setApplicationContext(applicationContext);
     }
 }

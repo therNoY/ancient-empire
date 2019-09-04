@@ -1,16 +1,16 @@
 package com.mihao.ancient_empire.handle.move_area;
 
-import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
-import org.springframework.context.ApplicationContext;
 
 public class FlyMoveHandle extends MoveAreaHandle {
 
+    private static FlyMoveHandle handel = null;
 
-
-
-    public FlyMoveHandle(UserRecord userRecord, ReqUnitIndexDto unitIndex, ApplicationContext ac) {
-        super(userRecord, unitIndex, ac);
+    public static FlyMoveHandle getInstance() {
+        if (handel == null) {
+            return new FlyMoveHandle();
+        }
+        return handel;
     }
 
     /**
@@ -20,7 +20,7 @@ public class FlyMoveHandle extends MoveAreaHandle {
      * @return
      */
     @Override
-    public int getRegionDeplete(int row, int column) {
+    public int getRegionDeplete(UserRecord userRecord, int row, int column) {
         return 1;
     }
 }

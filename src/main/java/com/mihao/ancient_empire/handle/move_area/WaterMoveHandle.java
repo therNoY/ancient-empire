@@ -1,14 +1,20 @@
 package com.mihao.ancient_empire.handle.move_area;
 
 import com.mihao.ancient_empire.constant.RegionEnum;
-import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
+import com.mihao.ancient_empire.dto.BaseSquare;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
-import org.springframework.context.ApplicationContext;
+
+import java.util.List;
 
 public class WaterMoveHandle extends MoveAreaHandle {
 
-    public WaterMoveHandle(UserRecord userRecord, ReqUnitIndexDto unitIndex, ApplicationContext ac) {
-        super(userRecord, unitIndex, ac);
+    private static WaterMoveHandle handel = null;
+
+    public static WaterMoveHandle getInstance() {
+        if (handel == null) {
+            return new WaterMoveHandle();
+        }
+        return handel;
     }
 
     /**
@@ -18,13 +24,15 @@ public class WaterMoveHandle extends MoveAreaHandle {
      * @return
      */
     @Override
-    public int getRegionDeplete(int row, int column) {
+    public int getRegionDeplete(UserRecord userRecord, int row, int column) {
+        int mapColumn = userRecord.getInitMap().getColumn();
+        List<BaseSquare> regionList = userRecord.getInitMap().getRegions();
         int index = (row - 1) * mapColumn + column - 1;
         String type = regionList.get(index).getType();
         if (type.startsWith(RegionEnum.SEA.getType()) || type.startsWith(RegionEnum.BANK.getType())) {
             return 1;
         }else {
-            return super.getRegionDeplete(row, column);
+            return super.getRegionDeplete(userRecord, row, column);
         }
     }
 }

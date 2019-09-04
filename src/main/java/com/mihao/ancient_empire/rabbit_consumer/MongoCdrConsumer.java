@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @RabbitListener(queues = RabbitMqAdd.MONGO_CDR)
 public class MongoCdrConsumer {
 
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     UserRecordRepository userRecordRepository;
