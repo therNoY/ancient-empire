@@ -35,7 +35,7 @@ public class MongoCdrConsumer {
             log.error("", e);
         }
         if (mqMessage != null) {
-            log.info("mongo.cdr 消费 {} at {}", mqMessage.getValue(), DateUtil.getNow());
+            log.info("mongo.cdr 消费 at {}", DateUtil.getNow());
             switch (mqMessage.getMqMethodEnum()) {
                 case ADD_RECORD:
                     addRecord(mqMessage.getValue());

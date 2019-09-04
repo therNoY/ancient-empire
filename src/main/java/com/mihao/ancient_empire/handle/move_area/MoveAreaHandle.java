@@ -54,13 +54,13 @@ public class MoveAreaHandle{
         AbilityEnum type = EnumUtil.valueOf(AbilityEnum.class, abilityType);
         switch (type) {
             case FLY:
-                return new flyMoveHandle(userRecord, unitIndex, ac);
+                return new FlyMoveHandle(userRecord, unitIndex, ac);
             case WATER_CLOSE:
-                return new waterMoveHandle(userRecord, unitIndex, ac);
+                return new WaterMoveHandle(userRecord, unitIndex, ac);
             case HILL_CLOSE:
-                return new hillMoveHandle(userRecord, unitIndex, ac);
+                return new HillMoveHandle(userRecord, unitIndex, ac);
             case FOREST_CLOSE:
-                return new forestMoveHandle(userRecord, unitIndex, ac);
+                return new ForestMoveHandle(userRecord, unitIndex, ac);
             default:
                 return null;
         }

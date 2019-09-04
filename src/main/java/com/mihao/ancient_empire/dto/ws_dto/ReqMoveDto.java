@@ -11,6 +11,14 @@ public class ReqMoveDto {
     private Position aimPoint;
     private List<Position> positions;
 
+    public ReqMoveDto() {
+    }
+
+    public ReqMoveDto(Integer currentUnitIndex, Position currentPoint, Position aimPoint) {
+        this.currentUnitIndex = currentUnitIndex;
+        this.currentPoint = currentPoint;
+        this.aimPoint = aimPoint;
+    }
 
     public Integer getCurrentUnitIndex() {
         return currentUnitIndex;

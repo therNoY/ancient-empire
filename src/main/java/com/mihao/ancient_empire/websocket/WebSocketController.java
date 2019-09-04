@@ -8,7 +8,6 @@ import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.ws_dto.PathPosition;
 import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
-import com.mihao.ancient_empire.dto.ws_dto.RespAction;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ public class WebSocketController {
 
     /**
      * 获取移动区域
-     *
+     * 如果是领主站在自己的城堡且没有移动 就显示action选项
      * @param principal
      * @param msg
      */
@@ -44,9 +43,14 @@ public class WebSocketController {
         log.info("从 {} getMoveArea收到的信息", principal.getName());
         ReqUnitIndexDto unitIndexDto = JacksonUtil.jsonToBean(msg, ReqUnitIndexDto.class);
         if (unitIndexDto != null) {
-            List<Position> areas = webSocketService.getMoveArea(principal.getName(), unitIndexDto);
-            simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                    WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_AREAS.getType(), areas));
+            Object areas = webSocketService.getMoveArea(principal.getName(), unitIndexDto);
+            if (areas instanceof List) {
+                simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                        WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_AREAS.getType(), areas));
+            }else {
+                simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                        WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_ACTION.getType(), areas));
+            }
         } else {
             log.error("{} 解析错误", msg);
         }
@@ -63,11 +67,14 @@ public class WebSocketController {
     public void getMovePath(Principal principal, String msg) {
         log.info("从 {} getMovePath 收到的信息", principal.getName());
         ReqMoveDto moveDto = JacksonUtil.jsonToBean(msg, ReqMoveDto.class);
+        Map<String, Object> map = new HashMap<>();
         if (moveDto != null) {
-            List<RespAction> actions = webSocketService.getActions(principal.getName(), moveDto);
-            List<PathPosition> movePath = webSocketService.getMovePath(moveDto);
-            Map<String, Object> map = new HashMap<>();
-            map.put("actions", actions);
+            List<PathPosition> movePath  = null;
+            Map<String, Object> actionMap = webSocketService.getActions(principal.getName(), moveDto, false);
+            if (actionMap.get("noMove") == null || !actionMap.get("noMove").equals(true)) {
+                movePath = webSocketService.getMovePath(moveDto);
+            }
+            map.put("actions", actionMap);
             map.put("movePath", movePath);
             simpMessagingTemplate.convertAndSendToUser(principal.getName(),
                     WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_PATH.getType(), map));

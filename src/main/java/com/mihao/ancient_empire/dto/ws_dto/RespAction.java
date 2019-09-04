@@ -15,6 +15,12 @@ public class RespAction {
         this.name = name;
     }
 
+    public RespAction(String name, Float row, Float column) {
+        this.name = name;
+        this.row = row;
+        this.column = column;
+    }
+
     public String getName() {
         return name;
     }

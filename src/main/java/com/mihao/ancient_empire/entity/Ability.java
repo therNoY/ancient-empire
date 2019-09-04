@@ -42,6 +42,13 @@ public class Ability implements Serializable {
      */
     private Integer buffId;
 
+    public Ability() {
+    }
+
+    public Ability(String type) {
+        this.type = type;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -76,6 +83,22 @@ public class Ability implements Serializable {
 
     public void setBuffId(Integer buffId) {
         this.buffId = buffId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Ability) {
+            Ability a2 = (Ability) obj;
+            if (a2.getType().equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.type.hashCode();
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.mihao.ancient_empire.websocket;
 
-import com.mihao.ancient_empire.dto.Army;
-import com.mihao.ancient_empire.dto.Position;
-import com.mihao.ancient_empire.dto.Unit;
+import com.mihao.ancient_empire.constant.AbilityEnum;
+import com.mihao.ancient_empire.constant.ActionEnum;
+import com.mihao.ancient_empire.constant.RegionEnum;
+import com.mihao.ancient_empire.dto.*;
 import com.mihao.ancient_empire.dto.ws_dto.PathPosition;
 import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
@@ -25,10 +26,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,15 +54,26 @@ public class WebSocketService implements ApplicationContextAware {
      * @param unitIndex
      * @return
      */
-    public List<Position> getMoveArea(String uuid, ReqUnitIndexDto unitIndex) {
+    public Object getMoveArea(String uuid, ReqUnitIndexDto unitIndex) {
         // 1.获取record
         UserRecord userRecord = userRecordService.getRecordById(uuid);
         Army cArmy = AppUtil.getArmyByIndex(userRecord, unitIndex.getArmyIndex());
+        String color = cArmy.getColor();
         Unit cUnit = cArmy.getUnits().get(unitIndex.getIndex());
         UnitMes cUnitMes = unitMesService.getByType(cUnit.getType());
         List<Ability> abilityList = abilityService.getUnitAbilityList(cUnitMes.getId());
         // 2. 找到单位的所有能力 从能力中找自动范围
         List<Position> positions = new ArrayList<>();
+        // 判断如果是
+        if (abilityList.contains(new Ability(AbilityEnum.CASTLE_GET.getType()))) {
+            // 判断移动单位是否有领主属性 如果有判断是否站在所属城堡
+            BaseSquare region = AppUtil.getRegionByPosition(userRecord, cUnit);
+            if (region.getType().equals(RegionEnum.CASTLE.getType()) && region.getColor().equals(color)) {
+                Map<String, Object> map = getActions(uuid, new ReqMoveDto(unitIndex.getArmyIndex(), AppUtil.getPosition(cUnit), AppUtil.getPosition(cUnit)), true);
+                return map;
+            }
+        }
+
         for (Ability ab : abilityList) {
             MoveAreaHandle moveAreaHandle = MoveAreaHandle.initActionHandle(ab.getType(), userRecord, unitIndex, ac);
             if (moveAreaHandle != null) {
@@ -106,7 +115,8 @@ public class WebSocketService implements ApplicationContextAware {
      * @param moveDto
      * @return
      */
-    public List<RespAction> getActions(String uuid, ReqMoveDto moveDto) {
+    public Map<String, Object> getActions(String uuid, ReqMoveDto moveDto, boolean isLoad) {
+        Map<String, Object> actionMap = new HashMap<>();
         // 1.获取record 获取当前单位信息 主要获取
         UserRecord userRecord = userRecordService.getRecordById(uuid);
         String color = userRecord.getCurrColor();
@@ -132,9 +142,16 @@ public class WebSocketService implements ApplicationContextAware {
                 actionSet.addAll(actions);
             }
         }
+        if (isLoad) {
+            actionSet.add(ActionEnum.BUY.getType());
+            actionSet.add(ActionEnum.MOVE.getType());
+        }
+        actionMap.put("cAction", AppUtil.addActionAim(new ArrayList<>(actionSet), moveDto.getAimPoint()));
         // 5. 渲染不同的action 不同的位置显示
         List<RespAction> respActions = AppUtil.addActionPosition(new ArrayList<>(actionSet), moveDto.getAimPoint());
-        return respActions;
+        actionMap.put("mAction", respActions);
+
+        return actionMap;
     }
 
     /**

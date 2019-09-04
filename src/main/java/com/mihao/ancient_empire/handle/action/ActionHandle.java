@@ -16,10 +16,13 @@ import java.util.List;
  * 基础的行动处理类
  * 除了 攻击 还有 召唤 占领 破坏 加血 dly
  */
+
 public class ActionHandle {
 
     protected ActionHandle() {
     }
+
+    public static ActionHandle actionHandle = null;
 
     /**
      * 根据单位的 能力选择相应的能力处理器
@@ -30,22 +33,25 @@ public class ActionHandle {
         AbilityEnum type = EnumUtil.valueOf(AbilityEnum.class, abilityType);
         switch (type) {
             case VILLAGE_GET:
-                return new villageGetActionHandle();
+                return VillageGetActionHandle.instance();
             case SUMMONER:
-                return new summonerActionHandle();
+                return SummonerActionHandle.instance();
             case CASTLE_GET:
-                return new castleGetActionHandle();
+                return CastleGetActionHandle.instance();
             case DESTROYER:
-                return new destroyerActionHandle();
+                return DestroyerActionHandle.instance();
             case REPAIR:
-                return new repairActionHandle();
+                return RepairActionHandle.instance();
             default:
                 return null;
         }
     }
 
     public static ActionHandle getDefaultHandle() {
-        return new ActionHandle();
+        if (actionHandle == null) {
+            return new ActionHandle();
+        }
+        return actionHandle;
     }
 
     /**

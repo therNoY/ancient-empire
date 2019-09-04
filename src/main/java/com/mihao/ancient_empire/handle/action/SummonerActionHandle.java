@@ -9,7 +9,18 @@ import java.util.List;
 /**
  * 召唤师 判断有能力召唤
  */
-public class summonerActionHandle extends ActionHandle{
+
+
+public class SummonerActionHandle extends ActionHandle{
+
+    private static CastleGetActionHandle actionHandle = null;
+
+    public static ActionHandle instance() {
+        if (actionHandle == null) {
+            actionHandle = new CastleGetActionHandle();
+        }
+        return actionHandle;
+    }
 
     @Override
     public List<String> getAction(List<Position> positions, UserRecord record, String color, Integer unitIndex, Position aimPoint) {

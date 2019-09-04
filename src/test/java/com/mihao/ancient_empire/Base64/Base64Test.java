@@ -82,7 +82,7 @@ public class Base64Test {
 
     @Test
     public void name2() throws IOException {
-        String base64Url = "aHR0cDovLzEwLjAuMTEuMTU0OjgwODAvcmVjb3JkZXJmaWxlc2VydmVyL3Jlc291cmNlcy8yMDE5LTA4LTI5L3dlYmNoYXRfZmlsZS9kM2UxYTNkNDkxMGU0YjJmYTg4MjU5YjQxOGYzZjZhNOaVmeeItjEuanBn";
+        String base64Url = "aHR0cDovLzEwLjAuMTEuMTU0OjgwODAvcmVjb3JkZXJmaWxlc2VydmVyL3Jlc291cmNlcy8yMDE5LTA5LTAzL3dlYmNoYXRfZmlsZS8zN2UxMTExZmZiN2Y0Mzk0OGRkYWIzODVmNjhkNzgwYy5qcGc=/";
         String s = new String(new BASE64Decoder().decodeBuffer(base64Url), "UTF-8");
         System.out.println(s);
     }

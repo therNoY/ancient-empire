@@ -12,8 +12,17 @@ import java.util.List;
 /**
  * 修理者能力者 判断是否有可以修理的房子
  */
-public class repairActionHandle extends ActionHandle {
 
+public class RepairActionHandle extends ActionHandle {
+
+    private static CastleGetActionHandle actionHandle = null;
+
+    public static ActionHandle instance() {
+        if (actionHandle == null) {
+            actionHandle = new CastleGetActionHandle();
+        }
+        return actionHandle;
+    }
 
     @Override
     public List<String> getAction(List<Position> positions, UserRecord record, String color, Integer unitIndex, Position aimPoint) {

@@ -9,8 +9,27 @@ import com.mihao.ancient_empire.util.AppUtil;
 
 import java.util.List;
 
-public class destroyerActionHandle extends ActionHandle {
 
+public class DestroyerActionHandle extends ActionHandle {
+
+    private static CastleGetActionHandle actionHandle = null;
+
+    public static ActionHandle instance() {
+        if (actionHandle == null) {
+            actionHandle = new CastleGetActionHandle();
+        }
+        return actionHandle;
+    }
+
+    /**
+     * 破化者可以破坏地形
+     * @param positions 攻击范围
+     * @param record
+     * @param color
+     * @param unitIndex
+     * @param aimPoint
+     * @return
+     */
     @Override
     public List<String> getAction(List<Position> positions, UserRecord record, String color, Integer unitIndex, Position aimPoint) {
         List<String> actions = super.getAction(positions, record, color, unitIndex, aimPoint);
