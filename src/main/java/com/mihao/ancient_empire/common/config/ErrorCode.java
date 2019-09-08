@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * 该文件从错误码的位置文件中获取 错误码信息 只初始化一次
+ */
 public class ErrorCode {
 
     static Logger log = LoggerFactory.getLogger(ErrorCode.class);

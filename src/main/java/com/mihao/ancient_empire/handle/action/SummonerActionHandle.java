@@ -13,18 +13,18 @@ import java.util.List;
 
 public class SummonerActionHandle extends ActionHandle{
 
-    private static CastleGetActionHandle actionHandle = null;
+    private static SummonerActionHandle actionHandle = null;
 
     public static ActionHandle instance() {
         if (actionHandle == null) {
-            actionHandle = new CastleGetActionHandle();
+            actionHandle = new SummonerActionHandle();
         }
         return actionHandle;
     }
 
     @Override
-    public List<String> getAction(List<Position> positions, UserRecord record, String color, Integer unitIndex, Position aimPoint) {
-        List<String> actions = super.getAction(positions, record, color, unitIndex, aimPoint);
+    public List<String> getAction(List<Position> positions, UserRecord record, Integer camp, Integer unitIndex, Position aimPoint) {
+        List<String> actions = super.getAction(positions, record, camp, unitIndex, aimPoint);
         List<Position> tombList = record.getTomb();
         if (tombList != null && tombList.size() > 0) {
             for (Position p : tombList) {

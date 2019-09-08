@@ -35,6 +35,8 @@ public class UserRecord implements Serializable {
     private Integer currentRound;
     // 当前行动的军队color
     private String currColor;
+    // 当前阵容
+    private Integer currCamp;
     // 是否保存 未保存的存档最多有一个
     private boolean isUnSave;
 
@@ -125,5 +127,13 @@ public class UserRecord implements Serializable {
 
     public void setTomb(List<Position> tomb) {
         this.tomb = tomb;
+    }
+
+    public Integer getCurrCamp() {
+        return currCamp;
+    }
+
+    public void setCurrCamp(Integer currCamp) {
+        this.currCamp = currCamp;
     }
 }

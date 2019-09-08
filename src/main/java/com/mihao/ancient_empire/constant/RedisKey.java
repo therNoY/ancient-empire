@@ -1,6 +1,6 @@
 package com.mihao.ancient_empire.constant;
 
-
+/*redis key 常量*/
 public class RedisKey{
     public static final String ENABLE_UNIT = "enableUnit";
     public static final String ENABLE_REGION = "enableRegion";
@@ -29,5 +29,9 @@ public class RedisKey{
     // 单位能力
     public static final String UNIT_ABILITY = "unitAbility";
     public static final String UNIT_ABILITY_ = "unitAbility::";
+
+    // 单位等级能力
+    public static final String UNIT_LEVEL_MES = "unitLevelMes";
+    public static final String UNIT_LEVEL_MES_ = "unitLevelMes::";
 
 }

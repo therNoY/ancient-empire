@@ -6,10 +6,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 配置静态资源映射
- *
- * @author sunziwen
- * @version 1.0
- * @date 2018-11-16 14:57
  **/
 @Component
 public class WebMvcConfig implements WebMvcConfigurer {

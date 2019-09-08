@@ -23,10 +23,17 @@ import java.util.Map;
 import java.util.Properties;
 
 
+/**
+ * redis 配置
+ */
 @Configuration
 @EnableCaching
 public class RedisConfig extends CachingConfigurerSupport{
 
+    /**
+     * 设置缓存的命名生成规则 使用缓存名+"::"+"参数.参数..."的形式
+     * @return
+     */
     @Bean
     public KeyGenerator keyGenerator() {
         return new KeyGenerator() {
@@ -46,15 +53,14 @@ public class RedisConfig extends CachingConfigurerSupport{
         };
     }
 
+    /**
+     * 配置缓存的过期时间
+     * @param connectionFactory
+     * @return
+     */
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        /* //设置 全局缓存过期时间
-        return RedisCacheManager
-                .builder(connectionFactory)
-                .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofMinutes(1)))
-                .transactionAware()
-                .build();*/
+
         // 设置默认的缓存过期时间
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration
                 .defaultCacheConfig()
@@ -72,27 +78,6 @@ public class RedisConfig extends CachingConfigurerSupport{
                     .entryTtl(Duration.ofMinutes(Integer.valueOf(value.toString())))
                     .disableCachingNullValues());
         });
-//        // 设置用户获取可用 单位的缓存过期时间
-//        RedisCacheConfiguration enableUnitCache = RedisCacheConfiguration
-//                .defaultCacheConfig()
-//                .entryTtl(Duration.ofMinutes(2))
-//                .disableCachingNullValues();
-//        // 设置用户获取可用 单位的缓存过期时间
-//        RedisCacheConfiguration userInfo = RedisCacheConfiguration
-//                .defaultCacheConfig()
-//                .entryTtl(Duration.ofMinutes(10))
-//                .disableCachingNullValues();
-//        // 设置 遭遇战地图的缓存 过期时间 1小时
-//        RedisCacheConfiguration encounterMap = RedisCacheConfiguration
-//                .defaultCacheConfig()
-//                .entryTtl(Duration.ofHours(1))
-//                .disableCachingNullValues();
-//
-//
-//        /* 将的接口放置到缓存中 有效时间是2 m*/
-//        map.put(RedisKey.ENABLE_UNIT, enableUnitCache);
-//        map.put(RedisKey.USER_INFO, userInfo);
-//        map.put(RedisKey.ENCOUNTER_MAP, encounterMap);
 
         return  RedisCacheManager
                 .builder(connectionFactory)
@@ -102,6 +87,11 @@ public class RedisConfig extends CachingConfigurerSupport{
     }
 
 
+    /**
+     * 自定义 redis 的序列化规则
+     * @param factory
+     * @return
+     */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();

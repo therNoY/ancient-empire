@@ -16,4 +16,6 @@ import java.util.List;
 public interface AbilityService extends IService<Ability> {
 
     List<Ability> getUnitAbilityList(Integer id);
+
+    List<Ability> getUnitAbilityListByType(String type);
 }

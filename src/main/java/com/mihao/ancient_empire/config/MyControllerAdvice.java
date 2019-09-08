@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 配置捕获全局异常
- * @author sam
- * @since 2017/7/17
  */
 @ControllerAdvice
 public class MyControllerAdvice {

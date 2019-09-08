@@ -12,6 +12,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface ExecuteTime {
 
-    int maxTime() default 300; // 默认的最大执行时间 超过会有逻辑操作 单位 s
+    int maxTime() default 100; // 默认的最大执行时间 超过会有逻辑操作 单位 s
 
 }

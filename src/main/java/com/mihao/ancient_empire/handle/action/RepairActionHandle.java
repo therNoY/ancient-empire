@@ -15,18 +15,18 @@ import java.util.List;
 
 public class RepairActionHandle extends ActionHandle {
 
-    private static CastleGetActionHandle actionHandle = null;
+    private static RepairActionHandle actionHandle = null;
 
     public static ActionHandle instance() {
         if (actionHandle == null) {
-            actionHandle = new CastleGetActionHandle();
+            actionHandle = new RepairActionHandle();
         }
         return actionHandle;
     }
 
     @Override
-    public List<String> getAction(List<Position> positions, UserRecord record, String color, Integer unitIndex, Position aimPoint) {
-        List<String> actions =  super.getAction(positions, record, color, unitIndex, aimPoint);
+    public List<String> getAction(List<Position> positions, UserRecord record, Integer camp, Integer unitIndex, Position aimPoint) {
+        List<String> actions =  super.getAction(positions, record, camp, unitIndex, aimPoint);
         if (!actions.contains(ActionEnum.OCCUPIED.getType())) {
             BaseSquare region = AppUtil.getRegionByPosition(record.getInitMap().getRegions(), aimPoint.getRow(), aimPoint.getColumn(), record.getInitMap().getColumn());
             if (region.getType().equals(RegionEnum.RUINS.getType())) {

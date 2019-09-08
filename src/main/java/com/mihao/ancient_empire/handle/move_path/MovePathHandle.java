@@ -314,14 +314,14 @@ public class MovePathHandle {
     // 将List<Position> 转成List<PathPosition>
     private static List<PathPosition> toPathPosition(List<Position> path) {
         List<PathPosition> pathPositions = new ArrayList<>();
-        // 6. 将路径长度放进去
+        // 将路径长度放进去
         for (int i = 0; i < path.size() - 1; i++) {
             PathPosition p = new PathPosition(path.get(i));
             p.setLength(getPositionLength(path.get(i), path.get(i + 1)));
             pathPositions.add(p);
         }
         pathPositions.add(new PathPosition(path.get(path.size() - 1)));
-        return null;
+        return pathPositions;
     }
 
     private static int getPositionLength(Position p1, Position p2) {

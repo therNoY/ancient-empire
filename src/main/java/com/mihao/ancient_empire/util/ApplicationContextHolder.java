@@ -6,14 +6,14 @@ import org.springframework.context.ApplicationContext;
 import java.util.Map;
 
 /**
- * 以静态变量保存Spring ApplicationContext, 可在任何代码任何地方任何时候中取出ApplicaitonContext.
+ * 以静态变量保存Spring ApplicationContext 方便在不将单例类交给Spring 管理时使用被Spring 管理的类
  */
-public class SpringContextHolder{
+public class ApplicationContextHolder {
 
     private static ApplicationContext applicationContext;
 
     public static void setApplicationContext(ApplicationContext applicationContext) {
-        SpringContextHolder.applicationContext = applicationContext;
+        ApplicationContextHolder.applicationContext = applicationContext;
     }
 
     //从静态变量ApplicationContext中取得Bean, 自动转型为所赋值对象的类型.

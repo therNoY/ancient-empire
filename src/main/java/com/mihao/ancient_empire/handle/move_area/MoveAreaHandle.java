@@ -11,7 +11,8 @@ import com.mihao.ancient_empire.entity.RegionMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.service.RegionMesService;
 import com.mihao.ancient_empire.service.UnitLevelMesService;
-import com.mihao.ancient_empire.util.SpringContextHolder;
+import com.mihao.ancient_empire.util.AppUtil;
+import com.mihao.ancient_empire.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +61,9 @@ public class MoveAreaHandle{
         Army army = userRecord.getArmyList().get(unitIndex.getArmyIndex());
         Unit unit = army.getUnits().get(unitIndex.getIndex());
         log.info("查询普单位{}移动范围", unit.getType());
-        int speed = SpringContextHolder.getBean(UnitLevelMesService.class).getSpeedByUnit(unit.getType(), unit.getLevel());
+        int speed = ApplicationContextHolder.getBean(UnitLevelMesService.class).getSpeedByUnit(unit.getType(), unit.getLevel());
         List<Position> positions = new ArrayList<>();
+        positions.add(AppUtil.getPosition(unit));
         getMovePosition(army, userRecord, positions, new Position(unit.getRow(), unit.getColumn(), speed, -1));
         return positions;
     }
@@ -146,9 +148,9 @@ public class MoveAreaHandle{
 
     // 判断上面有没有 敌方单位
     public boolean isHaveEnemy(Army army, UserRecord userRecord, int row, int column) {
-        String color = army.getColor();
+        Integer camp = army.getCamp();
         for (Army a : userRecord.getArmyList()) {
-            if (!a.getColor().equals(color)) {
+            if (!a.getCamp().equals(camp)) {
                 for (Unit u : a.getUnits()) {
                     if (!u.isDead() && u.getRow() == row && u.getColumn() == column) {
                         return true;
@@ -164,7 +166,7 @@ public class MoveAreaHandle{
         // 获取上面地形的type
         int index = (row - 1) * userRecord.getInitMap().getColumn() + column - 1;
         String type = userRecord.getInitMap().getRegions().get(index).getType();
-        RegionMes regionMes = SpringContextHolder.getBean(RegionMesService.class).getRegionByType(type);
+        RegionMes regionMes = ApplicationContextHolder.getBean(RegionMesService.class).getRegionByType(type);
         if (regionMes == null)
             throw new MyException("服务器错误");
         return regionMes.getDeplete();

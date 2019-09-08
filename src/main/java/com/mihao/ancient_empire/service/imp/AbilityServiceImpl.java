@@ -31,4 +31,15 @@ public class AbilityServiceImpl extends ServiceImpl<AbilityDao, Ability> impleme
     public List<Ability> getUnitAbilityList(Integer id) {
         return abilityDao.getUnitAbilityList(id);
     }
+
+    /**
+     * 获取单位能力
+     * @param type
+     * @return
+     */
+    @Cacheable(RedisKey.UNIT_ABILITY)
+    @Override
+    public List<Ability> getUnitAbilityListByType(String type) {
+        return abilityDao.getUnitAbilityListByType(type);
+    }
 }

@@ -2,6 +2,7 @@ package com.mihao.ancient_empire.handle.action;
 
 import com.mihao.ancient_empire.constant.ActionEnum;
 import com.mihao.ancient_empire.constant.RegionEnum;
+import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.BaseSquare;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
@@ -26,18 +27,26 @@ public class VillageGetActionHandle extends ActionHandle {
      *
      * @param positions 攻击范围
      * @param record
-     * @param color
+     * @param camp
      * @param unitIndex
      * @param aimPoint
      * @return
      */
     @Override
-    public List<String> getAction(List<Position> positions, UserRecord record, String color, Integer unitIndex, Position aimPoint) {
-        List<String> actions = super.getAction(positions, record, color, unitIndex, aimPoint);
+    public List<String> getAction(List<Position> positions, UserRecord record, Integer camp, Integer unitIndex, Position aimPoint) {
+        List<String> actions = super.getAction(positions, record, camp, unitIndex, aimPoint);
         if (!actions.contains(ActionEnum.OCCUPIED.getType())) {
+            // 获取要移动到的地址
             BaseSquare region = AppUtil.getRegionByPosition(record.getInitMap().getRegions(), aimPoint.getRow(), aimPoint.getColumn(), record.getInitMap().getColumn());
-            if (region.getType().equals(RegionEnum.TOWN.getType()) && !region.getColor().equals(color)) {
-                actions.add(ActionEnum.OCCUPIED.getType());
+            // 判断是城镇
+            if (region.getType().equals(RegionEnum.TOWN.getType())){
+                // 判断不是右方城镇
+                Army army = null;
+                if ((army = AppUtil.getArmyByColor(record, region.getColor())) != null) {
+                    if (!army.getCamp().equals(camp)) {
+                        actions.add(ActionEnum.OCCUPIED.getType());
+                    }
+                }
             }
         }
         return actions;

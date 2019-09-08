@@ -2,8 +2,10 @@ package com.mihao.ancient_empire.service.imp;
 
 import com.mihao.ancient_empire.common.util.RedisHelper;
 import com.mihao.ancient_empire.common.util.StringUtil;
+import com.mihao.ancient_empire.constant.ColorEnum;
 import com.mihao.ancient_empire.constant.MqMethodEnum;
 import com.mihao.ancient_empire.constant.RedisKey;
+import com.mihao.ancient_empire.constant.StateEnum;
 import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.InitMap;
 import com.mihao.ancient_empire.dto.Position;
@@ -82,10 +84,20 @@ public class UserRecordServiceImp implements UserRecordService {
         // TODO 测试
         if (userMap.getMapName().startsWith("测试地图")) {
             userRecord.setTomb(Arrays.asList(new Position(9, 7)));
+            for (Army army : armyList) {
+                if (army.getColor().equals(ColorEnum.RED.getType())) {
+                    for (Unit unit : army.getUnits()) {
+                        if (unit.getRow() == 3 && unit.getColumn() == 9){
+                            unit.setStatus(StateEnum.EXCITED.getType());
+                        }
+                    }
+                }
+            }
         }
         for (Army army : armyList) {
             if (army.getOrder() == 1) {
                 userRecord.setCurrColor(army.getColor());
+                userRecord.setCurrCamp(army.getCamp());
                 break;
             }
         }
@@ -104,6 +116,7 @@ public class UserRecordServiceImp implements UserRecordService {
 
     /**
      * 获取 Record By uuid
+     * 这里不使用 Spring catchAble 原因是保存改缓存使用的是redishelper 设置 序列化方式不一样
      * @param uuid
      * @return
      */
@@ -115,6 +128,7 @@ public class UserRecordServiceImp implements UserRecordService {
             Optional<UserRecord> optional = userRecordRepository.findById(uuid);
             if (optional.isPresent()) {
                 userRecord = optional.get();
+                redisHelper.set(RedisKey.USER_RECORD_ + uuid, userRecord, 5 * 60l);
             }
         }
         return userRecord;

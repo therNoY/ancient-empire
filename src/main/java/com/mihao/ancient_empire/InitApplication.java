@@ -1,7 +1,7 @@
 package com.mihao.ancient_empire;
 
 import com.mihao.ancient_empire.service.UserRecordService;
-import com.mihao.ancient_empire.util.SpringContextHolder;
+import com.mihao.ancient_empire.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -42,6 +42,6 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringContextHolder.setApplicationContext(applicationContext);
+        ApplicationContextHolder.setApplicationContext(applicationContext);
     }
 }

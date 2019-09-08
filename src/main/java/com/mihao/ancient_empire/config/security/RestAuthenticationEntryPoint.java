@@ -13,7 +13,6 @@ import java.io.IOException;
 
 /**
  * 当未登录或者token失效访问接口时，自定义的返回结果
- * Created by macro on 2018/5/14.
  */
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {

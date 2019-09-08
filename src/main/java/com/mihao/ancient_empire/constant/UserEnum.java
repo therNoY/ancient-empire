@@ -1,8 +1,8 @@
 package com.mihao.ancient_empire.constant;
 
 public enum  UserEnum {
-    ADMIN;
 
+    ADMIN;
 
     public int getId() {
         if (this.equals(ADMIN)) {

@@ -1,7 +1,7 @@
 package com.mihao.ancient_empire.constant;
 
 import com.mihao.ancient_empire.common.enums.BaseEnum;
-
+/*地形枚举*/
 public enum  RegionEnum implements BaseEnum {
     TOWN,
     CASTLE,

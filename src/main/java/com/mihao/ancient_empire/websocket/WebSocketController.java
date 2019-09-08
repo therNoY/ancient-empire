@@ -5,10 +5,12 @@ import com.mihao.ancient_empire.common.util.JacksonUtil;
 import com.mihao.ancient_empire.constant.WSPath;
 import com.mihao.ancient_empire.constant.WsMethodEnum;
 import com.mihao.ancient_empire.dto.Position;
-import com.mihao.ancient_empire.dto.ws_dto.PathPosition;
-import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
-import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
+import com.mihao.ancient_empire.dto.ws_dto.*;
 import com.mihao.ancient_empire.util.WsRespHelper;
+import com.mihao.ancient_empire.websocket.service.WsActionService;
+import com.mihao.ancient_empire.websocket.service.WsAttachResultService;
+import com.mihao.ancient_empire.websocket.service.WsMoveAreaService;
+import javafx.geometry.Pos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +23,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * WS 请求的前端控住值 路由请求处理方法
+ */
 @Controller
 public class WebSocketController {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    WebSocketService webSocketService;
+    WsMoveAreaService moveAreaService;
     @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    WsActionService actionService;
+    @Autowired
+    WsAttachResultService attachResultService;
 
     /**
      * 获取移动区域
@@ -37,13 +46,13 @@ public class WebSocketController {
      * @param principal
      * @param msg
      */
-    @ExecuteTime(maxTime = 200)
+    @ExecuteTime
     @MessageMapping("/ws/getMoveArea")
     public void getMoveArea(Principal principal, String msg) {
         log.info("从 {} getMoveArea收到的信息", principal.getName());
         ReqUnitIndexDto unitIndexDto = JacksonUtil.jsonToBean(msg, ReqUnitIndexDto.class);
         if (unitIndexDto != null) {
-            Object areas = webSocketService.getMoveArea(principal.getName(), unitIndexDto);
+            Object areas = moveAreaService.getMoveArea(principal.getName(), unitIndexDto);
             if (areas instanceof List) {
                 simpMessagingTemplate.convertAndSendToUser(principal.getName(),
                         WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_AREAS.getType(), areas));
@@ -62,7 +71,6 @@ public class WebSocketController {
      * @param principal
      * @param msg
      */
-    @ExecuteTime(maxTime = 50)
     @MessageMapping("/ws/getMovePath")
     public void getMovePath(Principal principal, String msg) {
         log.info("从 {} getMovePath 收到的信息", principal.getName());
@@ -70,9 +78,9 @@ public class WebSocketController {
         Map<String, Object> map = new HashMap<>();
         if (moveDto != null) {
             List<PathPosition> movePath  = null;
-            Map<String, Object> actionMap = webSocketService.getActions(principal.getName(), moveDto, false);
+            Map<String, Object> actionMap = actionService.getActions(principal.getName(), moveDto, false);
             if (actionMap.get("noMove") == null || !actionMap.get("noMove").equals(true)) {
-                movePath = webSocketService.getMovePath(moveDto);
+                movePath = moveAreaService.getMovePath(moveDto);
             }
             map.put("actions", actionMap);
             map.put("movePath", movePath);
@@ -83,6 +91,36 @@ public class WebSocketController {
         }
     }
 
+
+    /**
+     * 获取攻击范围
+     * @param principal
+     * @param msg
+     */
+    @MessageMapping("/ws/getAttachArea")
+    public void getAttachArea(Principal principal, String msg) {
+        log.info("从 {} getAttachArea 收到的信息", principal.getName());
+        ReqAttachAreaDto moveDto = JacksonUtil.jsonToBean(msg, ReqAttachAreaDto.class);
+        List<Position> attach = actionService.getAttachArea(principal.getName(), moveDto);
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_AREA.getType(), attach));
+    }
+
+    /**
+     * 获取一次攻击结果
+     * @param principal
+     * @param msg
+     */
+    @MessageMapping("/ws/getAttachResult")
+    public void getAttachResult(Principal principal, String msg) {
+        log.info("从 {} getAttachArea 收到的信息", principal.getName());
+        ReqAttachDto reqAttachDto = JacksonUtil.jsonToBean(msg, ReqAttachDto.class);
+        RespAttachResultDto resultDto = attachResultService.getAttachResult(principal.getName(), reqAttachDto);
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_RESULT.getType(), resultDto));
+    }
+
+    // WS 测试
     @MessageMapping("/ws/test")
     public void test(Principal principal, String msg) {
         log.info("从 {} getMoveArea收到的信息{}", principal.getName(), msg);

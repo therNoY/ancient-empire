@@ -23,7 +23,7 @@ public interface UnitLevelMesDao extends BaseMapper<UnitLevelMes> {
     @Select("SELECT um.type, ulm.* from unit_mes um left JOIN unit_level_mes ulm on um.id = ulm.unit_id ")
     IPage<RespUnitLevelDto> getUnitLevelMesList(Page page);
 
-    @Select("SELECT ulm.speed from unit_level_mes ulm LEFT JOIN unit_mes um on ulm.unit_id = um.id " +
+    @Select("SELECT ulm.* from unit_level_mes ulm LEFT JOIN unit_mes um on ulm.unit_id = um.id " +
             "WHERE ulm.`level` = #{level} and um.type = #{type}")
-    int getSpeedByUnit(@Param("type")String type, @Param("level")Integer level);
+    UnitLevelMes getUnitLevelMes(@Param("type")String type, @Param("level")Integer level);
 }

@@ -58,18 +58,18 @@ public class ActionHandle {
      * 获取单位的基础行为
      * @param positions 攻击范围
      * @param record
-     * @param color
+     * @param camp
      * @param unitIndex
      * @param aimPoint
      * @return
      */
-    public List<String> getAction(List<Position> positions, UserRecord record, String color, Integer unitIndex, Position aimPoint) {
+    public List<String> getAction(List<Position> positions, UserRecord record, Integer camp, Integer unitIndex, Position aimPoint) {
 
         List<String> actions = new ArrayList<>();
         List<Army> ArmyList = record.getArmyList();
         for (Position p : positions) {
             for (Army army : ArmyList) {
-                if (!army.getColor().equals(color)) {
+                if (!army.getCamp().equals(camp)) {
                     List<Unit> units = army.getUnits();
                     for (Unit unit : units) {
                         if (!unit.isDead() && unit.getRow() == p.getRow() && unit.getColumn() == p.getColumn()) {

@@ -1,8 +1,10 @@
 package com.mihao.ancient_empire.java_base;
 
+import com.mihao.ancient_empire.dto.Unit;
+import com.mihao.ancient_empire.dto.ws_dto.AttributesPower;
+import com.mihao.ancient_empire.util.AppUtil;
 import org.junit.Test;
 
-import javax.xml.crypto.Data;
 import java.util.Date;
 
 public class IntegerTest {
@@ -58,5 +60,26 @@ public class IntegerTest {
         }
         long end3 = System.currentTimeMillis();
         System.out.println("int -> Integer " + (end3 - begin3) + "ms");
+    }
+
+    @Test
+    public void name4() {
+        AttributesPower attributesPower = new AttributesPower();
+        attributesPower.setNum(30);
+        attributesPower.setAddition((float) 1.5);
+        System.out.println(attributesPower.attachPower());
+    }
+
+    @Test
+    public void name5() {
+        Unit unit = new Unit();
+        unit.setLife(new Integer[]{9, 8});
+        System.out.println(AppUtil.getUnitLeft(unit));
+    }
+
+    @Test
+    public void name6() {
+        System.out.println(Integer.valueOf("1"));
+        System.out.println(Integer.valueOf('1' + ""));
     }
 }

@@ -10,6 +10,10 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * mq  的工具类 使用时要注入
+ */
+
 @Component
 public class MqHelper {
 
