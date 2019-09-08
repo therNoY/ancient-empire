@@ -43,6 +43,7 @@ public class ForestDefenseHandle extends DefenseHandle {
         if (regionMes.getType().equals(RegionEnum.FOREST.getType()) || regionMes.getType().equals(RegionEnum.GROVE.getType())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(FOREST)));
+                log.info("森林之子 获取防御加成{}", Integer.valueOf(AppConfig.get(FOREST)));
             } else {
                 int defense = super.getDefensePower(type, record, unit, levelMes, regionMes, beAttachUnit, attributesPower, beAttachAbility).getNum();
                 attributesPower.setNum(defense + Integer.valueOf(AppConfig.get(FOREST)));

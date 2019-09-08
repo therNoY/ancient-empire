@@ -1,20 +1,16 @@
 package com.mihao.ancient_empire.ServiceTest;
 
 import com.mihao.ancient_empire.common.util.JacksonUtil;
-import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
-import com.mihao.ancient_empire.websocket.WebSocketService;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PathTest {
 
     @Test
     public void getPath() {
-        WebSocketService ws = new WebSocketService();
+//        WebSocketService ws = new WebSocketService();
 
         String filePath = "D:\\Users\\Administrator\\Idea\\ancient-empire\\src\\test\\java\\com\\mihao\\ancient_empire\\ServiceTest/package.json";
         File file = new File(filePath);

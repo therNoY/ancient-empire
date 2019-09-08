@@ -44,6 +44,7 @@ public class RemoteDefenseHandle extends DefenseHandle {
             if (attributesPower.getAddition() != null) {
                 if (addition > attributesPower.getAddition()) {
                     attributesPower.setAddition(addition);
+                    log.info("远程防御 获取防御加成{} 倍", Integer.valueOf(AppConfig.get(REMOTE_DEFENSE)));
                 }
             } else {
                 attributesPower.setAddition(addition);

@@ -47,6 +47,7 @@ public class ShooterAttachHandle extends AttachHandle {
             if (ability.getType().contains(AbilityEnum.FLY.getType())) {
                 if (attributesPower.getNum() != null) {
                     attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(SHOOTER)));
+                    log.info("神射手 获取攻击加成{}倍", Integer.valueOf(AppConfig.get(SHOOTER)));
                 } else {
                     int attach = AppUtil.getAttachNum(levelMes);
                     attributesPower.setNum(attach + Integer.valueOf(AppConfig.get(SHOOTER)));

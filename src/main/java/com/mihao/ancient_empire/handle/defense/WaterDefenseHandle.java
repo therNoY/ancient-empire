@@ -34,6 +34,7 @@ public class WaterDefenseHandle extends DefenseHandle {
         if (regionMes.getType().startsWith(RegionEnum.SEA.getType()) || regionMes.getType().startsWith(RegionEnum.BANK.getType())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(WATER)));
+                log.info("水之子 获取防御加成{}", Integer.valueOf(AppConfig.get(WATER)));
             } else {
                 int defense = super.getDefensePower(type, record, unit, levelMes, regionMes, beAttachUnit, attributesPower, beAttachAbility).getNum();
                 attributesPower.setNum(defense + Integer.valueOf(AppConfig.get(WATER)));

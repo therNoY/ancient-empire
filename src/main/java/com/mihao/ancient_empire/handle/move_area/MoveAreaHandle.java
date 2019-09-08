@@ -8,6 +8,7 @@ import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
 import com.mihao.ancient_empire.entity.RegionMes;
+import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.service.RegionMesService;
 import com.mihao.ancient_empire.service.UnitLevelMesService;
@@ -57,11 +58,15 @@ public class MoveAreaHandle{
         return handle;
     }
 
-    public List<Position> getMoveArea(UserRecord userRecord, ReqUnitIndexDto unitIndex) {
+    public List<Position> getMoveArea(UserRecord userRecord, ReqUnitIndexDto unitIndex, UnitLevelMes levelMes) {
         Army army = userRecord.getArmyList().get(unitIndex.getArmyIndex());
         Unit unit = army.getUnits().get(unitIndex.getIndex());
+        return getMoveArea(userRecord, army, unit, levelMes);
+    }
+
+    public List<Position> getMoveArea(UserRecord userRecord, Army army, Unit unit, UnitLevelMes levelMes) {
         log.info("查询普单位{}移动范围", unit.getType());
-        int speed = ApplicationContextHolder.getBean(UnitLevelMesService.class).getSpeedByUnit(unit.getType(), unit.getLevel());
+        int speed = levelMes.getSpeed();
         List<Position> positions = new ArrayList<>();
         positions.add(AppUtil.getPosition(unit));
         getMovePosition(army, userRecord, positions, new Position(unit.getRow(), unit.getColumn(), speed, -1));

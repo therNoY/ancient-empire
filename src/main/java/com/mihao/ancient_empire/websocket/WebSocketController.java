@@ -5,10 +5,12 @@ import com.mihao.ancient_empire.common.util.JacksonUtil;
 import com.mihao.ancient_empire.constant.WSPath;
 import com.mihao.ancient_empire.constant.WsMethodEnum;
 import com.mihao.ancient_empire.dto.Position;
+import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.ws_dto.*;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import com.mihao.ancient_empire.websocket.service.WsActionService;
 import com.mihao.ancient_empire.websocket.service.WsAttachResultService;
+import com.mihao.ancient_empire.websocket.service.WsEndService;
 import com.mihao.ancient_empire.websocket.service.WsMoveAreaService;
 import javafx.geometry.Pos;
 import org.slf4j.Logger;
@@ -39,6 +41,8 @@ public class WebSocketController {
     WsActionService actionService;
     @Autowired
     WsAttachResultService attachResultService;
+    @Autowired
+    WsEndService wsEndService;
 
     /**
      * 获取移动区域
@@ -112,6 +116,7 @@ public class WebSocketController {
      * @param msg
      */
     @MessageMapping("/ws/getAttachResult")
+    @ExecuteTime(maxTime = 50)
     public void getAttachResult(Principal principal, String msg) {
         log.info("从 {} getAttachArea 收到的信息", principal.getName());
         ReqAttachDto reqAttachDto = JacksonUtil.jsonToBean(msg, ReqAttachDto.class);
@@ -119,6 +124,22 @@ public class WebSocketController {
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
                 WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_RESULT.getType(), resultDto));
     }
+
+    /**
+     * 获取单位 回合结束后的影响
+     * @param principal
+     * @param msg
+     */
+    @MessageMapping("/ws/getEndResult")
+    @ExecuteTime(maxTime = 50)
+    public void getEndResult(Principal principal, String msg) {
+        log.info("从 {} getAttachArea 收到的信息", principal.getName());
+        Unit Unit = JacksonUtil.jsonToBean(msg, com.mihao.ancient_empire.dto.Unit.class);
+        RespEndResultDto resultDto = wsEndService.getEndResult(principal.getName(), Unit);
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_RESULT.getType(), resultDto));
+    }
+
 
     // WS 测试
     @MessageMapping("/ws/test")

@@ -39,6 +39,7 @@ public class WaterAttachHandle extends AttachHandle {
         if (region.getType().startsWith(RegionEnum.SEA.getType()) || region.getType().startsWith(RegionEnum.BANK.getType())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(WATER)));
+                log.info("水之子 获取攻击加成{}倍", Integer.valueOf(AppConfig.get(WATER)));
             } else {
                 int attach = AppUtil.getAttachNum(levelMes);
                 attributesPower.setNum(attach + Integer.valueOf(AppConfig.get(WATER)));

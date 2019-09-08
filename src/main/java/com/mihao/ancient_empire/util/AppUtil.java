@@ -66,6 +66,13 @@ public class AppUtil {
     }
 
     /**
+     *  获得单位的位置
+     */
+    public static BaseSquare getRegionByPosition(UserRecord record, int row, int column) {
+        return getRegionByPosition(record.getInitMap().getRegions(), row, column, record.getInitMap().getColumn());
+    }
+
+    /**
      * 通过行列获取地图上的位置
      * @return
      */

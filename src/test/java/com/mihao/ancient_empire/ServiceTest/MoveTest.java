@@ -1,7 +1,7 @@
 package com.mihao.ancient_empire.ServiceTest;
 
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
-import com.mihao.ancient_empire.websocket.WebSocketService;
+import com.mihao.ancient_empire.websocket.service.WsMoveAreaService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +13,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class MoveTest {
 
     @Autowired
-    WebSocketService webSocketService;
+    WsMoveAreaService moveAreaService;
 
     @Test
     public void getMoveArea() {
         String recordId = "a4652f73943347c1b7329ac67e5e1850"; // 初始化地图
-        webSocketService.getMoveArea(recordId, new ReqUnitIndexDto(0, 0));
+        moveAreaService.getMoveArea(recordId, new ReqUnitIndexDto(0, 0));
     }
 }

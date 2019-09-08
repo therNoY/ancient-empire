@@ -3,11 +3,9 @@ package com.mihao.ancient_empire.websocket.service;
 import com.mihao.ancient_empire.common.util.StringUtil;
 import com.mihao.ancient_empire.constant.AbilityEnum;
 import com.mihao.ancient_empire.constant.StateEnum;
+import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
-import com.mihao.ancient_empire.dto.ws_dto.AttachResult;
-import com.mihao.ancient_empire.dto.ws_dto.AttributesPower;
-import com.mihao.ancient_empire.dto.ws_dto.ReqAttachDto;
-import com.mihao.ancient_empire.dto.ws_dto.RespAttachResultDto;
+import com.mihao.ancient_empire.dto.ws_dto.*;
 import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.RegionMes;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
@@ -17,6 +15,8 @@ import com.mihao.ancient_empire.handle.attach.AttachHandle;
 import com.mihao.ancient_empire.handle.defense.DefenseHandle;
 import com.mihao.ancient_empire.service.*;
 import com.mihao.ancient_empire.util.AppUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,6 +29,8 @@ import java.util.List;
 @Service
 public class WsAttachResultService {
 
+    Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     UserRecordService userRecordService;
     @Autowired
@@ -39,6 +41,8 @@ public class WsAttachResultService {
     AbilityService abilityService;
     @Autowired
     RegionMesService regionMesService;
+    @Autowired
+    WsMoveAreaService moveAreaService;
 
     @Value("${attach.experience}")
     Integer attachExperience;
@@ -67,6 +71,7 @@ public class WsAttachResultService {
     public RespAttachResultDto getAttachResult(String uuid, ReqAttachDto reqAttachDto) {
         // 最终返回的结果
         RespAttachResultDto resultDto = new RespAttachResultDto();
+        AttachSituation attachSituation = new AttachSituation();
 
         // 1. 获取需要基本信息
         UserRecord record = userRecordService.getRecordById(uuid);
@@ -80,7 +85,7 @@ public class WsAttachResultService {
         UnitMes beAttachUnitMes = unitMesService.getByType(beAttachUnit.getType());
 
         // 2. 获取主动攻击结果
-        AttachResult attachResult = getOnceAttachResult(true, record, attachUnit, beAttachUnit,
+        AttachResult attachResult = getOnceAttachResult(true, attachSituation, record, attachUnit, beAttachUnit,
                 attachUnitMes, attachUnitLevelMes, beAttachLevelUnitMes, abilityList, beAttachAbility);
         resultDto.setAttachResult(attachResult);
         // 2.1 更新
@@ -114,11 +119,27 @@ public class WsAttachResultService {
         // 4.只有可以反击的情况才可以 获取反击结果
         if (counterattack) {
             // 4.1 获取反击者的攻击力
-            AttachResult counterattackResult = getOnceAttachResult(false, record, beAttachUnit, attachUnit,
+            AttachResult counterattackResult = getOnceAttachResult(false, attachSituation, record, beAttachUnit, attachUnit,
                     beAttachUnitMes, beAttachLevelUnitMes, attachUnitLevelMes, beAttachAbility, abilityList);
             resultDto.setCounterattackResult(counterattackResult);
         }
 
+        resultDto.setAttachSituation(attachSituation);
+
+        // 判断是否可以二次移动
+        for (Ability ability : abilityList) {
+            if (ability.getType().equals(AbilityEnum.ASSAULT.getType())) {
+                // 是可以进行二次移动
+                int lastSpeed = getLastSpeed(reqAttachDto.getPath(), attachUnitLevelMes.getSpeed());
+                if (lastSpeed > 0) {
+                    List<Position> positions = moveAreaService.getSecondMoveArea(record, attachUnit, attachUnitMes, lastSpeed);
+                    resultDto.setSecondMove(true);
+                    resultDto.setMoveArea(positions);
+                }
+                return resultDto;
+            }
+        }
+        resultDto.setSecondMove(false);
         return resultDto;
     }
 
@@ -136,17 +157,39 @@ public class WsAttachResultService {
      * @param beAttachAbility      被攻击单位能力列表
      * @return
      */
-    private AttachResult getOnceAttachResult(boolean isInitiative, UserRecord record, Unit attachUnit, Unit beAttachUnit, UnitMes attachUnitMes, UnitLevelMes attachUnitLevelMes,
-                                             UnitLevelMes beAttachLevelUnitMes, List<Ability> abilityList, List<Ability> beAttachAbility) {
+    private AttachResult getOnceAttachResult(boolean isInitiative, AttachSituation attachSituation, UserRecord record, Unit attachUnit, Unit beAttachUnit,
+                                             UnitMes attachUnitMes, UnitLevelMes attachUnitLevelMes, UnitLevelMes beAttachLevelUnitMes, List<Ability> abilityList, List<Ability> beAttachAbility) {
         // 1.1 获取到攻击者的攻击力
         AttachHandle attachHandle = AttachHandle.getDefaultHandle();
         AttributesPower attachPower = new AttributesPower(); // 保存攻击能力信息
         attachHandle.getAttachPower(record, attachUnit, attachUnitLevelMes, beAttachUnit, attachPower);
+        int baseAttach = attachPower.getNum();
         // 1.2 根据能力判断攻击力
         for (Ability ability : abilityList) {
             AttachHandle abilityAttachHandle = AttachHandle.initAttachHandle(ability.getType());
             abilityAttachHandle.getAttachPower(record, attachUnit, attachUnitLevelMes, beAttachUnit, attachPower);
         }
+        // 设置攻击加成情况
+        if (attachPower.getNum() > baseAttach || (attachPower.getAddition() != null && attachPower.getAddition() > 1)) {
+            if (isInitiative) {
+                attachSituation.setAttachUp(1);
+            } else {
+                attachSituation.setBeAttackUp(1);
+            }
+        } else if (attachPower.getNum() < baseAttach || (attachPower.getAddition() != null && attachPower.getAddition() < 1)) {
+            if (isInitiative) {
+                attachSituation.setAttachUp(-1);
+            } else {
+                attachSituation.setBeAttackUp(-1);
+            }
+        } else {
+            if (isInitiative) {
+                attachSituation.setAttachUp(0);
+            } else {
+                attachSituation.setBeAttackUp(0);
+            }
+        }
+
 
         // 1.3 获取 被攻击者的对应的防御力
         String type = attachUnitMes.getAttackType();
@@ -156,44 +199,72 @@ public class WsAttachResultService {
         // 1.4 根据能力判断防御力 顺便判断是否包含
         DefenseHandle defenseHandle = DefenseHandle.getDefaultHandle();
         defenseHandle.getDefensePower(type, record, attachUnit, beAttachLevelUnitMes, regionMes, beAttachUnit, defensePower, beAttachAbility);
+        int baseDefense = defensePower.getNum();
+        // 飞行单位不享受地形加成
+        if (!beAttachAbility.contains(new Ability(AbilityEnum.FLY.getType()))) {
+            defensePower.setNum(defensePower.getNum() + regionMes.getBuff());
+            log.info("{} 享受地形{} 加成{}", beAttachUnit.getType(), regionMes.getType(), regionMes.getBuff());
+        }
         for (Ability ability : beAttachAbility) {
             DefenseHandle abilityDefenseHandle = DefenseHandle.initAttachHandle(ability.getType());
             abilityDefenseHandle.getDefensePower(type, record, attachUnit, attachUnitLevelMes, regionMes, beAttachUnit, defensePower, beAttachAbility);
 
         }
 
+        // 设置防御加成情况
+        if (defensePower.getNum() > baseDefense || (defensePower.getAddition() != null && defensePower.getAddition() > 1)) {
+            if (isInitiative) {
+                attachSituation.setDefenseUp(1);
+            } else {
+                attachSituation.setBeDefenseUp(1);
+            }
+        } else if (defensePower.getNum() < baseDefense || (defensePower.getAddition() != null && defensePower.getAddition() < 1)) {
+            if (isInitiative) {
+                attachSituation.setDefenseUp(-1);
+            } else {
+                attachSituation.setBeDefenseUp(-1);
+            }
+        } else {
+            if (isInitiative) {
+                attachSituation.setDefenseUp(0);
+            } else {
+                attachSituation.setBeDefenseUp(0);
+            }
+        }
+
         // 1.5. 根据攻防完善出一个主动攻击的伤害结果
-        AttachResult attachResult = stuffAttachResult(isInitiative, attachPower, defensePower,attachUnit, beAttachUnit, abilityList, beAttachAbility);
+        AttachResult attachResult = stuffAttachResult(isInitiative, attachPower, defensePower, attachUnit, beAttachUnit, abilityList, beAttachAbility);
         return attachResult;
     }
+
     /**
      * 获取
      * stuff -> 填充
      *
      * @return
      */
-    private AttachResult stuffAttachResult(boolean isInitiative, AttributesPower attachPower, AttributesPower defensePower,Unit attachUnit, Unit beAttachUnit, List<Ability> abilityList, List<Ability> beAttachAbility) {
-
+    private AttachResult stuffAttachResult(boolean isInitiative, AttributesPower attachPower, AttributesPower defensePower, Unit attachUnit, Unit beAttachUnit, List<Ability> abilityList, List<Ability> beAttachAbility) {
         int attachNum = attachPower.getNum();
         int defenseNum = defensePower.getNum();
-
         if (attachPower.getAddition() != null) {
             attachNum = (int) (attachNum * attachPower.getAddition());
         }
-
         if (defensePower.getAddition() != null) {
             defenseNum = (int) (defenseNum * defensePower.getAddition());
         }
+
+        log.info("{} 经过加成后的攻击力{}， {}最终防御力{}", attachUnit.getType(), attachNum, beAttachUnit.getType(), defenseNum);
         // 设置攻击情况
         AttachResult attachResult = new AttachResult();
-        int harm = (attachNum - defenseNum) * AppUtil.getUnitLeft(attachUnit)/100;
+        int harm = (attachNum - defenseNum) * AppUtil.getUnitLeft(attachUnit) / 100;
+        log.info("{} 血量 {}， 最终伤害{}", attachUnit.getType(), AppUtil.getUnitLeft(attachUnit), harm);
         Integer[] attach;
         if (attachNum < defenseNum) {
             attach = new Integer[]{0};
         } else {
             if (harm > 100) {
                 attach = new Integer[]{-1, 1, 0, 0};
-            }else {
+            } else {
                 attach = AppUtil.getArrayByInt(-1, harm);
             }
         }
@@ -207,12 +278,12 @@ public class WsAttachResultService {
             int ke;
             if (isInitiative) {
                 ke = killExperience;
-            }else {
+            } else {
                 ke = antiKillExperience;
             }
             if (attachUnit.getExperience() != null) {
                 attachResult.setEndExperience(attachUnit.getExperience() + ke);
-            }else {
+            } else {
                 attachResult.setEndExperience(ke);
             }
             // 判断是否有坟墓
@@ -231,12 +302,12 @@ public class WsAttachResultService {
             int ae;
             if (isInitiative) {
                 ae = attachExperience;
-            }else {
+            } else {
                 ae = counterattackExperience;
             }
             if (attachUnit.getExperience() != null) {
                 attachResult.setEndExperience(attachUnit.getExperience() + ae);
-            }else {
+            } else {
                 attachResult.setEndExperience(ae);
             }
             // 设置剩余生命
@@ -253,19 +324,19 @@ public class WsAttachResultService {
 
         // 判断是否升级
         switch (attachUnit.getLevel()) {
-            case 0 :
+            case 0:
                 handleLevel(attachResult, level0);
                 break;
-            case 1 :
+            case 1:
                 handleLevel(attachResult, level1);
                 break;
-            case 2 :
+            case 2:
                 handleLevel(attachResult, level2);
                 break;
-            case 3 :
+            case 3:
                 handleLevel(attachResult, level3);
                 break;
-            case 4 :
+            case 4:
                 attachResult.setEndExperience(0);
                 break;
         }
@@ -273,10 +344,35 @@ public class WsAttachResultService {
         return attachResult;
     }
 
+    /**
+     * 处理单位升级
+     *
+     * @param attachResult
+     * @param level
+     */
     private void handleLevel(AttachResult attachResult, Integer level) {
         if (attachResult.getEndExperience() >= level) {
             attachResult.setLeaveUp(true);
             attachResult.setEndExperience(attachResult.getEndExperience() - level);
         }
+    }
+
+    /**
+     * 获取 单位的剩余移动力
+     */
+    private int getLastSpeed(List<PathPosition> path, int speed) {
+        int sum = 0;
+        for (int i = 0; i < path.size() - 1; i++) {
+            PathPosition p1 = path.get(i);
+            PathPosition p2 = path.get(i + 1);
+            sum = sum + getPathPositionLength(p1, p2);
+        }
+        return speed - sum;
+    }
+
+
+
+    private int getPathPositionLength(PathPosition p1, PathPosition p2) {
+        return Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p1.getColumn() - p2.getColumn());
     }
 }

@@ -7,6 +7,9 @@ public class PathPosition {
     private Integer column;
     private Integer length;
 
+    public PathPosition() {
+    }
+
     public PathPosition(Position position) {
         this.row = position.getRow();
         this.column = position.getColumn();

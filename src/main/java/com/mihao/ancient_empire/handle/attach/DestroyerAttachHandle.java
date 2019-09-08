@@ -43,6 +43,7 @@ public class DestroyerAttachHandle extends AttachHandle {
 
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(DESTROYER)));
+                log.info("破化者获取攻击加成{}", Integer.valueOf(AppConfig.get(DESTROYER)));
             } else {
                 int attach = AppUtil.getAttachNum(levelMes);
                 attributesPower.setNum(attach + Integer.valueOf(AppConfig.get(DESTROYER)));

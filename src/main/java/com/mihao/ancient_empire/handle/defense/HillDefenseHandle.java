@@ -43,6 +43,7 @@ public class HillDefenseHandle extends DefenseHandle {
         if (regionMes.getType().equals(RegionEnum.STONE.getType())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(HILL)));
+                log.info("山之子 获取防御加成{}", Integer.valueOf(AppConfig.get(HILL)));
             } else {
                 int defense = super.getDefensePower(type, record, unit, levelMes, regionMes, beAttachUnit, attributesPower, beAttachAbility).getNum();
                 attributesPower.setNum(defense + Integer.valueOf(AppConfig.get(HILL)));

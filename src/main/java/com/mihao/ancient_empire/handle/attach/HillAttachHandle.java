@@ -40,6 +40,7 @@ public class HillAttachHandle extends AttachHandle {
         if (region.getType().equals(RegionEnum.STONE.getType())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(HILL)));
+                log.info("山之子 获取攻击加成{}", Integer.valueOf(AppConfig.get(HILL)));
             } else {
                 int attach = AppUtil.getAttachNum(levelMes);
                 attributesPower.setNum(attach + Integer.valueOf(AppConfig.get(HILL)));

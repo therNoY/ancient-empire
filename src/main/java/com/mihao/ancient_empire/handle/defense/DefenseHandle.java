@@ -3,6 +3,7 @@ package com.mihao.ancient_empire.handle.defense;
 import com.mihao.ancient_empire.common.util.EnumUtil;
 import com.mihao.ancient_empire.constant.AbilityEnum;
 import com.mihao.ancient_empire.dto.Unit;
+import com.mihao.ancient_empire.dto.ws_dto.AttachSituation;
 import com.mihao.ancient_empire.dto.ws_dto.AttributesPower;
 import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.RegionMes;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public class DefenseHandle {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected DefenseHandle() {
     }
@@ -63,15 +64,12 @@ public class DefenseHandle {
             // 判断是物理防御还是魔法防御
             if (type.equals(PHYSICAL_DEFENSE)) {
                 defense = levelMes.getPhysicalDefense();
-                log.info("获取物理防御{}", defense);
+                log.info("{} 物理防御{}", beAttachUnit.getType(), defense);
             } else {
                 defense = levelMes.getMagicDefense();
-                log.info("获取魔法防御{}", defense);
+                log.info("{} 魔法防御{}", beAttachUnit.getType(), defense);
             }
-            // 飞行单位不享受地形加成
-            if (!beAttachAbility.contains(new Ability(AbilityEnum.FLY.getType()))) {
-                defense = defense + regionMes.getBuff();
-            }
+
             attributesPower.setNum(defense);
         }
 

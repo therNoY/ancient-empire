@@ -7,8 +7,12 @@ import com.mihao.ancient_empire.dto.ws_dto.AttributesPower;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.util.AppUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AttachHandle {
+
+    Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected AttachHandle() {
     }
@@ -64,8 +68,8 @@ public class AttachHandle {
         if (attributesPower.getNum() == null) {
             int attach = AppUtil.getAttachNum(levelMes);
             attributesPower.setNum(attach);
+            log.info("{} 攻击 {} 基础攻击力是{}", unit.getType(), beAttachUnit.getType(), attach);
         }
-
         return attributesPower;
     }
 

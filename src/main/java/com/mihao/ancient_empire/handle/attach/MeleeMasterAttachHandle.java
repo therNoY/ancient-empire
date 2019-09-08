@@ -38,6 +38,7 @@ public class MeleeMasterAttachHandle extends AttachHandle {
             if (attributesPower.getAddition() != null) {
                 if (addition > attributesPower.getAddition()) {
                     attributesPower.setAddition(addition);
+                    log.info("近战大师 获取攻击加成{}倍", Integer.valueOf(AppConfig.get(MELEE_MASTER)));
                 }
             } else {
                 attributesPower.setAddition(addition);

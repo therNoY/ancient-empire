@@ -40,6 +40,7 @@ public class ForestAttachHandle extends AttachHandle {
         if (region.getType().equals(RegionEnum.FOREST.getType()) || region.getType().equals(RegionEnum.GROVE.getType())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(FOREST)));
+                log.info("森林之子 获取攻击加成{}", Integer.valueOf(AppConfig.get(FOREST)));
             } else {
                 int attach = AppUtil.getAttachNum(levelMes);
                 attributesPower.setNum(attach + Integer.valueOf(AppConfig.get(FOREST)));
