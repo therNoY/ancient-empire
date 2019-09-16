@@ -32,7 +32,7 @@ public class MongoTest {
     public void updateMapType() {
         Update update = new Update();
         update.set("type", MapEnum.ENCOUNTER.getType());
-        mongoTemplate.upsert(new Query(Criteria.where("mapName").is("远古要塞")), update, CollectionEnum.USER_MAP.getType());
+        mongoTemplate.upsert(Query.query(Criteria.where("mapName").is("远古要塞")), update, CollectionEnum.USER_MAP.getType());
         UserMap userMap = mongoTemplate.findOne(new Query(Criteria.where("mapName").is("远古要塞")), UserMap.class, CollectionEnum.USER_MAP.getType());
         System.out.println(userMap.getType());
     }

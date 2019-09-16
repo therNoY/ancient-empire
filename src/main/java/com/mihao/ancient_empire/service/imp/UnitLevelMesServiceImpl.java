@@ -55,4 +55,9 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDao, UnitLe
     public UnitLevelMes getUnitLevelMes(String type, Integer level) {
         return unitLevelMesDao.getUnitLevelMes(type, level);
     }
+
+    @Override
+    public void insert(UnitLevelMes unitLevelMes) {
+        unitLevelMesDao.insert(unitLevelMes);
+    }
 }

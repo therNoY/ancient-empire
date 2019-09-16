@@ -6,10 +6,10 @@ import java.util.List;
 
 public class ReqMoveDto {
 
-    private Integer currentUnitIndex;
-    private Position currentPoint;
-    private Position aimPoint;
-    private List<Position> positions;
+    private Integer currentUnitIndex; // 当前单位的Index
+    private Position currentPoint; // 当前点
+    private Position aimPoint; // 目标点
+    private List<Position> positions; // 移动区域
 
     public ReqMoveDto() {
     }

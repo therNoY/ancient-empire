@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * 单位类 用来渲染地图 和 返回前端的 不包含 单位的基本信息
  */
-public class Unit implements Serializable {
+public class Unit extends Site implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -16,10 +16,6 @@ public class Unit implements Serializable {
     private String type;
     // 血量 [1, 0, 0]
     private Integer[] life;
-    // 当前行
-    private Integer row;
-    // 当前列
-    private Integer column;
     // 是否已死
     private Boolean isDead;
     // 等级
@@ -68,22 +64,6 @@ public class Unit implements Serializable {
 
     public void setLife(Integer[] life) {
         this.life = life;
-    }
-
-    public Integer getRow() {
-        return row;
-    }
-
-    public void setRow(Integer row) {
-        this.row = row;
-    }
-
-    public Integer getColumn() {
-        return column;
-    }
-
-    public void setColumn(Integer column) {
-        this.column = column;
     }
 
     public Boolean isDead() {

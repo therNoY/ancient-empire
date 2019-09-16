@@ -4,14 +4,13 @@ import com.mihao.ancient_empire.common.annotation.ExecuteTime;
 import com.mihao.ancient_empire.common.util.JacksonUtil;
 import com.mihao.ancient_empire.constant.WSPath;
 import com.mihao.ancient_empire.constant.WsMethodEnum;
+import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.ws_dto.*;
+import com.mihao.ancient_empire.util.AppUtil;
 import com.mihao.ancient_empire.util.WsRespHelper;
-import com.mihao.ancient_empire.websocket.service.WsActionService;
-import com.mihao.ancient_empire.websocket.service.WsAttachResultService;
-import com.mihao.ancient_empire.websocket.service.WsEndService;
-import com.mihao.ancient_empire.websocket.service.WsMoveAreaService;
+import com.mihao.ancient_empire.websocket.service.*;
 import javafx.geometry.Pos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +41,8 @@ public class WebSocketController {
     @Autowired
     WsAttachResultService attachResultService;
     @Autowired
+    WsSummonActionService summonActionService;
+    @Autowired
     WsEndService wsEndService;
 
     /**
@@ -69,6 +70,22 @@ public class WebSocketController {
         }
     }
 
+
+    /**
+     * 获取可进行的action
+     */
+    @MessageMapping("/ws/getActions")
+    public void getActions(Principal principal, String msg) {
+        log.info("从 {} getMovePath 收到的信息", principal.getName());
+        ReqMoveDto moveDto = JacksonUtil.jsonToBean(msg, ReqMoveDto.class);
+        if (moveDto != null) {
+            Map<String, Object> actionMap = actionService.getActions(principal.getName(), moveDto, false);
+            simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                    WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.UNIT_ACTION.getType(), actionMap));
+        } else {
+            log.error("{} 解析错误", msg);
+        }
+    }
     /**
      * 获取移动路线 并且提前获取单位 行动
      *
@@ -116,7 +133,7 @@ public class WebSocketController {
      * @param msg
      */
     @MessageMapping("/ws/getAttachResult")
-    @ExecuteTime(maxTime = 50)
+    @ExecuteTime
     public void getAttachResult(Principal principal, String msg) {
         log.info("从 {} getAttachArea 收到的信息", principal.getName());
         ReqAttachDto reqAttachDto = JacksonUtil.jsonToBean(msg, ReqAttachDto.class);
@@ -133,13 +150,27 @@ public class WebSocketController {
     @MessageMapping("/ws/getEndResult")
     @ExecuteTime(maxTime = 50)
     public void getEndResult(Principal principal, String msg) {
-        log.info("从 {} getAttachArea 收到的信息", principal.getName());
-        Unit Unit = JacksonUtil.jsonToBean(msg, com.mihao.ancient_empire.dto.Unit.class);
-        RespEndResultDto resultDto = wsEndService.getEndResult(principal.getName(), Unit);
+        log.info("从 {} getEndResult 收到的信息", principal.getName());
+        Unit unit = JacksonUtil.jsonToBean(msg, Unit.class);
+        RespEndResultDto resultDto = wsEndService.getEndResult(principal.getName(), unit);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_RESULT.getType(), resultDto));
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.END_RESULT.getType(), resultDto));
     }
 
+    /**
+     * 获取召唤结果
+     * @param principal
+     * @param msg
+     */
+    @MessageMapping("/ws/getSummonResult")
+    @ExecuteTime(maxTime = 50)
+    public void getSummonResult(Principal principal, String msg) {
+        log.info("从 {} getSummonResult 收到的信息", principal.getName());
+        ReqSummonDto summonDto = JacksonUtil.jsonToBean(msg, ReqSummonDto.class);
+        RespSummonResult summonResult = summonActionService.getSummonResult(principal.getName(), summonDto);
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.SUMMON_RESULT.getType(), summonResult));
+    }
 
     // WS 测试
     @MessageMapping("/ws/test")

@@ -26,4 +26,6 @@ public interface UnitLevelMesService extends IService<UnitLevelMes> {
     int getSpeedByUnit(String type, Integer level);
 
     UnitLevelMes getUnitLevelMes(String type, Integer level);
+
+    void insert(UnitLevelMes unitLevelMes);
 }

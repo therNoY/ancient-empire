@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
+import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +26,9 @@ public class JacksonUtil {
 
     static {
 //        mapper.enable(SerializationFeature.INDENT_OUTPUT); //化化输出
-//        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); //序列化空的 POPJ
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); //序列化空的 POPJ
 //        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); //不将date转化成timestamp
-//        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); //忽略未知属性
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); //忽略未知属性
 //        mapper.disable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT); //不将空转化为null
 //        mapper.disable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES); //允许没有引号的字段名（非标准）
 //        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -48,7 +49,7 @@ public class JacksonUtil {
     }
 
     public static <T> T jsonToBean(String json, Class<T> clazz) {
-        return jsonToBean(json, clazz, null);
+        return jsonToBean(json, clazz, mapper);
     }
 
     /**
@@ -147,6 +148,13 @@ public class JacksonUtil {
         }
     }
 
+    /**
+     * 将Map 转成Clazz
+     * @param object
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     public static <T> T mapToBean(Object object, Class<T> clazz) {
         return mapToBean(object, clazz, null);
     }
@@ -160,5 +168,15 @@ public class JacksonUtil {
             return null;
         }
 
+    }
+
+    public static  <T> List<T> listToBean(Object value, Class<T> clazz) {
+        if (value != null && value instanceof List ) {
+            String json = toJson(value);
+            return jsonToList(json, clazz);
+        }else {
+            log.error("错误转换");
+            return null;
+        }
     }
 }

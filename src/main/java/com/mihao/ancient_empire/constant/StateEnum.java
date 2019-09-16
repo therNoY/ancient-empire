@@ -8,5 +8,5 @@ import com.mihao.ancient_empire.common.enums.BaseEnum;
  */
 public enum StateEnum implements BaseEnum {
 
-    BLIND, EXCITED, POISON, WEAK
+    BLIND, EXCITED, POISON, WEAK, NORMAL
 }

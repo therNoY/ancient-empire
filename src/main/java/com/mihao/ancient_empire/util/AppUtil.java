@@ -1,12 +1,11 @@
 package com.mihao.ancient_empire.util;
 
-import com.mihao.ancient_empire.dto.Army;
-import com.mihao.ancient_empire.dto.BaseSquare;
-import com.mihao.ancient_empire.dto.Position;
-import com.mihao.ancient_empire.dto.Unit;
+import com.mihao.ancient_empire.common.vo.MyException;
+import com.mihao.ancient_empire.dto.*;
 import com.mihao.ancient_empire.dto.ws_dto.RespAction;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
+import javafx.geometry.Pos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,6 +180,24 @@ public class AppUtil {
         return army.getUnits().get(index);
     }
 
+
+    /**
+     * 获取当前的军队 index
+     * @param userRecord
+     * @return
+     */
+    public static Integer getCurrentArmyIndex(UserRecord userRecord) {
+        List<Army> armyList = userRecord.getArmyList();
+        Army cArmy = null;
+        for (int i = 0; i < armyList.size(); i++) {
+            cArmy = armyList.get(i);
+            if (userRecord.getCurrColor().equals(cArmy.getColor())) {
+                return i;
+            }
+        }
+        throw new MyException("错误的军队状态");
+    }
+
     /**
      * 获取当前的军队
      * @param userRecord
@@ -292,10 +309,35 @@ public class AppUtil {
      * @param aimP
      * @return
      */
-    public static boolean isReach(Unit currP, Unit aimP) {
-        if (Math.abs(currP.getRow() - aimP.getRow()) + Math.abs(currP.getColumn() - aimP.getColumn()) == 1) {
+    public static boolean isReach(Site currP, Site aimP) {
+        if (getLength(currP, aimP) == 1) {
             return true;
         }
         return false;
     }
+
+
+
+    public static int getLength(Site s1, Site s2) {
+        return Math.abs(s1.getRow() - s2.getRow()) + Math.abs(s1.getColumn() - s2.getColumn());
+    }
+
+    /**
+     * 判断一个单位是否在另一个单位的影响范围内
+     * @return
+     */
+    public static boolean isAround(Site s1, Site s2) {
+
+        int length = AppUtil.getLength(s1, s2);
+        if (length > 2) {
+            return false;
+        }else if (length == 2){
+            if (s1.getRow() == s2.getRow() && s1.getColumn() == s2.getColumn()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 }

@@ -59,7 +59,22 @@ public class WsMoveAreaService {
     public Object getMoveArea(String uuid, ReqUnitIndexDto unitIndex) {
         // 1.获取record
         UserRecord userRecord = userRecordService.getRecordById(uuid);
-        Army cArmy = AppUtil.getArmyByIndex(userRecord, unitIndex.getArmyIndex());
+        Army cArmy = null;
+        boolean getLoadAction = true;
+        if (unitIndex.getArmyIndex() != null) {
+            cArmy = AppUtil.getArmyByIndex(userRecord, unitIndex.getArmyIndex());
+        }else {
+            getLoadAction = false;
+            List<Army> armyList = userRecord.getArmyList();
+            for (int i = 0; i < armyList.size(); i++)  {
+                Army army = armyList.get(i);
+                if (userRecord.getCurrColor().equals(army.getColor())) {
+                    cArmy = army;
+                    unitIndex.setArmyIndex(i);
+                    break;
+                }
+            }
+        }
         // TODO 领主占领城镇
         String color = cArmy.getColor();
         Unit cUnit = cArmy.getUnits().get(unitIndex.getIndex());
@@ -67,12 +82,12 @@ public class WsMoveAreaService {
         List<Ability> abilityList = abilityService.getUnitAbilityList(cUnitMes.getId());
         // 2. 找到单位的所有能力 从能力中找自动范围
         List<Position> positions = new ArrayList<>();
-        // 判断如果是
-        if (abilityList.contains(new Ability(AbilityEnum.CASTLE_GET.getType()))) {
+        // 判断如果是 获取action
+        if (getLoadAction && abilityList.contains(new Ability(AbilityEnum.CASTLE_GET.getType()))) {
             // 判断移动单位是否有领主属性 如果有判断是否站在所属城堡
             BaseSquare region = AppUtil.getRegionByPosition(userRecord, cUnit);
             if (region.getType().equals(RegionEnum.CASTLE.getType()) && region.getColor().equals(color)) {
-                Map<String, Object> map = actionService.getActions(uuid, new ReqMoveDto(unitIndex.getArmyIndex(), AppUtil.getPosition(cUnit), AppUtil.getPosition(cUnit)), true);
+                Map<String, Object> map = actionService.getActions(uuid, new ReqMoveDto(unitIndex.getIndex(), AppUtil.getPosition(cUnit), AppUtil.getPosition(cUnit)), true);
                 return map;
             }
         }

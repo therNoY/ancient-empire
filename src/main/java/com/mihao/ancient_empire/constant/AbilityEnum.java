@@ -22,5 +22,6 @@ public enum AbilityEnum implements BaseEnum {
     MELEE_MASTER, // 近战大师
     CASTLE_GET, // 城堡捕获者
     REPAIR, // 维修者
-    UNDEAD // 亡灵
+    UNDEAD, // 亡灵
+    DEAD_KING, // 死亡领主
 }

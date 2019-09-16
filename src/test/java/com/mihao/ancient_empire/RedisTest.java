@@ -7,6 +7,9 @@ import com.mihao.ancient_empire.common.vo.test_dto.Dog;
 import com.mihao.ancient_empire.constant.RedisKey;
 import com.mihao.ancient_empire.dto.auth_dto.RegisterDto;
 import com.mihao.ancient_empire.entity.User;
+import com.mihao.ancient_empire.entity.mongo.UserMap;
+import com.mihao.ancient_empire.service.UserMapService;
+import com.mihao.ancient_empire.service.UserRecordService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -24,6 +28,10 @@ public class RedisTest {
     RedisHelper redisHelper;
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    UserMapService userMapService;
+    @Autowired
+    UserRecordService recordService;
 
     @Test
     public void name() {
@@ -51,5 +59,14 @@ public class RedisTest {
         redisHelper.hSet("111", "key1", "value2", 100);
 //        redisTemplate.opsForValue().set("222","vvv");
 //        System.out.println(redisTemplate.hasKey("222"));
+    }
+
+
+    @Test
+    public void name4() {
+        List<UserMap> userMaps = userMapService.getEncounterMaps();
+        for (UserMap map : userMaps) {
+            userMapService.saveMap(map);
+        }
     }
 }

@@ -5,10 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mihao.ancient_empire.common.vo.MyException;
 import com.mihao.ancient_empire.constant.RedisKey;
-import com.mihao.ancient_empire.dao.UnitLevelMesDao;
 import com.mihao.ancient_empire.dao.UnitMesDao;
+import com.mihao.ancient_empire.dto.ReqUnitInfoDto;
+import com.mihao.ancient_empire.dto.UnitInfo;
+import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.UnitMes;
+import com.mihao.ancient_empire.service.AbilityService;
+import com.mihao.ancient_empire.service.UnitLevelMesService;
 import com.mihao.ancient_empire.service.UnitMesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mihao.ancient_empire.util.AuthUtil;
@@ -37,7 +41,9 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
     @Autowired
     UnitMesDao unitMesDao;
     @Autowired
-    UnitLevelMesDao unitLevelMesDao;
+    UnitLevelMesService unitLevelMesService;
+    @Autowired
+    AbilityService abilityService;
 
     /**
      * 获取所有单位信息
@@ -67,7 +73,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
                     UnitLevelMes unitLevelMes = new UnitLevelMes();
                     unitLevelMes.setUnitId(unitMes.getId());
                     unitLevelMes.setLevel(i);
-                    unitLevelMesDao.insert(unitLevelMes);
+                    unitLevelMesService.insert(unitLevelMes);
                 }
             }else {
                 log.error("没有获取到插入的主键");
@@ -103,5 +109,20 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
     public UnitMes getByType(String type) {
         UnitMes unitMes = unitMesDao.selectOne(new QueryWrapper<UnitMes>().eq("type", type));
         return unitMes;
+    }
+
+
+    /**
+     *  @param type
+     * @param level
+     * @return
+     */
+    @Override
+    @Cacheable(RedisKey.UNIT_INFO)
+    public UnitInfo getUnitInfo(String type, Integer level) {
+        UnitMes unitMes = getByType(type);
+        UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(type, level);
+        List<Ability> abilityList = abilityService.getUnitAbilityListByType(type);
+        return new UnitInfo(unitMes, unitLevelMesMes, abilityList);
     }
 }

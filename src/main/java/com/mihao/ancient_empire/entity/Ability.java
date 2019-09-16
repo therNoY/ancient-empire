@@ -92,6 +92,8 @@ public class Ability implements Serializable {
             if (a2.getType().equals(type)) {
                 return true;
             }
+        }else if(obj instanceof String){
+            return this.getType().equals(obj.toString());
         }
         return false;
     }

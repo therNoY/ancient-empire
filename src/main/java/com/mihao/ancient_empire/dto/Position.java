@@ -2,13 +2,12 @@ package com.mihao.ancient_empire.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class Position {
-    private Integer row;
-    private Integer column;
+public class Position extends Site{
+
     @JsonIgnore
     private Integer lastMove; // 剩余的移动力
     @JsonIgnore
-    private int direction;
+    private Integer direction;
 
     public Position() {
     }
@@ -24,7 +23,7 @@ public class Position {
         this.column = column;
     }
 
-    public Position(Integer row, Integer column, Integer lastMove, int direction) {
+    public Position(Integer row, Integer column, Integer lastMove, Integer direction) {
         this.row = row;
         this.column = column;
         this.lastMove = lastMove;
@@ -54,22 +53,6 @@ public class Position {
         return 100 * this.row + this.column;
     }
 
-    public Integer getRow() {
-        return row;
-    }
-
-    public void setRow(Integer row) {
-        this.row = row;
-    }
-
-    public Integer getColumn() {
-        return column;
-    }
-
-    public void setColumn(Integer column) {
-        this.column = column;
-    }
-
     public Integer getLastMove() {
         return lastMove;
     }
@@ -78,11 +61,11 @@ public class Position {
         this.lastMove = lastMove;
     }
 
-    public int getDirection() {
+    public Integer getDirection() {
         return direction;
     }
 
-    public void setDirection(int direction) {
+    public void setDirection(Integer direction) {
         this.direction = direction;
     }
 }
