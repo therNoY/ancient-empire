@@ -4,14 +4,11 @@ import com.mihao.ancient_empire.common.annotation.ExecuteTime;
 import com.mihao.ancient_empire.common.util.JacksonUtil;
 import com.mihao.ancient_empire.constant.WSPath;
 import com.mihao.ancient_empire.constant.WsMethodEnum;
-import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.ws_dto.*;
-import com.mihao.ancient_empire.util.AppUtil;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import com.mihao.ancient_empire.websocket.service.*;
-import javafx.geometry.Pos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +39,10 @@ public class WebSocketController {
     WsAttachResultService attachResultService;
     @Autowired
     WsSummonActionService summonActionService;
+    @Autowired
+    WsRepairService repairService;
+    @Autowired
+    WsOccupiedService occupiedService;
     @Autowired
     WsEndService wsEndService;
 
@@ -170,6 +171,36 @@ public class WebSocketController {
         RespSummonResult summonResult = summonActionService.getSummonResult(principal.getName(), summonDto);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
                 WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.SUMMON_RESULT.getType(), summonResult));
+    }
+
+    /**
+     * 获取修理结果
+     * @param principal
+     * @param msg
+     */
+    @MessageMapping("/ws/getOccupiedResult")
+    @ExecuteTime
+    public void getOccupiedResult(Principal principal, String msg) {
+        log.info("从 {} getSummonResult 收到的信息", principal.getName());
+        ReqRepairOcpDto repairOcpDto = JacksonUtil.jsonToBean(msg, ReqRepairOcpDto.class);
+        RespRepairOcpResult repairOcpResult = occupiedService.getOccupiedResult(principal.getName(), repairOcpDto);
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.REPAIR_RESULT.getType(), repairOcpResult));
+    }
+
+    /**
+     * 获取占领结果
+     * @param principal
+     * @param msg
+     */
+    @MessageMapping("/ws/getRepairResult")
+    @ExecuteTime
+    public void getRepairResult(Principal principal, String msg) {
+        log.info("从 {} getSummonResult 收到的信息", principal.getName());
+        ReqRepairOcpDto reqRepairOcpDto = JacksonUtil.jsonToBean(msg, ReqRepairOcpDto.class);
+        RespRepairOcpResult repairResult = repairService.getRepairResult(principal.getName(), reqRepairOcpDto);
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.REPAIR_RESULT.getType(), repairResult));
     }
 
     // WS 测试

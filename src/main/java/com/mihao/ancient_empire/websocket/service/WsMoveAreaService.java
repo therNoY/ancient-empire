@@ -6,9 +6,7 @@ import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.BaseSquare;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
-import com.mihao.ancient_empire.dto.ws_dto.PathPosition;
-import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
-import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
+import com.mihao.ancient_empire.dto.ws_dto.*;
 import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.UnitMes;
@@ -177,5 +175,55 @@ public class WsMoveAreaService {
             }
         }
         return moveArea;
+    }
+
+    public SecondMoveDto getSecondMove(Unit unit, UserRecord record, ReqSecondMoveDto reqSecondMoveDto) {
+        // 2. 判断是否有二次移动
+        SecondMoveDto secondMoveDto = null;
+        List<Ability> abilityList = abilityService.getUnitAbilityListByType(unit.getType()); // 攻击者能力
+        UnitLevelMes levelMes;
+        UnitMes unitMes;
+        for (Ability ability : abilityList) {
+            if (ability.getType().equals(AbilityEnum.ASSAULT.getType())) {
+                // 是可以进行二次移动
+                levelMes = unitLevelMesService.getUnitLevelMes(unit.getType(), unit.getLevel());
+                unitMes = unitMesService.getByType(unit.getType());
+                secondMoveDto = new SecondMoveDto();
+                int lastSpeed = getLastSpeed(reqSecondMoveDto.getPath(), levelMes.getSpeed());
+                if (lastSpeed > 0) {
+                    List<Position> positions = getSecondMoveArea(record, unit, unitMes, lastSpeed);
+                    secondMoveDto.setSecondMove(true);
+                    secondMoveDto.setMoveArea(positions);
+                    break;
+                }
+            }
+        }
+        return secondMoveDto;
+    }
+
+
+    /**
+     * 获取 单位的剩余移动力
+     */
+    private int getLastSpeed(List<PathPosition> path, int speed) {
+        int sum = 0;
+        if (path != null) {
+            for (int i = 0; i < path.size() - 1; i++) {
+                PathPosition p1 = path.get(i);
+                PathPosition p2 = path.get(i + 1);
+                sum = sum + getPathPositionLength(p1, p2);
+            }
+        }
+        return speed - sum;
+    }
+
+    /**
+     * 获取两点消耗的移动力 本来应该根据能力算出不同的能力消耗
+     * @param p1
+     * @param p2
+     * @return
+     */
+    private int getPathPositionLength(PathPosition p1, PathPosition p2) {
+        return Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p1.getColumn() - p2.getColumn());
     }
 }

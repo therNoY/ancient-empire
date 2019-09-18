@@ -2,13 +2,11 @@ package com.mihao.ancient_empire.util;
 
 import com.mihao.ancient_empire.constant.StateEnum;
 import com.mihao.ancient_empire.constant.UnitEnum;
-import com.mihao.ancient_empire.dto.Army;
-import com.mihao.ancient_empire.dto.InitMap;
-import com.mihao.ancient_empire.dto.Position;
-import com.mihao.ancient_empire.dto.Unit;
+import com.mihao.ancient_empire.dto.*;
 import com.mihao.ancient_empire.dto.mongo_dto.SummonDto;
 import com.mihao.ancient_empire.dto.ws_dto.LifeChange;
 import com.mihao.ancient_empire.dto.ws_dto.RespEndResultDto;
+import com.mihao.ancient_empire.dto.ws_dto.RespRepairOcpResult;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.service.UserRecordService;
 import com.mongodb.client.result.UpdateResult;
@@ -134,6 +132,10 @@ public class UserRecordMongoHelper {
         return result.getMatchedCount();
     }
 
+    /**
+     * 处理召唤后的result
+     * @param summonDto
+     */
     @Transactional
     public void handleSummon(SummonDto summonDto) {
         UserRecord record = userRecordService.getRecordById(summonDto.getUuid());
@@ -201,5 +203,18 @@ public class UserRecordMongoHelper {
         Query query = Query.query(Criteria.where("_id").is(endResultDto.getUuid()));
         Update update = new Update().set("armyList", record.getArmyList());
         mongoTemplate.updateFirst(query, update, UserRecord.class);
+    }
+
+    /**
+     * 处理修复后的result
+     * @param repairResult
+     */
+    public void handleRepairOcp(RespRepairOcpResult repairResult) {
+        UserRecord record = userRecordService.getRecordById(repairResult.getRecordId());
+        List<BaseSquare> regions = record.getInitMap().getRegions();
+        BaseSquare square = repairResult.getSquare();
+        regions.get(repairResult.getRegionIndex()).setColor(square.getColor());
+        regions.get(repairResult.getRegionIndex()).setType(square.getType());
+        updateMap(repairResult.getRecordId(), record.getInitMap());
     }
 }

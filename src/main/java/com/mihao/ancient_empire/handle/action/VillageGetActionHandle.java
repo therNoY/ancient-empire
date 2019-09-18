@@ -1,5 +1,6 @@
 package com.mihao.ancient_empire.handle.action;
 
+import com.mihao.ancient_empire.common.util.StringUtil;
 import com.mihao.ancient_empire.constant.ActionEnum;
 import com.mihao.ancient_empire.constant.RegionEnum;
 import com.mihao.ancient_empire.dto.Army;
@@ -42,6 +43,10 @@ public class VillageGetActionHandle extends ActionHandle {
             if (region.getType().equals(RegionEnum.TOWN.getType())){
                 // 判断不是右方城镇
                 Army army = null;
+                if (StringUtil.isEmpty(region.getColor())) {
+                    actions.add(ActionEnum.OCCUPIED.getType());
+                    return actions;
+                }
                 if ((army = AppUtil.getArmyByColor(record, region.getColor())) != null) {
                     if (!army.getCamp().equals(camp)) {
                         actions.add(ActionEnum.OCCUPIED.getType());

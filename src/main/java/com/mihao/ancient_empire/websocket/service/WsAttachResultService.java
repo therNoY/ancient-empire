@@ -17,7 +17,6 @@ import com.mihao.ancient_empire.handle.defense.DefenseHandle;
 import com.mihao.ancient_empire.service.*;
 import com.mihao.ancient_empire.util.AppUtil;
 import com.mihao.ancient_empire.util.MqHelper;
-import com.mihao.ancient_empire.util.RecordHandle;
 import com.mihao.ancient_empire.util.UserRecordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +69,7 @@ public class WsAttachResultService {
     /**
      * 获取攻击结果
      * 不包括 攻击 房屋 攻击房屋之后才考虑
+     *
      * @param uuid         record 的uuid
      * @param reqAttachDto
      * @return
@@ -133,27 +133,16 @@ public class WsAttachResultService {
         resultDto.setAttachSituation(attachSituation);
 
         // 判断是否可以二次移动
-        for (Ability ability : abilityList) {
-            if (ability.getType().equals(AbilityEnum.ASSAULT.getType())) {
-                // 是可以进行二次移动
-                int lastSpeed = getLastSpeed(reqAttachDto.getPath(), attachUnitLevelMes.getSpeed());
-                if (lastSpeed > 0) {
-                    List<Position> positions = moveAreaService.getSecondMoveArea(record, attachUnit, attachUnitMes, lastSpeed);
-                    resultDto.setSecondMove(true);
-                    resultDto.setMoveArea(positions);
-                }
-                // 通知mq 修改记录
-                record.setInitMap(null);
-                mqHelper.sendMongoCdr(MqMethodEnum.UPDATE_ARMY, record);
-                return resultDto;
-            }
+        SecondMoveDto secondMoveDto = moveAreaService.getSecondMove(attachUnit, record, reqAttachDto);
+        if (secondMoveDto == null) {
+            resultDto.setSecondMove(false);
+        }else {
+            resultDto.setSecondMove(secondMoveDto.getSecondMove());
+            resultDto.setMoveArea(secondMoveDto.getMoveArea());
         }
-        resultDto.setSecondMove(false);
-
         // 通知mq 修改记录
         record.setInitMap(null);
         mqHelper.sendMongoCdr(MqMethodEnum.UPDATE_ARMY, record);
-
         return resultDto;
     }
 
@@ -257,6 +246,7 @@ public class WsAttachResultService {
         }
         return attachResult;
     }
+
     /**
      * 获取
      * stuff -> 填充
@@ -368,7 +358,7 @@ public class WsAttachResultService {
                 unit.setLevel(unit.getLevel() + 1);
                 unit.setExperience(attachResult.getEndExperience());
             });
-        }else {
+        } else {
             UserRecordUtil.updateUnit(record, attachUnit.getId(), unit -> {
                 unit.setLevel(unit.getLevel() + 1);
                 unit.setExperience(attachResult.getEndExperience());
@@ -377,6 +367,7 @@ public class WsAttachResultService {
 
         return attachResult;
     }
+
     /**
      * 处理单位升级
      *
@@ -390,28 +381,4 @@ public class WsAttachResultService {
         }
     }
 
-    /**
-     * 获取 单位的剩余移动力
-     */
-    private int getLastSpeed(List<PathPosition> path, int speed) {
-        int sum = 0;
-        if (path != null) {
-            for (int i = 0; i < path.size() - 1; i++) {
-                PathPosition p1 = path.get(i);
-                PathPosition p2 = path.get(i + 1);
-                sum = sum + getPathPositionLength(p1, p2);
-            }
-        }
-        return speed - sum;
-    }
-
-    /**
-     * 获取两点消耗的移动力 本来应该根据能力算出不同的能力消耗
-     * @param p1
-     * @param p2
-     * @return
-     */
-    private int getPathPositionLength(PathPosition p1, PathPosition p2) {
-        return Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p1.getColumn() - p2.getColumn());
-    }
 }

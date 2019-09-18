@@ -7,6 +7,15 @@ public class BaseSquare implements Serializable {
     protected String color;
     protected String type;
 
+
+    public BaseSquare() {
+    }
+
+    public BaseSquare(String color, String type) {
+        this.color = color;
+        this.type = type;
+    }
+
     public String getColor() {
         return color;
     }

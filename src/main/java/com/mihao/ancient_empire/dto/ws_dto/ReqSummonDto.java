@@ -2,12 +2,9 @@ package com.mihao.ancient_empire.dto.ws_dto;
 
 import com.mihao.ancient_empire.dto.Position;
 
-import java.util.List;
-
-public class ReqSummonDto {
-    private Integer index;
-    private Position tomb;
-    private List<PathPosition> path;
+public class ReqSummonDto extends ReqSecondMoveDto{
+    private Integer index; // 单位的Index
+    private Position tomb; // 召唤坟墓的位置
 
     public Integer getIndex() {
         return index;
@@ -23,13 +20,5 @@ public class ReqSummonDto {
 
     public void setTomb(Position tomb) {
         this.tomb = tomb;
-    }
-
-    public List<PathPosition> getPath() {
-        return path;
-    }
-
-    public void setPath(List<PathPosition> path) {
-        this.path = path;
     }
 }

@@ -2,9 +2,10 @@ package com.mihao.ancient_empire.dto.ws_dto;
 
 import com.mihao.ancient_empire.dto.Position;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SecondMoveDto {
+public class SecondMoveDto implements Serializable {
     private Boolean secondMove; // 单位是否有二次移动
     private List<Position> moveArea; // 单位二次移动的移动范围
 

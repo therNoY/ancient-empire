@@ -340,4 +340,14 @@ public class AppUtil {
     }
 
 
+    public static int getRegionIndex(UserRecord record, Site region) {
+        return getRegionIndex(record.getInitMap(), region);
+    }
+    public static int getRegionIndex(InitMap map, Site region) {
+        return getRegionIndex(map.getColumn(), region);
+    }
+    public static int getRegionIndex(Integer mapColumn, Site region) {
+        int index = (region.getRow() - 1) * mapColumn + region.getColumn() - 1;
+        return index;
+    }
 }

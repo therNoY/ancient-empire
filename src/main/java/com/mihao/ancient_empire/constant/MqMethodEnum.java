@@ -5,6 +5,7 @@ public enum MqMethodEnum {
     ADD_RECORD,
     UPDATE_RECORD,
     UPDATE_ARMY,
+    ACTION_REPAIR_OCP,
     ACTION_SUMMON,
     ACTION_END,
 }

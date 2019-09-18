@@ -13,5 +13,6 @@ public enum WsMethodEnum implements BaseEnum {
     ATTACH_RESULT, // 攻击结果
     END_RESULT, // 攻击结果
     SUMMON_RESULT, // 召唤结果
+    REPAIR_RESULT, // 召唤结果
     UNIT_ACTION, // 可选action
 }

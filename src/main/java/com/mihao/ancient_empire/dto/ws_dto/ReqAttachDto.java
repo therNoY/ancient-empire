@@ -7,11 +7,10 @@ import java.util.List;
 /**
  * 客户端 查询攻击结果需要的dto
  */
-public class ReqAttachDto {
+public class ReqAttachDto extends ReqSecondMoveDto{
 
     private Unit attachUnit;
     private Unit beAttachUnit;
-    private List<PathPosition> path;
 
     public Unit getAttachUnit() {
         return attachUnit;
@@ -27,13 +26,5 @@ public class ReqAttachDto {
 
     public void setBeAttachUnit(Unit beAttachUnit) {
         this.beAttachUnit = beAttachUnit;
-    }
-
-    public List<PathPosition> getPath() {
-        return path;
-    }
-
-    public void setPath(List<PathPosition> path) {
-        this.path = path;
     }
 }
