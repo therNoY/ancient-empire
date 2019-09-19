@@ -1,9 +1,11 @@
 package com.mihao.ancient_empire.dto.ws_dto;
 
+import java.io.Serializable;
+
 /**
  * 攻击结果
  */
-public class AttachResult {
+public class AttachResult  implements Serializable {
 
     private Integer[] attach; // 被攻击者受到伤害
     private Boolean dead; // 被攻击者是否死

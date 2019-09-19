@@ -64,7 +64,7 @@ public class UserRecordMongoHelperTest {
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
-            userRecordMongoHelper.updateArmy(id, armyList);
+//            userRecordMongoHelper.updateArmy(id, armyList);
         }
         System.out.println(System.currentTimeMillis() - start);
 
@@ -79,7 +79,7 @@ public class UserRecordMongoHelperTest {
 
         long start1 = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
-            userRecordMongoHelper.updateRecord(id, userRecord);
+            userRecordMongoHelper.updateRecord(userRecord);
         }
         System.out.println(System.currentTimeMillis() - start1);
 
@@ -91,7 +91,7 @@ public class UserRecordMongoHelperTest {
         UserRecord userRecord = userRecordRepository.findById(id).get();
         List<Army> armies = userRecord.getArmyList();
         armies.get(0).setMoney(500);
-        userRecordMongoHelper.updateArmy(id, armies);
+//        userRecordMongoHelper.updateArmy(id, armies);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class UserRecordMongoHelperTest {
         UserRecord userRecord = userRecordRepository.findById(id).get();
         System.out.println(userRecord.getCurrColor());
         long start3 = System.currentTimeMillis();
-        userRecordMongoHelper.updateColor(id, "red");
+//        userRecordMongoHelper.updateColor(id, "red");
         System.out.println(System.currentTimeMillis() - start3);
         UserRecord userRecord2 = userRecordRepository.findById(id).get();
         System.out.println(userRecord2.getCurrColor());

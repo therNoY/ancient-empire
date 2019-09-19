@@ -3,10 +3,9 @@ package com.mihao.ancient_empire.util;
 import com.mihao.ancient_empire.constant.StateEnum;
 import com.mihao.ancient_empire.constant.UnitEnum;
 import com.mihao.ancient_empire.dto.*;
+import com.mihao.ancient_empire.dto.mongo_dto.BuyUnitDto;
 import com.mihao.ancient_empire.dto.mongo_dto.SummonDto;
-import com.mihao.ancient_empire.dto.ws_dto.LifeChange;
-import com.mihao.ancient_empire.dto.ws_dto.RespEndResultDto;
-import com.mihao.ancient_empire.dto.ws_dto.RespRepairOcpResult;
+import com.mihao.ancient_empire.dto.ws_dto.*;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.service.UserRecordService;
 import com.mongodb.client.result.UpdateResult;
@@ -34,32 +33,12 @@ public class UserRecordMongoHelper {
     UserRecordService userRecordService;
 
     /**
-     * 给记录增加一个墓碑
-     */
-    public long addRecordTomb(String id, Position tomb) {
-        Query query = Query.query(Criteria.where("_id").is(id));
-        Update update = new Update();
-        update.addToSet("tomb", tomb);
-        UpdateResult result = mongoTemplate.updateFirst(query, update, UserRecord.class);
-        return result.getMatchedCount();
-    }
-
-    /**
-     * 移除记录的一个墓碑
-     */
-    public long removeRecordTomb(String id, Position tomb) {
-        Query query = Query.query(Criteria.where("_id").is(id));
-        Update update = new Update().pull("tomb", tomb);
-        UpdateResult result = mongoTemplate.updateFirst(query, update, UserRecord.class);
-        return result.getMatchedCount();
-    }
-
-    /**
      * 修改 记录的Army
      */
-    public long updateArmy(String id, List<Army> armyList) {
-        Query query = Query.query(Criteria.where("_id").is(id));
-        Update update = new Update().set("armyList", armyList);
+    public long updateArmyAndTomb(UserRecord record) {
+        Query query = Query.query(Criteria.where("_id").is(record.getUuid()));
+        Update update = new Update().set("armyList", record.getArmyList());
+        update.pull("tomb", record.getTomb());
         UpdateResult result = mongoTemplate.updateFirst(query, update, UserRecord.class);
         return result.getMatchedCount();
     }
@@ -68,57 +47,14 @@ public class UserRecordMongoHelper {
      * 修改 记录的Army
      */
     @Transactional
-    public long updateRecord(String id, UserRecord record) {
+    public long updateRecord(UserRecord record) {
         // 先删除 在添加
-        Query query = Query.query(Criteria.where("_id").is(id));
+        Query query = Query.query(Criteria.where("_id").is(record.getUuid()));
         mongoTemplate.remove(query, UserRecord.class);
         mongoTemplate.save(record, "userRecord");
         // 添加
         return 1;
     }
-
-    /**
-     * 更新当前颜色
-     *
-     * @param id
-     * @param color
-     */
-    public void updateColor(String id, String color) {
-        Query query = Query.query(Criteria.where("_id").is(id));
-        Update update = new Update();
-        update.set("currColor", color);
-        mongoTemplate.updateFirst(query, update, UserRecord.class);
-    }
-
-    /**
-     * 更新回合数
-     *
-     * @param id
-     * @param currentRound
-     */
-    public void updateRound(String id, Integer currentRound) {
-        // 先删除 在添加
-        Query query = Query.query(Criteria.where("_id").is(id));
-        Update update = new Update();
-        update.set("currentRound", currentRound);
-        mongoTemplate.updateFirst(query, update, UserRecord.class);
-    }
-
-    /**
-     * 更新回合
-     *
-     * @param id
-     * @param currentRound
-     */
-    public void updateRound(String id, Integer currentRound, String color) {
-        // 先删除 在添加
-        Query query = Query.query(Criteria.where("_id").is(id));
-        Update update = new Update();
-        update.set("currentRound", currentRound);
-        update.set("currColor", color);
-        mongoTemplate.updateFirst(query, update, UserRecord.class);
-    }
-
 
     /**
      * 修改 记录的 Map
@@ -132,8 +68,10 @@ public class UserRecordMongoHelper {
         return result.getMatchedCount();
     }
 
+
     /**
      * 处理召唤后的result
+     *
      * @param summonDto
      */
     @Transactional
@@ -182,6 +120,7 @@ public class UserRecordMongoHelper {
                                     unit.setStatus(null);
                                 } else {
                                     unit.setStatus(lifeChange.getState());
+                                    unit.setStatusPresenceNum(3);
                                 }
                             }
                         }
@@ -207,6 +146,7 @@ public class UserRecordMongoHelper {
 
     /**
      * 处理修复后的result
+     *
      * @param repairResult
      */
     public void handleRepairOcp(RespRepairOcpResult repairResult) {
@@ -217,4 +157,21 @@ public class UserRecordMongoHelper {
         regions.get(repairResult.getRegionIndex()).setType(square.getType());
         updateMap(repairResult.getRecordId(), record.getInitMap());
     }
+
+    public void handleBuyUnit(BuyUnitDto buyUnitDto) {
+        UserRecord record = userRecordService.getRecordById(buyUnitDto.getUuid());
+        List<Army> armies = record.getArmyList();
+        for (Army army : armies) {
+            if (army.getColor().equals(record.getCurrColor())) {
+                army.setMoney(buyUnitDto.getLastMoney());
+                army.getUnits().add(buyUnitDto.getUnit());
+                break;
+            }
+        }
+        Query query = Query.query(Criteria.where("_id").is(buyUnitDto.getUuid()));
+        Update update = new Update().set("armyList", armies);
+        mongoTemplate.updateFirst(query, update, UserRecord.class);
+    }
+
+
 }

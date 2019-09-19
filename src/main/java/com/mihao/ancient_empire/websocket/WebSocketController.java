@@ -45,6 +45,8 @@ public class WebSocketController {
     WsOccupiedService occupiedService;
     @Autowired
     WsEndService wsEndService;
+    @Autowired
+    WsNewRoundService newRoundService;
 
     /**
      * 获取移动区域
@@ -52,8 +54,8 @@ public class WebSocketController {
      * @param principal
      * @param msg
      */
-    @ExecuteTime
     @MessageMapping("/ws/getMoveArea")
+    @ExecuteTime
     public void getMoveArea(Principal principal, String msg) {
         log.info("从 {} getMoveArea收到的信息", principal.getName());
         ReqUnitIndexDto unitIndexDto = JacksonUtil.jsonToBean(msg, ReqUnitIndexDto.class);
@@ -71,11 +73,11 @@ public class WebSocketController {
         }
     }
 
-
     /**
      * 获取可进行的action
      */
     @MessageMapping("/ws/getActions")
+    @ExecuteTime(maxTime = 50)
     public void getActions(Principal principal, String msg) {
         log.info("从 {} getMovePath 收到的信息", principal.getName());
         ReqMoveDto moveDto = JacksonUtil.jsonToBean(msg, ReqMoveDto.class);
@@ -87,6 +89,7 @@ public class WebSocketController {
             log.error("{} 解析错误", msg);
         }
     }
+
     /**
      * 获取移动路线 并且提前获取单位 行动
      *
@@ -94,6 +97,7 @@ public class WebSocketController {
      * @param msg
      */
     @MessageMapping("/ws/getMovePath")
+    @ExecuteTime(maxTime = 50)
     public void getMovePath(Principal principal, String msg) {
         log.info("从 {} getMovePath 收到的信息", principal.getName());
         ReqMoveDto moveDto = JacksonUtil.jsonToBean(msg, ReqMoveDto.class);
@@ -120,6 +124,7 @@ public class WebSocketController {
      * @param msg
      */
     @MessageMapping("/ws/getAttachArea")
+    @ExecuteTime(maxTime = 50)
     public void getAttachArea(Principal principal, String msg) {
         log.info("从 {} getAttachArea 收到的信息", principal.getName());
         ReqAttachAreaDto moveDto = JacksonUtil.jsonToBean(msg, ReqAttachAreaDto.class);
@@ -201,6 +206,20 @@ public class WebSocketController {
         RespRepairOcpResult repairResult = repairService.getRepairResult(principal.getName(), reqRepairOcpDto);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
                 WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.REPAIR_RESULT.getType(), repairResult));
+    }
+
+
+    /**
+     *  请求结束回合
+     * @param principal
+     */
+    @MessageMapping("/ws/getNewRound")
+    @ExecuteTime
+    public void getNewRound(Principal principal) {
+        log.info("从 {} getSummonResult 收到的信息", principal.getName());
+        RespNewRoundDto newRoundDto = newRoundService.getNewRound(principal.getName());
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(),
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.NEW_ROUND.getType(), newRoundDto));
     }
 
     // WS 测试

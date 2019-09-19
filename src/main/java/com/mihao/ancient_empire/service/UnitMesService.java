@@ -28,4 +28,6 @@ public interface UnitMesService extends IService<UnitMes> {
     UnitMes getByType(String type);
 
     UnitInfo getUnitInfo(String type, Integer level);
+
+    List<UnitInfo> getUnitInfoList(boolean hasLoad);
 }

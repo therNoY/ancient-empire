@@ -82,4 +82,12 @@ public class IntegerTest {
         System.out.println(Integer.valueOf("1"));
         System.out.println(Integer.valueOf('1' + ""));
     }
+
+    @Test
+    public void name7() {
+        int a1 = 0x40000; // 4 * 16^4 = 4* 4^8 = 4 * 2*16 = 2^2 * 2^16 = 2^18
+        int a2 = (int) Math.pow(2, 18);
+        System.out.println(a1);
+        System.out.println(a2);
+    }
 }

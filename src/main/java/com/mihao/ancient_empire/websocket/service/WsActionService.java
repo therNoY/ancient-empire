@@ -76,6 +76,7 @@ public class WsActionService {
             actionSet.add(ActionEnum.BUY.getType());
             actionSet.add(ActionEnum.MOVE.getType());
         }
+        // 这里的cAction 和 mAction 是辅助行动图标动态移动的
         actionMap.put("cAction", AppUtil.addActionAim(new ArrayList<>(actionSet), moveDto.getAimPoint()));
         // 5. 渲染不同的action 不同的位置显示
         List<RespAction> respActions = AppUtil.addActionPosition(new ArrayList<>(actionSet), moveDto.getAimPoint());
@@ -96,7 +97,7 @@ public class WsActionService {
     }
 
     /**
-     * 获取单位的 攻击范围
+     * 获取单位的 攻击范围 保证不出地图
      *
      * @param unitMes
      * @param aimP

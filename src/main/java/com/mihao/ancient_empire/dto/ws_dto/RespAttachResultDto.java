@@ -2,17 +2,18 @@ package com.mihao.ancient_empire.dto.ws_dto;
 
 import com.mihao.ancient_empire.dto.Position;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 返回的攻击结果的dto
  */
-public class RespAttachResultDto {
+public class RespAttachResultDto implements Serializable {
 
     private AttachResult attachResult; // 攻击结果
     private Boolean counterattack; //是否被反击
     private AttachResult counterattackResult; // 反击结果
-    private AttachSituation attachSituation;
+    private AttachSituation attachSituation; // 一次攻击加成结果
     private Boolean secondMove; // 单位是否有二次移动
     private List<Position> moveArea; // 单位二次移动的移动范围
 

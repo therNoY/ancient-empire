@@ -350,4 +350,20 @@ public class AppUtil {
         int index = (region.getRow() - 1) * mapColumn + region.getColumn() - 1;
         return index;
     }
+
+    /**
+     * 获取同盟的所有颜色
+     * @param record
+     * @return
+     */
+    public static List<String> getCampColors(UserRecord record) {
+        List<String> strings = new ArrayList<>();
+        Army cArmy = getCurrentArmy(record);
+        for (Army army : record.getArmyList()) {
+            if (army.getCamp() == cArmy.getCamp()) {
+                strings.add(army.getColor());
+            }
+        }
+        return strings;
+    }
 }

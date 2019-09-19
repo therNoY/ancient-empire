@@ -24,6 +24,8 @@ public class Unit extends Site implements Serializable {
     private Boolean isDone;
     // 状态 buff 中毒
     private String status;
+    // 状态 存在的回合 超过两个回合 就会消失
+    private Integer statusPresenceNum;
     // 经验值
     private Integer experience;
 
@@ -39,6 +41,7 @@ public class Unit extends Site implements Serializable {
         this.isDead = false;
         this.level = 0;
         this.isDone = false;
+        statusPresenceNum = 0;
         this.experience = 0;
     }
 
@@ -108,5 +111,17 @@ public class Unit extends Site implements Serializable {
 
     public void setExperience(Integer experience) {
         this.experience = experience;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Integer getStatusPresenceNum() {
+        return statusPresenceNum;
+    }
+
+    public void setStatusPresenceNum(Integer statusPresenceNum) {
+        this.statusPresenceNum = statusPresenceNum;
     }
 }

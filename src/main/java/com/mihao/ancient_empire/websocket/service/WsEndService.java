@@ -41,6 +41,7 @@ public class WsEndService {
                 endHandle.getEndResult(respEndResultDto, record, unit);
             }
         }
+
         // 同步mongo
         respEndResultDto.setUuid(uuid);
         respEndResultDto.setUnitId(unit.getId());

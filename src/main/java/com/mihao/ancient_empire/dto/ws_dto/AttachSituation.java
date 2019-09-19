@@ -1,9 +1,11 @@
 package com.mihao.ancient_empire.dto.ws_dto;
 
+import java.io.Serializable;
+
 /**
  * 记录攻击情况 1 有增加 0 无增加 -1 有减少
  */
-public class AttachSituation {
+public class AttachSituation  implements Serializable {
     private int attachUp;
     private int defenseUp;
 

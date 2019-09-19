@@ -38,4 +38,8 @@ public class RedisKey{
     public static final String UNIT_INFO = "unitInfo";
     public static final String UNIT_INFO_ = "unitInfo::";
 
+    // 单位详细信息 包含单等级信息， 基础信息， 能力信息
+    public static final String UNIT_INFO_LIST = "unitInfoList";
+    public static final String UNIT_INFO_LIST_ = "unitInfoList::";
+
 }

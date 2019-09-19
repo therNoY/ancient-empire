@@ -15,4 +15,6 @@ public enum WsMethodEnum implements BaseEnum {
     SUMMON_RESULT, // 召唤结果
     REPAIR_RESULT, // 召唤结果
     UNIT_ACTION, // 可选action
+
+    NEW_ROUND, // 开始新的回合
 }

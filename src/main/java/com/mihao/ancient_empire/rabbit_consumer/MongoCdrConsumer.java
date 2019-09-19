@@ -6,6 +6,7 @@ import com.mihao.ancient_empire.common.util.JacksonUtil;
 import com.mihao.ancient_empire.common.util.RedisHelper;
 import com.mihao.ancient_empire.constant.RabbitMqAdd;
 import com.mihao.ancient_empire.constant.RedisKey;
+import com.mihao.ancient_empire.dto.mongo_dto.BuyUnitDto;
 import com.mihao.ancient_empire.dto.mongo_dto.SummonDto;
 import com.mihao.ancient_empire.dto.ws_dto.RespEndResultDto;
 import com.mihao.ancient_empire.dto.ws_dto.RespRepairOcpResult;
@@ -57,8 +58,8 @@ public class MongoCdrConsumer {
                 case ADD_RECORD:
                     addRecord(mqMessage.getValue());
                     break;
-                case UPDATE_ARMY:
-                    updateArmy(mqMessage.getValue());
+                case ACTION_ATTACH:
+                    actionAttach(mqMessage.getValue());
                     break;
                 case ACTION_REPAIR_OCP:
                     actionRepairOcp(mqMessage.getValue());
@@ -69,13 +70,40 @@ public class MongoCdrConsumer {
                 case ACTION_END:
                     actionEnd(mqMessage.getValue());
                     break;
-
+                case BUY_UNIT:
+                    buyUnit(mqMessage.getValue());
+                    break;
+                case END_ROUND:
+                    endRound(mqMessage.getValue());
+                    break;
                 default:
                     log.error("没有方法");
             }
         }else {
             log.error("mq 消费信息错误");
         }
+    }
+
+    /**
+     * 结束当前回合
+     * @param value
+     */
+    private void endRound(Object value) {
+        log.info("mq 处理：endRound");
+        UserRecord record = JacksonUtil.mapToBean(value, UserRecord.class);
+        userRecordMongoHelper.updateArmyAndTomb(record);
+        redisHelper.delKey(RedisKey.USER_RECORD_ + record.getUuid());
+    }
+
+    /**
+     * 购买单位
+     * @param value
+     */
+    private void buyUnit(Object value) {
+        log.info("mq 处理：buyUnit");
+        BuyUnitDto buyUnitDto = JacksonUtil.mapToBean(value, BuyUnitDto.class);
+        userRecordMongoHelper.handleBuyUnit(buyUnitDto);
+        redisHelper.delKey(RedisKey.USER_RECORD_ + buyUnitDto.getUuid());
     }
 
     /**
@@ -115,11 +143,11 @@ public class MongoCdrConsumer {
      * 更新军队
      * @param value
      */
-    private void updateArmy(Object value) {
-        log.info("mq 处理：updateArmy");
-        UserRecord userRecord = JacksonUtil.mapToBean(value, UserRecord.class);
-        userRecordMongoHelper.updateArmy(userRecord.getUuid(), userRecord.getArmyList());
-        redisHelper.delKey(RedisKey.USER_RECORD_ + userRecord.getUuid());
+    private void actionAttach(Object value) {
+        log.info("mq 处理：actionAttach");
+        UserRecord record = JacksonUtil.mapToBean(value, UserRecord.class);
+        userRecordMongoHelper.updateRecord(record);
+        redisHelper.delKey(RedisKey.USER_RECORD_ + record.getUuid());
     }
 
     /**
@@ -129,7 +157,7 @@ public class MongoCdrConsumer {
     private void addRecord(Object value) {
         log.info("mq 处理：addRecord");
         UserRecord userRecord = JacksonUtil.mapToBean(value, UserRecord.class);
-        userRecordMongoHelper.updateRecord(userRecord.getUuid(), userRecord);
+        userRecordMongoHelper.updateRecord(userRecord);
         userRecordRepository.save(userRecord);
     }
 }

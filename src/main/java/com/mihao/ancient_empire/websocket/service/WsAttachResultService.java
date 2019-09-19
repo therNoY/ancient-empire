@@ -140,9 +140,8 @@ public class WsAttachResultService {
             resultDto.setSecondMove(secondMoveDto.getSecondMove());
             resultDto.setMoveArea(secondMoveDto.getMoveArea());
         }
-        // 通知mq 修改记录
-        record.setInitMap(null);
-        mqHelper.sendMongoCdr(MqMethodEnum.UPDATE_ARMY, record);
+        // 通知mq 处理攻击后的结果
+        mqHelper.sendMongoCdr(MqMethodEnum.ACTION_ATTACH, record);
         return resultDto;
     }
 
@@ -243,7 +242,10 @@ public class WsAttachResultService {
 
         if (isChangeStatus && !beAttachAbility.contains(new Ability(AbilityEnum.POISONING.getType()))) {
             attachResult.setEndStatus(StateEnum.POISON.getType());
+            beAttachUnit.setStatus(StateEnum.POISON.getType());
+            beAttachUnit.setStatusPresenceNum(3);
         }
+
         return attachResult;
     }
 
@@ -303,7 +305,7 @@ public class WsAttachResultService {
             // 判断是否有坟墓
             attachResult.setHaveTomb(false);
             for (Ability ability : beAttachAbility) {
-                if (!ability.getType().equals(AbilityEnum.UNDEAD.getType()) && !ability.getType().equals(AbilityEnum.UNDEAD.getType())) {
+                if (!ability.getType().equals(AbilityEnum.CASTLE_GET.getType()) && !ability.getType().equals(AbilityEnum.UNDEAD.getType())) {
                     record.getTomb().add(new Position(beAttachUnit.getRow(), beAttachUnit.getColumn()));
                     attachResult.setHaveTomb(true);
                     break;
