@@ -8,6 +8,7 @@ public class BuyUnitDto implements Serializable {
     private String uuid;
     private Unit unit;
     private Integer lastMoney;
+    private Integer endPop;
 
     public String getUuid() {
         return uuid;
@@ -31,5 +32,13 @@ public class BuyUnitDto implements Serializable {
 
     public void setLastMoney(Integer lastMoney) {
         this.lastMoney = lastMoney;
+    }
+
+    public Integer getEndPop() {
+        return endPop;
+    }
+
+    public void setEndPop(Integer endPop) {
+        this.endPop = endPop;
     }
 }

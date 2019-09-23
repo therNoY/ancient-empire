@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * 包含和应用有关的配置
+ */
 public class AppConfig {
     static Logger log = LoggerFactory.getLogger(AppConfig.class);
     static Map<String, String> map;

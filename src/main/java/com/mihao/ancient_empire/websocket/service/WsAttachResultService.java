@@ -362,7 +362,7 @@ public class WsAttachResultService {
             });
         } else {
             UserRecordUtil.updateUnit(record, attachUnit.getId(), unit -> {
-                unit.setLevel(unit.getLevel() + 1);
+                unit.setLevel(unit.getLevel());
                 unit.setExperience(attachResult.getEndExperience());
             });
         }

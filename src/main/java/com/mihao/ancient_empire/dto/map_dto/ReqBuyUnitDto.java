@@ -8,27 +8,15 @@ import javax.validation.constraints.NotNull;
 
 public class ReqBuyUnitDto {
 
-    @NotBlank
-    private String uuid;
-    @DecimalMin(value = "-1")
-    private Integer unitId;
-    @NotNull
+    private String type;
     private Site site;
 
-    public String getUuid() {
-        return uuid;
+    public String getType() {
+        return type;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Integer getUnitId() {
-        return unitId;
-    }
-
-    public void setUnitId(Integer unitId) {
-        this.unitId = unitId;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Site getSite() {

@@ -4,7 +4,7 @@ package com.mihao.ancient_empire.common.annotation;
 import java.lang.annotation.*;
 
 /**
- * 加上该注解表示关心方法的执行时间
+ * 加上该注解表示关心改方法的执行时间
  */
 
 @Target(ElementType.METHOD) // 只能注解到方法上

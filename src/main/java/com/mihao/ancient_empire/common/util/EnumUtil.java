@@ -2,6 +2,13 @@ package com.mihao.ancient_empire.common.util;
 
 public class EnumUtil {
 
+    /**
+     * 将String 转成存在的枚举类型
+     * @param enumType
+     * @param type
+     * @param <T>
+     * @return
+     */
     public static <T extends Enum<T>> T valueOf(Class<T> enumType, String type) {
         // 1.将type 转成大写
         char[] types = type.toCharArray();

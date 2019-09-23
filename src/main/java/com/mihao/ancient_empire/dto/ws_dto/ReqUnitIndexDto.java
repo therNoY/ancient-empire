@@ -7,6 +7,10 @@ public class ReqUnitIndexDto {
     public ReqUnitIndexDto() {
     }
 
+    public ReqUnitIndexDto(Integer index) {
+        this.index = index;
+    }
+
     public ReqUnitIndexDto(Integer armyIndex, Integer index) {
         this.armyIndex = armyIndex;
         this.index = index;

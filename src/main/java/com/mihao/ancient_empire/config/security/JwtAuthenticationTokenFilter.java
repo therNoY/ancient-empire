@@ -55,7 +55,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             // 3. 判断token是否过期 如果token 没有过期就设置 信息到Spring Security 上下文中
             if (!jwtTokenHelper.validateToken(authToken)) {
                 String username = jwtTokenHelper.getUserNameFromToken(authToken);
-//                LOGGER.info("checking username:{}", username);
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 if (username != null && securityContext.getAuthentication() == null) {
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
@@ -63,7 +62,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         securityContext.setAuthentication(authentication);
-//                        LOGGER.info("authenticated user:{}", username);
                     }
                 }
             }

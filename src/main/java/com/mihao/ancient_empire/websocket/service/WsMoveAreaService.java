@@ -48,17 +48,22 @@ public class WsMoveAreaService {
     WsActionService actionService;
 
 
+    public Object getMoveArea(String uuid, ReqUnitIndexDto unitIndex) {
+        UserRecord userRecord = userRecordService.getRecordById(uuid);
+        return getMoveArea(userRecord, unitIndex, null);
+    }
+
     /**
      * 获取单位的移动范围
      *
      * @param unitIndex
      * @return
      */
-    public Object getMoveArea(String uuid, ReqUnitIndexDto unitIndex) {
+    public Object getMoveArea(UserRecord userRecord, ReqUnitIndexDto unitIndex, Unit unit) {
         // 1.获取record
-        UserRecord userRecord = userRecordService.getRecordById(uuid);
         Army cArmy = null;
         boolean getLoadAction = true;
+
         if (unitIndex.getArmyIndex() != null) {
             cArmy = AppUtil.getArmyByIndex(userRecord, unitIndex.getArmyIndex());
         }else {
@@ -75,7 +80,7 @@ public class WsMoveAreaService {
         }
         // TODO 领主占领城镇
         String color = cArmy.getColor();
-        Unit cUnit = cArmy.getUnits().get(unitIndex.getIndex());
+        Unit cUnit = (unit == null ? cArmy.getUnits().get(unitIndex.getIndex()) : unit);
         UnitMes cUnitMes = unitMesService.getByType(cUnit.getType());
         List<Ability> abilityList = abilityService.getUnitAbilityList(cUnitMes.getId());
         // 2. 找到单位的所有能力 从能力中找自动范围
@@ -85,7 +90,7 @@ public class WsMoveAreaService {
             // 判断移动单位是否有领主属性 如果有判断是否站在所属城堡
             BaseSquare region = AppUtil.getRegionByPosition(userRecord, cUnit);
             if (region.getType().equals(RegionEnum.CASTLE.getType()) && region.getColor().equals(color)) {
-                Map<String, Object> map = actionService.getActions(uuid, new ReqMoveDto(unitIndex.getIndex(), AppUtil.getPosition(cUnit), AppUtil.getPosition(cUnit)), true);
+                Map<String, Object> map = actionService.getActions(userRecord, new ReqMoveDto(unitIndex.getIndex(), AppUtil.getPosition(cUnit), AppUtil.getPosition(cUnit)), true);
                 return map;
             }
         }
@@ -95,7 +100,7 @@ public class WsMoveAreaService {
         for (Ability ab : abilityList) {
             MoveAreaHandle moveAreaHandle = MoveAreaHandle.initActionHandle(ab.getType());
             if (moveAreaHandle != null) {
-                List<Position> abMove = moveAreaHandle.getMoveArea(userRecord, unitIndex, levelMes);
+                List<Position> abMove = moveAreaHandle.getMoveArea(userRecord, cUnit, levelMes);
                 if (abMove != null) {
                     positions.addAll(abMove);
                 }
@@ -104,7 +109,7 @@ public class WsMoveAreaService {
         // 如果单位没有有效能力
         if (positions.size() == 0) {
             MoveAreaHandle defaultHandle = MoveAreaHandle.getDefaultHandle();
-            positions.addAll(defaultHandle.getMoveArea(userRecord, unitIndex, levelMes));
+            positions.addAll(defaultHandle.getMoveArea(userRecord, cUnit, levelMes));
         }
         // 去重
         List<Position> moveArea = new ArrayList<>();

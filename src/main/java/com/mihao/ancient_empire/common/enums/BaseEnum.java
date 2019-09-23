@@ -2,9 +2,10 @@ package com.mihao.ancient_empire.common.enums;
 
 public interface BaseEnum {
 
-
     /**
      * 单位枚举 获取驼峰命名的type
+     * 将枚举改成小写
+     * ex WATER_ELEMENT => waterElement
      * @return
      */
     default String getType() {

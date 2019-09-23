@@ -38,16 +38,22 @@ public class WsActionService {
     @Autowired
     AbilityService abilityService;
 
+
+    public Map<String, Object> getActions(String uuid, ReqMoveDto moveDto, boolean isLoad) {
+        UserRecord userRecord = userRecordService.getRecordById(uuid);
+        return getActions(userRecord, moveDto, isLoad);
+    }
+
     /**
      * 获取单位移动后的行动选项
      *
      * @param moveDto
      * @return
      */
-    public Map<String, Object> getActions(String uuid, ReqMoveDto moveDto, boolean isLoad) {
+    public Map<String, Object> getActions(UserRecord userRecord, ReqMoveDto moveDto, boolean isLoad) {
         Map<String, Object> actionMap = new HashMap<>();
         // 1.获取record 获取当前单位信息 主要获取
-        UserRecord userRecord = userRecordService.getRecordById(uuid);
+
         String color = userRecord.getCurrColor();
         Integer camp = userRecord.getCurrCamp();
         Army cArmy = AppUtil.getArmyByColor(userRecord, color);

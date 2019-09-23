@@ -144,7 +144,10 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
     public List<UnitInfo> getUnitInfoList(boolean hasLoad) {
         List<UnitInfo> unitInfoList = new ArrayList<>();
         // 1. 获取数据库中所有单位信息
-        List<UnitMes> unitMesList = unitMesDao.selectList(null);
+        QueryWrapper<UnitMes> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("tradeable", true);
+        queryWrapper.eq("enable", true);
+        List<UnitMes> unitMesList = unitMesDao.selectList(queryWrapper);
 
         for (UnitMes unitMes : unitMesList) {
 

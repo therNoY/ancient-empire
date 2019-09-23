@@ -6,6 +6,7 @@ import com.mihao.ancient_empire.constant.WSPath;
 import com.mihao.ancient_empire.constant.WsMethodEnum;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
+import com.mihao.ancient_empire.dto.map_dto.ReqBuyUnitDto;
 import com.mihao.ancient_empire.dto.ws_dto.*;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import com.mihao.ancient_empire.websocket.service.*;
@@ -46,11 +47,14 @@ public class WebSocketController {
     @Autowired
     WsEndService wsEndService;
     @Autowired
+    WsBuyUnitService buyUnitService;
+    @Autowired
     WsNewRoundService newRoundService;
 
     /**
      * 获取移动区域
      * 如果是领主站在自己的城堡且没有移动 就显示action选项
+     *
      * @param principal
      * @param msg
      */
@@ -64,7 +68,7 @@ public class WebSocketController {
             if (areas instanceof List) {
                 simpMessagingTemplate.convertAndSendToUser(principal.getName(),
                         WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_AREAS.getType(), areas));
-            }else {
+            } else {
                 simpMessagingTemplate.convertAndSendToUser(principal.getName(),
                         WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_ACTION.getType(), areas));
             }
@@ -103,7 +107,7 @@ public class WebSocketController {
         ReqMoveDto moveDto = JacksonUtil.jsonToBean(msg, ReqMoveDto.class);
         Map<String, Object> map = new HashMap<>();
         if (moveDto != null) {
-            List<PathPosition> movePath  = null;
+            List<PathPosition> movePath = null;
             Map<String, Object> actionMap = actionService.getActions(principal.getName(), moveDto, false);
             if (actionMap.get("noMove") == null || !actionMap.get("noMove").equals(true)) {
                 movePath = moveAreaService.getMovePath(moveDto);
@@ -120,6 +124,7 @@ public class WebSocketController {
 
     /**
      * 获取攻击范围
+     *
      * @param principal
      * @param msg
      */
@@ -135,6 +140,7 @@ public class WebSocketController {
 
     /**
      * 获取一次攻击结果
+     *
      * @param principal
      * @param msg
      */
@@ -150,6 +156,7 @@ public class WebSocketController {
 
     /**
      * 获取单位 回合结束后的影响
+     *
      * @param principal
      * @param msg
      */
@@ -165,6 +172,7 @@ public class WebSocketController {
 
     /**
      * 获取召唤结果
+     *
      * @param principal
      * @param msg
      */
@@ -180,6 +188,7 @@ public class WebSocketController {
 
     /**
      * 获取修理结果
+     *
      * @param principal
      * @param msg
      */
@@ -195,6 +204,7 @@ public class WebSocketController {
 
     /**
      * 获取占领结果
+     *
      * @param principal
      * @param msg
      */
@@ -208,9 +218,23 @@ public class WebSocketController {
                 WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.REPAIR_RESULT.getType(), repairResult));
     }
 
+    /**
+     * 请求结束回合
+     *
+     * @param principal
+     */
+    @MessageMapping("/ws/buyUnit")
+    @ExecuteTime
+    public void buyUnit(Principal principal, String msg) {
+        log.info("从 {} buyUnit 收到的信息", principal.getName());
+        ReqBuyUnitDto buyUnitDto = JacksonUtil.jsonToBean(msg, ReqBuyUnitDto.class);
+        WSRespDto wsRespDto = buyUnitService.buyArmyUnit(principal.getName(), buyUnitDto);
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(), WSPath.TOPIC_USER, wsRespDto);
+    }
 
     /**
-     *  请求结束回合
+     * 请求结束回合
+     *
      * @param principal
      */
     @MessageMapping("/ws/getNewRound")

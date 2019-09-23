@@ -64,34 +64,5 @@ public class UserRecordController {
         return RespHelper.successResJson(userRecord);
     }
 
-    /**
-     *  http 请求购买 单位
-     * @return
-     */
-    @PutMapping("/record/army/buy")
-    public RespJson buyArmyUnit(@RequestBody ReqBuyUnitDto buyUnitDto) {
-        UserRecord record = userRecordService.getRecordById(buyUnitDto.getUuid());
-        UnitMes buyUnit = unitMesService.getById(buyUnitDto.getUnitId());
-        Site site = buyUnitDto.getSite();
-        Army army = AppUtil.getCurrentArmy(record);
-        // 判断是否超出金币
-        int armyMoney = army.getMoney();
-        if (armyMoney < buyUnit.getPrice()) {
-            return RespHelper.errResJson(21000);
-        }
 
-        // 判断是否超出人口
-        int armyPop = army.getPop();
-        if (armyPop + buyUnit.getPopulation() > record.getMaxPop()) {
-            return RespHelper.errResJson(21001);
-        }
-
-        int lastMoney = armyMoney - buyUnit.getPrice();
-        BuyUnitDto unitDto = new BuyUnitDto();
-        unitDto.setLastMoney(lastMoney);
-        unitDto.setUnit(new Unit(buyUnit.getType(), site.getRow(), site.getColumn()));
-        mqHelper.sendMongoCdr(MqMethodEnum.BUY_UNIT, unitDto);
-
-        return RespHelper.successResJson();
-    }
 }

@@ -10,10 +10,10 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableAspectJAutoProxy
-@EnableTransactionManagement
+@EnableAspectJAutoProxy // 开启aop
+@EnableTransactionManagement // 开启事务
 @EnableMongoRepositories
-@MapperScan("com.mihao.ancient_empire.dao")
+@MapperScan("com.mihao.ancient_empire.dao") // 开启mybatis mapper 扫描
 public class AncientEmpireApplication {
 
     public static void main(String[] args) {
@@ -26,7 +26,7 @@ public class AncientEmpireApplication {
     @Bean
     public PaginationInterceptor paginationInterceptor() {
         PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
-        // paginationInterceptor.setLimit(你的最大单页限制数量，默认 500 条，小于 0 如 -1 不受限制);
+        // paginationInterceptor.setLimit(最大单页限制数量，默认 500 条，小于 0 如 -1 不受限制);
         return paginationInterceptor;
     }
 }

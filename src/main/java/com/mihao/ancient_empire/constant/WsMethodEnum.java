@@ -13,8 +13,12 @@ public enum WsMethodEnum implements BaseEnum {
     ATTACH_RESULT, // 攻击结果
     END_RESULT, // 攻击结果
     SUMMON_RESULT, // 召唤结果
-    REPAIR_RESULT, // 召唤结果
+    REPAIR_RESULT, // 占领结果
     UNIT_ACTION, // 可选action
+    BUY_UNIT, // 购买单位
+
 
     NEW_ROUND, // 开始新的回合
+
+    ERROR, // 同一错误处理
 }

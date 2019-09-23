@@ -9,6 +9,7 @@ import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
 import com.mihao.ancient_empire.entity.RegionMes;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
+import com.mihao.ancient_empire.entity.UnitMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.service.RegionMesService;
 import com.mihao.ancient_empire.service.UnitLevelMesService;
@@ -58,9 +59,8 @@ public class MoveAreaHandle{
         return handle;
     }
 
-    public List<Position> getMoveArea(UserRecord userRecord, ReqUnitIndexDto unitIndex, UnitLevelMes levelMes) {
-        Army army = userRecord.getArmyList().get(unitIndex.getArmyIndex());
-        Unit unit = army.getUnits().get(unitIndex.getIndex());
+    public List<Position> getMoveArea(UserRecord userRecord, Unit unit, UnitLevelMes levelMes) {
+        Army army = AppUtil.getCurrentArmy(userRecord);
         return getMoveArea(userRecord, army, unit, levelMes);
     }
 

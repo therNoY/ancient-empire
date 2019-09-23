@@ -56,25 +56,25 @@ public class MongoCdrConsumer {
             log.info("mongo.cdr 消费 at {}", DateUtil.getNow());
             switch (mqMessage.getMqMethodEnum()) {
                 case ADD_RECORD:
-                    addRecord(mqMessage.getValue());
+                    consumerMes(mqMessage, this::addRecord);
                     break;
                 case ACTION_ATTACH:
-                    actionAttach(mqMessage.getValue());
+                    consumerMes(mqMessage, this::actionAttach);
                     break;
                 case ACTION_REPAIR_OCP:
-                    actionRepairOcp(mqMessage.getValue());
+                    consumerMes(mqMessage, this::actionRepairOcp);
                     break;
                 case ACTION_SUMMON:
-                    actionSummon(mqMessage.getValue());
+                    consumerMes(mqMessage, this::actionSummon);
                     break;
                 case ACTION_END:
-                    actionEnd(mqMessage.getValue());
+                    consumerMes(mqMessage, this::actionEnd);
                     break;
                 case BUY_UNIT:
-                    buyUnit(mqMessage.getValue());
+                    consumerMes(mqMessage, this::buyUnit);
                     break;
                 case END_ROUND:
-                    endRound(mqMessage.getValue());
+                    consumerMes(mqMessage, this::endRound);
                     break;
                 default:
                     log.error("没有方法");
@@ -85,13 +85,27 @@ public class MongoCdrConsumer {
     }
 
     /**
+     * 统一处理Mq的消费异常
+     * @param mqMessage
+     * @param handle
+     */
+    void consumerMes(MqMessage mqMessage, ConsumerHandle handle){
+        try {
+            handle.handel(mqMessage.getValue());
+        } catch (Exception e) {
+            log.error("mq 信息消费错误", e);
+        }
+    }
+
+    /**
      * 结束当前回合
      * @param value
      */
     private void endRound(Object value) {
         log.info("mq 处理：endRound");
         UserRecord record = JacksonUtil.mapToBean(value, UserRecord.class);
-        userRecordMongoHelper.updateArmyAndTomb(record);
+        // 更新军队坟墓更新当前军队
+        userRecordMongoHelper.endRound(record);
         redisHelper.delKey(RedisKey.USER_RECORD_ + record.getUuid());
     }
 
@@ -159,5 +173,9 @@ public class MongoCdrConsumer {
         UserRecord userRecord = JacksonUtil.mapToBean(value, UserRecord.class);
         userRecordMongoHelper.updateRecord(userRecord);
         userRecordRepository.save(userRecord);
+    }
+
+    private interface ConsumerHandle{
+        void handel(Object value);
     }
 }

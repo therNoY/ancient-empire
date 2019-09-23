@@ -164,6 +164,7 @@ public class UserRecordMongoHelper {
         for (Army army : armies) {
             if (army.getColor().equals(record.getCurrColor())) {
                 army.setMoney(buyUnitDto.getLastMoney());
+                army.setPop(buyUnitDto.getEndPop());
                 army.getUnits().add(buyUnitDto.getUnit());
                 break;
             }
@@ -174,4 +175,13 @@ public class UserRecordMongoHelper {
     }
 
 
+    public void endRound(UserRecord record) {
+        Query query = Query.query(Criteria.where("_id").is(record.getUuid()));
+        Update update = new Update().set("armyList", record.getArmyList());
+        update.set("tomb", record.getTomb());
+        update.set("currentRound", record.getCurrentRound());
+        update.set("currColor", record.getCurrColor());
+        update.set("currCamp", record.getCurrCamp());
+        mongoTemplate.updateFirst(query, update, UserRecord.class);
+    }
 }

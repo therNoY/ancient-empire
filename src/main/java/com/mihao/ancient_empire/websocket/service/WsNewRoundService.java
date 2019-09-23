@@ -67,15 +67,27 @@ public class WsNewRoundService {
         UserRecord record = recordService.getRecordById(uuid);
         List<String> campColors = AppUtil.getCampColors(record);
         // 1.改变当前回合 改变军队颜色
-        int currentRound = record.getCurrentRound();
-        int armSize = record.getArmyList().size();
-        int armyIndex = currentRound % armSize;
-        if (armyIndex == 0) {
-            armyIndex = armSize;
+        Army currentArmy = null;
+        int currentRound = record.getCurrentRound() + 1;
+        int nextOrder = AppUtil.getCurrentArmy(record).getOrder() + 1;
+        for (Army army : record.getArmyList()) {
+            if (army.getOrder() == nextOrder) {
+                currentArmy = army;
+            }
         }
-        Army currentArmy = record.getArmyList().get(armyIndex);
+
+        // 没有找到要开始新的循环 让order = 1的开始
+        if (currentArmy == null) {
+            for (Army army : record.getArmyList()) {
+                if (army.getOrder() == 1) {
+                    currentArmy = army;
+                }
+            }
+        }
+
         record.setCurrColor(currentArmy.getColor());
-        record.setCurrentRound(currentRound + 1);
+        record.setCurrentRound(currentRound);
+        record.setCurrCamp(currentArmy.getCamp());
         // 2.改变当前军队的资金
         List<BaseSquare> regions = record.getInitMap().getRegions();
         int addMoney = 0;
@@ -95,12 +107,12 @@ public class WsNewRoundService {
         for (Unit unit : currentArmy.getUnits()) {
             LifeChange lifeChange = new LifeChange();
             BaseSquare square = AppUtil.getRegionByPosition(record, unit);
-
+            String status = unit.getStatus();
             if (square.getType().equals(RegionEnum.TOWN)) {
                 // 所处位置城镇
                 if (square.getColor() != null && campColors.contains(square.getColor())) {
                     int lastLife = AppUtil.getUnitLeft(unit);
-                    if (!unit.getStatus().equals(StateEnum.POISON.getType()) && lastLife < 100) {
+                    if (status !=null && !status.equals(StateEnum.POISON.getType()) && lastLife < 100) {
                         restoreLife(lifeChange, townRestore, lastLife);
                     }
                 }
@@ -108,14 +120,14 @@ public class WsNewRoundService {
                 // 所处位置城堡
                 if (square.getColor() != null && campColors.contains(square.getColor())) {
                     int lastLife = AppUtil.getUnitLeft(unit);
-                    if (!unit.getStatus().equals(StateEnum.POISON.getType()) && lastLife < 100) {
+                    if (status !=null && !status.equals(StateEnum.POISON.getType()) && lastLife < 100) {
                         restoreLife(lifeChange, castleRestore, lastLife);
                     }
                 }
             } else if (square.getType().equals(RegionEnum.TEMPLE)) {
                 // 所处位置神殿
                 int lastLife = AppUtil.getUnitLeft(unit);
-                if (!unit.getStatus().equals(StateEnum.EXCITED.getType())) {
+                if (status !=null && !status.equals(StateEnum.EXCITED.getType())) {
                     unit.setStatus(null);
                 }
                 if (lastLife < 100) {
@@ -124,13 +136,13 @@ public class WsNewRoundService {
             } else if (square.getType().equals(RegionEnum.STOCK)) {
                 // 所处位置寨子
                 int lastLife = AppUtil.getUnitLeft(unit);
-                if (!unit.getStatus().equals(StateEnum.POISON.getType()) && lastLife < 100) {
+                if (status !=null && !status.equals(StateEnum.POISON.getType()) && lastLife < 100) {
                     restoreLife(lifeChange, stockRestore, lastLife);
                 }
             } else if (square.getType().equals(RegionEnum.SEA_HOUSE)) {
                 // 所处位置是 海房
                 int lastLife = AppUtil.getUnitLeft(unit);
-                if (!unit.getStatus().equals(StateEnum.EXCITED.getType())) {
+                if (status !=null && !status.equals(StateEnum.EXCITED.getType())) {
                     unit.setStatus(null);
                 }
                 if (lastLife < 100) {
@@ -139,13 +151,13 @@ public class WsNewRoundService {
             } else if (square.getType().equals(RegionEnum.REMAINS2)) {
                 // 所处位置遗迹
                 int lastLife = AppUtil.getUnitLeft(unit);
-                if (!unit.getStatus().equals(StateEnum.POISON.getType()) && lastLife < 100) {
+                if (status !=null && !status.equals(StateEnum.POISON.getType()) && lastLife < 100) {
                     restoreLife(lifeChange, remainsRestore, lastLife);
                 }
             }
 
             // 如果单位是中毒就改成掉血
-            if (unit.getStatus().equals(StateEnum.POISON.getType())) {
+            if (status !=null && status.equals(StateEnum.POISON.getType())) {
                 int lastLife = AppUtil.getUnitLeft(unit);
                 decreaseLife(lifeChange, poisonDecrease, lastLife, unit, record);
             }
@@ -161,6 +173,7 @@ public class WsNewRoundService {
         RespNewRoundDto newRoundDto = new RespNewRoundDto(record, addMoney, lifeChanges);
 
         // 4.同步mongo
+        record.setInitMap(null);
         mqHelper.sendMongoCdr(MqMethodEnum.END_ROUND, record);
         return newRoundDto;
     }

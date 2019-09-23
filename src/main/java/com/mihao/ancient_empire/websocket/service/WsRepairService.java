@@ -40,7 +40,7 @@ public class WsRepairService {
         RespRepairOcpResult result = new RespRepairOcpResult();
         result.setRegionIndex(regionIndex);
 
-        BaseSquare region = new BaseSquare(color, RegionEnum.TOWN.getType());
+        BaseSquare region = new BaseSquare(null, RegionEnum.TOWN.getType());
         result.setSquare(region);
         // 2 设置二次移动结果
         SecondMoveDto secondMoveDto = moveAreaService.getSecondMove(unit, record, reqRepairOcpDto);

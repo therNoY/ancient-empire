@@ -66,6 +66,10 @@ public class UnitMes implements Serializable {
     // 创建者Id
     private Integer createUserId;
 
+    // 是否是可以购买的
+    private boolean tradeable;
+
+    // 是否可用
     private boolean enable;
 
     public Integer getId() {
@@ -149,6 +153,15 @@ public class UnitMes implements Serializable {
 
     public void setCreateUserId(Integer createUserId) {
         this.createUserId = createUserId;
+    }
+
+
+    public boolean isTradeable() {
+        return tradeable;
+    }
+
+    public void setTradeable(boolean tradeable) {
+        this.tradeable = tradeable;
     }
 
     @Override

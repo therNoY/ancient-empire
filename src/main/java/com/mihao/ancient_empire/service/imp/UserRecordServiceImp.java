@@ -11,23 +11,22 @@ import com.mihao.ancient_empire.dto.InitMap;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.map_dto.ReqInitMapDto;
+import com.mihao.ancient_empire.entity.UnitMes;
 import com.mihao.ancient_empire.entity.mongo.UserMap;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.mongo.dao.UserRecordRepository;
+import com.mihao.ancient_empire.service.UnitMesService;
 import com.mihao.ancient_empire.service.UserMapService;
 import com.mihao.ancient_empire.service.UserRecordService;
 import com.mihao.ancient_empire.util.MqHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class UserRecordServiceImp implements UserRecordService {
@@ -40,6 +39,8 @@ public class UserRecordServiceImp implements UserRecordService {
     MqHelper mqHelper;
     @Autowired
     UserMapService userMapService;
+    @Autowired
+    UnitMesService unitMesService;
     @Autowired
     RedisHelper redisHelper;
     @Autowired
@@ -70,13 +71,17 @@ public class UserRecordServiceImp implements UserRecordService {
             army.setId(i);
             List<Unit> units = new ArrayList<>();
             String color = army.getColor();
+            AtomicInteger pop = new AtomicInteger();
             userMap.getUnits().stream()
                     .filter(baseUnit -> baseUnit.getColor().equals(color))
                     .forEach(baseUnit -> {
                         Unit unit = new Unit(baseUnit.getType(), baseUnit.getRow(), baseUnit.getColumn());
+                        UnitMes unitMes = unitMesService.getByType(unit.getType());
+                        pop.set(pop.get() + unitMes.getPopulation());
                         units.add(unit);
                     });
             army.setUnits(units);
+            army.setPop(pop.get());
             army.setMoney(reqInitMapDto.getMoney());
         }
         userRecord.setArmyList(armyList);
