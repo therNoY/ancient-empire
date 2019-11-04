@@ -2,7 +2,9 @@ package com.mihao.ancient_empire.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * <p>
@@ -56,6 +58,7 @@ public class Ability implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
+
     public String getType() {
         return type;
     }
@@ -63,6 +66,7 @@ public class Ability implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
+
     public String getName() {
         return name;
     }
@@ -70,6 +74,7 @@ public class Ability implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
     public String getDescription() {
         return description;
     }
@@ -77,6 +82,7 @@ public class Ability implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
     public Integer getBuffId() {
         return buffId;
     }
@@ -92,8 +98,9 @@ public class Ability implements Serializable {
             if (a2.getType().equals(type)) {
                 return true;
             }
-        }else if(obj instanceof String){
-            return this.getType().equals(obj.toString());
+        } else if (obj instanceof String) {
+            String s = (String) obj;
+            return this.getType().equals(s);
         }
         return false;
     }
@@ -106,11 +113,11 @@ public class Ability implements Serializable {
     @Override
     public String toString() {
         return "Ability{" +
-        "id=" + id +
-        ", type=" + type +
-        ", name=" + name +
-        ", description=" + description +
-        ", buffId=" + buffId +
-        "}";
+                "id=" + id +
+                ", type=" + type +
+                ", name=" + name +
+                ", description=" + description +
+                ", buffId=" + buffId +
+                "}";
     }
 }

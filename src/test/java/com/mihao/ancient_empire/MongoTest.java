@@ -31,9 +31,9 @@ public class MongoTest {
     @Test
     public void updateMapType() {
         Update update = new Update();
-        update.set("type", MapEnum.ENCOUNTER.getType());
-        mongoTemplate.upsert(Query.query(Criteria.where("mapName").is("远古要塞")), update, CollectionEnum.USER_MAP.getType());
-        UserMap userMap = mongoTemplate.findOne(new Query(Criteria.where("mapName").is("远古要塞")), UserMap.class, CollectionEnum.USER_MAP.getType());
+        update.set("type", MapEnum.ENCOUNTER.type());
+        mongoTemplate.upsert(Query.query(Criteria.where("mapName").is("远古要塞")), update, CollectionEnum.USER_MAP.type());
+        UserMap userMap = mongoTemplate.findOne(new Query(Criteria.where("mapName").is("远古要塞")), UserMap.class, CollectionEnum.USER_MAP.type());
         System.out.println(userMap.getType());
     }
 

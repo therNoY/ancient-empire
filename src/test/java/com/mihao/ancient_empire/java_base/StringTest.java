@@ -21,4 +21,9 @@ public class StringTest {
     public void name3() {
         System.out.println("2".toLowerCase());
     }
+
+    @Test
+    public void name4() {
+        System.out.println(StringTest.class.getSimpleName());
+    }
 }

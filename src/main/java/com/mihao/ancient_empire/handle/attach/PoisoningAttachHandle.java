@@ -37,10 +37,10 @@ public class PoisoningAttachHandle extends AttachHandle {
     @Override
     public AttributesPower getAttachPower(UserRecord record, Unit unit, UnitLevelMes levelMes, Unit beAttachUnit, AttributesPower attributesPower) {
         if (!StringUtil.isEmpty(beAttachUnit.getStatus())) {
-            if (beAttachUnit.getStatus().equals(StateEnum.EXCITED.getType())) {
+            if (beAttachUnit.getStatus().equals(StateEnum.EXCITED.type())) {
                 if (attributesPower.getNum() != null) {
                     attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(POISONING)));
-                    log.info("投毒者 获取攻击加成{}倍", Integer.valueOf(AppConfig.get(POISONING)));
+                    log.info("投毒者 获取攻击加成{}", Integer.valueOf(AppConfig.get(POISONING)));
                 } else {
                     int attach = AppUtil.getAttachNum(levelMes);
                     attributesPower.setNum(attach + Integer.valueOf(AppConfig.get(POISONING)));

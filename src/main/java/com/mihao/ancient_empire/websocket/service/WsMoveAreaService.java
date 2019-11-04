@@ -2,10 +2,7 @@ package com.mihao.ancient_empire.websocket.service;
 
 import com.mihao.ancient_empire.constant.AbilityEnum;
 import com.mihao.ancient_empire.constant.RegionEnum;
-import com.mihao.ancient_empire.dto.Army;
-import com.mihao.ancient_empire.dto.BaseSquare;
-import com.mihao.ancient_empire.dto.Position;
-import com.mihao.ancient_empire.dto.Unit;
+import com.mihao.ancient_empire.dto.*;
 import com.mihao.ancient_empire.dto.ws_dto.*;
 import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
@@ -18,15 +15,12 @@ import com.mihao.ancient_empire.service.UnitLevelMesService;
 import com.mihao.ancient_empire.service.UnitMesService;
 import com.mihao.ancient_empire.service.UserRecordService;
 import com.mihao.ancient_empire.util.AppUtil;
-import com.mihao.ancient_empire.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 获取和单位移动有关的
@@ -50,26 +44,29 @@ public class WsMoveAreaService {
 
     public Object getMoveArea(String uuid, ReqUnitIndexDto unitIndex) {
         UserRecord userRecord = userRecordService.getRecordById(uuid);
-        return getMoveArea(userRecord, unitIndex, null);
+        return getMoveArea(userRecord, unitIndex, null, true);
     }
 
     /**
      * 获取单位的移动范围
      *
+     * @param userRecord   record
      * @param unitIndex
+     * @param unit         要移动的单位
+     * @param considerLoad 是否考虑领主移动 当人机的时候不会出现
      * @return
      */
-    public Object getMoveArea(UserRecord userRecord, ReqUnitIndexDto unitIndex, Unit unit) {
+    public Object getMoveArea(UserRecord userRecord, ReqUnitIndexDto unitIndex, Unit unit, boolean considerLoad) {
         // 1.获取record
         Army cArmy = null;
         boolean getLoadAction = true;
 
         if (unitIndex.getArmyIndex() != null) {
             cArmy = AppUtil.getArmyByIndex(userRecord, unitIndex.getArmyIndex());
-        }else {
+        } else {
             getLoadAction = false;
             List<Army> armyList = userRecord.getArmyList();
-            for (int i = 0; i < armyList.size(); i++)  {
+            for (int i = 0; i < armyList.size(); i++) {
                 Army army = armyList.get(i);
                 if (userRecord.getCurrColor().equals(army.getColor())) {
                     cArmy = army;
@@ -86,10 +83,10 @@ public class WsMoveAreaService {
         // 2. 找到单位的所有能力 从能力中找自动范围
         List<Position> positions = new ArrayList<>();
         // 判断如果是 获取action
-        if (getLoadAction && abilityList.contains(new Ability(AbilityEnum.CASTLE_GET.getType()))) {
+        if (considerLoad && getLoadAction && abilityList.contains(AbilityEnum.CASTLE_GET.ability())) {
             // 判断移动单位是否有领主属性 如果有判断是否站在所属城堡
             BaseSquare region = AppUtil.getRegionByPosition(userRecord, cUnit);
-            if (region.getType().equals(RegionEnum.CASTLE.getType()) && region.getColor().equals(color)) {
+            if (region.getType().equals(RegionEnum.CASTLE.type()) && region.getColor().equals(color)) {
                 Map<String, Object> map = actionService.getActions(userRecord, new ReqMoveDto(unitIndex.getIndex(), AppUtil.getPosition(cUnit), AppUtil.getPosition(cUnit)), true);
                 return map;
             }
@@ -135,21 +132,12 @@ public class WsMoveAreaService {
 
     /**
      * 获取单位二次移动的移动范围
+     *
      * @return
      */
-    public List<Position> getSecondMoveArea(UserRecord userRecord, Unit cUnit, UnitMes cUnitMes, int lastSpeed){
+    public List<Position> getSecondMoveArea(UserRecord userRecord, Unit cUnit, UnitMes cUnitMes, int lastSpeed) {
 
-        Army army = null;
-        for (Army a : userRecord.getArmyList()){
-            if (a.getColor().equals(userRecord.getCurrColor())) {
-                army = a;
-                break;
-            }
-        }
-        if (army == null) {
-            log.error("当前单位颜色记录错误");
-            return null;
-        }
+        Army army = AppUtil.getCurrentArmy(userRecord);
 
         List<Ability> abilityList = abilityService.getUnitAbilityList(cUnitMes.getId());
         // 2. 找到单位的所有能力 从能力中找自动范围
@@ -167,7 +155,7 @@ public class WsMoveAreaService {
                 }
             }
         }
-        // 如果单位没有有效能力
+        // 如果单位没有有效能力 就设置成默认的
         if (positions.size() == 0) {
             MoveAreaHandle defaultHandle = MoveAreaHandle.getDefaultHandle();
             positions.addAll(defaultHandle.getMoveArea(userRecord, army, cUnit, levelMes));
@@ -189,7 +177,7 @@ public class WsMoveAreaService {
         UnitLevelMes levelMes;
         UnitMes unitMes;
         for (Ability ability : abilityList) {
-            if (ability.getType().equals(AbilityEnum.ASSAULT.getType())) {
+            if (ability.getType().equals(AbilityEnum.ASSAULT.type())) {
                 // 是可以进行二次移动
                 levelMes = unitLevelMesService.getUnitLevelMes(unit.getType(), unit.getLevel());
                 unitMes = unitMesService.getByType(unit.getType());
@@ -224,6 +212,7 @@ public class WsMoveAreaService {
 
     /**
      * 获取两点消耗的移动力 本来应该根据能力算出不同的能力消耗
+     *
      * @param p1
      * @param p2
      * @return
@@ -231,4 +220,5 @@ public class WsMoveAreaService {
     private int getPathPositionLength(PathPosition p1, PathPosition p2) {
         return Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p1.getColumn() - p2.getColumn());
     }
+
 }

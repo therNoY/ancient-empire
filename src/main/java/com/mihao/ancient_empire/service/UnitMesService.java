@@ -30,4 +30,8 @@ public interface UnitMesService extends IService<UnitMes> {
     UnitInfo getUnitInfo(String type, Integer level);
 
     List<UnitInfo> getUnitInfoList(boolean hasLoad);
+
+    UnitMes getMaxCheapUnit();
+
+    List<UnitMes> getEnableBuyUnit();
 }

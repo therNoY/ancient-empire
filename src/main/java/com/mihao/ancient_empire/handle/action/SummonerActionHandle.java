@@ -29,7 +29,7 @@ public class SummonerActionHandle extends ActionHandle{
         if (tombList != null && tombList.size() > 0) {
             for (Position p : tombList) {
                 if (positions.contains(p)) {
-                    actions.add(ActionEnum.SUMMON.getType());
+                    actions.add(ActionEnum.SUMMON.type());
                     break;
                 }
             }

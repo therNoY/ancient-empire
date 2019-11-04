@@ -27,10 +27,10 @@ public class RepairActionHandle extends ActionHandle {
     @Override
     public List<String> getAction(List<Position> positions, UserRecord record, Integer camp, Integer unitIndex, Position aimPoint) {
         List<String> actions =  super.getAction(positions, record, camp, unitIndex, aimPoint);
-        if (!actions.contains(ActionEnum.REPAIR.getType())) {
+        if (!actions.contains(ActionEnum.REPAIR.type())) {
             BaseSquare region = AppUtil.getRegionByPosition(record.getInitMap().getRegions(), aimPoint.getRow(), aimPoint.getColumn(), record.getInitMap().getColumn());
-            if (region.getType().equals(RegionEnum.RUINS.getType())) {
-                actions.add(ActionEnum.REPAIR.getType());
+            if (region.getType().equals(RegionEnum.RUINS.type())) {
+                actions.add(ActionEnum.REPAIR.type());
             }
         }
 

@@ -37,7 +37,7 @@ public class ForestAttachHandle extends AttachHandle {
     @Override
     public AttributesPower getAttachPower(UserRecord record, Unit unit, UnitLevelMes levelMes, Unit beAttachUnit, AttributesPower attributesPower) {
         BaseSquare region = AppUtil.getRegionByPosition(record, unit);
-        if (region.getType().equals(RegionEnum.FOREST.getType()) || region.getType().equals(RegionEnum.GROVE.getType())) {
+        if (region.getType().equals(RegionEnum.FOREST.type()) || region.getType().equals(RegionEnum.GROVE.type())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(FOREST)));
                 log.info("森林之子 获取攻击加成{}", Integer.valueOf(AppConfig.get(FOREST)));

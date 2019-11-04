@@ -3,6 +3,7 @@ package com.mihao.ancient_empire.websocket.service;
 import com.mihao.ancient_empire.constant.ActionEnum;
 import com.mihao.ancient_empire.dto.Army;
 import com.mihao.ancient_empire.dto.Position;
+import com.mihao.ancient_empire.dto.Site;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.ws_dto.ReqAttachAreaDto;
 import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
@@ -79,8 +80,8 @@ public class WsActionService {
             }
         }
         if (isLoad) {
-            actionSet.add(ActionEnum.BUY.getType());
-            actionSet.add(ActionEnum.MOVE.getType());
+            actionSet.add(ActionEnum.BUY.type());
+            actionSet.add(ActionEnum.MOVE.type());
         }
         // 这里的cAction 和 mAction 是辅助行动图标动态移动的
         actionMap.put("cAction", AppUtil.addActionAim(new ArrayList<>(actionSet), moveDto.getAimPoint()));
@@ -110,7 +111,7 @@ public class WsActionService {
      * @param userRecord
      * @return
      */
-    private List<Position> getAttachArea(UnitMes unitMes, Position aimP, UserRecord userRecord) {
+    public List<Position> getAttachArea(UnitMes unitMes, Site aimP, UserRecord userRecord) {
         Integer maxRange = unitMes.getMaxAttachRange();
         List<Position> maxAttach = new ArrayList<>();
         int minI = Math.max(aimP.getRow() - maxRange, 1);

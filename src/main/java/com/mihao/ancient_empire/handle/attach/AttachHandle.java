@@ -69,7 +69,7 @@ public class AttachHandle {
         if (attributesPower.getNum() == null) {
             int attach = AppUtil.getAttachNum(levelMes);
             attributesPower.setNum(attach);
-            log.info("{} 攻击 {} 基础攻击力是{}", unit.getType(), beAttachUnit.getType(), attach);
+            log.info("{} 攻击 {} >>> 基础攻击力是{}", unit.getType(), beAttachUnit.getType(), attach);
         }
         return attributesPower;
     }

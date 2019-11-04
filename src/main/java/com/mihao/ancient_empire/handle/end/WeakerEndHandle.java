@@ -51,7 +51,7 @@ public class WeakerEndHandle extends EndHandle{
                             changeList = new ArrayList<>();
                         }
                         LifeChange lifeChange = new LifeChange(i);
-                        lifeChange.setState(StateEnum.WEAK.getType());
+                        lifeChange.setState(StateEnum.WEAK.type());
                         changeList.add(lifeChange);
                     }
                 }

@@ -16,6 +16,21 @@ public class Site implements Serializable {
         this.column = column;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Site) {
+            Site that = (Site) obj;
+            return row.equals(that.getRow()) && column.equals(that.getColumn());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "row=" + row + ", column=" + column;
+
+    }
+
     public Integer getRow() {
         return row;
     }

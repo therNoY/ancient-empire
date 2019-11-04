@@ -11,6 +11,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * 项目需要初始化的数据 比如读取全局的配置文件
  */
@@ -44,4 +46,6 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ApplicationContextHolder.setApplicationContext(applicationContext);
     }
+
+
 }

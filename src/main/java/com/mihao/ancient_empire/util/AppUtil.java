@@ -1,11 +1,14 @@
 package com.mihao.ancient_empire.util;
 
+import com.mihao.ancient_empire.common.util.EnumUtil;
+import com.mihao.ancient_empire.common.util.IntegerUtil;
 import com.mihao.ancient_empire.common.vo.MyException;
+import com.mihao.ancient_empire.constant.RegionEnum;
+import com.mihao.ancient_empire.constant.UnitEnum;
 import com.mihao.ancient_empire.dto.*;
 import com.mihao.ancient_empire.dto.ws_dto.RespAction;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
-import javafx.geometry.Pos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +24,18 @@ public class AppUtil {
 
     /**
      * 根据地图的 region 的index 和map的column 获取position
-     * @param index
-     * @param column
+     *
+     * @param index  region的index
+     * @param column map的column
      * @return
      */
-    public static Position getPositionByMapIndex(int index, int column) {
-        return new Position(index / column + 1, index % column + 1);
+    public static Site getSiteByMapIndex(int index, int column) {
+        return new Site(index / column + 1, index % column + 1);
     }
 
     /**
      * 根据Record 和 color  获取当前军队
+     *
      * @param record
      * @param color
      * @return
@@ -44,11 +49,14 @@ public class AppUtil {
                 break;
             }
         }
+        if (cArmy == null)
+            throw new MyException("record 记录错误 根据当前军队颜色找军队");
         return cArmy;
     }
 
     /**
      * 根据Record 和 color  获取当前军队
+     *
      * @param record
      * @param index
      * @return
@@ -58,14 +66,21 @@ public class AppUtil {
     }
 
     /**
-     *  获得单位的位置
+     * 获得单位的位置
      */
     public static BaseSquare getRegionByPosition(UserRecord record, Unit unit) {
         return getRegionByPosition(record.getInitMap().getRegions(), unit.getRow(), unit.getColumn(), record.getInitMap().getColumn());
     }
 
     /**
-     *  获得单位的位置
+     * 获得单位的位置
+     */
+    public static BaseSquare getRegionByPosition(UserRecord record, Site site) {
+        return getRegionByPosition(record.getInitMap().getRegions(), site.getRow(), site.getColumn(), record.getInitMap().getColumn());
+    }
+
+    /**
+     * 获得单位的位置
      */
     public static BaseSquare getRegionByPosition(UserRecord record, int row, int column) {
         return getRegionByPosition(record.getInitMap().getRegions(), row, column, record.getInitMap().getColumn());
@@ -73,6 +88,7 @@ public class AppUtil {
 
     /**
      * 通过行列获取地图上的位置
+     *
      * @return
      */
     public static BaseSquare getRegionByPosition(List<BaseSquare> regions, int row, int column, Integer mapColumn) {
@@ -85,7 +101,7 @@ public class AppUtil {
     public static List<RespAction> addActionAim(List<String> actionList, Position cUnit) {
         List<RespAction> respActions = new ArrayList<>();
         for (String s : actionList) {
-            respActions.add(new RespAction(s, (float)cUnit.getRow(), (float)cUnit.getColumn()));
+            respActions.add(new RespAction(s, (float) cUnit.getRow(), (float) cUnit.getColumn()));
         }
         return respActions;
     }
@@ -101,35 +117,35 @@ public class AppUtil {
             // 只有一个action 显示在下面
             RespAction action = new RespAction(actionList.get(0));
             action.setRow((float) (cUnit.getRow() + 1));
-            action.setColumn((float)(cUnit.getColumn() + 0.16));
+            action.setColumn((float) (cUnit.getColumn() + 0.16));
             respActions.add(action);
 
         } else if (actionList.size() == 2) {
             // 2个action一个显示在上面 一个显示下面
             RespAction action = new RespAction(actionList.get(0));
             action.setRow((float) (cUnit.getRow() - 1));
-            action.setColumn((float)(cUnit.getColumn() + 0.16));
+            action.setColumn((float) (cUnit.getColumn() + 0.16));
             respActions.add(action);
 
             RespAction action2 = new RespAction(actionList.get(1));
             action2.setRow((float) (cUnit.getRow() + 1));
-            action2.setColumn((float)(cUnit.getColumn() + 0.16));
+            action2.setColumn((float) (cUnit.getColumn() + 0.16));
             respActions.add(action2);
         } else if (actionList.size() == 3) {
             // 3个显示个3交
             RespAction action = new RespAction(actionList.get(0));
             action.setRow((float) (cUnit.getRow() - 1));
-            action.setColumn((float)(cUnit.getColumn() + 0.16));
+            action.setColumn((float) (cUnit.getColumn() + 0.16));
             respActions.add(action);
 
             RespAction action2 = new RespAction(actionList.get(1));
             action2.setRow((float) (cUnit.getRow() + 1));
-            action2.setColumn((float)(cUnit.getColumn() + 0.84));
+            action2.setColumn((float) (cUnit.getColumn() + 0.84));
             respActions.add(action2);
 
             RespAction action3 = new RespAction(actionList.get(2));
             action3.setRow((float) (cUnit.getRow() + 1));
-            action3.setColumn((float)(cUnit.getColumn() - 0.84));
+            action3.setColumn((float) (cUnit.getColumn() - 0.84));
             respActions.add(action3);
         } else if (actionList.size() == 4) {
             // 4个显示
@@ -162,6 +178,7 @@ public class AppUtil {
 
     /**
      * 获取单位的位置
+     *
      * @param cUnit
      * @return
      */
@@ -171,6 +188,7 @@ public class AppUtil {
 
     /**
      * 获取第几个单位
+     *
      * @param record
      * @param index
      * @return
@@ -183,6 +201,7 @@ public class AppUtil {
 
     /**
      * 获取当前的军队 index
+     *
      * @param userRecord
      * @return
      */
@@ -200,6 +219,7 @@ public class AppUtil {
 
     /**
      * 获取当前的军队
+     *
      * @param userRecord
      * @return
      */
@@ -210,18 +230,44 @@ public class AppUtil {
     /**
      * 通过位置判断该位置是不是友军
      */
-    public static boolean isFriend(UserRecord record, Position position, Integer camp) {
-        return getUnitByPosition(record, position, camp) == null ? false : true;
+    public static boolean isFriend(UserRecord record, Site site, Integer camp) {
+        return getUnitByPosition(record, site, camp) == null ? false : true;
     }
 
     /**
+     * 得到指定阵营的单位
      *
+     * @param record
+     * @param site
+     * @param camp
+     * @return
      */
-    public static Unit getUnitByPosition(UserRecord record, Position position, Integer camp) {
+    public static Unit getUnitByPosition(UserRecord record, Site site, Integer camp) {
         Unit unit = null;
         for (Army army : record.getArmyList()) {
             if (army.getCamp() == camp) {
-                unit = getUnitByPosition(army, position);
+                unit = getUnitByPosition(army, site);
+                if (unit != null) {
+                    return unit;
+                }
+            }
+        }
+        return unit;
+    }
+
+    /**
+     * 得到不在指定阵营的单位
+     *
+     * @param record
+     * @param site
+     * @param camp
+     * @return
+     */
+    public static Unit getUnitByPositionNotIn(UserRecord record, Site site, Integer camp) {
+        Unit unit = null;
+        for (Army army : record.getArmyList()) {
+            if (army.getCamp() != camp) {
+                unit = getUnitByPosition(army, site);
                 if (unit != null) {
                     return unit;
                 }
@@ -232,13 +278,14 @@ public class AppUtil {
 
     /**
      * 从军队中找给出位置的单位
+     *
      * @param army
-     * @param position
+     * @param site
      * @return
      */
-    public static Unit getUnitByPosition(Army army, Position position) {
+    public static Unit getUnitByPosition(Army army, Site site) {
         for (Unit unit : army.getUnits()) {
-            if (AppUtil.getPosition(unit).equals(position)) {
+            if (AppUtil.getPosition(unit).equals(site)) {
                 return unit;
             }
         }
@@ -251,23 +298,28 @@ public class AppUtil {
     public static int getAttachNum(UnitLevelMes levelMes) {
         int min = levelMes.getMinAttack();
         int max = levelMes.getMaxAttack();
-        int att = (int) (Math.random()*(max - min + 1) + min);
+        int att = IntegerUtil.getRandomIn(min, max);
         log.info("获取{} 和 {} 攻击的中间值 {}", min, max, att);
         return att;
     }
 
     /**
      * 获取单位的生命 int[] -> int
+     *
      * @param unit
      * @return
      */
     public static int getUnitLeft(Unit unit) {
         Integer[] life = unit.getLife();
+        return getIntByIntegers(life);
+    }
+
+    public static int getIntByIntegers(Integer[] life) {
+
         if (life != null && life.length > 0) {
             if (life[0] == -1) {
                 return 0;
-            }
-            else {
+            } else {
                 double sum = 0;
                 for (int i = 0; i < life.length; i++) {
                     sum = (life[i] * Math.pow(10, life.length - 1 - i) + sum);
@@ -305,6 +357,7 @@ public class AppUtil {
 
     /**
      * 判断两点是否是直接挨着的
+     *
      * @param currP
      * @param aimP
      * @return
@@ -316,14 +369,26 @@ public class AppUtil {
         return false;
     }
 
+    public static int getLength(Unit s1, Unit s2) {
+        return Math.abs(s1.getRow() - s2.getRow()) + Math.abs(s1.getColumn() - s2.getColumn());
+    }
+
+    public static int getLength(Site s1, Unit s2) {
+        return Math.abs(s1.getRow() - s2.getRow()) + Math.abs(s1.getColumn() - s2.getColumn());
+    }
 
 
     public static int getLength(Site s1, Site s2) {
-        return Math.abs(s1.getRow() - s2.getRow()) + Math.abs(s1.getColumn() - s2.getColumn());
+        return getLength(s1.getRow(), s2.getRow(), s1.getColumn(), s2.getColumn());
+    }
+
+    public static int getLength(int row1, int row2, int column1, int column2) {
+        return Math.abs(row1 - row2) + Math.abs(column1 - column2);
     }
 
     /**
      * 判断一个单位是否在另一个单位的影响范围内
+     *
      * @return
      */
     public static boolean isAround(Site s1, Site s2) {
@@ -331,7 +396,7 @@ public class AppUtil {
         int length = AppUtil.getLength(s1, s2);
         if (length > 2) {
             return false;
-        }else if (length == 2){
+        } else if (length == 2) {
             if (s1.getRow() == s2.getRow() && s1.getColumn() == s2.getColumn()) {
                 return false;
             }
@@ -343,9 +408,11 @@ public class AppUtil {
     public static int getRegionIndex(UserRecord record, Site region) {
         return getRegionIndex(record.getInitMap(), region);
     }
+
     public static int getRegionIndex(InitMap map, Site region) {
         return getRegionIndex(map.getColumn(), region);
     }
+
     public static int getRegionIndex(Integer mapColumn, Site region) {
         int index = (region.getRow() - 1) * mapColumn + region.getColumn() - 1;
         return index;
@@ -353,6 +420,7 @@ public class AppUtil {
 
     /**
      * 获取同盟的所有颜色
+     *
      * @param record
      * @return
      */
@@ -365,5 +433,51 @@ public class AppUtil {
             }
         }
         return strings;
+    }
+
+    /**
+     * 判断单位是否有指挥官
+     *
+     * @param army
+     * @return
+     */
+    public static boolean hasLoad(Army army) {
+
+        for (Unit unit : army.getUnits()) {
+            if (unit.getType().equals(UnitEnum.LORD.type())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static Integer getUnitIndex(Unit unit, Army army) {
+
+        for (int i = 0; i < army.getUnits().size(); i++) {
+            if (unit.getId().equals(army.getUnits().get(i).getId())) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static int getHpRecover(BaseSquare square) {
+        RegionEnum regionEnum = EnumUtil.valueOf(RegionEnum.class, square.getType());
+        switch (regionEnum) {
+            case TOWN:
+            case CASTLE:
+                return 20;
+            case STOCK:
+            case TEMPLE:
+            case SEA:
+            case SEA_HOUSE:
+                return 15;
+            case REMAINS2:
+                return 35;
+            default:
+                return 0;
+        }
     }
 }

@@ -28,7 +28,7 @@ public class ForestMoveHandle extends MoveAreaHandle {
         int mapColumn = userRecord.getInitMap().getColumn();
         List<BaseSquare> regionList = userRecord.getInitMap().getRegions();
         int index = (row - 1) * mapColumn + column - 1;
-        if (regionList.get(index).getType().equals(RegionEnum.FOREST.getType()) || regionList.get(index).getType().equals(RegionEnum.GROVE.getType())) {
+        if (regionList.get(index).getType().equals(RegionEnum.FOREST.type()) || regionList.get(index).getType().equals(RegionEnum.GROVE.type())) {
             return 1;
         }else {
             return super.getRegionDeplete(userRecord, row, column);

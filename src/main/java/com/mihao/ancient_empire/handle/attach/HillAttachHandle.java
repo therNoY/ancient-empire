@@ -37,7 +37,7 @@ public class HillAttachHandle extends AttachHandle {
     @Override
     public AttributesPower getAttachPower(UserRecord record, Unit unit, UnitLevelMes levelMes, Unit beAttachUnit, AttributesPower attributesPower) {
         BaseSquare region = AppUtil.getRegionByPosition(record, unit);
-        if (region.getType().equals(RegionEnum.STONE.getType())) {
+        if (region.getType().equals(RegionEnum.STONE.type())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(HILL)));
                 log.info("山之子 获取攻击加成{}", Integer.valueOf(AppConfig.get(HILL)));

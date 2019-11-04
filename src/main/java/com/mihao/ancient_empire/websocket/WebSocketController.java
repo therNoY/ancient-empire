@@ -1,13 +1,19 @@
 package com.mihao.ancient_empire.websocket;
 
+import com.mihao.ancient_empire.ai.RobotActive;
+import com.mihao.ancient_empire.ai.RobotManger;
+import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
 import com.mihao.ancient_empire.common.annotation.ExecuteTime;
 import com.mihao.ancient_empire.common.util.JacksonUtil;
+import com.mihao.ancient_empire.constant.ArmyEnum;
 import com.mihao.ancient_empire.constant.WSPath;
 import com.mihao.ancient_empire.constant.WsMethodEnum;
+import com.mihao.ancient_empire.dto.InitMap;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.map_dto.ReqBuyUnitDto;
 import com.mihao.ancient_empire.dto.ws_dto.*;
+import com.mihao.ancient_empire.util.AppUtil;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import com.mihao.ancient_empire.websocket.service.*;
 import org.slf4j.Logger;
@@ -49,7 +55,7 @@ public class WebSocketController {
     @Autowired
     WsBuyUnitService buyUnitService;
     @Autowired
-    WsNewRoundService newRoundService;
+    WsEndRoundService newRoundService;
 
     /**
      * 获取移动区域
@@ -67,10 +73,10 @@ public class WebSocketController {
             Object areas = moveAreaService.getMoveArea(principal.getName(), unitIndexDto);
             if (areas instanceof List) {
                 simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                        WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_AREAS.getType(), areas));
+                        WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_AREAS.type(), areas));
             } else {
                 simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                        WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_ACTION.getType(), areas));
+                        WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_ACTION.type(), areas));
             }
         } else {
             log.error("{} 解析错误", msg);
@@ -88,7 +94,7 @@ public class WebSocketController {
         if (moveDto != null) {
             Map<String, Object> actionMap = actionService.getActions(principal.getName(), moveDto, false);
             simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                    WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.UNIT_ACTION.getType(), actionMap));
+                    WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.UNIT_ACTION.type(), actionMap));
         } else {
             log.error("{} 解析错误", msg);
         }
@@ -115,7 +121,7 @@ public class WebSocketController {
             map.put("actions", actionMap);
             map.put("movePath", movePath);
             simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                    WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_PATH.getType(), map));
+                    WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.MOVE_PATH.type(), map));
         } else {
             log.error("{} 解析错误", msg);
         }
@@ -135,7 +141,7 @@ public class WebSocketController {
         ReqAttachAreaDto moveDto = JacksonUtil.jsonToBean(msg, ReqAttachAreaDto.class);
         List<Position> attach = actionService.getAttachArea(principal.getName(), moveDto);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_AREA.getType(), attach));
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_AREA.type(), attach));
     }
 
     /**
@@ -151,7 +157,7 @@ public class WebSocketController {
         ReqAttachDto reqAttachDto = JacksonUtil.jsonToBean(msg, ReqAttachDto.class);
         RespAttachResultDto resultDto = attachResultService.getAttachResult(principal.getName(), reqAttachDto);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_RESULT.getType(), resultDto));
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.ATTACH_RESULT.type(), resultDto));
     }
 
     /**
@@ -167,7 +173,7 @@ public class WebSocketController {
         Unit unit = JacksonUtil.jsonToBean(msg, Unit.class);
         RespEndResultDto resultDto = wsEndService.getEndResult(principal.getName(), unit);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.END_RESULT.getType(), resultDto));
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.END_RESULT.type(), resultDto));
     }
 
     /**
@@ -183,7 +189,7 @@ public class WebSocketController {
         ReqSummonDto summonDto = JacksonUtil.jsonToBean(msg, ReqSummonDto.class);
         RespSummonResult summonResult = summonActionService.getSummonResult(principal.getName(), summonDto);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.SUMMON_RESULT.getType(), summonResult));
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.SUMMON_RESULT.type(), summonResult));
     }
 
     /**
@@ -199,7 +205,7 @@ public class WebSocketController {
         ReqRepairOcpDto repairOcpDto = JacksonUtil.jsonToBean(msg, ReqRepairOcpDto.class);
         RespRepairOcpResult repairOcpResult = occupiedService.getOccupiedResult(principal.getName(), repairOcpDto);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.REPAIR_RESULT.getType(), repairOcpResult));
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.REPAIR_RESULT.type(), repairOcpResult));
     }
 
     /**
@@ -215,7 +221,7 @@ public class WebSocketController {
         ReqRepairOcpDto reqRepairOcpDto = JacksonUtil.jsonToBean(msg, ReqRepairOcpDto.class);
         RespRepairOcpResult repairResult = repairService.getRepairResult(principal.getName(), reqRepairOcpDto);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.REPAIR_RESULT.getType(), repairResult));
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.REPAIR_RESULT.type(), repairResult));
     }
 
     /**
@@ -242,8 +248,21 @@ public class WebSocketController {
     public void getNewRound(Principal principal) {
         log.info("从 {} getSummonResult 收到的信息", principal.getName());
         RespNewRoundDto newRoundDto = newRoundService.getNewRound(principal.getName());
+        InitMap map = newRoundDto.getRecord().getInitMap();
+        newRoundDto.getRecord().setInitMap(null);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
-                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.NEW_ROUND.getType(), newRoundDto));
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.NEW_ROUND.type(), newRoundDto));
+
+        // 判断新的回合是不是机器人
+        if (AppUtil.getCurrentArmy(newRoundDto.getRecord()).getType().equals(ArmyEnum.AI.type())) {
+            log.info("======================接下来是机器人的行动============================");
+            newRoundDto.getRecord().setInitMap(map);
+            RobotActive active = new RobotActive(newRoundDto.getRecord(), AiActiveEnum.SELECT_UNIT);
+            RobotManger robotManger = RobotManger.getInstance(newRoundDto.getRecord());
+            robotManger.saveRecord(newRoundDto.getRecord());
+            robotManger.submitActive(active);
+        }
+
     }
 
     // WS 测试

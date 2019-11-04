@@ -69,7 +69,7 @@ public class WsBuyUnitService {
 
         result.setBuyUnitDto(unitDto);
         List<Position> moveArea =null;
-        Object obj = moveAreaService.getMoveArea(record, new ReqUnitIndexDto(), addUnit);
+        Object obj = moveAreaService.getMoveArea(record, new ReqUnitIndexDto(), addUnit, true);
 
         try {
             if (obj != null && obj instanceof List) {
@@ -83,6 +83,6 @@ public class WsBuyUnitService {
 
         result.setMoveArea(moveArea);
         mqHelper.sendMongoCdr(MqMethodEnum.BUY_UNIT, unitDto);
-        return WsRespHelper.success(WsMethodEnum.BUY_UNIT.getType(), result);
+        return WsRespHelper.success(WsMethodEnum.BUY_UNIT.type(), result);
     }
 }

@@ -36,20 +36,20 @@ public class VillageGetActionHandle extends ActionHandle {
     @Override
     public List<String> getAction(List<Position> positions, UserRecord record, Integer camp, Integer unitIndex, Position aimPoint) {
         List<String> actions = super.getAction(positions, record, camp, unitIndex, aimPoint);
-        if (!actions.contains(ActionEnum.OCCUPIED.getType())) {
+        if (!actions.contains(ActionEnum.OCCUPIED.type())) {
             // 获取要移动到的地址
             BaseSquare region = AppUtil.getRegionByPosition(record.getInitMap().getRegions(), aimPoint.getRow(), aimPoint.getColumn(), record.getInitMap().getColumn());
             // 判断是城镇
-            if (region.getType().equals(RegionEnum.TOWN.getType())){
+            if (region.getType().equals(RegionEnum.TOWN.type())){
                 // 判断不是右方城镇
                 Army army = null;
                 if (StringUtil.isEmpty(region.getColor())) {
-                    actions.add(ActionEnum.OCCUPIED.getType());
+                    actions.add(ActionEnum.OCCUPIED.type());
                     return actions;
                 }
                 if ((army = AppUtil.getArmyByColor(record, region.getColor())) != null) {
                     if (!army.getCamp().equals(camp)) {
-                        actions.add(ActionEnum.OCCUPIED.getType());
+                        actions.add(ActionEnum.OCCUPIED.type());
                     }
                 }
             }

@@ -7,7 +7,7 @@ import java.util.List;
  * 地图类
  */
 public class InitMap implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8683452331192189L;
     // 宽
     private Integer row;
     // 高

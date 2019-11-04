@@ -90,4 +90,25 @@ public class IntegerTest {
         System.out.println(a1);
         System.out.println(a2);
     }
+
+    @Test
+    public void name8() {
+        Integer integer = new Integer(1);
+        Integer integer2 = new Integer(1);
+        Integer integer3 = Integer.valueOf(1);
+        System.out.println(integer == integer2);
+        System.out.println(integer == 1);
+        System.out.println(integer == integer3);
+    }
+
+
+    @Test
+    public void name9() {
+        int min = 10;
+        int max = 20;
+
+        for (int i = 0; i < 100; i++) {
+            System.out.println(Math.round(Math.random() * (max -min)) + min);
+        }
+    }
 }

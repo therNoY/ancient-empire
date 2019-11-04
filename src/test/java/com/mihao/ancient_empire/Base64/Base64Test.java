@@ -28,7 +28,7 @@ public class Base64Test {
             byte[] bytes =plainText.getBytes("UTF-8");
             encoded = Base64.getEncoder().encodeToString(bytes);
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
+            // TODO Auto-generated cache block
             e.printStackTrace();
         }
 

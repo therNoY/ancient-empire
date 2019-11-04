@@ -73,15 +73,15 @@ public class ActionHandle {
                     List<Unit> units = army.getUnits();
                     for (Unit unit : units) {
                         if (!unit.isDead() && unit.getRow() == p.getRow() && unit.getColumn() == p.getColumn()) {
-                            actions.add(ActionEnum.ATTACK.getType());
-                            actions.add(ActionEnum.END.getType());
+                            actions.add(ActionEnum.ATTACK.type());
+                            actions.add(ActionEnum.END.type());
                             return actions;
                         }
                     }
                 }
             }
         }
-        actions.add(ActionEnum.END.getType());
+        actions.add(ActionEnum.END.type());
         return actions;
     }
 }

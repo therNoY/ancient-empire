@@ -1,7 +1,5 @@
 package com.mihao.ancient_empire.dto;
 
-import com.mihao.ancient_empire.dto.Square;
-
 /**
  * 代表地形的类
  */

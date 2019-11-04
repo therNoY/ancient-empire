@@ -2,7 +2,7 @@ package com.mihao.ancient_empire.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class Position extends Site{
+public class Position extends Site {
 
     @JsonIgnore
     private Integer lastMove; // 剩余的移动力
@@ -30,6 +30,11 @@ public class Position extends Site{
         this.direction = direction;
     }
 
+    public Position(Site site) {
+        this.row = site.getRow();
+        this.column = site.getColumn();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Position) {
@@ -37,12 +42,17 @@ public class Position extends Site{
             if (this.row == p1.getRow() && this.column == p1.getColumn()) {
                 // 如果当前的剩剩余移动力比较小就不算了
                 if (p1.getLastMove() != null && this.lastMove != null) {
-                    if ( p1.getLastMove() > this.lastMove) {
+                    if (p1.getLastMove() > this.lastMove) {
                         return true;
                     }
-                }else {
+                } else {
                     return true;
                 }
+            }
+        } else if (obj instanceof Site) {
+            Site p1 = (Site) obj;
+            if (this.row == p1.getRow() && this.column == p1.getColumn()) {
+                return true;
             }
         }
         return false;

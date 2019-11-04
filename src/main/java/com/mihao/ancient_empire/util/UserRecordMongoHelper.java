@@ -1,7 +1,6 @@
 package com.mihao.ancient_empire.util;
 
 import com.mihao.ancient_empire.constant.StateEnum;
-import com.mihao.ancient_empire.constant.UnitEnum;
 import com.mihao.ancient_empire.dto.*;
 import com.mihao.ancient_empire.dto.mongo_dto.BuyUnitDto;
 import com.mihao.ancient_empire.dto.mongo_dto.SummonDto;
@@ -84,9 +83,8 @@ public class UserRecordMongoHelper {
         }
         unit.setExperience(summonDto.getLevelDto().getEndExperience());
 
-        Unit newUnit = new Unit(UnitEnum.BONE.getType(), summonDto.getTomb().getRow(), summonDto.getTomb().getColumn());
-        newUnit.setLevel(unit.getLevel());
-        army.getUnits().add(newUnit);
+
+        army.getUnits().add(summonDto.getNewUnit());
 
         Query query = Query.query(Criteria.where("_id").is(summonDto.getUuid()));
         Update update = new Update().set("armyList", record.getArmyList());
@@ -116,7 +114,7 @@ public class UserRecordMongoHelper {
                                 unit.setLife(lifeChange.getLastLife());
                             }
                             if (lifeChange.getState() != null) {
-                                if (lifeChange.getState().equals(StateEnum.NORMAL.getType())) {
+                                if (lifeChange.getState().equals(StateEnum.NORMAL.type())) {
                                     unit.setStatus(null);
                                 } else {
                                     unit.setStatus(lifeChange.getState());

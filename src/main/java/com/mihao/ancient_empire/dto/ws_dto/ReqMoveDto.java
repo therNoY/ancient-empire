@@ -1,6 +1,7 @@
 package com.mihao.ancient_empire.dto.ws_dto;
 
 import com.mihao.ancient_empire.dto.Position;
+import com.mihao.ancient_empire.dto.Site;
 
 import java.util.List;
 

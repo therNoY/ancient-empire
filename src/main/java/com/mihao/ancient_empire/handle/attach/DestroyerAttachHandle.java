@@ -39,7 +39,7 @@ public class DestroyerAttachHandle extends AttachHandle {
     @Override
     public AttributesPower getAttachPower(UserRecord record, Unit unit, UnitLevelMes levelMes, Unit beAttachUnit, AttributesPower attributesPower) {
         BaseSquare region = AppUtil.getRegionByPosition(record, beAttachUnit);
-        if (region.getType().equals(RegionEnum.TOWN.getType())) {
+        if (region.getType().equals(RegionEnum.TOWN.type())) {
 
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(DESTROYER)));

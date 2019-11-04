@@ -1,9 +1,12 @@
 package com.mihao.ancient_empire.java_base;
 
+import com.mihao.ancient_empire.dto.Site;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ForEachTest {
     @Test
@@ -91,5 +94,13 @@ public class ForEachTest {
         });
         end = System.currentTimeMillis();
         System.out.println("多管道stream耗时" + (end - begin) + "ms");
+    }
+
+
+    @Test
+    public void name() {
+        Map<String, Integer> map = new HashMap<>();
+        Integer a = map.get("1");
+        System.out.println(a);
     }
 }

@@ -3,7 +3,6 @@ package com.mihao.ancient_empire.service.imp;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mihao.ancient_empire.common.util.JwtTokenHelper;
 import com.mihao.ancient_empire.common.util.RedisHelper;
-import com.mihao.ancient_empire.common.util.RespHelper;
 import com.mihao.ancient_empire.constant.RedisKey;
 import com.mihao.ancient_empire.constant.RoleEnum;
 import com.mihao.ancient_empire.dao.PermissionDao;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -106,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         User loginUser = getUserByNameOrEmail(loginDto.getUserName());
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getUserName());
         for (GrantedAuthority author : userDetails.getAuthorities()) {
-            if (author.toString().equals(RoleEnum.ADMIN.getType())) {
+            if (author.toString().equals(RoleEnum.ADMIN.type())) {
                 return  jwtTokenHelper.generateToken(userDetails.getUsername());
             }
         }

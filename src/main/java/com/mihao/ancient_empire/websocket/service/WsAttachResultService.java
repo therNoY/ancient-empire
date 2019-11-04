@@ -77,6 +77,7 @@ public class WsAttachResultService {
     public RespAttachResultDto getAttachResult(String uuid, ReqAttachDto reqAttachDto) {
         // 最终返回的结果
         RespAttachResultDto resultDto = new RespAttachResultDto();
+        // 攻击状态加成或减易 给前端显示
         AttachSituation attachSituation = new AttachSituation();
 
         // 1. 获取需要基本信息
@@ -103,10 +104,11 @@ public class WsAttachResultService {
 
         // 3.判断是否反击
         boolean counterattack = true;
-        if (beAttachUnit.getStatus() != null && beAttachUnit.getStatus().equals(StateEnum.BLIND.getType())) {
+        if (beAttachUnit.getStatus() != null && beAttachUnit.getStatus().equals(StateEnum.BLIND.type())) {
             // 被致盲 无法反击
             counterattack = false;
         }
+        // 被攻击者死了无法反击
         if (counterattack && beAttachUnit.isDead()) {
             counterattack = false;
         }
@@ -116,7 +118,7 @@ public class WsAttachResultService {
             counterattack = false;
         }
         // 即便是挨着的 也有可能单位的攻击范围不够
-        if (counterattack && beAttachLevelUnitMes.getMinAttack() == 1) {
+        if (counterattack && beAttachUnitMes.getMinAttachRange() > 1) {
             counterattack = false;
         }
         resultDto.setCounterattack(counterattack);
@@ -136,7 +138,7 @@ public class WsAttachResultService {
         SecondMoveDto secondMoveDto = moveAreaService.getSecondMove(attachUnit, record, reqAttachDto);
         if (secondMoveDto == null) {
             resultDto.setSecondMove(false);
-        }else {
+        } else {
             resultDto.setSecondMove(secondMoveDto.getSecondMove());
             resultDto.setMoveArea(secondMoveDto.getMoveArea());
         }
@@ -160,7 +162,8 @@ public class WsAttachResultService {
      * @return
      */
     private AttachResult getOnceAttachResult(boolean isInitiative, AttachSituation attachSituation, UserRecord record, Unit attachUnit, Unit beAttachUnit,
-                                             UnitMes attachUnitMes, UnitLevelMes attachUnitLevelMes, UnitLevelMes beAttachLevelUnitMes, List<Ability> abilityList, List<Ability> beAttachAbility) {
+                                             UnitMes attachUnitMes, UnitLevelMes attachUnitLevelMes, UnitLevelMes beAttachLevelUnitMes,
+                                             List<Ability> abilityList, List<Ability> beAttachAbility) {
         // 1.1 获取到攻击者的攻击力
         AttachHandle attachHandle = AttachHandle.getDefaultHandle();
         AttributesPower attachPower = new AttributesPower(); // 保存攻击能力信息
@@ -169,7 +172,7 @@ public class WsAttachResultService {
         // 1.2 根据能力判断攻击力
         boolean isChangeStatus = false;
         for (Ability ability : abilityList) {
-            if (!isChangeStatus && ability.getType().equals(AbilityEnum.POISONING.getType())) {
+            if (!isChangeStatus && ability.getType().equals(AbilityEnum.POISONING.type())) {
                 isChangeStatus = true;
             }
             AttachHandle abilityAttachHandle = AttachHandle.initAttachHandle(ability.getType());
@@ -206,9 +209,9 @@ public class WsAttachResultService {
         defenseHandle.getDefensePower(type, record, attachUnit, beAttachLevelUnitMes, regionMes, beAttachUnit, defensePower, beAttachAbility);
         int baseDefense = defensePower.getNum();
         // 飞行单位不享受地形加成
-        if (!beAttachAbility.contains(new Ability(AbilityEnum.FLY.getType()))) {
+        if (!beAttachAbility.contains(AbilityEnum.FLY.ability())) {
             defensePower.setNum(defensePower.getNum() + regionMes.getBuff());
-            log.info("{} 享受地形{} 加成{}", beAttachUnit.getType(), regionMes.getType(), regionMes.getBuff());
+            log.info("{} 享受地形{} 防御增加加成{}", beAttachUnit.getType(), regionMes.getType(), regionMes.getBuff());
         }
         for (Ability ability : beAttachAbility) {
             DefenseHandle abilityDefenseHandle = DefenseHandle.initAttachHandle(ability.getType());
@@ -238,12 +241,16 @@ public class WsAttachResultService {
         }
 
         // 1.5. 根据攻防完善出一个主动攻击的伤害结果
-        AttachResult attachResult = stuffAttachResult(isInitiative, record, attachPower, defensePower, attachUnit, beAttachUnit, abilityList, beAttachAbility);
+        AttachResult attachResult = stuffAttachResult(isInitiative, record, attachPower, defensePower, attachUnit, beAttachUnit, beAttachAbility);
 
-        if (isChangeStatus && !beAttachAbility.contains(new Ability(AbilityEnum.POISONING.getType()))) {
-            attachResult.setEndStatus(StateEnum.POISON.getType());
-            beAttachUnit.setStatus(StateEnum.POISON.getType());
-            beAttachUnit.setStatusPresenceNum(3);
+        // 判断被攻击方是否中毒 只有攻击方有毒 并且被攻击方不含投毒者
+        if (isChangeStatus && !beAttachAbility.contains(AbilityEnum.POISONING.ability())) {
+            attachResult.setEndStatus(StateEnum.POISON.type());
+            UserRecordUtil.updateUnit(record, beAttachUnit.getId(), unit -> {
+                unit.setStatus(StateEnum.POISON.type());
+                unit.setStatusPresenceNum(3);
+            });
+
         }
 
         return attachResult;
@@ -256,21 +263,26 @@ public class WsAttachResultService {
      * @return
      */
     private AttachResult stuffAttachResult(boolean isInitiative, UserRecord record, AttributesPower attachPower, AttributesPower defensePower,
-                                           Unit attachUnit, Unit beAttachUnit, List<Ability> abilityList, List<Ability> beAttachAbility) {
+                                           Unit attachUnit, Unit beAttachUnit, List<Ability> beAttachAbility) {
         int attachNum = attachPower.getNum();
         int defenseNum = defensePower.getNum();
         int left = AppUtil.getUnitLeft(beAttachUnit);
-        if (attachPower.getAddition() != null) {
-            attachNum = (int) (attachNum * attachPower.getAddition());
-        }
-        if (defensePower.getAddition() != null) {
-            defenseNum = (int) (defenseNum * defensePower.getAddition());
-        }
 
         log.info("{} 经过加成后的攻击力{}， {}最终防御力{}", attachUnit.getType(), attachNum, beAttachUnit.getType(), defenseNum);
         // 设置攻击情况
         AttachResult attachResult = new AttachResult();
         int harm = (attachNum - defenseNum) * AppUtil.getUnitLeft(attachUnit) / 100;
+        // 根据攻击加成和防御加成重新设计 伤害值
+        if (attachPower.getAddition() != null) {
+            log.info("伤害加成 {}", attachPower.getAddition());
+            harm = (int) (harm * attachPower.getAddition());
+        }
+        if (defensePower.getAddition() != null) {
+            log.info("减伤加成 {}", defensePower.getAddition());
+            harm = (int) (harm / defensePower.getAddition());
+        }
+        // 判断如果无法破防的结果
+        harm = harm < 0 ? 0 : harm;
         log.info("{} 血量 {}， 最终伤害{}", attachUnit.getType(), AppUtil.getUnitLeft(attachUnit), harm);
         Integer[] attach;
         if (attachNum < defenseNum) {
@@ -305,7 +317,7 @@ public class WsAttachResultService {
             // 判断是否有坟墓
             attachResult.setHaveTomb(false);
             for (Ability ability : beAttachAbility) {
-                if (!ability.getType().equals(AbilityEnum.CASTLE_GET.getType()) && !ability.getType().equals(AbilityEnum.UNDEAD.getType())) {
+                if (!ability.getType().equals(AbilityEnum.CASTLE_GET.type()) && !ability.getType().equals(AbilityEnum.UNDEAD.type())) {
                     record.getTomb().add(new Position(beAttachUnit.getRow(), beAttachUnit.getColumn()));
                     attachResult.setHaveTomb(true);
                     break;

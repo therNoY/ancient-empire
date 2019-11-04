@@ -17,7 +17,6 @@ import com.mihao.ancient_empire.service.UserMapService;
 import com.mihao.ancient_empire.service.UserSettingService;
 import com.mihao.ancient_empire.util.AuthUtil;
 import io.jsonwebtoken.lang.Collections;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -120,7 +119,7 @@ public class UserMapController {
         }
         // 管理员创建地图默认是遭遇战地图
         if (AuthUtil.getAuthId().equals(1)) {
-            userMap.setType(MapEnum.ENCOUNTER.getType());
+            userMap.setType(MapEnum.ENCOUNTER.type());
             userMapService.saveMap(userMap);
         }else {
             userMapService.saveMap(userMap);

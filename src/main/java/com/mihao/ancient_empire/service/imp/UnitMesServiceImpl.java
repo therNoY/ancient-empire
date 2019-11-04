@@ -7,7 +7,6 @@ import com.mihao.ancient_empire.common.vo.MyException;
 import com.mihao.ancient_empire.constant.RedisKey;
 import com.mihao.ancient_empire.constant.UnitEnum;
 import com.mihao.ancient_empire.dao.UnitMesDao;
-import com.mihao.ancient_empire.dto.ReqUnitInfoDto;
 import com.mihao.ancient_empire.dto.UnitInfo;
 import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
@@ -150,9 +149,8 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
         List<UnitMes> unitMesList = unitMesDao.selectList(queryWrapper);
 
         for (UnitMes unitMes : unitMesList) {
-
             // 不是lord 直接添加
-            if (!unitMes.getType().equals(UnitEnum.LORD.getType())) {
+            if (!unitMes.getType().equals(UnitEnum.LORD.type())) {
                 UnitInfo unitInfo = new UnitInfo();
                 UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(unitMes.getType(), 1);
                 List<Ability> abilityList = abilityService.getUnitAbilityListByType(unitMes.getType());
@@ -176,5 +174,35 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
 
         return unitInfoList;
     }
+
+
+    /**
+     * 获取可以购买的单位
+     * @return
+     */
+    @Override
+    @Cacheable("enableBuyUnit")
+    public List<UnitMes> getEnableBuyUnit(){
+        QueryWrapper<UnitMes> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("tradeable", true);
+        queryWrapper.eq("enable", true);
+        List<UnitMes> unitMesList = unitMesDao.selectList(queryWrapper);
+        return unitMesList;
+    }
+
+    @Override
+    @Cacheable("maxCheapUnit")
+    public UnitMes getMaxCheapUnit() {
+        List<UnitMes> unitMesList = getEnableBuyUnit();
+        int unitPrice = Integer.MAX_VALUE;
+        UnitMes maxCheapUnit = null;
+        for (UnitMes mes : unitMesList) {
+            if (mes.getPrice() < unitPrice) {
+                maxCheapUnit = mes;
+            }
+        }
+        return maxCheapUnit;
+    }
+
 
 }

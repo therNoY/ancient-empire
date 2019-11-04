@@ -64,9 +64,9 @@ public class PurifyEndHandle extends EndHandle {
                 List<Ability> abilityList = abilityService.getUnitAbilityListByType(unit.getType());
                 affect:
                 {
-                    if (AppUtil.isAround(cUnit, unit)) {
+                    if (!unit.isDead() && AppUtil.isAround(cUnit, unit)) {
                         for (Ability a : abilityList) {
-                            if (a.getType().equals(AbilityEnum.UNDEAD.getType())) {
+                            if (a.getType().equals(AbilityEnum.UNDEAD.type())) {
                                 // 是亡灵 并且在范围内
                                 if (changeList == null) {
                                     changeList = new ArrayList<>();
@@ -95,8 +95,8 @@ public class PurifyEndHandle extends EndHandle {
                             boolean isChange = false;
                             LifeChange lifeChange = new LifeChange(i);
                             int life = AppUtil.getUnitLeft(unit);
-                            if (unit.getStatus() != null && !unit.getStatus().equals(StateEnum.EXCITED.getType())) {
-                                lifeChange.setState(StateEnum.NORMAL.getType());
+                            if (unit.getStatus() != null && !unit.getStatus().equals(StateEnum.EXCITED.type())) {
+                                lifeChange.setState(StateEnum.NORMAL.type());
                                 isChange = true;
                             }
                             if (life < 100) {

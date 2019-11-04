@@ -40,7 +40,7 @@ public class ForestDefenseHandle extends DefenseHandle {
      */
     @Override
     public AttributesPower getDefensePower(String type, UserRecord record, Unit unit, UnitLevelMes levelMes, RegionMes regionMes, Unit beAttachUnit, AttributesPower attributesPower, List<Ability> beAttachAbility) {
-        if (regionMes.getType().equals(RegionEnum.FOREST.getType()) || regionMes.getType().equals(RegionEnum.GROVE.getType())) {
+        if (regionMes.getType().equals(RegionEnum.FOREST.type()) || regionMes.getType().equals(RegionEnum.GROVE.type())) {
             if (attributesPower.getNum() != null) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(FOREST)));
                 log.info("森林之子 获取防御加成{}", Integer.valueOf(AppConfig.get(FOREST)));

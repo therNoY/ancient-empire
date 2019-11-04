@@ -15,6 +15,6 @@ public class WsRespHelper {
 
     public static WSRespDto error(Integer errCode) {
         String codeMes = ErrorCode.getErrorMes(errCode);
-        return new WSRespDto(WsMethodEnum.ERROR.getType(), codeMes);
+        return new WSRespDto(WsMethodEnum.ERROR.type(), codeMes);
     }
 }

@@ -101,7 +101,8 @@ public class MovePathHandle {
      */
     private static List<Position> getEasyPath(Position currP, Position aimP, List<Position> positions) {
         List<Position> path = null;
-        if (Math.abs(currP.getRow() - aimP.getRow()) >= Math.abs(currP.getColumn() - aimP.getColumn())) {
+        // 设置先跑路径比较长的
+        if (Math.abs(currP.getRow() - aimP.getRow()) <= Math.abs(currP.getColumn() - aimP.getColumn())) {
             path = getHorizonPath(currP, aimP, positions);
             if (path == null) {
                 path = getVerticalPath(currP, aimP, positions);

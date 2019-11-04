@@ -3,6 +3,7 @@ package com.mihao.ancient_empire.dto;
 import com.mihao.ancient_empire.common.util.StringUtil;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * 单位类 用来渲染地图 和 返回前端的 不包含 单位的基本信息
@@ -89,6 +90,10 @@ public class Unit extends Site implements Serializable {
         this.level = level;
     }
 
+    public Boolean isDone() {
+        return isDone;
+    }
+
     public Boolean getDone() {
         return isDone;
     }
@@ -123,5 +128,21 @@ public class Unit extends Site implements Serializable {
 
     public void setStatusPresenceNum(Integer statusPresenceNum) {
         this.statusPresenceNum = statusPresenceNum;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Unit{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", life=" + Arrays.toString(life) +
+                ", isDead=" + isDead +
+                ", level=" + level +
+                ", isDone=" + isDone +
+                ", status='" + status + '\'' +
+                ", statusPresenceNum=" + statusPresenceNum +
+                ", experience=" + experience +
+                '}';
     }
 }

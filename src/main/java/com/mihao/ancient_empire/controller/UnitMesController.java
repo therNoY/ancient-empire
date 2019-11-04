@@ -7,7 +7,6 @@ import com.mihao.ancient_empire.common.util.RespHelper;
 import com.mihao.ancient_empire.common.vo.RespJson;
 import com.mihao.ancient_empire.constant.UnitEnum;
 import com.mihao.ancient_empire.dto.Army;
-import com.mihao.ancient_empire.dto.ReqUnitInfoDto;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.UnitInfo;
 import com.mihao.ancient_empire.entity.UnitMes;
@@ -93,7 +92,7 @@ public class UnitMesController {
         Army army = AppUtil.getCurrentArmy(record);
         boolean hasLord = false;
         for (Unit unit : army.getUnits()) {
-            if (unit.getType().equals(UnitEnum.LORD.getType())) {
+            if (unit.getType().equals(UnitEnum.LORD.type())) {
                 hasLord = true;
                 break;
             }

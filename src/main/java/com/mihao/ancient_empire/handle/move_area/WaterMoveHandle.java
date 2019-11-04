@@ -29,7 +29,7 @@ public class WaterMoveHandle extends MoveAreaHandle {
         List<BaseSquare> regionList = userRecord.getInitMap().getRegions();
         int index = (row - 1) * mapColumn + column - 1;
         String type = regionList.get(index).getType();
-        if (type.startsWith(RegionEnum.SEA.getType()) || type.startsWith(RegionEnum.BANK.getType())) {
+        if (type.startsWith(RegionEnum.SEA.type()) || type.startsWith(RegionEnum.BANK.type())) {
             return 1;
         }else {
             return super.getRegionDeplete(userRecord, row, column);

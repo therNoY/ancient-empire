@@ -1,6 +1,7 @@
 package com.mihao.ancient_empire.service;
 
 import com.mihao.ancient_empire.dto.map_dto.ReqInitMapDto;
+import com.mihao.ancient_empire.dto.record_dto.ReqSaveRecordDto;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 
 public interface UserRecordService {
@@ -9,4 +10,8 @@ public interface UserRecordService {
     void initMap();
 
     UserRecord getRecordById(String uuid);
+
+    boolean saveRecord(ReqSaveRecordDto saveRecordDto);
+
+    boolean saveTempRecord(String uuid);
 }

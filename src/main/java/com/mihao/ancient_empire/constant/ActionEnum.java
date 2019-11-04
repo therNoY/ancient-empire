@@ -13,4 +13,5 @@ public enum  ActionEnum implements BaseEnum {
     OCCUPIED, // 占领
     REPAIR,// 修复
     SUMMON, // 召唤
+    HEAL, //治疗
 }

@@ -88,7 +88,6 @@ public class UserMapServiceImp implements UserMapService {
         List<RespSimpleDrawing> simpleDrawings = new ArrayList<>();
         Integer index = reqSimpleDrawing.getIndex();
         String type = reqSimpleDrawing.getType();
-        Integer row = reqSimpleDrawing.getRow();
         Integer column = reqSimpleDrawing.getColumn();
         List<BaseSquare> regionList = reqSimpleDrawing.getRegionList();
         // 如果是以sea 或者海开头的话
@@ -166,7 +165,7 @@ public class UserMapServiceImp implements UserMapService {
     public void updateMap(UserMap userMap) {
         Update update = new Update();
         update.set("type", userMap.getType());
-        mongoTemplate.updateFirst(new Query(Criteria.where("uuid").is(userMap.getUuid())), update, CollectionEnum.USER_MAP.getType());
+        mongoTemplate.updateFirst(new Query(Criteria.where("uuid").is(userMap.getUuid())), update, CollectionEnum.USER_MAP.type());
     }
 
     /**
@@ -176,7 +175,7 @@ public class UserMapServiceImp implements UserMapService {
     @Override
     @Cacheable(RedisKey.ENCOUNTER_MAP)
     public List<UserMap> getEncounterMaps() {
-        return userMapRepository.getAllByCreateUserIdAndType(UserEnum.ADMIN.getId(), MapEnum.ENCOUNTER.getType());
+        return userMapRepository.getAllByCreateUserIdAndType(UserEnum.ADMIN.getId(), MapEnum.ENCOUNTER.type());
     }
 
     /**
@@ -217,7 +216,7 @@ public class UserMapServiceImp implements UserMapService {
     @Override
     public UserMap getEncounterMapById(String uuid) {
         UserMap userMap = userMapRepository.getFirstByUuid(uuid);
-        if (userMap.getCreateUserId() != UserEnum.ADMIN.getId() || !MapEnum.ENCOUNTER.getType().equals(userMap.getType())) {
+        if (userMap.getCreateUserId() != UserEnum.ADMIN.getId() || !MapEnum.ENCOUNTER.type().equals(userMap.getType())) {
             // 不是遭遇地图
             return null;
         }

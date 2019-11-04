@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * 防御力
+ * 根据不同的能力判断防御力加成
  */
 public class DefenseHandle {
 
@@ -64,10 +64,10 @@ public class DefenseHandle {
             // 判断是物理防御还是魔法防御
             if (type.equals(PHYSICAL_DEFENSE)) {
                 defense = levelMes.getPhysicalDefense();
-                log.info("{} 物理防御{}", beAttachUnit.getType(), defense);
+                log.info("{} 初始物理防御{}", beAttachUnit.getType(), defense);
             } else {
                 defense = levelMes.getMagicDefense();
-                log.info("{} 魔法防御{}", beAttachUnit.getType(), defense);
+                log.info("{} 初始魔法防御{}", beAttachUnit.getType(), defense);
             }
 
             attributesPower.setNum(defense);

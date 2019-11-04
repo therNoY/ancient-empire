@@ -57,14 +57,14 @@ public class WsSummonActionService {
         if(respSummonResult.getLeaveUp() != null && respSummonResult.getLeaveUp()) {
             unit.setLevel(unit.getLevel() + 1);
         }
-        Unit newUnit = new Unit(UnitEnum.BONE.getType(), summonDto.getTomb().getRow(), summonDto.getTomb().getColumn());
+        Unit newUnit = new Unit(UnitEnum.BONE.type(), summonDto.getTomb().getRow(), summonDto.getTomb().getColumn());
         newUnit.setLevel(unit.getLevel());
 
         respSummonResult.setArmyIndex(armyIndex);
         respSummonResult.setBone(newUnit);
 
         // 3.mq更新mongo 坟墓减少 军队增加1 坟墓减少1
-        mqHelper.sendMongoCdr(MqMethodEnum.ACTION_SUMMON, new SummonDto(uuid, summonDto.getIndex(),respSummonResult, summonDto.getTomb()));
+        mqHelper.sendMongoCdr(MqMethodEnum.ACTION_SUMMON, new SummonDto(uuid, summonDto.getIndex(),respSummonResult, summonDto.getTomb(), newUnit));
         return respSummonResult;
     }
 }

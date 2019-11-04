@@ -9,6 +9,7 @@ import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.map_dto.ReqBuyUnitDto;
 import com.mihao.ancient_empire.dto.map_dto.ReqInitMapDto;
 import com.mihao.ancient_empire.dto.mongo_dto.BuyUnitDto;
+import com.mihao.ancient_empire.dto.record_dto.ReqSaveRecordDto;
 import com.mihao.ancient_empire.entity.UnitMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.service.UnitMesService;
@@ -21,6 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.ModelAttributeMethodProcessor;
+import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.validation.constraints.NotBlank;
 
 @RestController
 public class UserRecordController {
@@ -36,6 +41,7 @@ public class UserRecordController {
 
     /**
      * 用户选择地图 设置初始化地图 获取初始化地图的Id
+     *
      * @param reqInitMapDto
      * @param result
      * @return
@@ -48,6 +54,7 @@ public class UserRecordController {
 
     /**
      * 建立WS 连接
+     *
      * @return
      */
     @PostMapping("/tempRecord")
@@ -65,4 +72,29 @@ public class UserRecordController {
     }
 
 
+    /**
+     * 用户 登陆过保存临时地图
+     */
+    @PostMapping("/api/tempRecord")
+    public RespJson saveTempRecord(@NotBlank String uuid) {
+        // 判断是否存在
+        boolean isSave = userRecordService.saveTempRecord(uuid);
+        if (isSave) {
+            return RespHelper.successResJson();
+        }
+        return RespHelper.errResJson(41000);
+    }
+
+    /**
+     * 保存地图
+     */
+    @PostMapping("/api/record")
+    public RespJson saveRecord(@RequestBody @Validated ReqSaveRecordDto saveRecordDto, BindingResult result) {
+        // 判断是否存在
+        boolean isSave = userRecordService.saveRecord(saveRecordDto);
+        if (isSave) {
+            return RespHelper.successResJson();
+        }
+        return RespHelper.errResJson(41000);
+    }
 }
