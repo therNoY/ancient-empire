@@ -1,6 +1,7 @@
 package com.mihao.ancient_empire.ai.dto;
 
 import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
+import com.mihao.ancient_empire.ai.handle.AiActiveHandle;
 import com.mihao.ancient_empire.dto.Site;
 
 public class ActiveResult {

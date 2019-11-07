@@ -1,16 +1,13 @@
 package com.mihao.ancient_empire.ai;
 
 import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
-import com.mihao.ancient_empire.ai.dto.UnitActionResult;
-import com.mihao.ancient_empire.ai.dto.ActiveResult;
-import com.mihao.ancient_empire.ai.dto.SelectUnitResult;
+import com.mihao.ancient_empire.ai.dto.*;
 import com.mihao.ancient_empire.ai.handle.AiActiveHandle;
 import com.mihao.ancient_empire.ai.handle.AiMoveHandle;
 import com.mihao.ancient_empire.ai.handle.AiSelectUnitHandle;
 import com.mihao.ancient_empire.constant.RegionEnum;
-import com.mihao.ancient_empire.dto.BaseSquare;
-import com.mihao.ancient_empire.dto.Site;
-import com.mihao.ancient_empire.dto.SiteSquare;
+import com.mihao.ancient_empire.dto.*;
+import com.mihao.ancient_empire.dto.ws_dto.RespEndResultDto;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.service.UserRecordService;
 import com.mihao.ancient_empire.util.AppUtil;
@@ -36,11 +33,11 @@ public class RobotManger {
     private static AiMessageSender aiMessageSender;
     private static Map<String, RobotManger> selfManger = new HashMap<>();
     private static ThreadPoolExecutor executor;
+    private static ScheduledExecutorService scheduledExecutorService;
     private static Map<String, SelectUnitResult> selectUnitResultMap = null;
     private static Map<String, UserRecord> recordMap;
 
 
-    private UserRecord record;
     /* 维持一个保存有map 和map 对应状态的类 */
     private AiMoveHandle aiMoveHandle; /*每一个record 生成一个*/
     private AiSelectUnitHandle aiSelectUnitHandle; /*每一个record 生成一个*/
@@ -58,6 +55,7 @@ public class RobotManger {
                 new ArrayBlockingQueue<Runnable>(9),
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy());
+        scheduledExecutorService = Executors.newScheduledThreadPool(30);
         selectUnitResultMap = new HashMap<>();
         recordMap = new HashMap<>();
         aiMessageSender = ApplicationContextHolder.getBean(AiMessageSender.class);
@@ -65,7 +63,6 @@ public class RobotManger {
     }
 
     private RobotManger(UserRecord record) {
-        this.record = record;
         for (int i = 0; i < record.getInitMap().getRegions().size(); i++) {
             BaseSquare square = record.getInitMap().getRegions().get(i);
             if (square.getType().equals(RegionEnum.CASTLE.type())) {
@@ -74,27 +71,10 @@ public class RobotManger {
                 villageSite.add(new SiteSquare(square, AppUtil.getSiteByMapIndex(i, record.getInitMap().getColumn())));
             }
         }
-        aiMoveHandle = new AiMoveHandle();
-        aiSelectUnitHandle = new AiSelectUnitHandle();
-        log.error("RobotManger 创建一次》》》》》》》》》》》》》》》》》》");
+        aiMoveHandle = new AiMoveHandle(record.getUuid());
+        aiSelectUnitHandle = new AiSelectUnitHandle(record.getUuid());
+        log.warn("每个不同的record 创建一个实例对象id = {}", record.getUuid());
     }
-
-//    public static RobotManger getInstance(String recordId) {
-//        UserRecord record;
-//        if ((record = getRecordCatch(recordId)) == null) {
-//            record = userRecordService.getRecordById(recordId);
-//            saveRecord(record);
-//        }
-//
-//        if (selfManger.get(recordId) == null) {
-//            synchronized (RobotManger.class) {
-//                RobotManger robotManger = new RobotManger(record);
-//                selfManger.put(recordId, robotManger);
-//            }
-//        }
-//
-//        return selfManger.get(record.getUuid());
-//    }
 
     public static RobotManger getInstance(UserRecord record) {
         if (selfManger.get(record.getUuid()) == null) {
@@ -116,34 +96,61 @@ public class RobotManger {
      * @param active
      */
     public static void submitActive(RobotActive active) {
-
         CompletableFuture<ActiveResult> future = CompletableFuture.supplyAsync(active, executor);
 
         // 对结果的处理
         future.thenAccept(ar -> {
-            if (ar instanceof SelectUnitResult) {
+            try {
+                if (ar instanceof SelectUnitResult) {
+                    // 1.准备发送给前端
+                    SelectUnitResult selectUnitResult = (SelectUnitResult) ar;
+                    log.info("执行了单位选择操作 最终选择位置：{}", selectUnitResult.getSite());
+                    aiMessageSender.sendSelectUnit(selectUnitResult);
 
-                SelectUnitResult selectUnitResult = (SelectUnitResult) ar;
-                log.info("执行了单位选择操作 最终选择位置：{}", selectUnitResult.getSite());
-                aiMessageSender.sendSelectUnit(selectUnitResult);
-                // 选择单位结束准备延迟执行被选择单位的移动
-                sleep(100);
-                RobotManger.addSelectResult(selectUnitResult);
-                RobotManger.submitActive(new RobotActive(selectUnitResult.getRecordId(), AiActiveEnum.MOVE_UNIT));
-                log.info("选择完毕 提交准备移动单位的任务");
+                    // 2. 选择呢单位后提交移动单位任务
+                    log.info("[ 提交准备移动单位的任务 ]");
+                    RobotManger.addSelectResult(selectUnitResult);
+                    RobotManger.submitActive(new RobotActive(selectUnitResult.getRecordId(), AiActiveEnum.MOVE_UNIT));
 
-            }else if (ar instanceof UnitActionResult) {
-                UnitActionResult unitActionResult = (UnitActionResult) ar;
-                log.info("执行了单位行动类型{}", unitActionResult.getResultEnum());
-                // 根据action 的类型进行选择
-                switch (unitActionResult.getResultEnum()) {
-                    case REPAIR:
-                        break;
-                    case MOVE_UNIT:
-                        doSendMoveUnitMes(unitActionResult);
-                        break;
+                } else if (ar instanceof UnitActionResult) {
+                    UnitActionResult unitActionResult = (UnitActionResult) ar;
+                    log.info("执行了单位行动类型{}", unitActionResult.getResultEnum());
+                    // 根据action 的类型进行选择
+                    switch (unitActionResult.getResultEnum()) {
+                        case REPAIR:
+                            break;
+                        case MOVE_UNIT:
+                            doSendMoveUnitMes(unitActionResult);
+                            break;
+                    }
+                } else if (ar instanceof BuyUnitResult) {
+                    // 1. 准备发送给前端
+                    BuyUnitResult buyUnitResult = (BuyUnitResult) ar;
+                    Unit unit = new Unit(buyUnitResult.getUnitMes().getType(), buyUnitResult.getSite().getRow(), buyUnitResult.getSite().getColumn());
+                    buyUnitResult.setUnit(unit);
+                    aiMessageSender.sendByUnit(buyUnitResult);
+
+                    // 2.更新 record 的信息
+                    UserRecord record = recordMap.get(ar.getRecordId());
+                    int currentArmy = AppUtil.getCurrentArmyIndex(record);
+                    buyUnitResult.setArmyIndex(currentArmy);
+                    Army army = record.getArmyList().get(currentArmy);
+                    army.getUnits().add(unit);
+                    army.setPop(army.getPop() + buyUnitResult.getUnitMes().getPopulation());
+                    army.setMoney(army.getMoney() - buyUnitResult.getUnitMes().getPrice());
+
+                    // 3. 准备提交选择下一个单位的命令
+                    RobotActive newAction = new RobotActive(record, AiActiveEnum.SELECT_UNIT);
+                    RobotManger.getInstance(record).submitActive(newAction);
+                    log.info("[ 开始新的一轮提交选择单位任务 ]");
+                }else if (ar instanceof EndTurnResult) {
+                    EndTurnResult endTurnResult = (EndTurnResult) ar;
                 }
+            } catch (Exception e) {
+                log.error("", e);
+                throw e;
             }
+
 
         });
 
@@ -157,25 +164,45 @@ public class RobotManger {
 
 
     /**
+     * 对一些延迟任务的处理
+     *
+     * @param runnable
+     * @param time
+     */
+    public static void addTimerTask(Runnable runnable, long time) {
+        scheduledExecutorService.schedule(runnable, time, TimeUnit.MILLISECONDS);
+    }
+
+    /**
      * 单位没有实际的可选行动
+     *
      * @param unitActionResult
      */
     private static void doSendMoveUnitMes(UnitActionResult unitActionResult) {
-        aiMessageSender.sendMoveUnit(recordMap.get(unitActionResult.getRecordId()), selectUnitResultMap.get(unitActionResult.getRecordId()), unitActionResult);
+        // 1.发送单位移动命令
+        UserRecord record = recordMap.get(unitActionResult.getRecordId());
+        aiMessageSender.sendMoveUnit(record, selectUnitResultMap.get(unitActionResult.getRecordId()), unitActionResult);
+
+        // 2.准备同时发送endAction 命令
+        RespEndResultDto endResultDto = AiActiveHandle.getEndDto(record, unitActionResult.getUnit());
+        EndUnitResult endUnitResult = new EndUnitResult(record.getUuid(), unitActionResult.getSite(), endResultDto.getLifeChanges());
+        int time = unitActionResult.getLength() * 250 + 200;
+        log.info("准备提交结束移动命令{}, 延迟{} ms", endResultDto, time);
+        aiMessageSender.sendEndUnit(endUnitResult, time);
+
+        // 3.更新record 移动后的状态
+        unitActionResult.getUnit().setRow(unitActionResult.getSite().getRow());
+        unitActionResult.getUnit().setColumn(unitActionResult.getSite().getColumn());
+        unitActionResult.getUnit().setDone(true);
+
+        // 4.准备提交选择下一个单位的命令
+        addTimerTask(() -> {
+            RobotActive active = new RobotActive(record, AiActiveEnum.SELECT_UNIT);
+            RobotManger.getInstance(record).submitActive(active);
+            log.info("[ 开始新的一轮提交选择单位任务 ]");
+        }, time + 100);
     }
 
-
-    /**
-     * 延迟执行
-     * @param time
-     */
-    private static void sleep(long time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * 保存选择单位的记录

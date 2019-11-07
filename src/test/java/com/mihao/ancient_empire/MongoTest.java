@@ -1,9 +1,16 @@
 package com.mihao.ancient_empire;
 
+import com.mihao.ancient_empire.common.util.JacksonUtil;
 import com.mihao.ancient_empire.common.vo.test_dto.Dog;
 import com.mihao.ancient_empire.constant.CollectionEnum;
 import com.mihao.ancient_empire.constant.MapEnum;
 import com.mihao.ancient_empire.entity.mongo.UserMap;
+import com.mongodb.Block;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;;
 import com.mihao.ancient_empire.mongo.dao.UserMapRepository;
@@ -15,6 +22,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.*;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -65,5 +73,42 @@ public class MongoTest {
         mongoTemplate.updateFirst(new Query(Criteria.where("name").is("大黄")), update, dog);
         Dog dog2 = mongoTemplate.findOne(new Query(Criteria.where("name").is("大黄")), Dog.class, dog);
         System.out.println(dog2);
+    }
+
+
+    @Test
+    public void write() throws IOException {
+        List<UserMap> userMaps = userMapRepository.findAll();
+        File file = new File("D:/userMap.txt");
+
+        String j = JacksonUtil.toJson(userMaps);
+
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+
+
+        bufferedWriter.write(j);
+
+        bufferedWriter.close();
+    }
+
+    @Test
+    public void Reader() throws IOException {
+        File file = new File("D:/userMap.txt");
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        String info = bufferedReader.readLine();
+
+        List<UserMap> userMaps = JacksonUtil.jsonToList(info, UserMap.class);
+        userMaps.forEach(userMap -> userMapRepository.save(userMap));
+    }
+
+    public static void main(String[] ag) {
+        MongoClient mongoClient = new MongoClient("192.168.43.121", 27017);
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ancient-empire");
+        MongoCollection<Document> de =  mongoDatabase.getCollection("dog");
+        de.listIndexes().forEach((Block<? super Document>) a->{
+            System.out.println(a);
+        });
+
+        mongoClient.close();
     }
 }

@@ -20,4 +20,5 @@ public interface UserMapRepository extends MongoRepository<UserMap, String> {
     List<UserMap> getAllByCreateUserIdAndType(Integer id, String type);
 
     UserMap getFirstByUuid(String uuid);
+
 }

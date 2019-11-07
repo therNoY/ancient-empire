@@ -35,8 +35,8 @@ public class AiSelectUnitHandle extends AiActiveHandle {
     private static final Integer physical = 1;
     private static final Integer magic = 2;
 
-    public AiSelectUnitHandle() {
-        log.error("创建一次AiSelectUnitHandle？？？？？？？？？？？？？");
+    public AiSelectUnitHandle(String id) {
+        log.error("创建一次AiSelectUnitHandle id={}", id);
     }
 
     @Override
@@ -153,11 +153,15 @@ public class AiSelectUnitHandle extends AiActiveHandle {
      * @return
      */
     private Unit getLifeHealth(Army army) {
-        return army.getUnits().stream()
+        Optional<Unit> optionalUnit = army.getUnits().stream()
                 .filter(unit -> !unit.isDone() && !unit.isDead())
                 .sorted(Comparator.comparingInt(u -> -1 * AppUtil.getIntByIntegers(u.getLife())))
                 .sorted(statusComparator)
-                .findFirst().get();
+                .findFirst();
+        if (optionalUnit.isPresent()) {
+            return optionalUnit.get();
+        }
+        return null;
     }
 
     /**
@@ -186,7 +190,6 @@ public class AiSelectUnitHandle extends AiActiveHandle {
                 castleList.add(new CastleRegion(square, site));
             }
         }
-
         if (castleList.size() == 0) {
             log.info("没有自己的城堡直接结束");
             return null;
@@ -201,11 +204,12 @@ public class AiSelectUnitHandle extends AiActiveHandle {
                 selectCastle = entry.getKey();
             }
         }
-        log.info("从众多城堡中 {} 选出 {} 召唤", castleList, selectCastle);
+        log.info("从众多城堡中 {} 选出 {} 召唤", castleList.size(), selectCastle);
 
         // 准备希望要召唤的单位
         UnitMes loadMes = unitMesService.getByType(UnitEnum.LORD.type());
-        if (!AppUtil.hasLoad(army) && army.getMoney() >= loadMes.getPrice()) {
+        if (!AppUtil.hasLoad(army) && army.getMoney() >= loadMes.getPrice()
+                && loadMes.getPopulation() + army.getPop() <= record.getMaxPop()) {
             log.info("主帅已死 资金足够 重新招募");
             buyUnitResult = new BuyUnitResult(record.getUuid(), selectCastle.getSite(), loadMes);
             return buyUnitResult;
@@ -213,10 +217,12 @@ public class AiSelectUnitHandle extends AiActiveHandle {
 
         // 获取现在需要的能力
         NeedUnitType needUnitType = getNeedAbility(record);
-        // 获取可以买的单位列表
+        // 获取可以买的单位列表 TODO 考虑过滤loader
         List<UnitMes> canBuyUnit = unitMesService.getEnableBuyUnit()
                 .stream().filter(mes -> {
-                    if (mes.getPrice() > army.getMoney()) {
+                    if ((mes.getPrice() > army.getMoney() && loadMes.getPopulation() + army.getPop() > record.getMaxPop())
+                            || mes.getType().equals(UnitEnum.LORD.type())) {
+                        // 过滤 超过金额和人口的不买， 领主不买，能卖的话早就买了
                         return false;
                     }
                     return true;
@@ -227,7 +233,7 @@ public class AiSelectUnitHandle extends AiActiveHandle {
         if (needUnitType.isNeedAbility) {
             log.info("购买单位需要的能力 {}", needUnitType.abilityEnum);
             List<UnitMes> buyUnitList = canBuyUnit.stream().filter(mes -> {
-                if (abilityService.getUnitAbilityListByType(mes.getType()).contains(needUnitType.abilityEnum.type())) {
+                if (abilityService.getUnitAbilityListByType(mes.getType()).contains(new Ability(needUnitType.abilityEnum))) {
                     return true;
                 } else {
                     return false;

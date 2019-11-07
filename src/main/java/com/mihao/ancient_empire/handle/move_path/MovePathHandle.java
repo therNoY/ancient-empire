@@ -18,7 +18,7 @@ public class MovePathHandle {
         // 1.获取移动路径
         Position currP = moveDto.getCurrentPoint();
         Position aimP = moveDto.getAimPoint();
-        List<Position> positions = moveDto.getPositions();
+        List<Position> positions = moveDto.getMoveArea();
         List<Position> path = null;
 
         // 2.如果两点本来就是可达的直接返回

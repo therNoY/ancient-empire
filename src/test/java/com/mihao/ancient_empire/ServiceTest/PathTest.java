@@ -17,7 +17,7 @@ public class PathTest {
         ReqMoveDto moveDto = JacksonUtil.fileToBean(file, ReqMoveDto.class);
 //        Position aimP = moveDto.getAimPoint();
 //        Position cP = moveDto.getCurrentPoint();
-//        List<Position> positions = moveDto.getPositions();
+//        List<Position> positions = moveDto.getMoveArea();
 //        List<Position> path = ws.getMovePath(moveDto);
 //        System.out.println(path.size());
 //        System.out.println(path.size());

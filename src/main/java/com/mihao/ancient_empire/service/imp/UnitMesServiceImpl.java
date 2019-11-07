@@ -194,11 +194,12 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
     @Cacheable("maxCheapUnit")
     public UnitMes getMaxCheapUnit() {
         List<UnitMes> unitMesList = getEnableBuyUnit();
-        int unitPrice = Integer.MAX_VALUE;
+        int minPrice = Integer.MAX_VALUE;
         UnitMes maxCheapUnit = null;
         for (UnitMes mes : unitMesList) {
-            if (mes.getPrice() < unitPrice) {
+            if (mes.getPrice() < minPrice) {
                 maxCheapUnit = mes;
+                minPrice = mes.getPrice();
             }
         }
         return maxCheapUnit;

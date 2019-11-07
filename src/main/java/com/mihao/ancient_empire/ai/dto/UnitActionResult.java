@@ -1,9 +1,11 @@
 package com.mihao.ancient_empire.ai.dto;
 
 import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
+import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Site;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.ws_dto.PathPosition;
+import com.mihao.ancient_empire.util.AppUtil;
 
 import java.util.List;
 
@@ -14,6 +16,8 @@ public class UnitActionResult extends ActiveResult {
 
 
     private Unit unit;
+
+    private List<Position> moveArea;
 
     private List<PathPosition> pathPositions;
 
@@ -28,6 +32,22 @@ public class UnitActionResult extends ActiveResult {
         this.unit = unit;
     }
 
+    public UnitActionResult(String recordId, AiActiveEnum actionEnum, Site site, Unit unit, List<Position> moveArea) {
+        super.setRecordId(recordId);
+        super.setSite(site);
+        super.setResultEnum(actionEnum);
+        this.unit = unit;
+        this.moveArea = moveArea;
+    }
+
+
+    public List<Position> getMoveArea() {
+        return moveArea;
+    }
+
+    public void setMoveArea(List<Position> moveArea) {
+        this.moveArea = moveArea;
+    }
 
     public Unit getUnit() {
         return unit;
@@ -43,5 +63,9 @@ public class UnitActionResult extends ActiveResult {
 
     public void setPathPositions(List<PathPosition> pathPositions) {
         this.pathPositions = pathPositions;
+    }
+
+    public int getLength() {
+        return AppUtil.getLength(AppUtil.getPosition(unit), getSite());
     }
 }

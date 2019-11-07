@@ -2,6 +2,7 @@ package com.mihao.ancient_empire.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.mihao.ancient_empire.constant.AbilityEnum;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -49,6 +50,9 @@ public class Ability implements Serializable {
 
     public Ability(String type) {
         this.type = type;
+    }
+    public Ability(AbilityEnum abilityEnum) {
+        this.type = abilityEnum.type();
     }
 
     public Integer getId() {

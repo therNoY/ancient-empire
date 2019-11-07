@@ -8,11 +8,13 @@ import com.mihao.ancient_empire.ai.dto.SelectUnitResult;
 import com.mihao.ancient_empire.constant.*;
 import com.mihao.ancient_empire.dto.*;
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
+import com.mihao.ancient_empire.dto.ws_dto.RespEndResultDto;
 import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.RegionMes;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.UnitMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
+import com.mihao.ancient_empire.handle.end.EndHandle;
 import com.mihao.ancient_empire.service.RegionMesService;
 import com.mihao.ancient_empire.service.UnitLevelMesService;
 import com.mihao.ancient_empire.util.AppUtil;
@@ -36,8 +38,8 @@ public class AiMoveHandle extends AiActiveHandle {
     private static RegionMesService regionMesService;
     private static UnitLevelMesService unitLevelMesService;
 
-    public AiMoveHandle() {
-        log.warn("创建一次 AiMoveHandle 》》》》》》》》》》》》》》》》》");
+    public AiMoveHandle(String record) {
+        log.warn("创建一次 AiMoveHandle {}", record);
     }
 
     /*保存和类有关的数据*/
@@ -46,7 +48,7 @@ public class AiMoveHandle extends AiActiveHandle {
     Unit selectUnit;
     Site currSite;
     List<Ability> abilityList;
-    List<Site> moveArea = null;
+    List<Position> moveArea = null;
     UnitMes unitMes;
     RobotManger robotManger;
     List<String> campColors;
@@ -79,7 +81,7 @@ public class AiMoveHandle extends AiActiveHandle {
         ReqUnitIndexDto reqUnitIndexDto = new ReqUnitIndexDto(selectUnitResult.getArmyIndex(), selectUnitResult.getUnitIndex());
         Object object = moveAreaService.getMoveArea(record, reqUnitIndexDto, selectUnit, false);
         if (object instanceof List) {
-            this.moveArea = (List<Site>) object;
+            this.moveArea = (List<Position>) object;
         } else {
             log.error("获取移动区域错误");
         }
@@ -156,7 +158,7 @@ public class AiMoveHandle extends AiActiveHandle {
         // 3. 单位没有可以直接进行的操作 获取将来式操作
         if (robotManger.isThreatened(currSite)) {
             log.info("自己的领地受到威胁 直接结束");
-            return new UnitActionResult(record.getUuid(), AiActiveEnum.END, currSite);
+            return new UnitActionResult(record.getUuid(), AiActiveEnum.END, currSite, selectUnit);
         }
         if (abilityList.contains(AbilityEnum.VILLAGE_GET.ability())) {
             Site targetSite = getCanBeOccVillage();
@@ -164,7 +166,7 @@ public class AiMoveHandle extends AiActiveHandle {
                 log.info("有占领村庄的能力准备选择最近的可占领的村庄{}", targetSite);
                 Site site = getNextPositionToTarget(targetSite);
                 robotManger.addDangerVillage(targetSite);
-                return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site);
+                return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site, selectUnit, moveArea);
             }
         }
         Unit enemyLoad;
@@ -172,7 +174,7 @@ public class AiMoveHandle extends AiActiveHandle {
         if ((enemyLoad = getNearestEnemyCommander()) != null) {
             log.info("找到最近的敌军指挥官 准备并向他移动");
             Site site = getNextPositionToTarget(AppUtil.getPosition(enemyLoad));
-            return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site);
+            return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site, selectUnit, moveArea);
         } else {
             log.info("没有找到最近的敌军指挥官");
             if (abilityList.contains(AbilityEnum.CASTLE_GET.ability())) {
@@ -180,22 +182,22 @@ public class AiMoveHandle extends AiActiveHandle {
                 if (castleSite != null) {
                     log.info("司令官找到最近的可占领的城堡{}", castleSite);
                     Site site = getNextPositionToTarget(castleSite);
-                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site);
+                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site, selectUnit, moveArea);
                 } else {
                     Site niceSite = getPreferredStandbyPosition();
                     log.info("没找到最近可占领的城堡，找到最远移动的点{}", niceSite);
-                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, niceSite);
+                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, niceSite, selectUnit, moveArea);
                 }
             } else {
                 Unit nearestEnemy;
                 if ((nearestEnemy = getNearestEnemy()) != null) {
                     Site nextPosition = getNextPositionToTarget(AppUtil.getPosition(nearestEnemy));
                     log.info("普通单位找到最近的可攻击的单位{}", nextPosition);
-                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, nextPosition);
+                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, nextPosition, selectUnit, moveArea);
                 } else {
                     Site niceSite = getPreferredStandbyPosition();
                     log.info("没有可攻击的单位找到最好的移动地点{}", niceSite);
-                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, niceSite);
+                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, niceSite, selectUnit, moveArea);
 
                 }
             }
@@ -352,10 +354,12 @@ public class AiMoveHandle extends AiActiveHandle {
         Site next = moveArea.get(0);
         int minDistance = Integer.MAX_VALUE;
         for (Site site : moveArea) {
-            int distance = AppUtil.getLength(site, targetSite);
-            if (distance < minDistance) {
-                next = site;
-                minDistance = distance;
+            if (!AppUtil.isUnitsContentSite(army.getUnits(), site)) {
+                int distance = AppUtil.getLength(site, targetSite);
+                if (distance < minDistance) {
+                    next = site;
+                    minDistance = distance;
+                }
             }
         }
 
@@ -464,10 +468,12 @@ public class AiMoveHandle extends AiActiveHandle {
         Site niceSite = moveArea.get(0);
         int max_standby_score = Integer.MIN_VALUE;
         for (Site site : moveArea) {
-            int score = getStandbyScore(site);
-            if (score > max_standby_score) {
-                niceSite = site;
-                max_standby_score = score;
+            if (!AppUtil.isUnitsContentSite(army.getUnits(), site)) {
+                int score = getStandbyScore(site);
+                if (score > max_standby_score) {
+                    niceSite = site;
+                    max_standby_score = score;
+                }
             }
         }
         return niceSite;
@@ -575,4 +581,6 @@ public class AiMoveHandle extends AiActiveHandle {
         }
         return heal;
     }
+
+
 }

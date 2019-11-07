@@ -21,4 +21,9 @@ public class CastleRegion extends BaseSquare {
     public void setSite(Site site) {
         this.site = site;
     }
+
+    @Override
+    public String toString() {
+        return site.toString();
+    }
 }

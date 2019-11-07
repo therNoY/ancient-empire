@@ -480,4 +480,23 @@ public class AppUtil {
                 return 0;
         }
     }
+
+    public static Unit getUnitId(UserRecord record, String uuid) {
+        Army army = AppUtil.getCurrentArmy(record);
+        for (Unit unit : army.getUnits()) {
+            if (unit.getId().equals(uuid)) {
+                return unit;
+            }
+        }
+        return null;
+    }
+    public static boolean isUnitsContentSite(List<Unit> units, Site site) {
+        for (Unit u: units) {
+            if (u.getRow().equals(site.getRow()) && u.getColumn().equals(site.getColumn())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
