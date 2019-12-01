@@ -5,13 +5,20 @@ import com.mihao.ancient_empire.ai.dto.*;
 import com.mihao.ancient_empire.ai.handle.AiActiveHandle;
 import com.mihao.ancient_empire.ai.handle.AiMoveHandle;
 import com.mihao.ancient_empire.ai.handle.AiSelectUnitHandle;
+import com.mihao.ancient_empire.constant.ArmyEnum;
 import com.mihao.ancient_empire.constant.RegionEnum;
+import com.mihao.ancient_empire.constant.WSPath;
+import com.mihao.ancient_empire.constant.WsMethodEnum;
 import com.mihao.ancient_empire.dto.*;
-import com.mihao.ancient_empire.dto.ws_dto.RespEndResultDto;
+import com.mihao.ancient_empire.dto.ws_dto.*;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
+import com.mihao.ancient_empire.handle.move_path.MovePathHandle;
 import com.mihao.ancient_empire.service.UserRecordService;
 import com.mihao.ancient_empire.util.AppUtil;
 import com.mihao.ancient_empire.util.ApplicationContextHolder;
+import com.mihao.ancient_empire.util.WsRespHelper;
+import com.mihao.ancient_empire.websocket.service.WsEndRoundService;
+import com.mihao.ancient_empire.websocket.service.WsMoveAreaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +38,8 @@ public class RobotManger {
 
     private static UserRecordService userRecordService;
     private static AiMessageSender aiMessageSender;
+    private static WsEndRoundService endRoundService;
+    private static WsMoveAreaService moveAreaService;
     private static Map<String, RobotManger> selfManger = new HashMap<>();
     private static ThreadPoolExecutor executor;
     private static ScheduledExecutorService scheduledExecutorService;
@@ -44,8 +53,11 @@ public class RobotManger {
 
     private List<Site> dangerCastle = new ArrayList<>(); // 有危险的城堡
     private List<Site> dangerVillage = new ArrayList<>(); // 有危险的村庄
-    List<SiteSquare> castleSite = new ArrayList<>();
-    List<SiteSquare> villageSite = new ArrayList<>();
+    private List<PathPosition> pathPositions = null; /*上一个单位移动的路径*/
+    private Map<Integer, List<Site>> aimSite = new HashMap<>(); // 当前单位想要占领的或者修复的点
+    List<SiteSquare> castleSite = new ArrayList<>(); // 所有的城堡
+    List<SiteSquare> villageSite = new ArrayList<>(); // 所有的村庄
+    List<SiteSquare> ruinsSite = new ArrayList<>(); // 当前地图所有的废墟
 
     static {
         executor = new ThreadPoolExecutor(3,
@@ -60,6 +72,8 @@ public class RobotManger {
         recordMap = new HashMap<>();
         aiMessageSender = ApplicationContextHolder.getBean(AiMessageSender.class);
         userRecordService = ApplicationContextHolder.getBean(UserRecordService.class);
+        endRoundService = ApplicationContextHolder.getBean(WsEndRoundService.class);
+        moveAreaService = ApplicationContextHolder.getBean(WsMoveAreaService.class);
     }
 
     private RobotManger(UserRecord record) {
@@ -69,6 +83,8 @@ public class RobotManger {
                 castleSite.add(new SiteSquare(square, AppUtil.getSiteByMapIndex(i, record.getInitMap().getColumn())));
             } else if (square.getType().equals(RegionEnum.TOWN.type())) {
                 villageSite.add(new SiteSquare(square, AppUtil.getSiteByMapIndex(i, record.getInitMap().getColumn())));
+            }else if (square.getType().equals(RegionEnum.RUINS.type())) {
+                ruinsSite.add(new SiteSquare(square, AppUtil.getSiteByMapIndex(i, record.getInitMap().getColumn())));
             }
         }
         aiMoveHandle = new AiMoveHandle(record.getUuid());
@@ -119,6 +135,9 @@ public class RobotManger {
                     switch (unitActionResult.getResultEnum()) {
                         case REPAIR:
                             break;
+                        case OCCUPIED:
+                            doSendOccupied(unitActionResult);
+                            break;
                         case MOVE_UNIT:
                             doSendMoveUnitMes(unitActionResult);
                             break;
@@ -127,13 +146,13 @@ public class RobotManger {
                     // 1. 准备发送给前端
                     BuyUnitResult buyUnitResult = (BuyUnitResult) ar;
                     Unit unit = new Unit(buyUnitResult.getUnitMes().getType(), buyUnitResult.getSite().getRow(), buyUnitResult.getSite().getColumn());
+                    UserRecord record = recordMap.get(ar.getRecordId());
+                    int currentArmy = AppUtil.getCurrentArmyIndex(record);
+                    buyUnitResult.setArmyIndex(currentArmy);
                     buyUnitResult.setUnit(unit);
                     aiMessageSender.sendByUnit(buyUnitResult);
 
                     // 2.更新 record 的信息
-                    UserRecord record = recordMap.get(ar.getRecordId());
-                    int currentArmy = AppUtil.getCurrentArmyIndex(record);
-                    buyUnitResult.setArmyIndex(currentArmy);
                     Army army = record.getArmyList().get(currentArmy);
                     army.getUnits().add(unit);
                     army.setPop(army.getPop() + buyUnitResult.getUnitMes().getPopulation());
@@ -145,6 +164,23 @@ public class RobotManger {
                     log.info("[ 开始新的一轮提交选择单位任务 ]");
                 }else if (ar instanceof EndTurnResult) {
                     EndTurnResult endTurnResult = (EndTurnResult) ar;
+                    RespNewRoundDto newRoundDto = endRoundService.getNewRound(recordMap.get(endTurnResult.getRecordId()));
+                    InitMap map = newRoundDto.getRecord().getInitMap();
+                    newRoundDto.getRecord().setInitMap(null);
+                    aiMessageSender.sendEndTurnResult(newRoundDto);
+
+                    // 判断新的回合是不是机器人
+                    Army nextArmy = AppUtil.getCurrentArmy(newRoundDto.getRecord());
+                    if (nextArmy.getType().equals(ArmyEnum.AI.type())) {
+                        newRoundDto.getRecord().setInitMap(map);
+                        RobotActive newTurnAction = new RobotActive(newRoundDto.getRecord(), AiActiveEnum.SELECT_UNIT);
+                        RobotManger robotManger = RobotManger.getInstance(newRoundDto.getRecord());
+                        robotManger.saveRecord(newRoundDto.getRecord());
+                        log.info("\n==================[ 准备提交新的Ai行动 ]======================");
+                        log.info("颜色：{}", nextArmy.getColor());
+                        addTimerTask(()->robotManger.submitActive(newTurnAction), 100);
+                    }
+
                 }
             } catch (Exception e) {
                 log.error("", e);
@@ -161,6 +197,8 @@ public class RobotManger {
         });
 
     }
+
+
 
 
     /**
@@ -203,7 +241,28 @@ public class RobotManger {
         }, time + 100);
     }
 
+    /**
+     * 单位选择占领
+     * @param actionResult
+     */
+    private static void doSendOccupied(UnitActionResult actionResult) {
+        // 1 设置占领
+        UserRecord record = recordMap.get(actionResult.getRecordId());
+        Integer regionIndex = AppUtil.getRegionIndex(record, actionResult.getSite());
+        RespRepairOcpResult result = new RespRepairOcpResult();
+        result.setRecordId(record.getUuid());
+        result.setRegionIndex(regionIndex);
+        BaseSquare region = record.getInitMap().getRegions().get(regionIndex);
+        region.setColor(record.getCurrColor());
+        result.setSquare(region);
 
+        // 2 设置二次移动结果
+        SecondMoveDto secondMoveDto = moveAreaService.getSecondMove(actionResult.getSelectUnit(), record, RobotManger.getInstance(record).getPathPositions());
+        result.setSecondMove(secondMoveDto);
+
+
+        aiMessageSender.sendOccupiedResult(record,actionResult, result);
+    }
     /**
      * 保存选择单位的记录
      *
@@ -274,5 +333,22 @@ public class RobotManger {
 
     public AiActiveHandle getMoveUnitHandle() {
         return this.aiMoveHandle;
+    }
+
+
+    public List<SiteSquare> getRuinsSite() {
+        return ruinsSite;
+    }
+
+    public Map<Integer, List<Site>> getAimSite() {
+        return aimSite;
+    }
+
+    public List<PathPosition> getPathPositions() {
+        return pathPositions;
+    }
+
+    public void setPathPositions(List<PathPosition> pathPositions) {
+        this.pathPositions = pathPositions;
     }
 }

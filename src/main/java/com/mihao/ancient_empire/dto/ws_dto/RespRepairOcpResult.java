@@ -3,13 +3,15 @@ package com.mihao.ancient_empire.dto.ws_dto;
 import com.mihao.ancient_empire.dto.BaseSquare;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class RespRepairOcpResult implements Serializable {
 
-    private Integer regionIndex;
-    private BaseSquare square;
-    private SecondMoveDto secondMove;
-    private String recordId;
+    private Integer regionIndex; /* 要占领的地形index */
+    private BaseSquare square; /* 要占领的地形 */
+    private SecondMoveDto secondMove; /* 二次移动区域 */
+    private String recordId; /* 地图Id */
+    private List<PathPosition> pathPositions; /* 移动路径 */
 
     public SecondMoveDto getSecondMove() {
         return secondMove;
@@ -43,4 +45,11 @@ public class RespRepairOcpResult implements Serializable {
         this.square = square;
     }
 
+    public List<PathPosition> getPathPositions() {
+        return pathPositions;
+    }
+
+    public void setPathPositions(List<PathPosition> pathPositions) {
+        this.pathPositions = pathPositions;
+    }
 }

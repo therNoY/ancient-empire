@@ -3,14 +3,18 @@ package com.mihao.ancient_empire.ai;
 import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
 import com.mihao.ancient_empire.ai.dto.*;
 import com.mihao.ancient_empire.constant.WSPath;
+import com.mihao.ancient_empire.constant.WsMethodEnum;
 import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.ws_dto.PathPosition;
 import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
+import com.mihao.ancient_empire.dto.ws_dto.RespNewRoundDto;
+import com.mihao.ancient_empire.dto.ws_dto.RespRepairOcpResult;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.util.AppUtil;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import com.mihao.ancient_empire.websocket.service.WsMoveAreaService;
+import javafx.geometry.Pos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +61,15 @@ public class AiMessageSender {
     }
 
     /**
+     * 发送结束回合命令给前端
+     * @param newRoundDto
+     */
+    public void sendEndTurnResult(RespNewRoundDto newRoundDto) {
+        simpMessagingTemplate.convertAndSendToUser(newRoundDto.getRecord().getUuid(),
+                WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.NEW_ROUND.type(), newRoundDto));
+    }
+
+    /**
      * 发送准备购买单位
      *
      * @param buyUnitResult
@@ -89,6 +102,7 @@ public class AiMessageSender {
         ReqMoveDto moveDto = new ReqMoveDto(unitIndex, AppUtil.getPosition(cUnit), new Position(unitActionResult.getSite()));
         moveDto.setMoveArea(unitActionResult.getMoveArea());
         List<PathPosition> pathPositions = moveAreaService.getMovePath(moveDto);
+        RobotManger.getInstance(record).setPathPositions(pathPositions);
         unitActionResult.setPathPositions(pathPositions);
     }
 
@@ -123,4 +137,12 @@ public class AiMessageSender {
                 WSPath.TOPIC_USER, WsRespHelper.success("ai_" + method.type(), activeResult));
     }
 
+
+    public void sendOccupiedResult(UserRecord record,UnitActionResult actionResult, RespRepairOcpResult result) {
+        ReqMoveDto reqMoveDto = new ReqMoveDto(AppUtil.getPosition(actionResult.getSelectUnit()), (Position) actionResult.getSite(), actionResult.getMoveArea());
+        List<PathPosition> pathPositions = moveAreaService.getMovePath(reqMoveDto);
+        result.setPathPositions(pathPositions);
+        simpMessagingTemplate.convertAndSendToUser(result.getRecordId(),
+                WSPath.TOPIC_USER, WsRespHelper.success("ai_" + AiActiveEnum.OCCUPIED.type(), result));
+    }
 }

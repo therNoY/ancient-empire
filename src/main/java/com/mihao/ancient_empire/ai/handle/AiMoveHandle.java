@@ -8,13 +8,11 @@ import com.mihao.ancient_empire.ai.dto.SelectUnitResult;
 import com.mihao.ancient_empire.constant.*;
 import com.mihao.ancient_empire.dto.*;
 import com.mihao.ancient_empire.dto.ws_dto.ReqUnitIndexDto;
-import com.mihao.ancient_empire.dto.ws_dto.RespEndResultDto;
 import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.RegionMes;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.UnitMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
-import com.mihao.ancient_empire.handle.end.EndHandle;
 import com.mihao.ancient_empire.service.RegionMesService;
 import com.mihao.ancient_empire.service.UnitLevelMesService;
 import com.mihao.ancient_empire.util.AppUtil;
@@ -100,11 +98,11 @@ public class AiMoveHandle extends AiActiveHandle {
             List<Position> area = actionService.getAttachArea(unitMes, site, record);
             if (canRepair(square)) {
                 log.info("{} 可以进行 修复 操作地点:{}", selectUnit.getType(), site);
-                actionList.add(new UnitActionResult(record.getUuid(), AiActiveEnum.REPAIR, site));
+                actionList.add(new UnitActionResult(selectUnit, record.getUuid(), AiActiveEnum.REPAIR, site));
             }
             if (canOccupyVillage(square) || canOccupyCastle(square)) {
                 log.info("{} 可以进行 占领 操作地点:{}", selectUnit.getType(), site);
-                actionList.add(new UnitActionResult(record.getUuid(), AiActiveEnum.OCCUPIED, site));
+                actionList.add(new UnitActionResult(selectUnit, record.getUuid(), AiActiveEnum.OCCUPIED, site));
             }
             attachArea.addAll(area);
         });
@@ -118,7 +116,7 @@ public class AiMoveHandle extends AiActiveHandle {
             if (hasSummoner) {
                 if (record.getTomb() != null && record.getTomb().contains(site)) {
                     log.info("{} 可以进行 召唤 操作地点:{}", selectUnit.getType(), site);
-                    actionList.add(new UnitActionResult(record.getUuid(), AiActiveEnum.SUMMON, site));
+                    actionList.add(new UnitActionResult(selectUnit, record.getUuid(), AiActiveEnum.SUMMON, site));
                 }
             }
 
@@ -146,6 +144,7 @@ public class AiMoveHandle extends AiActiveHandle {
             log.info("有许多可选的操作size = {} 选出一个最好的操作", actionList.size());
             UnitActionResult preferredAction;
             if ((preferredAction = getPreferredAction(actionList)) != null) {
+                preferredAction.setMoveArea(moveArea);
                 return preferredAction;
             } else {
                 Site site = getPreferredStandbyPosition();
@@ -160,46 +159,56 @@ public class AiMoveHandle extends AiActiveHandle {
             log.info("自己的领地受到威胁 直接结束");
             return new UnitActionResult(record.getUuid(), AiActiveEnum.END, currSite, selectUnit);
         }
+
+        // 占领 修复的集合
+        AnalysisOccAndRep analysisOccAndRep = new AnalysisOccAndRep();
+        // 如果有领主能力
+        if (abilityList.contains(AbilityEnum.CASTLE_GET.ability())) {
+            Site castleSite = getCanBeOccCastle();
+            if (castleSite != null) {
+                log.info("司令官找到最近的可占领的城堡{}", castleSite);
+                analysisOccAndRep.setCastleSite(castleSite);
+            }
+        }
+        // 如果有占领能力
         if (abilityList.contains(AbilityEnum.VILLAGE_GET.ability())) {
             Site targetSite = getCanBeOccVillage();
             if (targetSite != null) {
                 log.info("有占领村庄的能力准备选择最近的可占领的村庄{}", targetSite);
-                Site site = getNextPositionToTarget(targetSite);
-                robotManger.addDangerVillage(targetSite);
-                return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site, selectUnit, moveArea);
+                analysisOccAndRep.setVillageSite(targetSite);
             }
         }
-        Unit enemyLoad;
 
+        // 如果有修复能力
+        if (abilityList.contains(AbilityEnum.REPAIR.ability())) {
+            Site targetSite = getCanBeRepVillage();
+            if (targetSite != null) {
+                log.info("有修复的能力准备选择最近的可修复的村庄{}", targetSite);
+                analysisOccAndRep.setRunsSite(targetSite);
+            }
+        }
+        UnitActionResult unitActionResult = analysisOccAndRep.analysis(selectUnit);
+        if (unitActionResult != null) {
+            unitActionResult.setMoveArea(moveArea);
+            return unitActionResult;
+        }
+
+        Unit enemyLoad;
         if ((enemyLoad = getNearestEnemyCommander()) != null) {
             log.info("找到最近的敌军指挥官 准备并向他移动");
             Site site = getNextPositionToTarget(AppUtil.getPosition(enemyLoad));
             return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site, selectUnit, moveArea);
         } else {
             log.info("没有找到最近的敌军指挥官");
-            if (abilityList.contains(AbilityEnum.CASTLE_GET.ability())) {
-                Site castleSite = getCanBeOccCastle();
-                if (castleSite != null) {
-                    log.info("司令官找到最近的可占领的城堡{}", castleSite);
-                    Site site = getNextPositionToTarget(castleSite);
-                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site, selectUnit, moveArea);
-                } else {
-                    Site niceSite = getPreferredStandbyPosition();
-                    log.info("没找到最近可占领的城堡，找到最远移动的点{}", niceSite);
-                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, niceSite, selectUnit, moveArea);
-                }
+            Unit nearestEnemy;
+            if ((nearestEnemy = getNearestEnemy()) != null) {
+                Site nextPosition = getNextPositionToTarget(AppUtil.getPosition(nearestEnemy));
+                log.info("普通单位找到最近的可攻击的单位{}", nextPosition);
+                return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, nextPosition, selectUnit, moveArea);
             } else {
-                Unit nearestEnemy;
-                if ((nearestEnemy = getNearestEnemy()) != null) {
-                    Site nextPosition = getNextPositionToTarget(AppUtil.getPosition(nearestEnemy));
-                    log.info("普通单位找到最近的可攻击的单位{}", nextPosition);
-                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, nextPosition, selectUnit, moveArea);
-                } else {
-                    Site niceSite = getPreferredStandbyPosition();
-                    log.info("没有可攻击的单位找到最好的移动地点{}", niceSite);
-                    return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, niceSite, selectUnit, moveArea);
-
-                }
+                Site niceSite = getPreferredStandbyPosition();
+                log.info("没有可攻击的单位找到最好的移动地点{}", niceSite);
+                return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, niceSite, selectUnit, moveArea);
             }
         }
     }
@@ -374,15 +383,38 @@ public class AiMoveHandle extends AiActiveHandle {
      */
     private Site getCanBeOccCastle() {
         Site targetSite = null;
+        List<Site> aimSite = robotManger.getAimSite().get(army.getId());
         int minDistance = Integer.MAX_VALUE;
         for (SiteSquare siteSquare : robotManger.getCastleSite()) {
             if (!campColors.contains(siteSquare.getSquare().getColor())) {
-                if (!robotManger.getDangerCastle().contains(siteSquare.getSite())) {
+                if (aimSite == null || !aimSite.contains(siteSquare.getSite())) {
                     int distance = AppUtil.getLength(siteSquare.getSite(), AppUtil.getPosition(selectUnit));
                     if (distance < minDistance) {
                         targetSite = siteSquare.getSite();
                         minDistance = distance;
                     }
+                }
+            }
+
+        }
+        return targetSite;
+    }
+
+    /**
+     * 获取一个最近的可被修复的点
+     *
+     * @return
+     */
+    private Site getCanBeRepVillage() {
+        Site targetSite = null;
+        List<Site> aimSite = robotManger.getAimSite().get(army.getId());
+        int minDistance = Integer.MAX_VALUE;
+        for (SiteSquare siteSquare : robotManger.getRuinsSite()) {
+            if (aimSite == null || !aimSite.contains(siteSquare.getSite())) {
+                int distance = AppUtil.getLength(siteSquare.getSite(), AppUtil.getPosition(selectUnit));
+                if (distance < minDistance) {
+                    targetSite = siteSquare.getSite();
+                    minDistance = distance;
                 }
             }
 
@@ -397,11 +429,11 @@ public class AiMoveHandle extends AiActiveHandle {
      */
     private Site getCanBeOccVillage() {
         Site targetSite = null;
+        List<Site> aimSite = robotManger.getAimSite().get(army.getId());
         int minDistance = Integer.MAX_VALUE;
-        for (SiteSquare siteSquare : robotManger.getCastleSite()) {
-
+        for (SiteSquare siteSquare : robotManger.getVillageSite()) {
             if (!campColors.contains(siteSquare.getSquare().getColor())) {
-                if (!robotManger.getDangerVillage().contains(siteSquare.getSite())) {
+                if (aimSite == null || !aimSite.contains(siteSquare.getSite())) {
                     int distance = AppUtil.getLength(siteSquare.getSite(), AppUtil.getPosition(selectUnit));
                     if (distance < minDistance) {
                         targetSite = siteSquare.getSite();
@@ -582,5 +614,84 @@ public class AiMoveHandle extends AiActiveHandle {
         return heal;
     }
 
+    private class AnalysisOccAndRep {
 
+        Site castleSite;
+        Site villageSite;
+        Site runsSite;
+        Site targetSite;
+        int castleScore;
+        int villageScore;
+        int runsScore;
+
+        public void setCastleSite(Site castleSite) {
+            this.castleSite = castleSite;
+        }
+
+        public void setVillageSite(Site villageSite) {
+            this.villageSite = villageSite;
+        }
+
+        public void setRunsSite(Site runsSite) {
+            this.runsSite = runsSite;
+        }
+
+        /**
+         * 选择最好的占领目标
+         *
+         * @param unit
+         * @return
+         */
+        public UnitActionResult analysis(Unit unit) {
+            if (castleSite != null) {
+                castleScore = AppUtil.getLength(unit, castleSite) - 2;
+            }
+            if (villageSite != null) {
+                villageScore = AppUtil.getLength(unit, villageSite) - 1;
+            }
+            if (runsSite != null) {
+                runsScore = AppUtil.getLength(unit, runsSite);
+            }
+
+            if (castleScore == villageScore && villageScore == runsScore && villageScore == 0) {
+                return null;
+            }
+
+            if (castleScore >= villageScore) {
+                if (castleScore >= runsScore) {
+                    // 选择占领城堡
+                    log.info("目标 占领城堡：{}", castleSite);
+                    targetSite = castleSite;
+                } else {
+                    // 选择修复废墟
+                    log.info("目标 修复废墟：{}", runsSite);
+                    targetSite = runsSite;
+                }
+            } else {
+                if (villageScore >= runsScore) {
+                    // 选择占领城堡
+                    log.info("目标 占领城镇：{}", villageSite);
+                    targetSite = villageSite;
+                } else {
+                    log.info("目标 修复废墟：{}", runsSite);
+                    targetSite = runsSite;
+                }
+            }
+
+
+            Site site = getNextPositionToTarget(targetSite);
+            List<Site> sites = robotManger.getAimSite().get(army.getId());
+            if (sites == null) {
+                sites = new ArrayList<>();
+                sites.add(targetSite);
+                robotManger.getAimSite().put(army.getId(), sites);
+            } else {
+                sites.add(targetSite);
+            }
+
+            return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, site, selectUnit, moveArea);
+        }
+
+
+    }
 }

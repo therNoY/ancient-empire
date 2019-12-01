@@ -57,16 +57,27 @@ public class WsEndRoundService {
     Integer poisonDecrease;
 
 
+    public RespNewRoundDto getNewRound(String uuid) {
+        UserRecord record = recordService.getRecordById(uuid);
+        return getNewRound(record);
+    }
+
     /**
      * 回合结束的Service
      *
-     * @param uuid
+     * @param record
      * @return
      */
-    public RespNewRoundDto getNewRound(String uuid) {
-        UserRecord record = recordService.getRecordById(uuid);
+    public RespNewRoundDto getNewRound(UserRecord record) {
         List<String> campColors = AppUtil.getCampColors(record);
-        // 1.改变当前回合 改变军队颜色
+
+        // 1. 恢复当前单位的非石化状态
+        Army cArmy = AppUtil.getCurrentArmy(record);
+        for (Unit unit : cArmy.getUnits()) {
+            unit.setDone(false);
+        }
+
+        // 2.改变当前回合 改变军队颜色
         Army currentArmy = null;
         int currentRound = record.getCurrentRound() + 1;
         int nextOrder = AppUtil.getCurrentArmy(record).getOrder() + 1;
@@ -76,7 +87,7 @@ public class WsEndRoundService {
             }
         }
 
-        // 没有找到要开始新的循环 让order = 1的开始
+        // 2.1 没有找到要开始新的循环 让order = 1的开始
         if (currentArmy == null) {
             for (Army army : record.getArmyList()) {
                 if (army.getOrder() == 1) {
@@ -88,7 +99,7 @@ public class WsEndRoundService {
         record.setCurrColor(currentArmy.getColor());
         record.setCurrentRound(currentRound);
         record.setCurrCamp(currentArmy.getCamp());
-        // 2.改变当前军队的资金
+        // 3.改变当前军队的资金
         List<BaseSquare> regions = record.getInitMap().getRegions();
         int addMoney = 0;
         for (BaseSquare square : regions) {
@@ -102,7 +113,7 @@ public class WsEndRoundService {
         }
         currentArmy.setMoney(currentArmy.getMoney() + addMoney);
 
-        // 3.获取当前军队的生命变化以及状态变化
+        // 4.获取当前军队的生命变化以及状态变化
         List<LifeChange> lifeChanges = new ArrayList<>();
         for (Unit unit : currentArmy.getUnits()) {
             LifeChange lifeChange = new LifeChange();
@@ -176,7 +187,7 @@ public class WsEndRoundService {
 
         RespNewRoundDto newRoundDto = new RespNewRoundDto(record, addMoney, lifeChanges);
 
-        // 4.同步mongo
+        // 5.同步mongo
         mqHelper.sendMongoCdr(MqMethodEnum.END_ROUND, record);
         return newRoundDto;
     }

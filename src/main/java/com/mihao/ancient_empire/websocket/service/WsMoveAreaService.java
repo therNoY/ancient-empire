@@ -171,6 +171,10 @@ public class WsMoveAreaService {
     }
 
     public SecondMoveDto getSecondMove(Unit unit, UserRecord record, ReqSecondMoveDto reqSecondMoveDto) {
+        return getSecondMove(unit, record, reqSecondMoveDto.getPath());
+    }
+
+    public SecondMoveDto getSecondMove(Unit unit, UserRecord record, List<PathPosition> path) {
         // 2. 判断是否有二次移动
         SecondMoveDto secondMoveDto = null;
         List<Ability> abilityList = abilityService.getUnitAbilityListByType(unit.getType()); // 攻击者能力
@@ -182,7 +186,7 @@ public class WsMoveAreaService {
                 levelMes = unitLevelMesService.getUnitLevelMes(unit.getType(), unit.getLevel());
                 unitMes = unitMesService.getByType(unit.getType());
                 secondMoveDto = new SecondMoveDto();
-                int lastSpeed = getLastSpeed(reqSecondMoveDto.getPath(), levelMes.getSpeed());
+                int lastSpeed = getLastSpeed(path, levelMes.getSpeed());
                 if (lastSpeed > 0) {
                     List<Position> positions = getSecondMoveArea(record, unit, unitMes, lastSpeed);
                     secondMoveDto.setSecondMove(true);

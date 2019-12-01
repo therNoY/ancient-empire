@@ -38,13 +38,12 @@ public class ListStreamTest {
         });
     }
 
-    @Test
-    public void testList() {
-        List<Dog> dogs = new ArrayList<>();
-        Dog dog = new Dog(1, "AA");
-        dogs.add(dog);
-
-        dog.setName("BB");
-        System.out.println(dogs.get(0).getName());
+    public static void main(String[] args) {
+        System.out.println("hello");
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("1");
+        strings.add("2");
+        strings.add("3");
+        strings.add("4");
     }
 }

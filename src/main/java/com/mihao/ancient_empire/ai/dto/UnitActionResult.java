@@ -14,12 +14,22 @@ import java.util.List;
  */
 public class UnitActionResult extends ActiveResult {
 
+    private Unit selectUnit; /* 设置当前单位 */
 
-    private Unit unit;
+    private Unit unit; /* 目标单位 */
 
     private List<Position> moveArea;
 
     private List<PathPosition> pathPositions;
+
+
+    public UnitActionResult(Unit selectUnit, String recordId, AiActiveEnum actionEnum, Site site) {
+        this.setSelectUnit(selectUnit);
+        super.setRecordId(recordId);
+        super.setSite(site);
+        super.setResultEnum(actionEnum);
+
+    }
 
     public UnitActionResult(String recordId, AiActiveEnum actionEnum, Site site) {
         this(recordId, actionEnum, site, null);
@@ -40,6 +50,14 @@ public class UnitActionResult extends ActiveResult {
         this.moveArea = moveArea;
     }
 
+
+    public Unit getSelectUnit() {
+        return selectUnit;
+    }
+
+    public void setSelectUnit(Unit selectUnit) {
+        this.selectUnit = selectUnit;
+    }
 
     public List<Position> getMoveArea() {
         return moveArea;

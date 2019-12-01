@@ -220,7 +220,7 @@ public class AiSelectUnitHandle extends AiActiveHandle {
         // 获取可以买的单位列表 TODO 考虑过滤loader
         List<UnitMes> canBuyUnit = unitMesService.getEnableBuyUnit()
                 .stream().filter(mes -> {
-                    if ((mes.getPrice() > army.getMoney() && loadMes.getPopulation() + army.getPop() > record.getMaxPop())
+                    if ((mes.getPrice() > army.getMoney() || loadMes.getPopulation() + army.getPop() > record.getMaxPop())
                             || mes.getType().equals(UnitEnum.LORD.type())) {
                         // 过滤 超过金额和人口的不买， 领主不买，能卖的话早就买了
                         return false;
@@ -240,29 +240,33 @@ public class AiSelectUnitHandle extends AiActiveHandle {
                 }
             }).collect(Collectors.toList());
 
-            buyUnit = buyUnitList.get(IntegerUtil.getRandomIn(buyUnitList.size() - 1));
-
-        } else {
-            log.info("购买单位需要的攻击类型 {}： 1 物理 2 魔法", needUnitType.attachType);
-            List<UnitMes> buyUnitList = canBuyUnit.stream().filter(mes -> {
-                if (needUnitType.attachType == physical) {
-                    if (mes.getAttackType().equals(physical)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+            if (buyUnitList.size() > 0) {
+                buyUnit = buyUnitList.get(IntegerUtil.getRandomIn(buyUnitList.size() - 1));
+                buyUnitResult = new BuyUnitResult(record.getUuid(), selectCastle.getSite(), buyUnit);
+                log.info("计算要购买的单位是" + buyUnit.getType());
+                return buyUnitResult;
+            }
+        }
+        log.info("购买单位需要的攻击类型 {}： 1 物理 2 魔法", needUnitType.attachType);
+        List<UnitMes> buyUnitList = canBuyUnit.stream().filter(mes -> {
+            if (needUnitType.attachType == physical) {
+                if (mes.getAttackType().equals(physical)) {
+                    return true;
                 } else {
-                    if (mes.getAttackType().equals(magic)) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return false;
                 }
-            }).collect(Collectors.toList());
+            } else {
+                if (mes.getAttackType().equals(magic)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }).collect(Collectors.toList());
 
+        if (buyUnitList.size() > 0) {
             buyUnit = buyUnitList.get(IntegerUtil.getRandomIn(buyUnitList.size() - 1));
         }
-
         if (buyUnit != null) {
             buyUnitResult = new BuyUnitResult(record.getUuid(), selectCastle.getSite(), buyUnit);
             log.info("计算要购买的单位是" + buyUnit.getType());
