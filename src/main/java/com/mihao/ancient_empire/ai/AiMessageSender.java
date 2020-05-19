@@ -139,9 +139,7 @@ public class AiMessageSender {
 
 
     public void sendOccupiedResult(UserRecord record,UnitActionResult actionResult, RespRepairOcpResult result) {
-        ReqMoveDto reqMoveDto = new ReqMoveDto(AppUtil.getPosition(actionResult.getSelectUnit()), (Position) actionResult.getSite(), actionResult.getMoveArea());
-        List<PathPosition> pathPositions = moveAreaService.getMovePath(reqMoveDto);
-        result.setPathPositions(pathPositions);
+
         simpMessagingTemplate.convertAndSendToUser(result.getRecordId(),
                 WSPath.TOPIC_USER, WsRespHelper.success("ai_" + AiActiveEnum.OCCUPIED.type(), result));
     }

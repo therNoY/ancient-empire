@@ -44,7 +44,7 @@ public class RobotManger {
     private static ThreadPoolExecutor executor;
     private static ScheduledExecutorService scheduledExecutorService;
     private static Map<String, SelectUnitResult> selectUnitResultMap = null;
-    private static Map<String, UserRecord> recordMap;
+    private static Map<String, UserRecord> recordMap; /* 对地图的缓存 */
 
 
     /* 维持一个保存有map 和map 对应状态的类 */
@@ -134,6 +134,7 @@ public class RobotManger {
                     // 根据action 的类型进行选择
                     switch (unitActionResult.getResultEnum()) {
                         case REPAIR:
+                            doSendRepair(unitActionResult);
                             break;
                         case OCCUPIED:
                             doSendOccupied(unitActionResult);
@@ -233,6 +234,7 @@ public class RobotManger {
         unitActionResult.getUnit().setColumn(unitActionResult.getSite().getColumn());
         unitActionResult.getUnit().setDone(true);
 
+
         // 4.准备提交选择下一个单位的命令
         addTimerTask(() -> {
             RobotActive active = new RobotActive(record, AiActiveEnum.SELECT_UNIT);
@@ -241,12 +243,29 @@ public class RobotManger {
         }, time + 100);
     }
 
+    private static void doSendRepair(UnitActionResult actionResult) {
+
+        // 1 设置修复
+        UserRecord record = recordMap.get(actionResult.getRecordId());
+        Integer regionIndex = AppUtil.getRegionIndex(record, actionResult.getSite());
+        RespRepairOcpResult result = new RespRepairOcpResult();
+        result.setRecordId(record.getUuid());
+        result.setRegionIndex(regionIndex);
+        BaseSquare region = record.getInitMap().getRegions().get(regionIndex);
+        region.setType(RegionEnum.TOWN.type());
+        result.setSquare(region);
+
+        record.getInitMap().getRegions().get(result.getRegionIndex()).setType(RegionEnum.TOWN.type());
+
+        doRepairOrOccupied(actionResult, result);
+    }
+
     /**
      * 单位选择占领
      * @param actionResult
      */
     private static void doSendOccupied(UnitActionResult actionResult) {
-        // 1 设置占领
+        // 1 设置修复
         UserRecord record = recordMap.get(actionResult.getRecordId());
         Integer regionIndex = AppUtil.getRegionIndex(record, actionResult.getSite());
         RespRepairOcpResult result = new RespRepairOcpResult();
@@ -256,12 +275,47 @@ public class RobotManger {
         region.setColor(record.getCurrColor());
         result.setSquare(region);
 
+        record.getInitMap().getRegions().get(result.getRegionIndex()).setColor(record.getCurrColor());
+
+        doRepairOrOccupied(actionResult, result);
+    }
+
+    /**
+     * 处理修复或者占领
+     * @param actionResult
+     * @param result
+     */
+    private static void doRepairOrOccupied(UnitActionResult actionResult, RespRepairOcpResult result){
+        UserRecord record = recordMap.get(actionResult.getRecordId());
+
         // 2 设置二次移动结果
         SecondMoveDto secondMoveDto = moveAreaService.getSecondMove(actionResult.getSelectUnit(), record, RobotManger.getInstance(record).getPathPositions());
         result.setSecondMove(secondMoveDto);
 
 
+        ReqMoveDto reqMoveDto = new ReqMoveDto(AppUtil.getPosition(actionResult.getSelectUnit()), (Position) actionResult.getSite(), actionResult.getMoveArea());
+        List<PathPosition> pathPositions = moveAreaService.getMovePath(reqMoveDto);
+        result.setPathPositions(pathPositions);
         aiMessageSender.sendOccupiedResult(record,actionResult, result);
+
+        int time = pathPositions.size() * 250 + 200;
+        // 3.准备同时发送endAction 命令
+        RespEndResultDto endResultDto = AiActiveHandle.getEndDto(record, actionResult.getSelectUnit());
+        EndUnitResult endUnitResult = new EndUnitResult(record.getUuid(), actionResult.getSite(), endResultDto.getLifeChanges());
+        log.info("准备提交结束移动命令{}, 延迟{} ms", endResultDto, time);
+        aiMessageSender.sendEndUnit(endUnitResult, time);
+
+        actionResult.getSelectUnit().setDone(true);
+        actionResult.getSelectUnit().setColumn(actionResult.getSite().getColumn());
+        actionResult.getSelectUnit().setRow(actionResult.getSite().getRow());
+
+
+        // 4.准备提交选择下一个单位的命令
+        addTimerTask(() -> {
+            RobotActive active = new RobotActive(record, AiActiveEnum.SELECT_UNIT);
+            RobotManger.getInstance(record).submitActive(active);
+            log.info("[ 开始新的一轮提交选择单位任务 ]");
+        }, time + 100);
     }
     /**
      * 保存选择单位的记录

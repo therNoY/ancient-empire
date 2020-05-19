@@ -23,6 +23,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.servlet.http.HttpSession;
+import javax.xml.ws.spi.http.HttpContext;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
