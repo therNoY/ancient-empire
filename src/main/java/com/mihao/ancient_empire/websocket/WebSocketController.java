@@ -1,7 +1,6 @@
 package com.mihao.ancient_empire.websocket;
 
 import com.mihao.ancient_empire.ai.RobotActive;
-import com.mihao.ancient_empire.ai.RobotManger;
 import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
 import com.mihao.ancient_empire.common.annotation.ExecuteTime;
 import com.mihao.ancient_empire.common.util.JacksonUtil;
@@ -13,6 +12,7 @@ import com.mihao.ancient_empire.dto.Position;
 import com.mihao.ancient_empire.dto.Unit;
 import com.mihao.ancient_empire.dto.map_dto.ReqBuyUnitDto;
 import com.mihao.ancient_empire.dto.ws_dto.*;
+import com.mihao.ancient_empire.manger.GameCoreManger;
 import com.mihao.ancient_empire.util.AppUtil;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import com.mihao.ancient_empire.websocket.service.*;
@@ -260,9 +260,9 @@ public class WebSocketController {
             log.info("======================接下来是机器人的行动============================");
             newRoundDto.getRecord().setInitMap(map);
             RobotActive active = new RobotActive(newRoundDto.getRecord(), AiActiveEnum.SELECT_UNIT);
-            RobotManger robotManger = RobotManger.getInstance(newRoundDto.getRecord());
-            robotManger.saveRecord(newRoundDto.getRecord());
-            robotManger.submitActive(active);
+            GameCoreManger gameCoreManger = GameCoreManger.getInstance(newRoundDto.getRecord());
+            gameCoreManger.saveRecord(newRoundDto.getRecord());
+            gameCoreManger.submitActive(active);
         }
 
     }

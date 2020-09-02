@@ -1,6 +1,5 @@
 package com.mihao.ancient_empire.ai.handle;
 
-import com.mihao.ancient_empire.ai.RobotManger;
 import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
 import com.mihao.ancient_empire.ai.dto.UnitActionResult;
 import com.mihao.ancient_empire.ai.dto.ActiveResult;
@@ -13,6 +12,7 @@ import com.mihao.ancient_empire.entity.RegionMes;
 import com.mihao.ancient_empire.entity.UnitLevelMes;
 import com.mihao.ancient_empire.entity.UnitMes;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
+import com.mihao.ancient_empire.manger.GameCoreManger;
 import com.mihao.ancient_empire.service.RegionMesService;
 import com.mihao.ancient_empire.service.UnitLevelMesService;
 import com.mihao.ancient_empire.util.AppUtil;
@@ -48,7 +48,7 @@ public class AiMoveHandle extends AiActiveHandle {
     List<Ability> abilityList;
     List<Position> moveArea = null;
     UnitMes unitMes;
-    RobotManger robotManger;
+    GameCoreManger robotManger;
     List<String> campColors;
 
     static {
@@ -68,8 +68,8 @@ public class AiMoveHandle extends AiActiveHandle {
     public ActiveResult getActiveResult(UserRecord record) {
         // 1. 获取上一次选择的结果 重新设置选择单位的信息
         this.record = record;
-        this.robotManger = RobotManger.getInstance(record);
-        SelectUnitResult selectUnitResult = RobotManger.getSelectResult(record.getUuid());// 上一次行动的结果
+        this.robotManger = GameCoreManger.getInstance(record);
+        SelectUnitResult selectUnitResult = GameCoreManger.getSelectResult(record.getUuid());// 上一次行动的结果
         this.army = record.getArmyList().get(selectUnitResult.getArmyIndex());
         this.selectUnit = army.getUnits().get(selectUnitResult.getUnitIndex());
         this.currSite = AppUtil.getPosition(selectUnit);

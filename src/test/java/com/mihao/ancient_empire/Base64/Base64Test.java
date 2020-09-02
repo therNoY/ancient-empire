@@ -82,18 +82,18 @@ public class Base64Test {
 
     @Test
     public void name2() throws IOException {
-        String base64Url = "aHR0cDovLzEwLjAuMTEuODE6ODA4MC9yZWNvcmRlcmZpbGVzZXJ2ZXIvcmVzb3VyY2VzL3dlaXhpbl9zaG9ydHZpZGVvX3BhdGgvMjAxOV8wOV8xNi9rc2dva2ZqVG5FQmx6QWxva3p6S0Zfb0xZdW9ndngzT3EyX0c4bGVUclRtU0lpVGdvcTJ1YWwzMkk4b3l2RGdhLm1wNA==";
+        String base64Url = "HR0cDovLzEwLjAuMTIuODk6ODA4MC9yZWNvcmRlcmZpbGVzZXJ2ZXIvcmVzb3VyY2VzLzIwMjAtMDItMTgvd2ViY2hhdF9maWxlL1NNQUxMXzczNDYwMmM5NjE0NTQzNTFhNTQ5OTI1NjJmNWFkNzJiPz8/LmpwZw==";
         String s = new String(new BASE64Decoder().decodeBuffer(base64Url), "UTF-8");
         System.out.println(s);
     }
 
     @Test
     public void name3() throws IOException {
-        String base64Url = "aHR0cDovLzEwLjAuMTEuMTU0OjgwODAvcmVjb3JkZXJmaWxlc2VydmVyL3Jlc291cmNlcy8yMDE5LTA4LTI5L3dlYmNoYXRfZmlsZS8lRTYlQjUlOEIlRTglQUYlOTUlRTklOTclQUUlRTQlQkIlQjcudHh0";
-        base64Url = base64Url.substring(0, base64Url.indexOf("/"));
-        String ecodeS = "aHR0cDovLzEwLjAuMTEuMTU0OjgwODAvcmVjb3JkZXJmaWxlc2VydmVyL3Jlc291cmNlcy8yMDE5LTA4LTE0L3dlYmNoYXRfZmlsZS8lRTYlQjUlOEIlRTglQUYlOTUlRTYlOTYlODclRTQlQkIlQjYudHh0";
-        ecodeS.replace("\r", "").replace("\n", "");
+        String base64Url = "aHR0cDovLzEwLjAuMTIuODk6ODA4MC9yZWNvcmRlcmZpbGVzZXJ2ZXIvcmVzb3VyY2VzLzIwMjAtMDItMTgvd2ViY2hhdF9maWxlL1NNQUxMXzczNDYwMmM5NjE0NTQzNTFhNTQ5OTI1NjJmNWFkNzJiPz8/LmpwZw==/SMALL_734602c961454351a54992562f5ad72b胡萝卜.jpg";
+        String fileName = base64Url.substring(base64Url.lastIndexOf("/"));
+        base64Url = base64Url.substring(0, base64Url.lastIndexOf("/"));
         String s = new String(new BASE64Decoder().decodeBuffer(base64Url), "UTF-8");
+        s = s.substring(0, s.lastIndexOf("/")) + fileName;
         System.out.println(s);
     }
 

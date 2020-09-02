@@ -11,6 +11,7 @@ import com.mihao.ancient_empire.dto.ws_dto.ReqMoveDto;
 import com.mihao.ancient_empire.dto.ws_dto.RespNewRoundDto;
 import com.mihao.ancient_empire.dto.ws_dto.RespRepairOcpResult;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
+import com.mihao.ancient_empire.manger.GameCoreManger;
 import com.mihao.ancient_empire.util.AppUtil;
 import com.mihao.ancient_empire.util.WsRespHelper;
 import com.mihao.ancient_empire.websocket.service.WsMoveAreaService;
@@ -102,7 +103,7 @@ public class AiMessageSender {
         ReqMoveDto moveDto = new ReqMoveDto(unitIndex, AppUtil.getPosition(cUnit), new Position(unitActionResult.getSite()));
         moveDto.setMoveArea(unitActionResult.getMoveArea());
         List<PathPosition> pathPositions = moveAreaService.getMovePath(moveDto);
-        RobotManger.getInstance(record).setPathPositions(pathPositions);
+        GameCoreManger.getInstance(record).setPathPositions(pathPositions);
         unitActionResult.setPathPositions(pathPositions);
     }
 

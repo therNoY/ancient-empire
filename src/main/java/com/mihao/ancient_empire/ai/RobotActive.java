@@ -4,6 +4,7 @@ import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
 import com.mihao.ancient_empire.ai.dto.ActiveResult;
 import com.mihao.ancient_empire.ai.handle.AiActiveHandle;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
+import com.mihao.ancient_empire.manger.GameCoreManger;
 
 import java.util.function.Supplier;
 
@@ -21,7 +22,7 @@ public class RobotActive implements Supplier<ActiveResult> {
     }
 
     public RobotActive(String recordId, AiActiveEnum activeEnum) {
-        this.record = RobotManger.getRecordCatch(recordId);
+        this.record = GameCoreManger.getRecordCatch(recordId);
         this.activeEnum = activeEnum;
     }
 

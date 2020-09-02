@@ -1,6 +1,5 @@
 package com.mihao.ancient_empire.ai.handle;
 
-import com.mihao.ancient_empire.ai.RobotManger;
 import com.mihao.ancient_empire.ai.constant.AiActiveEnum;
 import com.mihao.ancient_empire.ai.dto.ActiveResult;
 import com.mihao.ancient_empire.dto.Unit;
@@ -8,6 +7,7 @@ import com.mihao.ancient_empire.dto.ws_dto.RespEndResultDto;
 import com.mihao.ancient_empire.entity.Ability;
 import com.mihao.ancient_empire.entity.mongo.UserRecord;
 import com.mihao.ancient_empire.handle.end.EndHandle;
+import com.mihao.ancient_empire.manger.GameCoreManger;
 import com.mihao.ancient_empire.service.AbilityService;
 import com.mihao.ancient_empire.service.UnitMesService;
 import com.mihao.ancient_empire.service.UserRecordService;
@@ -27,9 +27,9 @@ public abstract class AiActiveHandle {
     public static AiActiveHandle getInstance(UserRecord record, AiActiveEnum activeEnum) {
         switch (activeEnum) {
             case SELECT_UNIT:
-                return RobotManger.getInstance(record).getSelectUnitHandle();
+                return GameCoreManger.getInstance(record).getSelectUnitHandle();
             case MOVE_UNIT:
-                return RobotManger.getInstance(record).getMoveUnitHandle();
+                return GameCoreManger.getInstance(record).getMoveUnitHandle();
             default:
                 return null;
         }
