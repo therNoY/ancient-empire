@@ -2,14 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <modules>
+        <module>common</module>
+        <module>auth</module>
+        <module>base</module>
+<!--        <module>core</module>-->
+<!--        <module>robot</module>-->
+<!--        <module>startup</module>-->
+    </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.mihao</groupId>
-    <artifactId>ancient-empire</artifactId>
+    <groupId>pers.mihao.ancient-empire</groupId>
+    <artifactId>ancient-empire-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ancient-empire</name>
     <description>Demo project for Spring Boot</description>
@@ -17,6 +26,7 @@
     <properties>
         <java.version>1.8</java.version>
         <skipTests>true</skipTests>
+        <version>0.0.1-SNAPSHOT</version>
     </properties>
 
     <dependencies>
@@ -102,8 +112,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
