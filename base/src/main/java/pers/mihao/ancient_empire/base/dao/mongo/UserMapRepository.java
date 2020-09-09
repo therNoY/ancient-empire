@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.dao.mongo;
 import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
+import pers.mihao.ancient_empire.base.entity.UserMap;
 
 @Repository
 public interface UserMapRepository extends MongoRepository<UserMap, String> {

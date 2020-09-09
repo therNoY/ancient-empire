@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 能力信息表
+ * 单位能力信息表
  * </p>
  *
  * @author mihao

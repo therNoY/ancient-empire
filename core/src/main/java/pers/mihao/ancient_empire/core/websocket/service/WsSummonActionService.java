@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.dto.SummonDto;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;

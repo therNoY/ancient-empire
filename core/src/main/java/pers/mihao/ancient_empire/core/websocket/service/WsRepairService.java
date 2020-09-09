@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;

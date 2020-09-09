@@ -1,13 +1,13 @@
 package pers.mihao.ancient_empire.startup.config;
 
-import com.mihao.ancient_empire.common.util.RespHelper;
-import com.mihao.ancient_empire.common.vo.MyException;
-import com.mihao.ancient_empire.common.vo.RespJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.vo.MyException;
+import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
  * 配置捕获全局异常

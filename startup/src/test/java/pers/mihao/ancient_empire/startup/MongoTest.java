@@ -1,28 +1,34 @@
 package pers.mihao.ancient_empire.startup;
 
-import com.mihao.ancient_empire.common.util.JacksonUtil;
-import com.mihao.ancient_empire.common.vo.test_dto.Dog;
-import pers.mihao.ancient_empire.common.constant.CollectionEnum;
-import pers.mihao.ancient_empire.common.constant.MapEnum;
-import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 import org.bson.Document;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;;
-import pers.mihao.ancient_empire.base.dao.UserMapRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
+import pers.mihao.ancient_empire.base.dao.mongo.UserMapRepository;
+import pers.mihao.ancient_empire.base.entity.UserMap;
+import pers.mihao.ancient_empire.base.enums.CollectionEnum;
+import pers.mihao.ancient_empire.base.enums.MapEnum;
+import pers.mihao.ancient_empire.common.util.JacksonUtil;
+import pers.mihao.ancient_empire.common.vo.test_dto.Dog;
 
-import java.io.*;
-import java.util.List;
+;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

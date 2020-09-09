@@ -1,11 +1,7 @@
 package pers.mihao.ancient_empire.startup;
 
-import pers.mihao.ancient_empire.common.bo.Army;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.base.dao.UserRecordRepository;
-import com.mihao.ancient_empire.util.UserRecordMongoHelper;
 import com.mongodb.client.result.UpdateResult;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +11,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.dao.mongo.UserRecordRepository;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.core.util.UserRecordMongoHelper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

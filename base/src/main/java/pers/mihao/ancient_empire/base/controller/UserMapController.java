@@ -23,7 +23,7 @@ import pers.mihao.ancient_empire.base.dto.RespUserMapDao;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
-import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
+import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.MapEnum;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;

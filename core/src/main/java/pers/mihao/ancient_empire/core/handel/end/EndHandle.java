@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.core.handel.end;
 
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.core.dto.RespEndResultDto;

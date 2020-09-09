@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.startup.config.aspect;
 
-import com.mihao.ancient_empire.common.annotation.ExecuteTime;
 import java.lang.reflect.Method;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -10,6 +9,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
 
 /**
  * 拦截需要统计方法执行时间的 aop
@@ -20,7 +20,7 @@ public class ExecuteTimeAspect {
 
     Logger log = LoggerFactory.getLogger(ExecuteTimeAspect.class);
 
-    @Pointcut("@annotation(com.mihao.ancient_empire.common.annotation.ExecuteTime))")
+    @Pointcut("@annotation(pers.mihao.ancient_empire.common.annotation.ExecuteTime))")
     public void ExecuteTime() {
     }
 

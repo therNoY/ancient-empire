@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.core.handel.move_area;
 
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 
 public class WaterMoveHandle extends MoveAreaHandle {

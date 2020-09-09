@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.base.util;
 
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 
 public interface RecordHandle {
 

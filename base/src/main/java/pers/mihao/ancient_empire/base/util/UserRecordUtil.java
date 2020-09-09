@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.base.util;
 
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 
 /**
  * 改类是处理record 更改record 方便持久化更改的record

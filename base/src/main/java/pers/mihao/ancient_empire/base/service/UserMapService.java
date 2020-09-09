@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.service;
 import java.util.List;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespSimpleDrawing;
-import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
+import pers.mihao.ancient_empire.base.entity.UserMap;
 
 public interface UserMapService {
     List<UserMap> getUserMap();

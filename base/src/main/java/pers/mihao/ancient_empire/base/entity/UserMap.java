@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.entity.mongo;
+package pers.mihao.ancient_empire.base.entity;
 
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;

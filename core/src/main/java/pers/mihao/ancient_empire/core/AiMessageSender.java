@@ -11,7 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.dto.ReqMoveDto;

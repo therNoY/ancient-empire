@@ -16,7 +16,7 @@ import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;

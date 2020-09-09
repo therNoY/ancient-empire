@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.handel.ai;
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.Ability;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;

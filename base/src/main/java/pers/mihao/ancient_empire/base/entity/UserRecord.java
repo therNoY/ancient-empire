@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.entity.mongo;
+package pers.mihao.ancient_empire.base.entity;
 
 import java.io.Serializable;
 import java.util.List;

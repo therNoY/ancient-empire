@@ -16,7 +16,7 @@ import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.dto.BuyUnitDto;
 import pers.mihao.ancient_empire.base.dto.SummonDto;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;

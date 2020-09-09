@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.core;
 
 import java.util.function.Supplier;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 import pers.mihao.ancient_empire.core.handel.ai.AiActiveHandle;

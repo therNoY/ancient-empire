@@ -12,6 +12,7 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.dao.RegionMesDao;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
+import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
 
 /**
@@ -49,7 +50,7 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDao, RegionMes> i
     @Cacheable(RedisKey.ENABLE_REGION)
     public List<RegionMes> getEnableRegionByUserId(Integer id) {
         // 目前没有开启个性化功能 暂不开启
-        QueryWrapper wrapper = new QueryWrapper<>().eq("enable", "1");
+        QueryWrapper wrapper = new QueryWrapper<>().eq("enable", BaseConstant.YES);
         List<RegionMes> regionMesList = regionMesDao.selectList(wrapper);
         return regionMesList;
     }

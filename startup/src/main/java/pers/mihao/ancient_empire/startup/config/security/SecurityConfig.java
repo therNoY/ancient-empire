@@ -1,9 +1,5 @@
 package pers.mihao.ancient_empire.startup.config.security;
 
-import com.mihao.ancient_empire.common.vo.MyException;
-import com.mihao.ancient_empire.common.vo.MyUserDetails;
-import com.mihao.ancient_empire.entity.Permission;
-import com.mihao.ancient_empire.entity.User;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -24,7 +20,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
+import pers.mihao.ancient_empire.auth.entity.Permission;
+import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
+import pers.mihao.ancient_empire.common.vo.MyException;
 
 
 /**

@@ -1,5 +1,8 @@
 package pers.mihao.ancient_empire.common.util;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedTransferQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -17,8 +20,8 @@ public class MqHelper {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    AmqpTemplate amqpTemplate;
+
+    BlockingQueue<MqMessage> blockingQueue = new LinkedTransferQueue<>();
 
     /**
      * 向监听mongoDB cdr 的消费者发送消息
@@ -27,7 +30,10 @@ public class MqHelper {
      */
     public void sendMongoCdr(MqMethodEnum mqMethodEnum, Object object)  {
         MqMessage mqMessage = new MqMessage(mqMethodEnum, object);
-        log.info("send to mongo.cdr {} {} at {}",mqMethodEnum.name(), object, DateUtil.getNow());
-        amqpTemplate.convertAndSend(RabbitMqAdd.CDR, RabbitMqAdd.MONGO_CDR, JacksonUtil.toJson(mqMessage));
+        blockingQueue.add(mqMessage);
+    }
+
+    public MqMessage getMessage() throws InterruptedException {
+        return blockingQueue.take();
     }
 }

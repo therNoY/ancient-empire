@@ -66,7 +66,7 @@ public class UnitMes implements Serializable {
     // 创建者Id
     private Integer createUserId;
 
-    // 是否是可以购买的
+    // TODO 字段需要修改 是否是可以购买的
     private boolean tradeable;
 
     // 是否可用

@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 
 import java.util.List;
 

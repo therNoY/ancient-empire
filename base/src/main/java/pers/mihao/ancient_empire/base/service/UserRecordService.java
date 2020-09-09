@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.base.service;
 
 import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 
 public interface UserRecordService {
     String initMapRecord(ReqInitMapDto reqInitMapDto);

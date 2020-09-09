@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.util.MqHelper;

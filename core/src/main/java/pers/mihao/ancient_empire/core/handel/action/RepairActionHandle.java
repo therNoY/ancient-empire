@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.handel.action;
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Position;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;

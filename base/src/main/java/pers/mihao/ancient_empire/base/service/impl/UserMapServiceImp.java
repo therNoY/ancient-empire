@@ -22,7 +22,7 @@ import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.dao.mongo.UserMapRepository;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespSimpleDrawing;
-import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
+import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.CollectionEnum;
 import pers.mihao.ancient_empire.base.enums.MapEnum;
 import pers.mihao.ancient_empire.base.service.UserMapService;

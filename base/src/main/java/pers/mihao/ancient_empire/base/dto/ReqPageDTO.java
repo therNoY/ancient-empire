@@ -1,6 +1,9 @@
-package pers.mihao.ancient_empire.base.bo;
+package pers.mihao.ancient_empire.base.dto;
 
-public class ReqPageDto {
+/**
+ * 基础分页请求
+ */
+public class ReqPageDTO {
 
     private Integer pageNow;
 

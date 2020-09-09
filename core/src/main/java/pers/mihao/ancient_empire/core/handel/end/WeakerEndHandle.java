@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.dto.LifeChange;

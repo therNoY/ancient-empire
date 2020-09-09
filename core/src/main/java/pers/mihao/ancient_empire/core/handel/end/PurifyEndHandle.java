@@ -7,7 +7,7 @@ import java.util.Map;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.Ability;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.service.AbilityService;

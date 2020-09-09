@@ -1,9 +1,9 @@
-package pers.mihao.ancient_empire.base.bo;
+package pers.mihao.ancient_empire.base.dto;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 
-public class ReqUnitInfoDto {
+public class ReqUnitInfoDTO {
     @NotBlank(message = "单位类型不能为空")
     private String type;
     @DecimalMin(value = "0", message = "单位等级错误")

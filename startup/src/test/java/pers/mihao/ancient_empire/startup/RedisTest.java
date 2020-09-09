@@ -1,22 +1,19 @@
 package pers.mihao.ancient_empire.startup;
 
-import com.mihao.ancient_empire.common.util.JacksonUtil;
-import com.mihao.ancient_empire.common.util.RedisHelper;
-import com.mihao.ancient_empire.common.util.RespHelper;
-import com.mihao.ancient_empire.common.vo.test_dto.Dog;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
-import pers.mihao.ancient_empire.common.bo.auth_dto.RegisterDto;
-import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
-import pers.mihao.ancient_empire.auth.service.UserMapService;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
+import pers.mihao.ancient_empire.base.entity.UserMap;
+import pers.mihao.ancient_empire.base.service.UserMapService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.dto.RegisterDto;
+import pers.mihao.ancient_empire.common.util.JacksonUtil;
+import pers.mihao.ancient_empire.common.util.RedisHelper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

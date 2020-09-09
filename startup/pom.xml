@@ -13,7 +13,12 @@
   <artifactId>startup</artifactId>
 
   <dependencies>
-
+    <dependency>
+      <groupId>pers.mihao.ancient-empire</groupId>
+      <artifactId>core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>

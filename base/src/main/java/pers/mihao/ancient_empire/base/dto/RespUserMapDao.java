@@ -4,7 +4,7 @@ import java.util.List;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
-import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
+import pers.mihao.ancient_empire.base.entity.UserMap;
 
 public class RespUserMapDao {
 

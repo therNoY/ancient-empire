@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 单位等级信息表
+ * 单位等级属性 不同的单位 不同的属性 成长不一样
  * </p>
  *
  * @author mihao
@@ -34,8 +34,7 @@ public class UnitLevelMes implements Serializable {
     /**
      * 等级
      */
-    @DecimalMax(value = "3", message = "单位等级必须在0和3之间")
-    @DecimalMin(value = "0", message = "单位等级必须在0和3之间")
+    @DecimalMin(value = "0", message = "单位等级必须大于0")
     private Integer level;
 
     /**

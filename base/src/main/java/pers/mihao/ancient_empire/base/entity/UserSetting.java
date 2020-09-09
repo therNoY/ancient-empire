@@ -132,5 +132,5 @@ public class UserSetting implements Serializable {
 
     // 作弊模式（减伤20%） 普通模式（无） 困难模式（敌方减伤20%） 地狱模式 （敌方减伤40%）
 
-    // AI 模式 ： 随机 热血 活命 附庸 联盟
+    // AI 模式 ： 随机热血活命附庸联盟
 }

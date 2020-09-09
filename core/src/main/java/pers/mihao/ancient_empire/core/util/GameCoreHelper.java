@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.IntegerUtil;

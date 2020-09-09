@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.Ability;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;

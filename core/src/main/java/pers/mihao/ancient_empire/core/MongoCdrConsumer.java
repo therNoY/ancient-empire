@@ -1,8 +1,10 @@
-package pers.mihao.ancient_empire.startup.rabbit_consumer;
+package pers.mihao.ancient_empire.core;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pers.mihao.ancient_empire.base.dao.mongo.UserRecordRepository;
@@ -12,7 +14,6 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.JacksonUtil;
-import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.common.util.MqMessage;
 import pers.mihao.ancient_empire.common.util.RedisHelper;
 import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
@@ -33,58 +34,59 @@ public class MongoCdrConsumer {
     UserRecordMongoHelper userRecordMongoHelper;
     @Autowired
     RedisHelper redisHelper;
-    @Autowired
-    MqHelper mqHelper;
 
-    public void router() {
-        new Thread(() -> {
-            for (; ; ) {
-                try {
-                    MqMessage mqMessage = mqHelper.getMessage();
-                    if (mqMessage != null) {
-                        log.info("mongo.cdr 消费 at {}", DateUtil.getNow());
-                        switch (mqMessage.getMqMethodEnum()) {
-                            case ADD_RECORD:
-                                consumerMes(mqMessage, this::addRecord);
-                                break;
-                            case ACTION_ATTACH:
-                                consumerMes(mqMessage, this::actionAttach);
-                                break;
-                            case ACTION_REPAIR_OCP:
-                                consumerMes(mqMessage, this::actionRepairOcp);
-                                break;
-                            case ACTION_SUMMON:
-                                consumerMes(mqMessage, this::actionSummon);
-                                break;
-                            case ACTION_END:
-                                consumerMes(mqMessage, this::actionEnd);
-                                break;
-                            case BUY_UNIT:
-                                consumerMes(mqMessage, this::buyUnit);
-                                break;
-                            case END_ROUND:
-                                consumerMes(mqMessage, this::endRound);
-                                break;
-                            default:
-                                log.error("没有方法");
-                        }
-                    } else {
-                        log.error("mq 消费信息错误");
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    /**
+     * 消费者处理消息入口
+     * @param object
+     */
+    @RabbitHandler
+    public void router(Object object) {
+        MqMessage mqMessage = null;
+        try {
+            Message message = (Message) object;
+            String mes = new String(message.getBody(), "utf-8");
+            mqMessage = JacksonUtil.jsonToBean(mes, MqMessage.class);
+        } catch (Exception e) {
+            log.error("", e);
+        }
+        if (mqMessage != null) {
+            log.info("mongo.cdr 消费 at {}", DateUtil.getNow());
+            switch (mqMessage.getMqMethodEnum()) {
+                case ADD_RECORD:
+                    consumerMes(mqMessage, this::addRecord);
+                    break;
+                case ACTION_ATTACH:
+                    consumerMes(mqMessage, this::actionAttach);
+                    break;
+                case ACTION_REPAIR_OCP:
+                    consumerMes(mqMessage, this::actionRepairOcp);
+                    break;
+                case ACTION_SUMMON:
+                    consumerMes(mqMessage, this::actionSummon);
+                    break;
+                case ACTION_END:
+                    consumerMes(mqMessage, this::actionEnd);
+                    break;
+                case BUY_UNIT:
+                    consumerMes(mqMessage, this::buyUnit);
+                    break;
+                case END_ROUND:
+                    consumerMes(mqMessage, this::endRound);
+                    break;
+                default:
+                    log.error("没有方法");
             }
-        }).start();
+        }else {
+            log.error("mq 消费信息错误");
+        }
     }
 
     /**
      * 统一处理Mq的消费异常
-     *
      * @param mqMessage
      * @param handle
      */
-    void consumerMes(MqMessage mqMessage, ConsumerHandle handle) {
+    void consumerMes(MqMessage mqMessage, ConsumerHandle handle){
         try {
             handle.handel(mqMessage.getValue());
         } catch (Exception e) {
@@ -94,7 +96,6 @@ public class MongoCdrConsumer {
 
     /**
      * 结束当前回合
-     *
      * @param value
      */
     private void endRound(Object value) {
@@ -107,7 +108,6 @@ public class MongoCdrConsumer {
 
     /**
      * 购买单位
-     *
      * @param value
      */
     private void buyUnit(Object value) {
@@ -119,7 +119,6 @@ public class MongoCdrConsumer {
 
     /**
      * 处理占领或者修复的结果
-     *
      * @param value
      */
     private void actionRepairOcp(Object value) {
@@ -131,7 +130,6 @@ public class MongoCdrConsumer {
 
     /**
      * 结束行为的影响
-     *
      * @param value
      */
     private void actionEnd(Object value) {
@@ -143,7 +141,6 @@ public class MongoCdrConsumer {
 
     /**
      * 召唤后更新record
-     *
      * @param value
      */
     private void actionSummon(Object value) {
@@ -155,7 +152,6 @@ public class MongoCdrConsumer {
 
     /**
      * 更新军队
-     *
      * @param value
      */
     private void actionAttach(Object value) {
@@ -167,7 +163,6 @@ public class MongoCdrConsumer {
 
     /**
      * mongo 添加记录
-     *
      * @param value
      */
     private void addRecord(Object value) {
@@ -177,8 +172,7 @@ public class MongoCdrConsumer {
         userRecordRepository.save(userRecord);
     }
 
-    private interface ConsumerHandle {
-
+    private interface ConsumerHandle{
         void handel(Object value);
     }
 }

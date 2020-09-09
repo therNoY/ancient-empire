@@ -4,7 +4,7 @@ import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.common.config.AppConfig;
