@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.startup.java_base;
 
-import com.mihao.ancient_empire.common.util.IntegerUtil;
 import org.junit.Test;
+import pers.mihao.ancient_empire.common.util.IntegerUtil;
 
 public class RandomTest {
 

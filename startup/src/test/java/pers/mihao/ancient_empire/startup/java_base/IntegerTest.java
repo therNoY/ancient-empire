@@ -1,9 +1,9 @@
 package pers.mihao.ancient_empire.startup.java_base;
 
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.common.bo.ws_dto.AttributesPower;
-import com.mihao.ancient_empire.util.AppUtil;
 import org.junit.Test;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.core.dto.AttributesPower;
 
 import java.util.Date;
 

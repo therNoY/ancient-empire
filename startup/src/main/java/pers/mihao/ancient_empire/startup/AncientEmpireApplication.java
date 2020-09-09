@@ -9,11 +9,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication
 @EnableAspectJAutoProxy // 开启aop
 @EnableTransactionManagement // 开启事务
-@EnableMongoRepositories
-@MapperScan("com.mihao.ancient_empire.dao") // 开启mybatis mapper 扫描
+@SpringBootApplication(scanBasePackages = {"pers.mihao.ancient_empire.**"})
+@MapperScan("pers.mihao.ancient_empire.*.dao") // 开启mybatis mapper 扫描
+@EnableMongoRepositories(basePackages = {"pers.mihao.ancient_empire.base.mongo"})
 public class AncientEmpireApplication {
 
     public static void main(String[] args) {

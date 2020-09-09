@@ -5,13 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pers.mihao.ancient_empire.base.dao.mongo.UserRecordRepository;
 import pers.mihao.ancient_empire.base.dto.BuyUnitDto;
 import pers.mihao.ancient_empire.base.dto.SummonDto;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.mongo.dao.UserRecordRepository;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
 import pers.mihao.ancient_empire.common.util.DateUtil;
-import pers.mihao.ancient_empire.common.util.JacksonUtil;
 import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.common.util.MqMessage;
 import pers.mihao.ancient_empire.common.util.RedisHelper;
@@ -99,7 +98,7 @@ public class MongoCdrConsumer {
      */
     private void endRound(Object value) {
         log.info("mq 处理：endRound");
-        UserRecord record = JacksonUtil.mapToBean(value, UserRecord.class);
+        UserRecord record = (UserRecord)value;
         // 更新军队坟墓更新当前军队
         userRecordMongoHelper.endRound(record);
         redisHelper.delKey(RedisKey.USER_RECORD_ + record.getUuid());
@@ -112,7 +111,7 @@ public class MongoCdrConsumer {
      */
     private void buyUnit(Object value) {
         log.info("mq 处理：buyUnit");
-        BuyUnitDto buyUnitDto = JacksonUtil.mapToBean(value, BuyUnitDto.class);
+        BuyUnitDto buyUnitDto = (BuyUnitDto)value;
         userRecordMongoHelper.handleBuyUnit(buyUnitDto);
         redisHelper.delKey(RedisKey.USER_RECORD_ + buyUnitDto.getUuid());
     }
@@ -124,7 +123,7 @@ public class MongoCdrConsumer {
      */
     private void actionRepairOcp(Object value) {
         log.info("mq 处理：actionRepairOcp");
-        RespRepairOcpResult repairOcpResult = JacksonUtil.mapToBean(value, RespRepairOcpResult.class);
+        RespRepairOcpResult repairOcpResult = (RespRepairOcpResult)value;
         userRecordMongoHelper.handleRepairOcp(repairOcpResult);
         redisHelper.delKey(RedisKey.USER_RECORD_ + repairOcpResult.getRecordId());
     }
@@ -136,7 +135,7 @@ public class MongoCdrConsumer {
      */
     private void actionEnd(Object value) {
         log.info("mq 处理：actionEnd");
-        RespEndResultDto endResultDto = JacksonUtil.mapToBean(value, RespEndResultDto.class);
+        RespEndResultDto endResultDto = (RespEndResultDto)value;
         userRecordMongoHelper.handleEnd(endResultDto);
         redisHelper.delKey(RedisKey.USER_RECORD_ + endResultDto.getUuid());
     }
@@ -148,7 +147,7 @@ public class MongoCdrConsumer {
      */
     private void actionSummon(Object value) {
         log.info("mq 处理：actionSummon");
-        SummonDto summonDto = JacksonUtil.mapToBean(value, SummonDto.class);
+        SummonDto summonDto = (SummonDto)value;
         userRecordMongoHelper.handleSummon(summonDto);
         redisHelper.delKey(RedisKey.USER_RECORD_ + summonDto.getUuid());
     }
@@ -160,7 +159,7 @@ public class MongoCdrConsumer {
      */
     private void actionAttach(Object value) {
         log.info("mq 处理：actionAttach");
-        UserRecord record = JacksonUtil.mapToBean(value, UserRecord.class);
+        UserRecord record = (UserRecord)value;
         userRecordMongoHelper.updateRecord(record);
         redisHelper.delKey(RedisKey.USER_RECORD_ + record.getUuid());
     }
@@ -172,7 +171,7 @@ public class MongoCdrConsumer {
      */
     private void addRecord(Object value) {
         log.info("mq 处理：addRecord");
-        UserRecord userRecord = JacksonUtil.mapToBean(value, UserRecord.class);
+        UserRecord userRecord = (UserRecord) value;
         userRecordMongoHelper.updateRecord(userRecord);
         userRecordRepository.save(userRecord);
     }

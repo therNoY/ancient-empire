@@ -1,14 +1,14 @@
 package pers.mihao.ancient_empire.startup.ServiceTest;
 
-import pers.mihao.ancient_empire.common.constant.AbilityEnum;
-import pers.mihao.ancient_empire.common.constant.UnitEnum;
-import com.mihao.ancient_empire.entity.Ability;
-import pers.mihao.ancient_empire.auth.service.AbilityService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.UnitEnum;
+import pers.mihao.ancient_empire.base.service.AbilityService;
 
 import java.util.List;
 

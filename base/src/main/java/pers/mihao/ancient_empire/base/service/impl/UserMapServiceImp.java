@@ -19,7 +19,7 @@ import pers.mihao.ancient_empire.auth.enums.UserEnum;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
-import pers.mihao.ancient_empire.base.dao.mongo.UserMapRepository;
+import pers.mihao.ancient_empire.base.mongo.dao.UserMapRepository;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;

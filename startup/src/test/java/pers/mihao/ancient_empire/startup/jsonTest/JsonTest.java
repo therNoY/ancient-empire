@@ -1,8 +1,8 @@
 package pers.mihao.ancient_empire.startup.jsonTest;
 
-import com.mihao.ancient_empire.common.util.JacksonUtil;
-import com.mihao.ancient_empire.common.vo.test_dto.Dog;
 import org.junit.Test;
+import pers.mihao.ancient_empire.common.util.JacksonUtil;
+import pers.mihao.ancient_empire.common.vo.test_dto.Dog;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.dao.mongo;
+package pers.mihao.ancient_empire.base.mongo.dao;
 
 import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;

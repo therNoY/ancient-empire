@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.startup.java_base;
 
-import pers.mihao.ancient_empire.common.bo.Site;
 import org.junit.Test;
 
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
 package pers.mihao.ancient_empire.startup.ServiceTest;
 
-import com.mihao.ancient_empire.common.util.JacksonUtil;
-import pers.mihao.ancient_empire.common.bo.ws_dto.ReqMoveDto;
 import org.junit.Test;
+import pers.mihao.ancient_empire.common.util.JacksonUtil;
+import pers.mihao.ancient_empire.core.dto.ReqMoveDto;
 
 import java.io.File;
 

@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
-import pers.mihao.ancient_empire.base.dao.mongo.UserMapRepository;
+import pers.mihao.ancient_empire.base.mongo.dao.UserMapRepository;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.CollectionEnum;
 import pers.mihao.ancient_empire.base.enums.MapEnum;

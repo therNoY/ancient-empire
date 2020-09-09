@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.startup.java_base;
 
-import com.mihao.ancient_empire.common.vo.test_dto.Dog;
 import org.junit.Test;
+import pers.mihao.ancient_empire.common.vo.test_dto.Dog;
 
 import java.util.Arrays;
 import java.util.List;

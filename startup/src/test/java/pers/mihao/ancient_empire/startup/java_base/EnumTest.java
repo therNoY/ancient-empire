@@ -1,8 +1,8 @@
 package pers.mihao.ancient_empire.startup.java_base;
 
-import com.mihao.ancient_empire.common.util.EnumUtil;
-import pers.mihao.ancient_empire.common.constant.UnitEnum;
 import org.junit.Test;
+import pers.mihao.ancient_empire.base.enums.UnitEnum;
+import pers.mihao.ancient_empire.common.util.EnumUtil;
 
 public class EnumTest {
     @Test
