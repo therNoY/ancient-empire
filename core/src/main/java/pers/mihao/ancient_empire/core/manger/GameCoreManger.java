@@ -48,6 +48,7 @@ import pers.mihao.ancient_empire.core.websocket.service.WsEndRoundService;
 import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
 
 /**
+ * 管理游戏context的类
  * 管理缓存和任务调度 static 是共有的 其他属性是根据每个record 生成一个
  */
 public class GameCoreManger {

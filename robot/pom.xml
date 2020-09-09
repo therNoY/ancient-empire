@@ -15,8 +15,8 @@
   <dependencies>
     <dependency>
       <groupId>pers.mihao.ancient-empire</groupId>
-      <artifactId>common</artifactId>
-      <version>${project.version}</version>
+      <artifactId>core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
