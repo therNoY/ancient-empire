@@ -1,14 +1,13 @@
 package pers.mihao.ancient_empire.core.handel.action;
 
-import pers.mihao.ancient_empire.core.eums.ActionEnum;
-import pers.mihao.ancient_empire.common.constant.RegionEnum;
-import pers.mihao.ancient_empire.common.bo.BaseSquare;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.common.bo.Site;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import com.mihao.ancient_empire.util.AppUtil;
-
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.core.eums.ActionEnum;
 
 
 public class DestroyerActionHandle extends ActionHandle {
@@ -40,8 +39,8 @@ public class DestroyerActionHandle extends ActionHandle {
             return actions;
         }
 
-        List<BaseSquare> regions = record.getInitMap().getRegions();
-        int column = record.getInitMap().getColumn();
+        List<BaseSquare> regions = record.getGameMap().getRegions();
+        int column = record.getGameMap().getColumn();
         // 从所有的地形中
         for (int i = 0; i < regions.size(); i++) {
             BaseSquare region = regions.get(i);

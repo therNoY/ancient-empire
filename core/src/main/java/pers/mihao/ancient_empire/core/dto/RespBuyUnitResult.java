@@ -1,8 +1,8 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.common.bo.Position;
-
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.dto.BuyUnitDto;
 
 public class RespBuyUnitResult {
 

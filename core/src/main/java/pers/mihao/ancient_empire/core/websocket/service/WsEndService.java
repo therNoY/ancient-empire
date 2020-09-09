@@ -1,20 +1,18 @@
 package pers.mihao.ancient_empire.core.websocket.service;
 
 
-import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
-import com.mihao.ancient_empire.entity.Ability;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.core.handel.end.EndHandle;
-import pers.mihao.ancient_empire.auth.service.AbilityService;
-import pers.mihao.ancient_empire.auth.service.UnitAbilityService;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
-import com.mihao.ancient_empire.util.MqHelper;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.service.AbilityService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
+import pers.mihao.ancient_empire.common.util.MqHelper;
+import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
+import pers.mihao.ancient_empire.core.handel.end.EndHandle;
 
 /**
  * Service 结束时的 处理

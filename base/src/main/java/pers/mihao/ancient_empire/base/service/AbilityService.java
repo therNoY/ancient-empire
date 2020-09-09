@@ -1,9 +1,8 @@
 package pers.mihao.ancient_empire.base.service;
 
-import com.mihao.ancient_empire.entity.Ability;
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import java.util.List;
+import pers.mihao.ancient_empire.base.entity.Ability;
 
 /**
  * <p>

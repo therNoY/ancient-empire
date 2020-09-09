@@ -1,12 +1,11 @@
-package pers.mihao.ancient_empire.robot;
-
-import pers.mihao.ancient_empire.robot.constant.AiActiveEnum;
-import pers.mihao.ancient_empire.robot.dto.ActiveResult;
-import pers.mihao.ancient_empire.robot.handle.AiActiveHandle;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+package pers.mihao.ancient_empire.core;
 
 import java.util.function.Supplier;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
+import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
+import pers.mihao.ancient_empire.core.handel.ai.AiActiveHandle;
+import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 
 /**
  * 任务调度的提交类 工具人

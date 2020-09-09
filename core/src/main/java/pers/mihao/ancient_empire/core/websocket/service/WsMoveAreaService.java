@@ -1,11 +1,27 @@
 package pers.mihao.ancient_empire.core.websocket.service;
 
-import pers.mihao.ancient_empire.common.constant.AbilityEnum;
-import pers.mihao.ancient_empire.common.constant.RegionEnum;
-import com.mihao.ancient_empire.entity.Ability;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
-import com.mihao.ancient_empire.entity.UnitMes;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
+import pers.mihao.ancient_empire.base.service.AbilityService;
+import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
+import pers.mihao.ancient_empire.base.service.UnitMesService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.dto.ReqMoveDto;
 import pers.mihao.ancient_empire.core.dto.ReqSecondMoveDto;
@@ -13,17 +29,7 @@ import pers.mihao.ancient_empire.core.dto.ReqUnitIndexDto;
 import pers.mihao.ancient_empire.core.dto.SecondMoveDto;
 import pers.mihao.ancient_empire.core.handel.move_area.MoveAreaHandle;
 import pers.mihao.ancient_empire.core.handel.move_path.MovePathHandle;
-import pers.mihao.ancient_empire.auth.service.AbilityService;
-import pers.mihao.ancient_empire.auth.service.UnitLevelMesService;
-import pers.mihao.ancient_empire.auth.service.UnitMesService;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
-import com.mihao.ancient_empire.util.AppUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  * 获取和单位移动有关的
@@ -88,7 +94,7 @@ public class WsMoveAreaService {
         // 判断如果是 获取action
         if (considerLoad && getLoadAction && abilityList.contains(AbilityEnum.CASTLE_GET.ability())) {
             // 判断移动单位是否有领主属性 如果有判断是否站在所属城堡
-            BaseSquare region = AppUtil.getRegionByPosition(userRecord, cUnit);
+            BaseSquare region = GameCoreHelper.getRegionByPosition(userRecord, cUnit);
             if (region.getType().equals(RegionEnum.CASTLE.type()) && region.getColor().equals(color)) {
                 Map<String, Object> map = actionService.getActions(userRecord, new ReqMoveDto(unitIndex.getIndex(), AppUtil.getPosition(cUnit), AppUtil.getPosition(cUnit)), true);
                 return map;

@@ -1,8 +1,8 @@
 package pers.mihao.ancient_empire.core.util;
 
-import com.mihao.ancient_empire.common.config.ErrorCode;
-import pers.mihao.ancient_empire.common.constant.WsMethodEnum;
-import pers.mihao.ancient_empire.common.bo.ws_dto.WSRespDto;
+import pers.mihao.ancient_empire.common.config.ErrorCode;
+import pers.mihao.ancient_empire.core.dto.WSRespDto;
+import pers.mihao.ancient_empire.core.eums.WsMethodEnum;
 
 /**
  * 帮助构建 WS 统一返回值

@@ -1,23 +1,22 @@
 package pers.mihao.ancient_empire.core.handel.move_area;
 
-import com.mihao.ancient_empire.common.util.EnumUtil;
-import com.mihao.ancient_empire.common.vo.MyException;
-import pers.mihao.ancient_empire.common.constant.AbilityEnum;
-import pers.mihao.ancient_empire.common.bo.Army;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import com.mihao.ancient_empire.entity.RegionMes;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.auth.service.RegionMesService;
-import com.mihao.ancient_empire.util.AppUtil;
-import com.mihao.ancient_empire.util.ApplicationContextHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.*;
+import java.awt.Event;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.service.RegionMesService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.common.util.EnumUtil;
+import pers.mihao.ancient_empire.common.vo.MyException;
 
 public class MoveAreaHandle{
 
@@ -97,7 +96,7 @@ public class MoveAreaHandle{
             }
         }
         // 2.判断右边的节点
-        if (position.getColumn() < userRecord.getInitMap().getColumn() && position.getDirection() != Event.LEFT) {
+        if (position.getColumn() < userRecord.getGameMap().getColumn() && position.getDirection() != Event.LEFT) {
             Position nPosition = new Position(position.getRow(), position.getColumn() + 1);
             // 判断上面有没有单位
             if (!isHaveEnemy(army, userRecord, nPosition.getRow(), nPosition.getColumn())) {
@@ -115,7 +114,7 @@ public class MoveAreaHandle{
 
         }
         // 3.判断下面的节点
-        if (position.getRow() < userRecord.getInitMap().getRow() && position.getDirection() != Event.UP) {
+        if (position.getRow() < userRecord.getGameMap().getRow() && position.getDirection() != Event.UP) {
             Position nPosition = new Position(position.getRow() + 1, position.getColumn());
             // 判断上面有没有单位
             if (!isHaveEnemy(army, userRecord, nPosition.getRow(), nPosition.getColumn())) {
@@ -166,8 +165,8 @@ public class MoveAreaHandle{
     // 获取上面的地形 的消耗
     public int getRegionDeplete(UserRecord userRecord, int row, int column) {
         // 获取上面地形的type
-        int index = (row - 1) * userRecord.getInitMap().getColumn() + column - 1;
-        String type = userRecord.getInitMap().getRegions().get(index).getType();
+        int index = (row - 1) * userRecord.getGameMap().getColumn() + column - 1;
+        String type = userRecord.getGameMap().getRegions().get(index).getType();
         RegionMes regionMes = ApplicationContextHolder.getBean(RegionMesService.class).getRegionByType(type);
         if (regionMes == null)
             throw new MyException("服务器错误");

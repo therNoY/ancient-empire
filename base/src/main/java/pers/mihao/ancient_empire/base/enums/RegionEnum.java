@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.enums;
 
-import com.mihao.ancient_empire.common.enums.BaseEnum;
+import pers.mihao.ancient_empire.common.enums.BaseEnum;
+
 /*地形枚举*/
 public enum  RegionEnum implements BaseEnum {
     TOWN, // 城镇

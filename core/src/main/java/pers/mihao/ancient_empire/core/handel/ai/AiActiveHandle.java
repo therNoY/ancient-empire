@@ -1,19 +1,18 @@
-package pers.mihao.ancient_empire.robot.handle;
-
-import pers.mihao.ancient_empire.robot.constant.AiActiveEnum;
-import pers.mihao.ancient_empire.robot.dto.ActiveResult;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.common.bo.ws_dto.RespEndResultDto;
-import com.mihao.ancient_empire.entity.Ability;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.core.handel.end.EndHandle;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
-import pers.mihao.ancient_empire.auth.service.AbilityService;
-import pers.mihao.ancient_empire.auth.service.UnitMesService;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
-import com.mihao.ancient_empire.util.ApplicationContextHolder;
+package pers.mihao.ancient_empire.core.handel.ai;
 
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.service.AbilityService;
+import pers.mihao.ancient_empire.base.service.UnitMesService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
+import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
+import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
+import pers.mihao.ancient_empire.core.handel.end.EndHandle;
+import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 
 /**
  * 具体任务的处理类 根据不同的类型返回不同的处理类 是简单工厂模式

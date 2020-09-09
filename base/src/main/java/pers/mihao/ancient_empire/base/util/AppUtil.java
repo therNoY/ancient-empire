@@ -1,24 +1,19 @@
 package pers.mihao.ancient_empire.base.util;
 
-import com.mihao.ancient_empire.common.vo.MyException;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.common.bo.ws_dto.RespAction;
-import pers.mihao.ancient_empire.common.constant.RegionEnum;
-import pers.mihao.ancient_empire.common.constant.UnitEnum;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.common.util.EnumUtil;
-import pers.mihao.ancient_empire.common.util.IntegerUtil;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.UnitEnum;
+import pers.mihao.ancient_empire.common.vo.MyException;
 
 /**
  * 和业务有关的工具类 方便修改
@@ -70,26 +65,7 @@ public class AppUtil {
         return record.getArmyList().get(index);
     }
 
-    /**
-     * 获得单位的位置
-     */
-    public static BaseSquare getRegionByPosition(UserRecord record, Unit unit) {
-        return getRegionByPosition(record.getInitMap().getRegions(), unit.getRow(), unit.getColumn(), record.getInitMap().getColumn());
-    }
 
-    /**
-     * 获得单位的位置
-     */
-    public static BaseSquare getRegionByPosition(UserRecord record, Site site) {
-        return getRegionByPosition(record.getInitMap().getRegions(), site.getRow(), site.getColumn(), record.getInitMap().getColumn());
-    }
-
-    /**
-     * 获得单位的位置
-     */
-    public static BaseSquare getRegionByPosition(UserRecord record, int row, int column) {
-        return getRegionByPosition(record.getInitMap().getRegions(), row, column, record.getInitMap().getColumn());
-    }
 
     /**
      * 通过行列获取地图上的位置
@@ -103,82 +79,82 @@ public class AppUtil {
     /**
      * 根据 单位的action  和 最重点的位置渲染 单位action 图标的位置
      */
-    public static List<RespAction> addActionAim(List<String> actionList, Position cUnit) {
-        List<RespAction> respActions = new ArrayList<>();
-        for (String s : actionList) {
-            respActions.add(new RespAction(s, (float) cUnit.getRow(), (float) cUnit.getColumn()));
-        }
-        return respActions;
-    }
+//    public static List<RespAction> addActionAim(List<String> actionList, Position cUnit) {
+//        List<RespAction> respActions = new ArrayList<>();
+//        for (String s : actionList) {
+//            respActions.add(new RespAction(s, (float) cUnit.getRow(), (float) cUnit.getColumn()));
+//        }
+//        return respActions;
+//    }
 
     /**
      * 根据 单位的action  和 最重点的位置渲染 单位action 图标的位置
      */
-    public static List<RespAction> addActionPosition(List<String> actionList, Position cUnit) {
-
-        List<RespAction> respActions = new ArrayList<>();
-
-        if (actionList.size() == 1) {
-            // 只有一个action 显示在下面
-            RespAction action = new RespAction(actionList.get(0));
-            action.setRow((float) (cUnit.getRow() + 1));
-            action.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action);
-
-        } else if (actionList.size() == 2) {
-            // 2个action一个显示在上面 一个显示下面
-            RespAction action = new RespAction(actionList.get(0));
-            action.setRow((float) (cUnit.getRow() - 1));
-            action.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action);
-
-            RespAction action2 = new RespAction(actionList.get(1));
-            action2.setRow((float) (cUnit.getRow() + 1));
-            action2.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action2);
-        } else if (actionList.size() == 3) {
-            // 3个显示个3交
-            RespAction action = new RespAction(actionList.get(0));
-            action.setRow((float) (cUnit.getRow() - 1));
-            action.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action);
-
-            RespAction action2 = new RespAction(actionList.get(1));
-            action2.setRow((float) (cUnit.getRow() + 1));
-            action2.setColumn((float) (cUnit.getColumn() + 0.84));
-            respActions.add(action2);
-
-            RespAction action3 = new RespAction(actionList.get(2));
-            action3.setRow((float) (cUnit.getRow() + 1));
-            action3.setColumn((float) (cUnit.getColumn() - 0.84));
-            respActions.add(action3);
-        } else if (actionList.size() == 4) {
-            // 4个显示
-            RespAction action = new RespAction(actionList.get(0));
-            action.setRow((float) (cUnit.getRow() - 1));
-            action.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action);
-
-            RespAction action2 = new RespAction(actionList.get(1));
-            action2.setRow((float) (cUnit.getRow() + 1));
-            action2.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action2);
-
-            RespAction action3 = new RespAction(actionList.get(2));
-            action3.setRow((float) (cUnit.getRow() + 0.16));
-            action3.setColumn((float) (cUnit.getColumn() - 1));
-            respActions.add(action3);
-
-            RespAction action4 = new RespAction(actionList.get(3));
-            action4.setRow((float) (cUnit.getRow() + 0.16));
-            action4.setColumn((float) (cUnit.getColumn() + 1));
-            respActions.add(action4);
-        } else {
-            log.error("不可能存在的Action");
-        }
-
-        return respActions;
-    }
+//    public static List<RespAction> addActionPosition(List<String> actionList, Position cUnit) {
+//
+//        List<RespAction> respActions = new ArrayList<>();
+//
+//        if (actionList.size() == 1) {
+//            // 只有一个action 显示在下面
+//            RespAction action = new RespAction(actionList.get(0));
+//            action.setRow((float) (cUnit.getRow() + 1));
+//            action.setColumn((float) (cUnit.getColumn() + 0.16));
+//            respActions.add(action);
+//
+//        } else if (actionList.size() == 2) {
+//            // 2个action一个显示在上面 一个显示下面
+//            RespAction action = new RespAction(actionList.get(0));
+//            action.setRow((float) (cUnit.getRow() - 1));
+//            action.setColumn((float) (cUnit.getColumn() + 0.16));
+//            respActions.add(action);
+//
+//            RespAction action2 = new RespAction(actionList.get(1));
+//            action2.setRow((float) (cUnit.getRow() + 1));
+//            action2.setColumn((float) (cUnit.getColumn() + 0.16));
+//            respActions.add(action2);
+//        } else if (actionList.size() == 3) {
+//            // 3个显示个3交
+//            RespAction action = new RespAction(actionList.get(0));
+//            action.setRow((float) (cUnit.getRow() - 1));
+//            action.setColumn((float) (cUnit.getColumn() + 0.16));
+//            respActions.add(action);
+//
+//            RespAction action2 = new RespAction(actionList.get(1));
+//            action2.setRow((float) (cUnit.getRow() + 1));
+//            action2.setColumn((float) (cUnit.getColumn() + 0.84));
+//            respActions.add(action2);
+//
+//            RespAction action3 = new RespAction(actionList.get(2));
+//            action3.setRow((float) (cUnit.getRow() + 1));
+//            action3.setColumn((float) (cUnit.getColumn() - 0.84));
+//            respActions.add(action3);
+//        } else if (actionList.size() == 4) {
+//            // 4个显示
+//            RespAction action = new RespAction(actionList.get(0));
+//            action.setRow((float) (cUnit.getRow() - 1));
+//            action.setColumn((float) (cUnit.getColumn() + 0.16));
+//            respActions.add(action);
+//
+//            RespAction action2 = new RespAction(actionList.get(1));
+//            action2.setRow((float) (cUnit.getRow() + 1));
+//            action2.setColumn((float) (cUnit.getColumn() + 0.16));
+//            respActions.add(action2);
+//
+//            RespAction action3 = new RespAction(actionList.get(2));
+//            action3.setRow((float) (cUnit.getRow() + 0.16));
+//            action3.setColumn((float) (cUnit.getColumn() - 1));
+//            respActions.add(action3);
+//
+//            RespAction action4 = new RespAction(actionList.get(3));
+//            action4.setRow((float) (cUnit.getRow() + 0.16));
+//            action4.setColumn((float) (cUnit.getColumn() + 1));
+//            respActions.add(action4);
+//        } else {
+//            log.error("不可能存在的Action");
+//        }
+//
+//        return respActions;
+//    }
 
 
     /**
@@ -300,13 +276,13 @@ public class AppUtil {
     /**
      * 获取单位的攻击（大于最小 小于最大）
      */
-    public static int getAttachNum(UnitLevelMes levelMes) {
-        int min = levelMes.getMinAttack();
-        int max = levelMes.getMaxAttack();
-        int att = IntegerUtil.getRandomIn(min, max);
-        log.info("获取{} 和 {} 攻击的中间值 {}", min, max, att);
-        return att;
-    }
+//    public static int getAttachNum(UnitLevelMes levelMes) {
+//        int min = levelMes.getMinAttack();
+//        int max = levelMes.getMaxAttack();
+//        int att = IntegerUtil.getRandomIn(min, max);
+//        log.info("获取{} 和 {} 攻击的中间值 {}", min, max, att);
+//        return att;
+//    }
 
     /**
      * 获取单位的生命 int[] -> int
@@ -411,7 +387,7 @@ public class AppUtil {
 
 
     public static int getRegionIndex(UserRecord record, Site region) {
-        return getRegionIndex(record.getInitMap(), region);
+        return getRegionIndex(record.getGameMap(), region);
     }
 
     public static int getRegionIndex(GameMap map, Site region) {
@@ -468,23 +444,23 @@ public class AppUtil {
         return -1;
     }
 
-    public static int getHpRecover(BaseSquare square) {
-        RegionEnum regionEnum = EnumUtil.valueOf(RegionEnum.class, square.getType());
-        switch (regionEnum) {
-            case RegionEnum.TOWN:
-            case RegionEnum.CASTLE:
-                return 20;
-            case RegionEnum.STOCK:
-            case RegionEnum.TEMPLE:
-            case RegionEnum.SEA:
-            case RegionEnum.SEA_HOUSE:
-                return 15;
-            case RegionEnum.REMAINS2:
-                return 35;
-            default:
-                return 0;
-        }
-    }
+//    public static int getHpRecover(BaseSquare square) {
+//        RegionEnum regionEnum = EnumUtil.valueOf(RegionEnum.class, square.getType());
+//        switch (regionEnum) {
+//            case RegionEnum.TOWN:
+//            case RegionEnum.CASTLE:
+//                return 20;
+//            case RegionEnum.STOCK:
+//            case RegionEnum.TEMPLE:
+//            case RegionEnum.SEA:
+//            case RegionEnum.SEA_HOUSE:
+//                return 15;
+//            case RegionEnum.REMAINS2:
+//                return 35;
+//            default:
+//                return 0;
+//        }
+//    }
 
     public static Unit getUnitId(UserRecord record, String uuid) {
         Army army = AppUtil.getCurrentArmy(record);

@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.base.enums;
 
-import com.mihao.ancient_empire.common.enums.BaseEnum;
+import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /*单位类型枚举*/
 public enum UnitEnum implements BaseEnum {

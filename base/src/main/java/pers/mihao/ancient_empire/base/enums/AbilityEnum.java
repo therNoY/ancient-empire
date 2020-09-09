@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.base.enums;
 
-import com.mihao.ancient_empire.common.enums.BaseEnum;
-import com.mihao.ancient_empire.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /**
  * 单位拥有的能力类型枚举

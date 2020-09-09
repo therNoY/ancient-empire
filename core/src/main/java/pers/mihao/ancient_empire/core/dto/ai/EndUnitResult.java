@@ -1,11 +1,10 @@
-package pers.mihao.ancient_empire.robot.dto;
-
-import pers.mihao.ancient_empire.robot.constant.AiActiveEnum;
-import pers.mihao.ancient_empire.common.bo.Site;
-import pers.mihao.ancient_empire.common.bo.ws_dto.LifeChange;
+package pers.mihao.ancient_empire.core.dto.ai;
 
 import java.util.List;
 import java.util.Map;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.core.dto.LifeChange;
+import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 
 public class EndUnitResult extends ActiveResult{
 

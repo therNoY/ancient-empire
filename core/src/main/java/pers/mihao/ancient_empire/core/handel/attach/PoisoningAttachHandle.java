@@ -1,13 +1,13 @@
 package pers.mihao.ancient_empire.core.handel.attach;
 
-import com.mihao.ancient_empire.common.config.AppConfig;
-import com.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.constant.StateEnum;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.core.dto.AttributesPower;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import com.mihao.ancient_empire.util.AppUtil;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.common.config.AppConfig;
+import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.core.dto.AttributesPower;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 public class PoisoningAttachHandle extends AttachHandle {
 
@@ -35,14 +35,15 @@ public class PoisoningAttachHandle extends AttachHandle {
      * @return
      */
     @Override
-    public AttributesPower getAttachPower(UserRecord record, Unit unit, UnitLevelMes levelMes, Unit beAttachUnit, AttributesPower attributesPower) {
+    public AttributesPower getAttachPower(UserRecord record, Unit unit, UnitLevelMes levelMes, Unit beAttachUnit,
+        AttributesPower attributesPower) {
         if (!StringUtil.isEmpty(beAttachUnit.getStatus())) {
             if (beAttachUnit.getStatus().equals(StateEnum.EXCITED.type())) {
                 if (attributesPower.getNum() != null) {
                     attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(POISONING)));
                     log.info("投毒者 获取攻击加成{}", Integer.valueOf(AppConfig.get(POISONING)));
                 } else {
-                    int attach = AppUtil.getAttachNum(levelMes);
+                    int attach = GameCoreHelper.getAttachNum(levelMes);
                     attributesPower.setNum(attach + Integer.valueOf(AppConfig.get(POISONING)));
                 }
             }

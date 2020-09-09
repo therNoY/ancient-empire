@@ -1,9 +1,8 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.common.bo.Position;
-
 import java.io.Serializable;
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Position;
 
 /**
  * 返回的攻击结果的dto

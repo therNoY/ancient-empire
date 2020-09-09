@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.service;
 
-import pers.mihao.ancient_empire.common.bo.record_dto.ReqSaveRecordDto;
+import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
+import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
 import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
 
 public interface UserRecordService {

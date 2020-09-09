@@ -1,11 +1,9 @@
 package pers.mihao.ancient_empire.base.dao;
 
-import com.mihao.ancient_empire.entity.Ability;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.data.mongodb.repository.Query;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Select;
+import pers.mihao.ancient_empire.base.entity.Ability;
 
 /**
  * <p>

@@ -1,13 +1,12 @@
 package pers.mihao.ancient_empire.base.entity.mongo;
 
+import java.io.Serializable;
+import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.base.bo.Position;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * 这个DTO 属于用户存档 即是进行中的

@@ -1,7 +1,7 @@
-package pers.mihao.ancient_empire.robot.dto;
+package pers.mihao.ancient_empire.core.dto.ai;
 
-import pers.mihao.ancient_empire.robot.constant.AiActiveEnum;
-import pers.mihao.ancient_empire.common.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 
 public class ActiveResult {
 

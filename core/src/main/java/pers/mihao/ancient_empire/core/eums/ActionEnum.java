@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.core.eums;
 
-import com.mihao.ancient_empire.common.enums.BaseEnum;
+import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /**
  * 攻击行为的枚举类

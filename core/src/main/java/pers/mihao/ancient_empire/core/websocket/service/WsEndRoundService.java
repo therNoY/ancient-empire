@@ -1,27 +1,27 @@
 package pers.mihao.ancient_empire.core.websocket.service;
 
-import pers.mihao.ancient_empire.common.constant.AbilityEnum;
-import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
-import pers.mihao.ancient_empire.common.constant.RegionEnum;
-import pers.mihao.ancient_empire.common.constant.StateEnum;
-import pers.mihao.ancient_empire.common.bo.Army;
-import pers.mihao.ancient_empire.common.bo.BaseSquare;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.core.dto.LifeChange;
-import pers.mihao.ancient_empire.core.dto.RespNewRoundDto;
-import com.mihao.ancient_empire.entity.Ability;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.auth.service.AbilityService;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
-import com.mihao.ancient_empire.util.AppUtil;
-import com.mihao.ancient_empire.util.MqHelper;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.service.AbilityService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
+import pers.mihao.ancient_empire.common.util.MqHelper;
+import pers.mihao.ancient_empire.core.dto.LifeChange;
+import pers.mihao.ancient_empire.core.dto.RespNewRoundDto;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  * 回合结束Service
@@ -100,7 +100,7 @@ public class WsEndRoundService {
         record.setCurrentRound(currentRound);
         record.setCurrCamp(currentArmy.getCamp());
         // 3.改变当前军队的资金
-        List<BaseSquare> regions = record.getInitMap().getRegions();
+        List<BaseSquare> regions = record.getGameMap().getRegions();
         int addMoney = 0;
         for (BaseSquare square : regions) {
             if (square.getColor() != null && square.getColor().equals(currentArmy.getColor())) {
@@ -117,7 +117,7 @@ public class WsEndRoundService {
         List<LifeChange> lifeChanges = new ArrayList<>();
         for (Unit unit : currentArmy.getUnits()) {
             LifeChange lifeChange = new LifeChange();
-            BaseSquare square = AppUtil.getRegionByPosition(record, unit);
+            BaseSquare square = GameCoreHelper.getRegionByPosition(record, unit);
             String status = unit.getStatus();
             if (square.getType().equals(RegionEnum.TOWN)) {
                 // 所处位置城镇

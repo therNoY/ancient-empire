@@ -1,15 +1,14 @@
 package pers.mihao.ancient_empire.core.handel.action;
 
-import com.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.core.eums.ActionEnum;
-import pers.mihao.ancient_empire.common.constant.RegionEnum;
-import pers.mihao.ancient_empire.common.bo.Army;
-import pers.mihao.ancient_empire.common.bo.BaseSquare;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import com.mihao.ancient_empire.util.AppUtil;
-
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.core.eums.ActionEnum;
 
 
 public class VillageGetActionHandle extends ActionHandle {
@@ -38,7 +37,8 @@ public class VillageGetActionHandle extends ActionHandle {
         List<String> actions = super.getAction(positions, record, camp, unitIndex, aimPoint);
         if (!actions.contains(ActionEnum.OCCUPIED.type())) {
             // 获取要移动到的地址
-            BaseSquare region = AppUtil.getRegionByPosition(record.getInitMap().getRegions(), aimPoint.getRow(), aimPoint.getColumn(), record.getInitMap().getColumn());
+            BaseSquare region = AppUtil
+                .getRegionByPosition(record.getGameMap().getRegions(), aimPoint.getRow(), aimPoint.getColumn(), record.getGameMap().getColumn());
             // 判断是城镇
             if (region.getType().equals(RegionEnum.TOWN.type())){
                 // 判断不是右方城镇

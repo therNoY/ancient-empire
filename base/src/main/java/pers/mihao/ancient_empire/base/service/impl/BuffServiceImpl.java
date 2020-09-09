@@ -1,10 +1,10 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
-import com.mihao.ancient_empire.entity.Buff;
-import com.mihao.ancient_empire.dao.BuffDao;
-import pers.mihao.ancient_empire.auth.service.BuffService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.base.dao.BuffDao;
+import pers.mihao.ancient_empire.base.entity.Buff;
+import pers.mihao.ancient_empire.base.service.BuffService;
 
 /**
  * <p>

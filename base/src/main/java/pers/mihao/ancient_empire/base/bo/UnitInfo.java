@@ -1,6 +1,10 @@
 package pers.mihao.ancient_empire.base.bo;
 
 import java.io.Serializable;
+import java.util.List;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
 
 /**
  * 返回一个详细的单位 信息

@@ -1,8 +1,7 @@
 package pers.mihao.ancient_empire.base.dao;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.mihao.ancient_empire.entity.UnitMes;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
 
 /**
  * <p>

@@ -1,7 +1,6 @@
-package pers.mihao.ancient_empire.robot.constant;
+package pers.mihao.ancient_empire.core.eums.ai;
 
-import com.mihao.ancient_empire.common.enums.BaseEnum;
-import pers.mihao.ancient_empire.common.constant.ActionEnum;
+import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 public enum AiActiveEnum implements BaseEnum {
 

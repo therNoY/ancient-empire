@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.common.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Site;
 
 /**
  * 单位修复占领传过来的

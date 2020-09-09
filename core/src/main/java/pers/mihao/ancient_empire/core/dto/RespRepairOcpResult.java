@@ -1,9 +1,8 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.common.bo.BaseSquare;
-
 import java.io.Serializable;
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
 
 public class RespRepairOcpResult implements Serializable {
 

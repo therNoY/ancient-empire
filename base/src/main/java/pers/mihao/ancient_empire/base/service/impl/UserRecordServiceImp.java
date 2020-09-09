@@ -1,35 +1,40 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
-import com.mihao.ancient_empire.common.util.DateUtil;
-import com.mihao.ancient_empire.common.util.RedisHelper;
-import com.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.base.enums.ColorEnum;
-import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
-import pers.mihao.ancient_empire.base.enums.StateEnum;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.GameMap;
-import pers.mihao.ancient_empire.base.bo.Position;
-import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.common.bo.record_dto.ReqSaveRecordDto;
-import com.mihao.ancient_empire.entity.UnitMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.base.dao.UserRecordRepository;
-import pers.mihao.ancient_empire.auth.service.UnitMesService;
-import pers.mihao.ancient_empire.base.service.UserMapService;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
-import com.mihao.ancient_empire.util.AuthUtil;
-import com.mihao.ancient_empire.util.MqHelper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.GameMap;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.dao.mongo.UserRecordRepository;
+import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
+import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.entity.mongo.UserMap;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.ColorEnum;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.service.UnitMesService;
+import pers.mihao.ancient_empire.base.service.UserMapService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
+import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.util.DateUtil;
+import pers.mihao.ancient_empire.common.util.MqHelper;
+import pers.mihao.ancient_empire.common.util.RedisHelper;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 
 @Service
 public class UserRecordServiceImp implements UserRecordService {

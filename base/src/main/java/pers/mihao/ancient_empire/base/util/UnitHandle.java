@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.base.util;
 
-import pers.mihao.ancient_empire.common.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.Unit;
 
 public interface UnitHandle {
 

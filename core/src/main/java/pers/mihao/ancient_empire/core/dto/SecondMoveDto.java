@@ -1,9 +1,8 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.common.bo.Position;
-
 import java.io.Serializable;
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Position;
 
 public class SecondMoveDto implements Serializable {
     private Boolean secondMove; // 单位是否有二次移动

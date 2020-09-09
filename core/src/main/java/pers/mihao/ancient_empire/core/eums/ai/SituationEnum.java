@@ -1,6 +1,6 @@
-package pers.mihao.ancient_empire.robot.constant;
+package pers.mihao.ancient_empire.core.eums.ai;
 
-import com.mihao.ancient_empire.common.enums.BaseEnum;
+import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /**
  * 分析局势的结果 是根据其他国家的状态的几个指标分析出来的

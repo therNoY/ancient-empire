@@ -1,10 +1,10 @@
 package pers.mihao.ancient_empire.core.handel.end;
 
-import com.mihao.ancient_empire.common.util.EnumUtil;
-import pers.mihao.ancient_empire.common.constant.AbilityEnum;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
+import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.common.util.EnumUtil;
+import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
 
 /**
  * 单位行动结束后的handle
@@ -18,6 +18,7 @@ public class EndHandle {
 
     /**
      * 根据单位的 能力选择相应的能力处理器
+     *
      * @param abilityType
      * @return
      */
@@ -40,7 +41,7 @@ public class EndHandle {
         return endHandle;
     }
 
-    public RespEndResultDto getEndResult(RespEndResultDto respEndResultDto, UserRecord record, Unit unit){
+    public RespEndResultDto getEndResult(RespEndResultDto respEndResultDto, UserRecord record, Unit unit) {
         return respEndResultDto;
     }
 }

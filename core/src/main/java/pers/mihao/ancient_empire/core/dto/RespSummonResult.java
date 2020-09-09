@@ -1,8 +1,9 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.common.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.dto.LevelDto;
 
-public class RespSummonResult extends LevelDto{
+public class RespSummonResult extends LevelDto {
 
     private Integer armyIndex;
     private Unit bone;

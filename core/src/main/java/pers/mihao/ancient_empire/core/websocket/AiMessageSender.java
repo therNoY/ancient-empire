@@ -1,30 +1,33 @@
-package pers.mihao.ancient_empire.robot;
-
-import pers.mihao.ancient_empire.robot.constant.AiActiveEnum;
-import pers.mihao.ancient_empire.robot.dto.*;
-import pers.mihao.ancient_empire.common.constant.WSPath;
-import pers.mihao.ancient_empire.common.constant.WsMethodEnum;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.common.bo.ws_dto.PathPosition;
-import pers.mihao.ancient_empire.common.bo.ws_dto.ReqMoveDto;
-import pers.mihao.ancient_empire.common.bo.ws_dto.RespNewRoundDto;
-import pers.mihao.ancient_empire.common.bo.ws_dto.RespRepairOcpResult;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
-import com.mihao.ancient_empire.util.AppUtil;
-import com.mihao.ancient_empire.util.WsRespHelper;
-import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
+package pers.mihao.ancient_empire.core.websocket;
 
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.core.dto.PathPosition;
+import pers.mihao.ancient_empire.core.dto.ReqMoveDto;
+import pers.mihao.ancient_empire.core.dto.RespNewRoundDto;
+import pers.mihao.ancient_empire.core.dto.RespRepairOcpResult;
+import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
+import pers.mihao.ancient_empire.core.dto.ai.BuyUnitResult;
+import pers.mihao.ancient_empire.core.dto.ai.EndUnitResult;
+import pers.mihao.ancient_empire.core.dto.ai.SelectUnitResult;
+import pers.mihao.ancient_empire.core.dto.ai.UnitActionResult;
+import pers.mihao.ancient_empire.core.eums.WSPath;
+import pers.mihao.ancient_empire.core.eums.WsMethodEnum;
+import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
+import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.util.WsRespHelper;
+import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
 
 @Component
 public class AiMessageSender {

@@ -1,8 +1,8 @@
-package pers.mihao.ancient_empire.robot.dto;
+package pers.mihao.ancient_empire.core.dto.ai;
 
-import pers.mihao.ancient_empire.common.bo.Site;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import com.mihao.ancient_empire.entity.UnitMes;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
 
 public class BuyUnitResult extends ActiveResult{
     private Integer armyIndex;

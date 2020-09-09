@@ -1,14 +1,14 @@
 package pers.mihao.ancient_empire.core.handel.attach;
 
-import com.mihao.ancient_empire.common.util.EnumUtil;
-import pers.mihao.ancient_empire.common.constant.AbilityEnum;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.core.dto.AttributesPower;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import com.mihao.ancient_empire.util.AppUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.common.util.EnumUtil;
+import pers.mihao.ancient_empire.core.dto.AttributesPower;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 public class AttachHandle {
 
@@ -66,7 +66,7 @@ public class AttachHandle {
      */
     public AttributesPower getAttachPower(UserRecord record, Unit unit, UnitLevelMes levelMes, Unit beAttachUnit, AttributesPower attributesPower) {
         if (attributesPower.getNum() == null) {
-            int attach = AppUtil.getAttachNum(levelMes);
+            int attach = GameCoreHelper.getAttachNum(levelMes);
             attributesPower.setNum(attach);
             log.info("{} 攻击 {} >>> 基础攻击力是{}", unit.getType(), beAttachUnit.getType(), attach);
         }

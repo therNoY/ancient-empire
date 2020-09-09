@@ -1,27 +1,36 @@
-package pers.mihao.ancient_empire.robot.handle;
+package pers.mihao.ancient_empire.core.handel.ai;
 
-import pers.mihao.ancient_empire.robot.StatusComparator;
-import pers.mihao.ancient_empire.robot.dto.*;
-import com.mihao.ancient_empire.common.util.EnumUtil;
-import com.mihao.ancient_empire.common.util.IntegerUtil;
-import pers.mihao.ancient_empire.common.constant.AbilityEnum;
-import pers.mihao.ancient_empire.common.constant.RegionEnum;
-import pers.mihao.ancient_empire.common.constant.StateEnum;
-import pers.mihao.ancient_empire.common.constant.UnitEnum;
-import pers.mihao.ancient_empire.common.bo.Army;
-import pers.mihao.ancient_empire.common.bo.BaseSquare;
-import pers.mihao.ancient_empire.common.bo.Site;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import com.mihao.ancient_empire.entity.Ability;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
-import com.mihao.ancient_empire.entity.UnitMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import com.mihao.ancient_empire.util.AppUtil;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.enums.UnitEnum;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.util.EnumUtil;
+import pers.mihao.ancient_empire.common.util.IntegerUtil;
+import pers.mihao.ancient_empire.core.StatusComparator;
+import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
+import pers.mihao.ancient_empire.core.dto.ai.BuyUnitResult;
+import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
+import pers.mihao.ancient_empire.core.dto.ai.EndTurnResult;
+import pers.mihao.ancient_empire.core.dto.ai.SelectUnitResult;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 
 /**
@@ -137,7 +146,7 @@ public class AiSelectUnitHandle extends AiActiveHandle {
     private Unit getFirstOnCastle(UserRecord record, Army army) {
         for (Unit unit : army.getUnits()) {
             if (!unit.isDone() && !unit.isDead()) {
-                BaseSquare square = AppUtil.getRegionByPosition(record, unit);
+                BaseSquare square = GameCoreHelper.getRegionByPosition(record, unit);
                 if (square.getType().equals(RegionEnum.CASTLE.type())) {
                     return unit;
                 }
@@ -181,12 +190,12 @@ public class AiSelectUnitHandle extends AiActiveHandle {
         }
 
         // 判断是否还有自己的castle
-        List<BaseSquare> baseSquares = record.getInitMap().getRegions();
+        List<BaseSquare> baseSquares = record.getGameMap().getRegions();
         List<CastleRegion> castleList = new ArrayList<>();
         for (int i = 0; i < baseSquares.size(); i++) {
             BaseSquare square = baseSquares.get(i);
             if (square.getType().equals(RegionEnum.CASTLE.type()) && square.getColor().equals(record.getCurrColor())) {
-                Site site = AppUtil.getSiteByMapIndex(i, record.getInitMap().getColumn());
+                Site site = AppUtil.getSiteByMapIndex(i, record.getGameMap().getColumn());
                 castleList.add(new CastleRegion(square, site));
             }
         }

@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.base.service;
 
-import com.mihao.ancient_empire.entity.UnitAbility;
 import com.baomidou.mybatisplus.extension.service.IService;
+import pers.mihao.ancient_empire.base.entity.UnitAbility;
 
 /**
  * <p>

@@ -7,9 +7,9 @@
         <module>common</module>
         <module>auth</module>
         <module>base</module>
-<!--        <module>core</module>-->
-<!--        <module>robot</module>-->
-<!--        <module>startup</module>-->
+        <module>core</module>
+        <module>robot</module>
+        <module>startup</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

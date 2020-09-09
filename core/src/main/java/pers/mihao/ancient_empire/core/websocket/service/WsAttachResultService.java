@@ -1,16 +1,30 @@
 package pers.mihao.ancient_empire.core.websocket.service;
 
-import com.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.constant.AbilityEnum;
-import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
-import pers.mihao.ancient_empire.common.constant.StateEnum;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import com.mihao.ancient_empire.entity.Ability;
-import com.mihao.ancient_empire.entity.RegionMes;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
-import com.mihao.ancient_empire.entity.UnitMes;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.service.AbilityService;
+import pers.mihao.ancient_empire.base.service.RegionMesService;
+import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
+import pers.mihao.ancient_empire.base.service.UnitMesService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.base.util.UserRecordUtil;
+import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
+import pers.mihao.ancient_empire.common.util.MqHelper;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.dto.AttachResult;
 import pers.mihao.ancient_empire.core.dto.AttachSituation;
 import pers.mihao.ancient_empire.core.dto.AttributesPower;
@@ -19,16 +33,7 @@ import pers.mihao.ancient_empire.core.dto.RespAttachResultDto;
 import pers.mihao.ancient_empire.core.dto.SecondMoveDto;
 import pers.mihao.ancient_empire.core.handel.attach.AttachHandle;
 import pers.mihao.ancient_empire.core.handel.defense.DefenseHandle;
-import com.mihao.ancient_empire.util.AppUtil;
-import com.mihao.ancient_empire.util.MqHelper;
-import com.mihao.ancient_empire.util.UserRecordUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  * 获取单位攻击结果
@@ -71,8 +76,7 @@ public class WsAttachResultService {
     Integer level3;
 
     /**
-     * 获取攻击结果
-     * 不包括 攻击 房屋 攻击房屋之后才考虑
+     * 获取攻击结果 不包括 攻击 房屋 攻击房屋之后才考虑
      *
      * @param uuid         record 的uuid
      * @param reqAttachDto
@@ -88,8 +92,10 @@ public class WsAttachResultService {
         UserRecord record = userRecordService.getRecordById(uuid);
         Unit attachUnit = reqAttachDto.getAttachUnit();
         Unit beAttachUnit = reqAttachDto.getBeAttachUnit();
-        UnitLevelMes attachUnitLevelMes = unitLevelMesService.getUnitLevelMes(attachUnit.getType(), attachUnit.getLevel());
-        UnitLevelMes beAttachLevelUnitMes = unitLevelMesService.getUnitLevelMes(beAttachUnit.getType(), beAttachUnit.getLevel());
+        UnitLevelMes attachUnitLevelMes = unitLevelMesService
+            .getUnitLevelMes(attachUnit.getType(), attachUnit.getLevel());
+        UnitLevelMes beAttachLevelUnitMes = unitLevelMesService
+            .getUnitLevelMes(beAttachUnit.getType(), beAttachUnit.getLevel());
         List<Ability> abilityList = abilityService.getUnitAbilityListByType(attachUnit.getType()); // 攻击者能力
         List<Ability> beAttachAbility = abilityService.getUnitAbilityListByType(beAttachUnit.getType()); // 被攻击者能力
         UnitMes attachUnitMes = unitMesService.getByType(attachUnit.getType());
@@ -97,14 +103,13 @@ public class WsAttachResultService {
 
         // 2. 获取主动攻击结果
         AttachResult attachResult = getOnceAttachResult(true, attachSituation, record, attachUnit, beAttachUnit,
-                attachUnitMes, attachUnitLevelMes, beAttachLevelUnitMes, abilityList, beAttachAbility);
+            attachUnitMes, attachUnitLevelMes, beAttachLevelUnitMes, abilityList, beAttachAbility);
         resultDto.setAttachResult(attachResult);
         // 2.1 更新
         beAttachUnit.setLife(attachResult.getLastLife());
         if (!StringUtil.isEmpty(attachResult.getEndStatus())) {
             beAttachUnit.setStatus(attachResult.getEndStatus());
         }
-
 
         // 3.判断是否反击
         boolean counterattack = true;
@@ -127,12 +132,12 @@ public class WsAttachResultService {
         }
         resultDto.setCounterattack(counterattack);
 
-
         // 4.只有可以反击的情况才可以 获取反击结果
         if (counterattack) {
             // 4.1 获取反击者的攻击力
-            AttachResult counterattackResult = getOnceAttachResult(false, attachSituation, record, beAttachUnit, attachUnit,
-                    beAttachUnitMes, beAttachLevelUnitMes, attachUnitLevelMes, beAttachAbility, abilityList);
+            AttachResult counterattackResult = getOnceAttachResult(false, attachSituation, record, beAttachUnit,
+                attachUnit,
+                beAttachUnitMes, beAttachLevelUnitMes, attachUnitLevelMes, beAttachAbility, abilityList);
             resultDto.setCounterattackResult(counterattackResult);
         }
 
@@ -165,9 +170,10 @@ public class WsAttachResultService {
      * @param beAttachAbility      被攻击单位能力列表
      * @return
      */
-    private AttachResult getOnceAttachResult(boolean isInitiative, AttachSituation attachSituation, UserRecord record, Unit attachUnit, Unit beAttachUnit,
-                                             UnitMes attachUnitMes, UnitLevelMes attachUnitLevelMes, UnitLevelMes beAttachLevelUnitMes,
-                                             List<Ability> abilityList, List<Ability> beAttachAbility) {
+    private AttachResult getOnceAttachResult(boolean isInitiative, AttachSituation attachSituation, UserRecord record,
+        Unit attachUnit, Unit beAttachUnit,
+        UnitMes attachUnitMes, UnitLevelMes attachUnitLevelMes, UnitLevelMes beAttachLevelUnitMes,
+        List<Ability> abilityList, List<Ability> beAttachAbility) {
         // 1.1 获取到攻击者的攻击力
         AttachHandle attachHandle = AttachHandle.getDefaultHandle();
         AttributesPower attachPower = new AttributesPower(); // 保存攻击能力信息
@@ -189,7 +195,8 @@ public class WsAttachResultService {
             } else {
                 attachSituation.setBeAttackUp(1);
             }
-        } else if (attachPower.getNum() < baseAttach || (attachPower.getAddition() != null && attachPower.getAddition() < 1)) {
+        } else if (attachPower.getNum() < baseAttach || (attachPower.getAddition() != null
+            && attachPower.getAddition() < 1)) {
             if (isInitiative) {
                 attachSituation.setAttachUp(-1);
             } else {
@@ -206,11 +213,14 @@ public class WsAttachResultService {
         // 1.3 获取 被攻击者的对应的防御力
         String type = attachUnitMes.getAttackType();
         // 获取被攻击者的地形信息
-        RegionMes regionMes = regionMesService.getRegionByType(AppUtil.getRegionByPosition(record, beAttachUnit).getType());
+        RegionMes regionMes = regionMesService
+            .getRegionByType(GameCoreHelper.getRegionByPosition(record, beAttachUnit).getType());
         AttributesPower defensePower = new AttributesPower();
         // 1.4 根据能力判断防御力 顺便判断是否包含
         DefenseHandle defenseHandle = DefenseHandle.getDefaultHandle();
-        defenseHandle.getDefensePower(type, record, attachUnit, beAttachLevelUnitMes, regionMes, beAttachUnit, defensePower, beAttachAbility);
+        defenseHandle
+            .getDefensePower(type, record, attachUnit, beAttachLevelUnitMes, regionMes, beAttachUnit, defensePower,
+                beAttachAbility);
         int baseDefense = defensePower.getNum();
         // 飞行单位不享受地形加成
         if (!beAttachAbility.contains(AbilityEnum.FLY.ability())) {
@@ -219,18 +229,22 @@ public class WsAttachResultService {
         }
         for (Ability ability : beAttachAbility) {
             DefenseHandle abilityDefenseHandle = DefenseHandle.initAttachHandle(ability.getType());
-            abilityDefenseHandle.getDefensePower(type, record, attachUnit, attachUnitLevelMes, regionMes, beAttachUnit, defensePower, beAttachAbility);
+            abilityDefenseHandle
+                .getDefensePower(type, record, attachUnit, attachUnitLevelMes, regionMes, beAttachUnit, defensePower,
+                    beAttachAbility);
 
         }
 
         // 设置防御加成情况
-        if (defensePower.getNum() > baseDefense || (defensePower.getAddition() != null && defensePower.getAddition() > 1)) {
+        if (defensePower.getNum() > baseDefense || (defensePower.getAddition() != null
+            && defensePower.getAddition() > 1)) {
             if (isInitiative) {
                 attachSituation.setDefenseUp(1);
             } else {
                 attachSituation.setBeDefenseUp(1);
             }
-        } else if (defensePower.getNum() < baseDefense || (defensePower.getAddition() != null && defensePower.getAddition() < 1)) {
+        } else if (defensePower.getNum() < baseDefense || (defensePower.getAddition() != null
+            && defensePower.getAddition() < 1)) {
             if (isInitiative) {
                 attachSituation.setDefenseUp(-1);
             } else {
@@ -245,7 +259,8 @@ public class WsAttachResultService {
         }
 
         // 1.5. 根据攻防完善出一个主动攻击的伤害结果
-        AttachResult attachResult = stuffAttachResult(isInitiative, record, attachPower, defensePower, attachUnit, beAttachUnit, beAttachAbility);
+        AttachResult attachResult = stuffAttachResult(isInitiative, record, attachPower, defensePower, attachUnit,
+            beAttachUnit, beAttachAbility);
 
         // 判断被攻击方是否中毒 只有攻击方有毒 并且被攻击方不含投毒者
         if (isChangeStatus && !beAttachAbility.contains(AbilityEnum.POISONING.ability())) {
@@ -261,13 +276,13 @@ public class WsAttachResultService {
     }
 
     /**
-     * 获取
-     * stuff -> 填充
+     * 获取 stuff -> 填充
      *
      * @return
      */
-    private AttachResult stuffAttachResult(boolean isInitiative, UserRecord record, AttributesPower attachPower, AttributesPower defensePower,
-                                           Unit attachUnit, Unit beAttachUnit, List<Ability> beAttachAbility) {
+    private AttachResult stuffAttachResult(boolean isInitiative, UserRecord record, AttributesPower attachPower,
+        AttributesPower defensePower,
+        Unit attachUnit, Unit beAttachUnit, List<Ability> beAttachAbility) {
         int attachNum = attachPower.getNum();
         int defenseNum = defensePower.getNum();
         int left = AppUtil.getUnitLeft(beAttachUnit);
@@ -321,7 +336,8 @@ public class WsAttachResultService {
             // 判断是否有坟墓
             attachResult.setHaveTomb(false);
             for (Ability ability : beAttachAbility) {
-                if (!ability.getType().equals(AbilityEnum.CASTLE_GET.type()) && !ability.getType().equals(AbilityEnum.UNDEAD.type())) {
+                if (!ability.getType().equals(AbilityEnum.CASTLE_GET.type()) && !ability.getType()
+                    .equals(AbilityEnum.UNDEAD.type())) {
                     record.getTomb().add(new Position(beAttachUnit.getRow(), beAttachUnit.getColumn()));
                     attachResult.setHaveTomb(true);
                     break;

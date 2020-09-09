@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.base.dao;
 
-import com.mihao.ancient_empire.entity.UserSetting;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
 

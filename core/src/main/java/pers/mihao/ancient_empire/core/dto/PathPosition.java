@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.common.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Position;
 
 public class PathPosition {
     private Integer row;

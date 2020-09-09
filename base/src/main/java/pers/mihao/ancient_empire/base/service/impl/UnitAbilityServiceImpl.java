@@ -1,10 +1,10 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
-import com.mihao.ancient_empire.entity.UnitAbility;
-import com.mihao.ancient_empire.dao.UnitAbilityDao;
-import pers.mihao.ancient_empire.auth.service.UnitAbilityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.base.dao.UnitAbilityDao;
+import pers.mihao.ancient_empire.base.entity.UnitAbility;
+import pers.mihao.ancient_empire.base.service.UnitAbilityService;
 
 /**
  * <p>

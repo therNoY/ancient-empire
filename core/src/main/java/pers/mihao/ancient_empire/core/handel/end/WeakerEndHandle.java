@@ -1,17 +1,16 @@
 package pers.mihao.ancient_empire.core.handel.end;
 
-import pers.mihao.ancient_empire.common.constant.StateEnum;
-import pers.mihao.ancient_empire.common.bo.Army;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.core.dto.LifeChange;
-import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import com.mihao.ancient_empire.util.AppUtil;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.core.dto.LifeChange;
+import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
 
 /**
  *

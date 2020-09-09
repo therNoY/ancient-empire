@@ -3,7 +3,6 @@ package pers.mihao.ancient_empire.base.dto;
 import java.io.Serializable;
 import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.common.bo.ws_dto.LevelDto;
 
 public class SummonDto implements Serializable {
 

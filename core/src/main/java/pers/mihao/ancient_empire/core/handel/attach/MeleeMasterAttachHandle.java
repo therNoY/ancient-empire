@@ -1,10 +1,10 @@
 package pers.mihao.ancient_empire.core.handel.attach;
 
-import com.mihao.ancient_empire.common.config.AppConfig;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.core.dto.AttributesPower;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.common.config.AppConfig;
+import pers.mihao.ancient_empire.core.dto.AttributesPower;
 
 public class MeleeMasterAttachHandle extends AttachHandle {
 

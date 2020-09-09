@@ -1,27 +1,32 @@
 package pers.mihao.ancient_empire.core.websocket.service;
 
-import pers.mihao.ancient_empire.core.eums.ActionEnum;
-import pers.mihao.ancient_empire.common.bo.Army;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.common.bo.Site;
-import pers.mihao.ancient_empire.common.bo.Unit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.service.AbilityService;
+import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
+import pers.mihao.ancient_empire.base.service.UnitMesService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.dto.ReqAttachAreaDto;
 import pers.mihao.ancient_empire.core.dto.ReqMoveDto;
 import pers.mihao.ancient_empire.core.dto.RespAction;
-import com.mihao.ancient_empire.entity.Ability;
-import com.mihao.ancient_empire.entity.UnitMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.handel.action.ActionHandle;
-import pers.mihao.ancient_empire.auth.service.AbilityService;
-import pers.mihao.ancient_empire.auth.service.UnitLevelMesService;
-import pers.mihao.ancient_empire.auth.service.UnitMesService;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
-import com.mihao.ancient_empire.util.AppUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  * 获取和单位行动有关的数据
@@ -84,9 +89,9 @@ public class WsActionService {
             actionSet.add(ActionEnum.MOVE.type());
         }
         // 这里的cAction 和 mAction 是辅助行动图标动态移动的
-        actionMap.put("cAction", AppUtil.addActionAim(new ArrayList<>(actionSet), moveDto.getAimPoint()));
+        actionMap.put("cAction", GameCoreHelper.addActionAim(new ArrayList<>(actionSet), moveDto.getAimPoint()));
         // 5. 渲染不同的action 不同的位置显示
-        List<RespAction> respActions = AppUtil.addActionPosition(new ArrayList<>(actionSet), moveDto.getAimPoint());
+        List<RespAction> respActions = GameCoreHelper.addActionPosition(new ArrayList<>(actionSet), moveDto.getAimPoint());
         actionMap.put("mAction", respActions);
 
         return actionMap;
@@ -115,9 +120,9 @@ public class WsActionService {
         Integer maxRange = unitMes.getMaxAttachRange();
         List<Position> maxAttach = new ArrayList<>();
         int minI = Math.max(aimP.getRow() - maxRange, 1);
-        int maxI = Math.min(aimP.getRow() + maxRange + 1, userRecord.getInitMap().getRow() + 1);
+        int maxI = Math.min(aimP.getRow() + maxRange + 1, userRecord.getGameMap().getRow() + 1);
         int minJ = Math.max(aimP.getColumn() - maxRange, 1);
-        int maxJ = Math.min(aimP.getColumn() + maxRange + 1, userRecord.getInitMap().getRow() + 1);
+        int maxJ = Math.min(aimP.getColumn() + maxRange + 1, userRecord.getGameMap().getRow() + 1);
         for (int i = minI; i < maxI; i++) {
             for (int j = minJ; j < maxJ; j++) {
                 if (getPositionLength(i, j, aimP.getRow(), aimP.getColumn()) <= maxRange && getPositionLength(i, j, aimP.getRow(), aimP.getColumn()) > 0) {
@@ -132,9 +137,9 @@ public class WsActionService {
             minRange = minRange - 1;
             notAttach = new ArrayList<>();
             minI = Math.max(aimP.getRow() - minRange, 0);
-            maxI = Math.min(aimP.getRow() + minRange + 1, userRecord.getInitMap().getRow());
+            maxI = Math.min(aimP.getRow() + minRange + 1, userRecord.getGameMap().getRow());
             minJ = Math.max(aimP.getColumn() - minRange, 0);
-            maxJ = Math.min(aimP.getColumn() + minRange + 1, userRecord.getInitMap().getRow());
+            maxJ = Math.min(aimP.getColumn() + minRange + 1, userRecord.getGameMap().getRow());
             for (int i = minI; i < maxI; i++) {
                 for (int j = minJ; j < maxJ; j++) {
                     if (getPositionLength(i, j, aimP.getRow(), aimP.getColumn()) <= minRange) {
@@ -145,8 +150,8 @@ public class WsActionService {
 
         }
 
-        int row = userRecord.getInitMap().getRow();
-        int column = userRecord.getInitMap().getColumn();
+        int row = userRecord.getGameMap().getRow();
+        int column = userRecord.getGameMap().getColumn();
         // 过滤符合条件的点
         List<Position> finalNotAttach = notAttach;
         return maxAttach.stream().filter(position -> {

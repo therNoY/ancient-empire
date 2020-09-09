@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.util;
+package pers.mihao.ancient_empire.core.util;
 
 import com.mongodb.client.result.UpdateResult;
 import java.util.List;
@@ -10,19 +10,22 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.dto.BuyUnitDto;
 import pers.mihao.ancient_empire.base.dto.SummonDto;
 import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
-import pers.mihao.ancient_empire.common.constant.StateEnum;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.core.dto.LifeChange;
+import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
+import pers.mihao.ancient_empire.core.dto.RespRepairOcpResult;
 
 /**
- * 更新简单属性 逐个更新
- * 大的属性 删除插入
+ * 更新简单属性 逐个更新 大的属性 删除插入
  */
 @Component
 public class UserRecordMongoHelper {
@@ -83,7 +86,6 @@ public class UserRecordMongoHelper {
             unit.setLevel(unit.getLevel() + 1);
         }
         unit.setExperience(summonDto.getLevelDto().getEndExperience());
-
 
         army.getUnits().add(summonDto.getNewUnit());
 
@@ -150,11 +152,11 @@ public class UserRecordMongoHelper {
      */
     public void handleRepairOcp(RespRepairOcpResult repairResult) {
         UserRecord record = userRecordService.getRecordById(repairResult.getRecordId());
-        List<BaseSquare> regions = record.getInitMap().getRegions();
+        List<BaseSquare> regions = record.getGameMap().getRegions();
         BaseSquare square = repairResult.getSquare();
         regions.get(repairResult.getRegionIndex()).setColor(square.getColor());
         regions.get(repairResult.getRegionIndex()).setType(square.getType());
-        updateMap(repairResult.getRecordId(), record.getInitMap());
+        updateMap(repairResult.getRecordId(), record.getGameMap());
     }
 
     public void handleBuyUnit(BuyUnitDto buyUnitDto) {

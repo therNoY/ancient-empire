@@ -1,13 +1,12 @@
-package pers.mihao.ancient_empire.robot.dto;
-
-import pers.mihao.ancient_empire.robot.constant.AiActiveEnum;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.common.bo.Site;
-import pers.mihao.ancient_empire.common.bo.Unit;
-import pers.mihao.ancient_empire.common.bo.ws_dto.PathPosition;
-import com.mihao.ancient_empire.util.AppUtil;
+package pers.mihao.ancient_empire.core.dto.ai;
 
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.core.dto.PathPosition;
+import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 
 /**
  * 有行动的结果

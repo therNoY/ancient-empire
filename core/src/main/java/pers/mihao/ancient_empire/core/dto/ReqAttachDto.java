@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.common.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.Unit;
 
 /**
  * 客户端 查询攻击结果需要的dto

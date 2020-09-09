@@ -1,26 +1,39 @@
-package pers.mihao.ancient_empire.robot.handle;
+package pers.mihao.ancient_empire.core.handel.ai;
 
-import pers.mihao.ancient_empire.robot.constant.AiActiveEnum;
-import pers.mihao.ancient_empire.robot.dto.UnitActionResult;
-import pers.mihao.ancient_empire.robot.dto.ActiveResult;
-import pers.mihao.ancient_empire.robot.dto.SelectUnitResult;
-import pers.mihao.ancient_empire.common.bo.ws_dto.ReqUnitIndexDto;
-import com.mihao.ancient_empire.entity.Ability;
-import com.mihao.ancient_empire.entity.RegionMes;
-import com.mihao.ancient_empire.entity.UnitLevelMes;
-import com.mihao.ancient_empire.entity.UnitMes;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
-import pers.mihao.ancient_empire.auth.service.RegionMesService;
-import pers.mihao.ancient_empire.auth.service.UnitLevelMesService;
-import com.mihao.ancient_empire.util.AppUtil;
-import com.mihao.ancient_empire.util.ApplicationContextHolder;
-import pers.mihao.ancient_empire.core.websocket.service.WsActionService;
-import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.SiteSquare;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.enums.UnitEnum;
+import pers.mihao.ancient_empire.base.service.RegionMesService;
+import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.core.dto.ReqUnitIndexDto;
+import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
+import pers.mihao.ancient_empire.core.dto.ai.SelectUnitResult;
+import pers.mihao.ancient_empire.core.dto.ai.UnitActionResult;
+import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
+import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
+import pers.mihao.ancient_empire.core.websocket.service.WsActionService;
+import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
 
 /**
  * record 单例 改类维持在robot manger 中
@@ -74,7 +87,8 @@ public class AiMoveHandle extends AiActiveHandle {
         this.abilityList = abilityService.getUnitAbilityListByType(selectUnit.getType());
         this.unitMes = unitMesService.getByType(selectUnit.getType());
         this.campColors = AppUtil.getCampColors(record);
-        ReqUnitIndexDto reqUnitIndexDto = new ReqUnitIndexDto(selectUnitResult.getArmyIndex(), selectUnitResult.getUnitIndex());
+        ReqUnitIndexDto reqUnitIndexDto = new ReqUnitIndexDto(selectUnitResult.getArmyIndex(),
+            selectUnitResult.getUnitIndex());
         Object object = moveAreaService.getMoveArea(record, reqUnitIndexDto, selectUnit, false);
         if (object instanceof List) {
             this.moveArea = (List<Position>) object;
@@ -92,7 +106,7 @@ public class AiMoveHandle extends AiActiveHandle {
         Set<Site> attachArea = new HashSet<>();
         // 2.1 获取单位是否可以占领或者修复
         moveArea.stream().forEach(site -> {
-            BaseSquare square = AppUtil.getRegionByPosition(record, site);
+            BaseSquare square = GameCoreHelper.getRegionByPosition(record, site);
             List<Position> area = actionService.getAttachArea(unitMes, site, record);
             if (canRepair(square)) {
                 log.info("{} 可以进行 修复 操作地点:{}", selectUnit.getType(), site);
@@ -123,7 +137,8 @@ public class AiMoveHandle extends AiActiveHandle {
                 Unit unit = AppUtil.getUnitByPosition(record, site, army.getCamp());
                 if (unit != null && !unit.getStatus().equals(StateEnum.POISON.type())) {
                     if (AppUtil.getUnitLeft(unit) < 100) {
-                        log.info("{} 可以进行 治疗 操作目标单位:{} 血量：{}", selectUnit.getType(), unit.getType(), AppUtil.getUnitLeft(unit));
+                        log.info("{} 可以进行 治疗 操作目标单位:{} 血量：{}", selectUnit.getType(), unit.getType(),
+                            AppUtil.getUnitLeft(unit));
                         actionList.add(new UnitActionResult(record.getUuid(), AiActiveEnum.HEAL, site, unit));
                     }
                 }
@@ -149,7 +164,6 @@ public class AiMoveHandle extends AiActiveHandle {
                 return new UnitActionResult(record.getUuid(), AiActiveEnum.END, site);
             }
         }
-
 
         log.info("没有直接可以进行的操作 准备获取预计操作");
         // 3. 单位没有可以直接进行的操作 获取将来式操作
@@ -202,7 +216,8 @@ public class AiMoveHandle extends AiActiveHandle {
             if ((nearestEnemy = getNearestEnemy()) != null) {
                 Site nextPosition = getNextPositionToTarget(AppUtil.getPosition(nearestEnemy));
                 log.info("普通单位找到最近的可攻击的单位{}", nextPosition);
-                return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, nextPosition, selectUnit, moveArea);
+                return new UnitActionResult(record.getUuid(), AiActiveEnum.MOVE_UNIT, nextPosition, selectUnit,
+                    moveArea);
             } else {
                 Site niceSite = getPreferredStandbyPosition();
                 log.info("没有可攻击的单位找到最好的移动地点{}", niceSite);
@@ -235,7 +250,7 @@ public class AiMoveHandle extends AiActiveHandle {
         int score = 0;
         switch (action.getResultEnum()) {
             case OCCUPIED:
-                BaseSquare tile = AppUtil.getRegionByPosition(record, action.getSite());
+                BaseSquare tile = GameCoreHelper.getRegionByPosition(record, action.getSite());
                 if (tile != null && tile.getType().equals(RegionEnum.CASTLE.type())) {
                     score += 20000;
                 }
@@ -251,8 +266,10 @@ public class AiMoveHandle extends AiActiveHandle {
                 break;
             case HEAL:
                 Unit target = action.getUnit();
-                UnitLevelMes targetUnitLevelMes = unitLevelMesService.getUnitLevelMes(target.getType(), target.getLevel());
-                score += 10 * (targetUnitLevelMes.getMaxAttack() * AppUtil.getUnitLeft(target) / 100 + targetUnitLevelMes.getSpeed() * 5);
+                UnitLevelMes targetUnitLevelMes = unitLevelMesService
+                    .getUnitLevelMes(target.getType(), target.getLevel());
+                score += 10 * (targetUnitLevelMes.getMaxAttack() * AppUtil.getUnitLeft(target) / 100
+                    + targetUnitLevelMes.getSpeed() * 5);
                 break;
             case ATTACH:
                 Unit targetUnit = action.getUnit();
@@ -267,7 +284,7 @@ public class AiMoveHandle extends AiActiveHandle {
         }
 
         if (robotManger.isThreatened(currSite) && !action.getSite().equals(currSite)) {
-            BaseSquare baseSquare = AppUtil.getRegionByPosition(record, currSite);
+            BaseSquare baseSquare = GameCoreHelper.getRegionByPosition(record, currSite);
             if (baseSquare.getType().contains(RegionEnum.CASTLE.type())) {
                 score -= 20000;
             }
@@ -311,12 +328,14 @@ public class AiMoveHandle extends AiActiveHandle {
             score += (left - lastLeft) / 20 * targetUnitMes.getPrice() * defender.getLevel();
         }
         if (defender.getStatus() == null) {
-            if (abilityList.contains(AbilityEnum.POISONING.ability()) && abilityList.contains(AbilityEnum.BLINDER.ability())) {
+            if (abilityList.contains(AbilityEnum.POISONING.ability()) && abilityList
+                .contains(AbilityEnum.BLINDER.ability())) {
                 score += targetUnitMes.getPrice() / 4;
             }
         } else {
             if (defender.getStatus().equals(StateEnum.EXCITED.type())) {
-                if (abilityList.contains(AbilityEnum.POISONING.ability()) && abilityList.contains(AbilityEnum.BLINDER.ability())) {
+                if (abilityList.contains(AbilityEnum.POISONING.ability()) && abilityList
+                    .contains(AbilityEnum.BLINDER.ability())) {
                     score += targetUnitMes.getPrice() / 2;
                 }
             }
@@ -519,7 +538,7 @@ public class AiMoveHandle extends AiActiveHandle {
         int score = 0;
         score += getAverageEnemyDistance(site) * 20; // 敌军近加分
         score -= getAverageAllyDistance(site) * 10; // 友军近减分
-        BaseSquare square = AppUtil.getRegionByPosition(record, site);
+        BaseSquare square = GameCoreHelper.getRegionByPosition(record, site);
         RegionMes regionMes = regionMesService.getRegionByType(square.getType());
         score += regionMes.getBuff() * 5;// 地形防御加分
         score += getTerrainHeal(regionMes, square) * 10; // 恢复血量加分
@@ -595,18 +614,18 @@ public class AiMoveHandle extends AiActiveHandle {
         int heal = 0;
         if (!abilityList.contains(AbilityEnum.BLOOD_THIRSTY.ability())) {
             if (campColors.contains(square.getColor())) {
-                heal += AppUtil.getHpRecover(square);
+                heal += GameCoreHelper.getHpRecover(square);
             }
         }
         if (tile.getType() == RegionEnum.STONE.type() && abilityList.contains(AbilityEnum.HILL_CLOSE.ability())) {
             heal += 10;
         }
         if ((tile.getType() == RegionEnum.GROVE.type() || tile.getType() == RegionEnum.FOREST.type())
-                && abilityList.contains(AbilityEnum.HILL_CLOSE.ability())) {
+            && abilityList.contains(AbilityEnum.HILL_CLOSE.ability())) {
             heal += 10;
         }
         if ((tile.getType().startsWith(RegionEnum.SEA.type()) || (tile.getType().startsWith(RegionEnum.BANK.type()))
-                && abilityList.contains(AbilityEnum.FOREST_CLOSE.ability()))) {
+            && abilityList.contains(AbilityEnum.FOREST_CLOSE.ability()))) {
             heal += 10;
         }
         return heal;
@@ -675,7 +694,6 @@ public class AiMoveHandle extends AiActiveHandle {
                     targetSite = runsSite;
                 }
             }
-
 
             Site site = getNextPositionToTarget(targetSite);
             List<Site> sites = robotManger.getAimSite().get(army.getId());

@@ -1,6 +1,23 @@
 package pers.mihao.ancient_empire.core.websocket;
 
-import com.mihao.ancient_empire.ai.RobotActive;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import pers.mihao.ancient_empire.base.bo.GameMap;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.dto.ReqBuyUnitDto;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
+import pers.mihao.ancient_empire.common.util.JacksonUtil;
+import pers.mihao.ancient_empire.core.RobotActive;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.dto.ReqAttachAreaDto;
 import pers.mihao.ancient_empire.core.dto.ReqAttachDto;
@@ -14,30 +31,21 @@ import pers.mihao.ancient_empire.core.dto.RespNewRoundDto;
 import pers.mihao.ancient_empire.core.dto.RespRepairOcpResult;
 import pers.mihao.ancient_empire.core.dto.RespSummonResult;
 import pers.mihao.ancient_empire.core.dto.WSRespDto;
-import pers.mihao.ancient_empire.robot.constant.AiActiveEnum;
-import com.mihao.ancient_empire.common.annotation.ExecuteTime;
-import com.mihao.ancient_empire.common.util.JacksonUtil;
 import pers.mihao.ancient_empire.core.eums.ArmyEnum;
 import pers.mihao.ancient_empire.core.eums.WSPath;
 import pers.mihao.ancient_empire.core.eums.WsMethodEnum;
-import pers.mihao.ancient_empire.common.bo.GameMap;
-import pers.mihao.ancient_empire.common.bo.Position;
-import pers.mihao.ancient_empire.common.bo.Unit;
+import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
-import com.mihao.ancient_empire.util.AppUtil;
-import com.mihao.ancient_empire.util.WsRespHelper;
-import pers.mihao.ancient_empire.core.websocket.service.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import pers.mihao.ancient_empire.core.util.WsRespHelper;
+import pers.mihao.ancient_empire.core.websocket.service.WsActionService;
+import pers.mihao.ancient_empire.core.websocket.service.WsAttachResultService;
+import pers.mihao.ancient_empire.core.websocket.service.WsBuyUnitService;
+import pers.mihao.ancient_empire.core.websocket.service.WsEndRoundService;
+import pers.mihao.ancient_empire.core.websocket.service.WsEndService;
+import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
+import pers.mihao.ancient_empire.core.websocket.service.WsOccupiedService;
+import pers.mihao.ancient_empire.core.websocket.service.WsRepairService;
+import pers.mihao.ancient_empire.core.websocket.service.WsSummonActionService;
 
 /**
  * WS 请求的前端控住值 路由请求处理方法
@@ -259,15 +267,15 @@ public class WebSocketController {
     public void getNewRound(Principal principal) {
         log.info("从 {} getSummonResult 收到的信息", principal.getName());
         RespNewRoundDto newRoundDto = newRoundService.getNewRound(principal.getName());
-        GameMap map = newRoundDto.getRecord().getInitMap();
-        newRoundDto.getRecord().setInitMap(null);
+        GameMap map = newRoundDto.getRecord().getGameMap();
+        newRoundDto.getRecord().setGameMap(null);
         simpMessagingTemplate.convertAndSendToUser(principal.getName(),
                 WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.NEW_ROUND.type(), newRoundDto));
 
         // 判断新的回合是不是机器人
         if (AppUtil.getCurrentArmy(newRoundDto.getRecord()).getType().equals(ArmyEnum.AI.type())) {
             log.info("======================接下来是机器人的行动============================");
-            newRoundDto.getRecord().setInitMap(map);
+            newRoundDto.getRecord().setGameMap(map);
             RobotActive active = new RobotActive(newRoundDto.getRecord(), AiActiveEnum.SELECT_UNIT);
             GameCoreManger gameCoreManger = GameCoreManger.getInstance(newRoundDto.getRecord());
             gameCoreManger.saveRecord(newRoundDto.getRecord());

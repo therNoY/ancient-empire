@@ -1,17 +1,18 @@
 package pers.mihao.ancient_empire.core.websocket.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
-import pers.mihao.ancient_empire.common.bo.BaseSquare;
-import pers.mihao.ancient_empire.common.bo.Unit;
+import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.core.dto.ReqRepairOcpDto;
 import pers.mihao.ancient_empire.core.dto.RespRepairOcpResult;
 import pers.mihao.ancient_empire.core.dto.SecondMoveDto;
-import pers.mihao.ancient_empire.base.entity.mongo.UserRecord;
-import pers.mihao.ancient_empire.auth.service.UserRecordService;
-import com.mihao.ancient_empire.util.AppUtil;
-import com.mihao.ancient_empire.util.MqHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  *
@@ -29,6 +30,7 @@ public class WsOccupiedService {
 
     /**
      * 占领
+     *
      * @param uuid
      * @param reqRepairOcpDto
      * @return
@@ -36,12 +38,12 @@ public class WsOccupiedService {
     public RespRepairOcpResult getOccupiedResult(String uuid, ReqRepairOcpDto reqRepairOcpDto) {
         UserRecord record = userRecordService.getRecordById(uuid);
         Unit unit = AppUtil.getUnitByIndex(record, reqRepairOcpDto.getIndex());
-        Integer regionIndex = AppUtil.getRegionIndex(record, reqRepairOcpDto.getRegion());
+        Integer regionIndex = GameCoreHelper.getRegionIndex(record, reqRepairOcpDto.getRegion());
         String color = record.getCurrColor();
         // 1 设置占领
         RespRepairOcpResult result = new RespRepairOcpResult();
         result.setRegionIndex(regionIndex);
-        BaseSquare region = record.getInitMap().getRegions().get(regionIndex);
+        BaseSquare region = record.getGameMap().getRegions().get(regionIndex);
         region.setColor(color);
         result.setSquare(region);
         // 2 设置二次移动结果
