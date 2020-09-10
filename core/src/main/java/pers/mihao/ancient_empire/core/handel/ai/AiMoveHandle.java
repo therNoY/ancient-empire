@@ -30,7 +30,7 @@ import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
 import pers.mihao.ancient_empire.core.dto.ai.SelectUnitResult;
 import pers.mihao.ancient_empire.core.dto.ai.UnitActionResult;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.GameCoreStaManger;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 import pers.mihao.ancient_empire.core.websocket.service.WsActionService;
 import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
@@ -59,7 +59,7 @@ public class AiMoveHandle extends AiActiveHandle {
     List<Ability> abilityList;
     List<Position> moveArea = null;
     UnitMes unitMes;
-    GameCoreManger robotManger;
+    GameCoreStaManger robotManger;
     List<String> campColors;
 
     static {
@@ -79,8 +79,8 @@ public class AiMoveHandle extends AiActiveHandle {
     public ActiveResult getActiveResult(UserRecord record) {
         // 1. 获取上一次选择的结果 重新设置选择单位的信息
         this.record = record;
-        this.robotManger = GameCoreManger.getInstance(record);
-        SelectUnitResult selectUnitResult = GameCoreManger.getSelectResult(record.getUuid());// 上一次行动的结果
+        this.robotManger = GameCoreStaManger.getInstance(record);
+        SelectUnitResult selectUnitResult = GameCoreStaManger.getSelectResult(record.getUuid());// 上一次行动的结果
         this.army = record.getArmyList().get(selectUnitResult.getArmyIndex());
         this.selectUnit = army.getUnits().get(selectUnitResult.getUnitIndex());
         this.currSite = AppUtil.getPosition(selectUnit);

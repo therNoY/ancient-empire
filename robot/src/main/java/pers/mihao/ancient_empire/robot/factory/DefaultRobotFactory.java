@@ -10,8 +10,17 @@ import pers.mihao.ancient_empire.robot.Robot;
  */
 public class DefaultRobotFactory extends AbstractRobotFactory{
 
+    private static DefaultRobotFactory factory = new DefaultRobotFactory();
+
+    private DefaultRobotFactory() {
+    }
+
     @Override
-    public Robot createRobot() {
+    public Robot create() {
         return new DefaultRoot();
+    }
+
+    public static Robot createRobot() {
+        return factory.create();
     }
 }

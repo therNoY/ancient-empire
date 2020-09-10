@@ -25,7 +25,7 @@ import pers.mihao.ancient_empire.core.dto.ai.UnitActionResult;
 import pers.mihao.ancient_empire.core.eums.WSPath;
 import pers.mihao.ancient_empire.core.eums.WsMethodEnum;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.GameCoreStaManger;
 import pers.mihao.ancient_empire.core.util.WsRespHelper;
 import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
 
@@ -105,7 +105,7 @@ public class AiMessageSender {
         ReqMoveDto moveDto = new ReqMoveDto(unitIndex, AppUtil.getPosition(cUnit), new Position(unitActionResult.getSite()));
         moveDto.setMoveArea(unitActionResult.getMoveArea());
         List<PathPosition> pathPositions = moveAreaService.getMovePath(moveDto);
-        GameCoreManger.getInstance(record).setPathPositions(pathPositions);
+        GameCoreStaManger.getInstance(record).setPathPositions(pathPositions);
         unitActionResult.setPathPositions(pathPositions);
     }
 

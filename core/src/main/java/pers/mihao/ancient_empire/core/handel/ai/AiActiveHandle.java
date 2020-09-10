@@ -12,7 +12,7 @@ import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
 import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 import pers.mihao.ancient_empire.core.handel.end.EndHandle;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.GameCoreStaManger;
 
 /**
  * 具体任务的处理类 根据不同的类型返回不同的处理类 是简单工厂模式
@@ -26,9 +26,9 @@ public abstract class AiActiveHandle {
     public static AiActiveHandle getInstance(UserRecord record, AiActiveEnum activeEnum) {
         switch (activeEnum) {
             case SELECT_UNIT:
-                return GameCoreManger.getInstance(record).getSelectUnitHandle();
+                return GameCoreStaManger.getInstance(record).getSelectUnitHandle();
             case MOVE_UNIT:
-                return GameCoreManger.getInstance(record).getMoveUnitHandle();
+                return GameCoreStaManger.getInstance(record).getMoveUnitHandle();
             default:
                 return null;
         }

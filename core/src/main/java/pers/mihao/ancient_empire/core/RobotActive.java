@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.dto.ai.ActiveResult;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 import pers.mihao.ancient_empire.core.handel.ai.AiActiveHandle;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.GameCoreStaManger;
 
 /**
  * 任务调度的提交类 工具人
@@ -21,7 +21,7 @@ public class RobotActive implements Supplier<ActiveResult> {
     }
 
     public RobotActive(String recordId, AiActiveEnum activeEnum) {
-        this.record = GameCoreManger.getRecordCatch(recordId);
+        this.record = GameCoreStaManger.getRecordCatch(recordId);
         this.activeEnum = activeEnum;
     }
 

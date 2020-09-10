@@ -31,6 +31,7 @@ public class HandleShakeInterceptors implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+        // TODO 这里需要前端传过来的参数是recordId_name 和 token 在这里对token进行校验
         HttpServletRequest h = ((ServletServerHttpRequest) request).getServletRequest();
         logger.info("握手之前");
         attributes.put("name", h.getParameter("name"));

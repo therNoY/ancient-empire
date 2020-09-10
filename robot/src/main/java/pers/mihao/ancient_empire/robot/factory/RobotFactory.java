@@ -10,6 +10,6 @@ import pers.mihao.ancient_empire.robot.Robot;
 public interface RobotFactory {
 
 
-    Robot createRobot();
+    Robot create();
 
 }

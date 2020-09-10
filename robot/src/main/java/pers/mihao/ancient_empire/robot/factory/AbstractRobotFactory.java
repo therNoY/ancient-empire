@@ -14,14 +14,7 @@ import pers.mihao.ancient_empire.robot.Robot;
  */
 public abstract class AbstractRobotFactory implements RobotFactory {
 
-    private static AtomicInteger threadIndex = new AtomicInteger(0);
-    private static String threadName = "robot-";
 
-    ExecutorService robotPool = Executors.newCachedThreadPool(runnable -> {
-        Thread thread = new Thread(runnable);
-        thread.setName(threadName + threadIndex);
-        return thread;
-    });
 
 
 }

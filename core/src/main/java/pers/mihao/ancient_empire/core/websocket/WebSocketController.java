@@ -35,7 +35,7 @@ import pers.mihao.ancient_empire.core.eums.ArmyEnum;
 import pers.mihao.ancient_empire.core.eums.WSPath;
 import pers.mihao.ancient_empire.core.eums.WsMethodEnum;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.GameCoreStaManger;
 import pers.mihao.ancient_empire.core.util.WsRespHelper;
 import pers.mihao.ancient_empire.core.websocket.service.WsActionService;
 import pers.mihao.ancient_empire.core.websocket.service.WsAttachResultService;
@@ -277,9 +277,9 @@ public class WebSocketController {
             log.info("======================接下来是机器人的行动============================");
             newRoundDto.getRecord().setGameMap(map);
             RobotActive active = new RobotActive(newRoundDto.getRecord(), AiActiveEnum.SELECT_UNIT);
-            GameCoreManger gameCoreManger = GameCoreManger.getInstance(newRoundDto.getRecord());
-            gameCoreManger.saveRecord(newRoundDto.getRecord());
-            gameCoreManger.submitActive(active);
+            GameCoreStaManger gameCoreStaManger = GameCoreStaManger.getInstance(newRoundDto.getRecord());
+            gameCoreStaManger.saveRecord(newRoundDto.getRecord());
+            gameCoreStaManger.submitActive(active);
         }
 
     }
