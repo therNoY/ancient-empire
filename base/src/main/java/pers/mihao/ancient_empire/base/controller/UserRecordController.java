@@ -17,7 +17,7 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.util.MqHelper;
-import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 @RestController
@@ -42,7 +42,7 @@ public class UserRecordController {
     @PostMapping("/record/init")
     public RespJson initMapRecord(@RequestBody @Validated ReqInitMapDto reqInitMapDto, BindingResult result) {
         String recordId = userRecordService.initMapRecord(reqInitMapDto);
-        return RespHelper.successResJson(recordId);
+        return RespUtil.successResJson(recordId);
     }
 
     /**
@@ -61,7 +61,7 @@ public class UserRecordController {
     @GetMapping("/record/{uuid}")
     public RespJson getRecordById(@PathVariable("uuid") String uuid) {
         UserRecord userRecord = userRecordService.getRecordById(uuid);
-        return RespHelper.successResJson(userRecord);
+        return RespUtil.successResJson(userRecord);
     }
 
 
@@ -73,9 +73,9 @@ public class UserRecordController {
         // 判断是否存在
         boolean isSave = userRecordService.saveTempRecord(uuid);
         if (isSave) {
-            return RespHelper.successResJson();
+            return RespUtil.successResJson();
         }
-        return RespHelper.errResJson(41000);
+        return RespUtil.error(41000);
     }
 
     /**
@@ -86,8 +86,8 @@ public class UserRecordController {
         // 判断是否存在
         boolean isSave = userRecordService.saveRecord(saveRecordDto);
         if (isSave) {
-            return RespHelper.successResJson();
+            return RespUtil.successResJson();
         }
-        return RespHelper.errResJson(41000);
+        return RespUtil.error(41000);
     }
 }

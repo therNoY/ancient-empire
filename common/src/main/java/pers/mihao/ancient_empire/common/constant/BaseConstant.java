@@ -15,4 +15,9 @@ public class BaseConstant {
      */
     public static final String NO = "0";
 
+    /**
+     * 下划线
+     */
+    public static final String UNDER_LINE = "_";
+
 }

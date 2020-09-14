@@ -7,9 +7,7 @@ import java.util.Map;
 import pers.mihao.ancient_empire.common.config.ErrorCode;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
-public class RespHelper {
-
-    ErrorCode errorCode;
+public class RespUtil {
 
     /**
      * 返回默认的操作成功
@@ -58,7 +56,7 @@ public class RespHelper {
      * @param mes
      * @return
      */
-    public static RespJson errResJson (String mes) {
+    public static RespJson error(String mes) {
         return new RespJson(-1, mes);
     }
 
@@ -67,7 +65,7 @@ public class RespHelper {
      * @param errCode
      * @return
      */
-    public static RespJson errResJson (Integer errCode) {
+    public static RespJson error(Integer errCode) {
         return new RespJson(errCode, ErrorCode.getErrorMes(errCode));
     }
 

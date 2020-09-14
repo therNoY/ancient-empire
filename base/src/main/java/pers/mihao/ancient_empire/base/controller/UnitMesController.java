@@ -21,7 +21,7 @@ import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
@@ -50,7 +50,7 @@ public class UnitMesController {
     public RespJson getUnitMesList(@RequestParam Long pageSize, @RequestParam Long pageNow) {
         Page<UnitMes> page = new Page<>(pageNow, pageSize);
         IPage<UnitMes> unitMesIPage = unitMesService.getList(page);
-        return RespHelper.successPageResJson(unitMesIPage);
+        return RespUtil.successPageResJson(unitMesIPage);
     }
 
     /**
@@ -62,7 +62,7 @@ public class UnitMesController {
     @PutMapping("/root/unit")
     public RespJson saveUnit(@RequestBody @Validated UnitMes unitMes, BindingResult result) {
         unitMesService.saveUnitMes(unitMes);
-        return RespHelper.successResJson();
+        return RespUtil.successResJson();
     }
 
     /**
@@ -75,12 +75,12 @@ public class UnitMesController {
 
         int index = typeLevel.lastIndexOf("_");
         if (index == 0) {
-            return RespHelper.errResJson(40010);
+            return RespUtil.error(40010);
         }
         String type = typeLevel.substring(0, index);
         Integer level = Integer.valueOf(typeLevel.substring(index + 1));
         UnitInfo unitInfo = unitMesService.getUnitInfo(type, level);
-        return RespHelper.successResJson(unitInfo);
+        return RespUtil.successResJson(unitInfo);
     }
 
     /**
@@ -90,7 +90,7 @@ public class UnitMesController {
     public RespJson getUnitInfoList(@RequestParam String uuid) {
         UserRecord record = userRecordService.getRecordById(uuid);
         if (record == null) {
-            return RespHelper.errResJson(40010);
+            return RespUtil.error(40010);
         }
         Army army = AppUtil.getCurrentArmy(record);
         boolean hasLord = false;
@@ -101,6 +101,6 @@ public class UnitMesController {
             }
         }
         List<UnitInfo> unitInfoList = unitMesService.getUnitInfoList(hasLord);
-        return RespHelper.successResJson(unitInfoList);
+        return RespUtil.successResJson(unitInfoList);
     }
 }

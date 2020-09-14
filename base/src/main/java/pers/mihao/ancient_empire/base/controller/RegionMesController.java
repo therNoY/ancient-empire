@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
-import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
@@ -40,7 +40,7 @@ public class RegionMesController {
     public RespJson getRegionMesList(@RequestParam Long pageSize, @RequestParam Long pageNow) {
         Page<RegionMes> page = new Page<>(pageNow, pageSize);
         IPage<RegionMes> unitMesIPage = regionMesService.getList(page);
-        return RespHelper.successPageResJson(unitMesIPage);
+        return RespUtil.successPageResJson(unitMesIPage);
     }
 
     /**
@@ -52,13 +52,13 @@ public class RegionMesController {
     @PutMapping("/root/region")
     public RespJson saveRegion(@RequestBody @Validated RegionMes regionMes, BindingResult result) {
         regionMesService.saveUnitMes(regionMes);
-        return RespHelper.successResJson();
+        return RespUtil.successResJson();
     }
 
 
     @GetMapping("/regionInfo")
     public RespJson getRegionInfo(@RequestParam  String type) {
         RegionMes regionMes = regionMesService.getRegionByType(type);
-        return RespHelper.successResJson(regionMes);
+        return RespUtil.successResJson(regionMes);
     }
 }

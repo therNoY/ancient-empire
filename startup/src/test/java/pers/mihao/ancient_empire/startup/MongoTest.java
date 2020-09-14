@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.startup;
 
+import com.alibaba.fastjson.JSON;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -86,7 +87,7 @@ public class MongoTest {
         List<UserMap> userMaps = userMapRepository.findAll();
         File file = new File("D:/userMap.txt");
 
-        String j = JacksonUtil.toJson(userMaps);
+        String j = JSON.toJSONString(userMaps);
 
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
 
