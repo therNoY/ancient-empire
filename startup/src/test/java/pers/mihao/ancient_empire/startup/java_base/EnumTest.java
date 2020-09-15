@@ -25,5 +25,15 @@ public class EnumTest {
         System.out.println(type.type());
     }
 
+    @Test
+    public void switchNullTest(){
+        String s = null;
+        switch (s){
+            case "1":
+                System.out.println("1");
+                break;
+        }
+    }
+
 
 }
