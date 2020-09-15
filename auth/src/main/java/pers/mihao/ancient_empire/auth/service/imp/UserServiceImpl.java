@@ -2,8 +2,10 @@ package pers.mihao.ancient_empire.auth.service.imp;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDto;
-import pers.mihao.ancient_empire.common.util.JwtTokenHelper;
+import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
 import pers.mihao.ancient_empire.common.util.RedisHelper;
 
 /**
@@ -44,8 +46,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private JwtTokenHelper jwtTokenHelper;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
     @Autowired
@@ -79,15 +79,16 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
 
     /**
      * 验证登录信息返回验证的token
+     *
      * @param loginDto
      * @return
      */
     @Override
     public RespAuthDao login(LoginDto loginDto) {
-        String token = null;
+        String token;
         User loginUser = getUserByNameOrEmail(loginDto.getUserName());
-        if (loginUser != null && passwordEncoder.matches(loginDto.getPassword(),loginUser.getPassword())) {
-            token = jwtTokenHelper.generateToken(loginDto.getUserName());
+        if (loginUser != null && passwordEncoder.matches(loginDto.getPassword(), loginUser.getPassword())) {
+            token = JwtTokenUtil.generateToken(loginUser.getId().toString());
             return new RespAuthDao(loginUser.getName(), loginDto.getPassword(), token);
         }
         return null;
@@ -95,6 +96,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
 
     /**
      * 管理员登录
+     *
      * @param loginDto
      * @return
      */
@@ -104,7 +106,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getUserName());
         for (GrantedAuthority author : userDetails.getAuthorities()) {
             if (author.toString().equals(RoleEnum.ADMIN.type())) {
-                return  jwtTokenHelper.generateToken(userDetails.getUsername());
+                return JwtTokenUtil.generateToken(userDetails.getUsername());
             }
         }
         return null;
@@ -143,6 +145,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
 
     /**
      * 更新用户信息 更新成功返回新的token
+     *
      * @param user
      * @return
      */
@@ -150,13 +153,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     public String updateUserInfo(ReqUserDto user) {
         // 1.防止用户伪造 通过Token 获取当前登录对象 当前用户只能更改当前用户
         if (user.getId() - AuthUtil.getAuthId() != 0) {
-            return  null;
-        }else {
+            return null;
+        } else {
             // 清除缓存
             redisHelper.delKey(RedisKey.USER_INFO_ + userDao.selectById(user.getId()).getName());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userDao.updateByReqUserDto(user.getUserName(), user.getPassword(), user.getId());
-            return jwtTokenHelper.generateToken(user.getUserName());
+            return JwtTokenUtil.generateToken(user.getUserName());
         }
     }
 

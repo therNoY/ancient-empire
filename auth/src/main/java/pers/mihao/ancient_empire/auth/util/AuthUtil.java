@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
+import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.vo.MyException;
 
 /**
@@ -14,23 +15,43 @@ public class AuthUtil {
 
     static Logger log = LoggerFactory.getLogger(AuthUtil.class);
 
+    static ThreadLocal<Integer> authId = new ThreadLocal<>();
+    static ThreadLocal<MyUserDetails> userDetailsThreadLocal = new ThreadLocal<>();
+
     public static MyUserDetails getLoginUser() {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        if (token == null) {
-            log.error("错误的身份过滤");
-            throw new MyException(40003);
+
+        if (userDetailsThreadLocal.get() == null) {
+            UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            if (token == null) {
+                log.error("错误的身份过滤");
+                throw new MyException(40003);
+            }
+            MyUserDetails userDetails = (MyUserDetails) token.getPrincipal();
+            userDetailsThreadLocal.set(userDetails);
         }
-        MyUserDetails userDetails = (MyUserDetails) token.getPrincipal();
-        return userDetails;
+        return userDetailsThreadLocal.get();
     }
 
     public static Integer getAuthId() {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        if (token == null) {
-            log.error("错误的身份过滤");
-            throw new MyException(40003);
+
+        if (authId.get() == null) {
+            UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            if (token == null) {
+                log.error("错误的身份过滤");
+                throw new MyException(40003);
+            }
+            MyUserDetails userDetails = (MyUserDetails) token.getPrincipal();
+            authId.set(userDetails.getUserId());
         }
-        MyUserDetails userDetails = (MyUserDetails) token.getPrincipal();
-        return userDetails.getUserId();
+
+        return authId.get();
+    }
+
+
+    @KnowledgePoint("对于threadLocal的使用如果是线程池使用（有回收的情况）就需要" +
+            "每次使用完都清除掉，不然线程回收了，但是保存的对象没有回收，会造成内存泄漏")
+    public static void clear(){
+        authId.remove();
+        userDetailsThreadLocal.remove();
     }
 }

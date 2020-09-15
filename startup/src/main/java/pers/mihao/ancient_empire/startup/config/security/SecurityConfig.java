@@ -98,8 +98,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public UserDetailsService userDetailsService() {
         //获取登录用户信息 Lambda重写loadUserByUsername 方法 为了获取一个UserDetails 的对象
-        return username -> {
-            User user = userService.getUserByNameOrEmail(username);
+        return userId -> {
+            User user = userService.getById(userId);
             if (user != null) {
                 List<Permission> permissionList = userService.getPermissionList(user.getId());
                 return new MyUserDetails(user,permissionList);

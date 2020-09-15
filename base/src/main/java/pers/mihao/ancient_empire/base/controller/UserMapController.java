@@ -29,7 +29,7 @@ import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserSettingService;
-import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
@@ -73,7 +73,7 @@ public class UserMapController {
         // 4.获取初始化地图信息
         UserSetting userSetting = userSettingService.getUserSettingById(id);
         RespUserMapDao userMapDao = new RespUserMapDao(unitMesList, regionMes, userMaps, unSaveMap, userSetting);
-        return RespHelper.successResJson(userMapDao);
+        return RespUtil.successResJson(userMapDao);
     }
 
     /**
@@ -84,10 +84,10 @@ public class UserMapController {
     @PostMapping("/api/userMap/saveTemp")
     public RespJson saveTempMap(@RequestBody UserMap userMap) {
         if (Collections.isEmpty(userMap.getRegions())) {
-            return RespHelper.errResJson(40010);
+            return RespUtil.error(40010);
         }
         userMapService.saveTempMap(userMap);
-        return RespHelper.successResJson();
+        return RespUtil.successResJson();
     }
 
     /**
@@ -97,7 +97,7 @@ public class UserMapController {
     public RespJson getSimpleDrawing(@RequestBody ReqSimpleDrawing reqSimpleDrawing) {
         List<RespSimpleDrawing> simpleDrawings = userMapService.getSimpleDrawing(reqSimpleDrawing);
         String type = userMapService.getType(reqSimpleDrawing.getType());
-        return RespHelper.successResJson("data", simpleDrawings, "key", type);
+        return RespUtil.successResJson("data", simpleDrawings, "key", type);
     }
 
     /**
@@ -111,7 +111,7 @@ public class UserMapController {
         List<UserMap> userMaps = userAllMaps.stream()
                 .filter(userMap -> userMap.isUnSave() == false)
                 .collect(Collectors.toList());
-        return RespHelper.successResJson(userMaps);
+        return RespUtil.successResJson(userMaps);
     }
 
     /**
@@ -121,7 +121,7 @@ public class UserMapController {
     public RespJson saveUserMap(@RequestBody @Validated UserMap userMap, BindingResult result) {
         UserMap map = userMapService.getUserMapByName(userMap.getMapName());
         if (map != null){
-            return RespHelper.errResJson(42000);
+            return RespUtil.error(42000);
         }
         // 管理员创建地图默认是遭遇战地图
         if (AuthUtil.getAuthId().equals(1)) {
@@ -130,7 +130,7 @@ public class UserMapController {
         }else {
             userMapService.saveMap(userMap);
         }
-        return RespHelper.successResJson();
+        return RespUtil.successResJson();
     }
 
 
@@ -141,7 +141,7 @@ public class UserMapController {
     @DeleteMapping("/api/userMap/{id}")
     public RespJson deleteUserMap(@PathVariable("id") String id) {
         userMapService.deleteMapById(id);
-        return RespHelper.successResJson();
+        return RespUtil.successResJson();
     }
 
     /**
@@ -151,7 +151,7 @@ public class UserMapController {
     @GetMapping("/encounterMap")
     public RespJson getEncounterMap() {
         List<UserMap> encounterMaps = userMapService.getEncounterMaps();
-        return RespHelper.successResJson(encounterMaps);
+        return RespUtil.successResJson(encounterMaps);
     }
 
     /**
@@ -161,7 +161,7 @@ public class UserMapController {
     @GetMapping("/encounter/initSetting")
     public RespJson getEncounterInitSetting(@RequestParam String uuid) {
         List<String> colors = userMapService.getInitArmy(uuid);
-        return RespHelper.successResJson(colors);
+        return RespUtil.successResJson(colors);
     }
     /**
      * 超管权限设置全局的 遭遇战地图和 故事模式
@@ -172,7 +172,7 @@ public class UserMapController {
     @PutMapping("/roots/map")
     public RespJson save(UserMap userMap, BindingResult result) {
         userMapService.updateMap(userMap);
-        return RespHelper.successResJson();
+        return RespUtil.successResJson();
     }
 
 }

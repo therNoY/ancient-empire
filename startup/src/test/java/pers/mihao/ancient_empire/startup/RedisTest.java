@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.startup;
 
 import java.util.List;
+
+import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,7 @@ public class RedisTest {
     @Test
     public void name() {
        Object object = redisHelper.get("f09fbc8d-93d2-4344-b8a6-f3769a644e31");
-        RegisterDto registerDto = JacksonUtil.jsonToBean(object.toString(), RegisterDto.class);
+        RegisterDto registerDto = JSON.parseObject(object.toString(), RegisterDto.class);
        System.out.println(object.toString());
     }
 

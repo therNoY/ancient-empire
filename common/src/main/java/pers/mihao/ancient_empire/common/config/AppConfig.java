@@ -16,10 +16,11 @@ public class AppConfig {
 
     static {
         map = new HashMap<>();
-        Properties properties = PropertiesUtil.getProperties("application-setting.properties");
-        properties.forEach((key, value)->{
-            map.put(key.toString(), value.toString());
-        });
+        Properties propertiesSetting = PropertiesUtil.getProperties("application-setting.properties");
+        propertiesSetting.forEach((key, value)-> map.put(key.toString(), value.toString()));
+
+        Properties properties = PropertiesUtil.getProperties("application.properties");
+        properties.forEach((key, value)-> map.put(key.toString(), value.toString()));
     }
 
 

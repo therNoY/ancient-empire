@@ -7,4 +7,13 @@ package pers.mihao.ancient_empire.core.manger.commend;
  */
 public abstract class AbstractCommend implements Commend{
 
+    protected String taskType;
+
+    public String getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
+    }
 }

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.MyException;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
@@ -39,7 +39,7 @@ public class MyControllerAdvice {
     @ExceptionHandler(value = MyException.class)
     public RespJson myErrorHandler(MyException ex) {
         log.error("", ex);
-        return RespHelper.errResJson(ex.getMessage());
+        return RespUtil.error(ex.getMessage());
     }
 
 }

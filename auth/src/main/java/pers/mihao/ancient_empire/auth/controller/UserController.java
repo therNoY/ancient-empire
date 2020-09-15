@@ -26,7 +26,7 @@ import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDto;
 import pers.mihao.ancient_empire.common.email.EmailService;
 import pers.mihao.ancient_empire.common.util.RedisHelper;
-import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
@@ -60,9 +60,9 @@ public class UserController {
     public RespJson login(@RequestBody @Validated LoginDto loginDto, BindingResult result) {
         RespAuthDao respAuthDao = userService.login(loginDto);
         if (respAuthDao == null) {
-            return RespHelper.errResJson(40011);
+            return RespUtil.error(40011);
         }else {
-            return RespHelper.successResJson(respAuthDao);
+            return RespUtil.successResJson(respAuthDao);
         }
     }
 
@@ -75,9 +75,9 @@ public class UserController {
     public RespJson adminLogin(@RequestBody @Validated LoginDto loginDto, BindingResult result) {
         String token = userService.adminLogin(loginDto);
         if (token == null) {
-            return RespHelper.errResJson(40011);
+            return RespUtil.error(40011);
         }else {
-            return RespHelper.successResJson(token);
+            return RespUtil.successResJson(token);
         }
     }
 
@@ -93,12 +93,12 @@ public class UserController {
         User userByEmail = userService.getUserByEmail(registerDto.getEmail());
         if (userByEmail != null) {
             log.error("用户注册错误 邮箱 {} 已注册", userByEmail.getName());
-            return RespHelper.errResJson(40013);
+            return RespUtil.error(40013);
         }
         User user = userService.getUserByName(registerDto.getUserName());
         if (user != null) {
             log.error("用户注册错误 用户名 {} 重复", user.getName());
-            return RespHelper.errResJson(40012);
+            return RespUtil.error(40012);
         }
         // 准备发送给邮件服务器
         // 1.获取token
@@ -107,7 +107,7 @@ public class UserController {
         emailService.sendRegisterEmail(registerDto, uuid);
         // 3.放到缓存中 key email+_REGISTER 时间60s
         redisHelper.set(uuid, registerDto, 600l);
-        return RespHelper.successResJson();
+        return RespUtil.successResJson();
     }
 
     /**
@@ -138,9 +138,9 @@ public class UserController {
         // 验证密码是否正确
         if (passwordEncoder.matches(pwdDto.getPassword(), userDetails.getPassword())) {
             // 返回用户Id
-            return RespHelper.successResJson(userDetails.getUserId());
+            return RespUtil.successResJson(userDetails.getUserId());
         }
-        return RespHelper.errResJson(40014);
+        return RespUtil.error(40014);
     }
 
     /**
@@ -153,8 +153,8 @@ public class UserController {
     public RespJson changeUserInfo (@RequestBody @Validated ReqUserDto user, BindingResult result) {
         String token = userService.updateUserInfo(user);
         if (token == null) {
-            return RespHelper.errResJson(40003);
+            return RespUtil.error(40003);
         }
-        return RespHelper.successResJson(token);
+        return RespUtil.successResJson(token);
     }
 }

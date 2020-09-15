@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.util.RespUtil;
 
 /**
  * 验证参数的aop
@@ -30,9 +30,9 @@ public class BindingResultAspect {
                 if (result.hasErrors()) {
                     FieldError fieldError = result.getFieldError();
                     if(fieldError!=null){
-                        return RespHelper.parsErrResJson(fieldError.getDefaultMessage());
+                        return RespUtil.parsErrResJson(fieldError.getDefaultMessage());
                     }else{
-                        return RespHelper.parsErrResJson();
+                        return RespUtil.parsErrResJson();
                     }
                 }
             }

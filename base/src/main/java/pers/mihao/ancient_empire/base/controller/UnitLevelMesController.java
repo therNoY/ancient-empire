@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
-import pers.mihao.ancient_empire.common.util.RespHelper;
+import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
@@ -32,12 +32,12 @@ public class UnitLevelMesController {
     @GetMapping("/root/unitLevel")
     public RespJson getUnitLevelMesList (@RequestParam Long pageSize, @RequestParam Long pageNow) {
         Page page = new Page<>(pageNow, pageSize);
-        return RespHelper.successPageResJson(unitLevelMesService.getUnitLevelMesList(page));
+        return RespUtil.successPageResJson(unitLevelMesService.getUnitLevelMesList(page));
     }
 
     @PutMapping("/root/unitLevel")
     public RespJson saveUnitLevelMesList (@RequestBody @Validated UnitLevelMes unitLevelMes, BindingResult result) {
         unitLevelMesService.saveUnitLevelMesList(unitLevelMes);
-        return RespHelper.successResJson();
+        return RespUtil.successResJson();
     }
 }
