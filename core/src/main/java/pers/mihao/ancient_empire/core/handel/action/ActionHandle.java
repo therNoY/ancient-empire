@@ -63,7 +63,6 @@ public class ActionHandle {
      * @return
      */
     public List<String> getAction(List<Position> positions, UserRecord record, Integer camp, Integer unitIndex, Position aimPoint) {
-
         List<String> actions = new ArrayList<>();
         List<Army> ArmyList = record.getArmyList();
         for (Position p : positions) {
