@@ -14,6 +14,10 @@ public class MyException extends RuntimeException{
         this.mes = mes;
     }
 
+    public MyException() {
+        this.mes = "请联系管理员";
+    }
+
     public Integer getCode() {
         return code;
     }

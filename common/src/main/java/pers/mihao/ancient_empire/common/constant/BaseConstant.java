@@ -16,6 +16,11 @@ public class BaseConstant {
     public static final String NO = "0";
 
     /**
+     * 点
+     */
+    public static final String POINT = ".";
+
+    /**
      * 下划线
      */
     public static final String UNDER_LINE = "_";

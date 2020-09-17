@@ -1,7 +1,6 @@
 package pers.mihao.ancient_empire.robot;
 
-import pers.mihao.ancient_empire.core.GameCoreContext;
-import pers.mihao.ancient_empire.core.util.GameCoreHelper;
+import pers.mihao.ancient_empire.core.manger.GameContext;
 
 /**
  * @Author mh32736
@@ -9,7 +8,7 @@ import pers.mihao.ancient_empire.core.util.GameCoreHelper;
  */
 public abstract class Robot implements Runnable{
 
-    private GameCoreContext gameCoreContext;
+    private GameContext gameContext;
 
     @Override
     public void run() {

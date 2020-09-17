@@ -50,4 +50,67 @@ public class StringUtil {
             return false;
         return true;
     }
+
+    /**
+     * 驼峰转下划线大写
+     * @param string
+     * @return
+     */
+    public static String humpToUnderscore(String string) {
+        // 1.将type 转成大写
+        char[] types = string.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : types) {
+            if ('a' <= c && c <= 'z') {
+                sb.append(Character.toUpperCase(c));
+            }else if ('A' <= c && c <= 'Z' ){
+                sb.append("_").append(c);
+            }else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * 下划线大写转驼峰
+     * @param string
+     * @return
+     */
+    public static String underscoreToHump(String string) {
+        return underscoreToHump(string, false);
+    }
+
+    /**
+     * 下划线大写转驼峰(开头是大写)
+     * @param string
+     * @return
+     */
+    public static String underscoreToHump(String string, boolean firstIsBig) {
+        String type = string.toLowerCase();
+        char[] typeChar = type.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < typeChar.length; i++) {
+            char c = typeChar[i];
+            if (i > 0) {
+                if (c != '_') {
+                    if (i > 0 && typeChar[i-1] == '_' && sb.length() > 1) {
+                        // 只有当他的前一位是"_" 才保持大写
+                        sb.append(Character.toUpperCase(c));
+                    }else {
+                        // 其他情况全部小写
+                        sb.append(Character.toLowerCase(c));
+                    }
+                }
+            }else {
+                if (firstIsBig) {
+                    sb.append(Character.toUpperCase(c));
+                }else {
+                    sb.append(Character.toLowerCase(c));
+                }
+            }
+        }
+        return sb.toString();
+    }
 }

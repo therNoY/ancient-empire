@@ -4,6 +4,9 @@ import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 
+/**
+ * 用户存档接口
+ */
 public interface UserRecordService {
     String initMapRecord(ReqInitMapDto reqInitMapDto);
 

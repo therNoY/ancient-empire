@@ -21,7 +21,7 @@ ancient-empire 是项目远古帝国网页版 的后端项目(现在该项目在
 
 + 其中后端维护一局游戏的生命周期，即GameContext 维护在GameContextManger中;
 
-+ 客户端对操作做出校验，校验成功通过simp(WS)发出事件，后端接受事件，封装成事件对象，分发到相应的GameContext，
++ 客户端对操作做出校验，校验成功通过websocket长连接发出事件，后端接受事件，封装成事件对象，发送到GameContext，
 GameContext获取对应事件的处理器，处理事件，返回结果，生成相应指令；
 
 ### 2.数据库选择（为什么用mongo+mysql+redis）游戏单位

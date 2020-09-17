@@ -4,6 +4,7 @@ import java.util.Date;
 import javax.websocket.Session;
 
 /**
+ * 用户连接gameSession
  * @Author mh32736
  * @Date 2020/9/15 13:00
  */

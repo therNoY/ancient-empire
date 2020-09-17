@@ -37,4 +37,5 @@ public interface BaseEnum {
             return sb.toString();
         }
     }
+
 }
