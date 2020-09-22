@@ -33,7 +33,7 @@ import pers.mihao.ancient_empire.core.websocket.service.WsMoveAreaService;
 public class AiMessageSender {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
-    @Autowired
+//    @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     WsMoveAreaService moveAreaService;

@@ -8,7 +8,15 @@ import org.springframework.boot.CommandLineRunner;
  */
 public interface TaskQueueManger<T> extends CommandLineRunner {
 
+    /**
+     * 处理事件
+     * @param t
+     */
     void handelTask(T t);
 
+    /**
+     * 添加任务
+     * @param t
+     */
     void addTask(T t);
 }

@@ -1,11 +1,7 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,16 +15,25 @@ import pers.mihao.ancient_empire.auth.enums.UserEnum;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
-import pers.mihao.ancient_empire.base.mongo.dao.UserMapRepository;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.CollectionEnum;
-import pers.mihao.ancient_empire.base.enums.MapEnum;
+import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
+import pers.mihao.ancient_empire.base.mongo.dao.UserMapRepository;
 import pers.mihao.ancient_empire.base.service.UserMapService;
+import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
+import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.jdbc.mongo.MongoUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserMapServiceImp implements UserMapService {
@@ -176,8 +181,12 @@ public class UserMapServiceImp implements UserMapService {
      */
     @Override
     @Cacheable(RedisKey.ENCOUNTER_MAP)
-    public List<UserMap> getEncounterMaps() {
-        return userMapRepository.getAllByCreateUserIdAndType(UserEnum.ADMIN.getId(), MapEnum.ENCOUNTER.type());
+    public List<BaseMapInfoVO> getEncounterMaps() {
+        Criteria criteria = new Criteria()
+                .and("createUserId").is(UserEnum.ADMIN.getId())
+                .and("type").is(GameTypeEnum.ENCOUNTER.type());
+        List<BaseMapInfoVO> encounterMaps = MongoUtil.findByCriteria(criteria, BaseMapInfoVO.class);
+        return encounterMaps;
     }
 
     /**
@@ -218,13 +227,27 @@ public class UserMapServiceImp implements UserMapService {
     @Override
     public UserMap getEncounterMapById(String uuid) {
         UserMap userMap = userMapRepository.getFirstByUuid(uuid);
-        if (userMap.getCreateUserId() != UserEnum.ADMIN.getId() || !MapEnum.ENCOUNTER.type().equals(userMap.getType())) {
+        if (userMap.getCreateUserId() != UserEnum.ADMIN.getId() || !GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
             // 不是遭遇地图
             return null;
         }
         return userMap;
     }
 
+    /**
+     * 获取用户凡人地图
+     * @param uuid
+     * @return
+     */
+    @Cacheable(RedisKey.USER_MAP)
+    @Override
+    public UserMapVo getUserMapById(String uuid) {
+        UserMapVo userMapVo = new UserMapVo();
+        UserMap userMap = userMapRepository.getFirstByUuid(uuid);
+        BeanUtils.copyProperties(userMap, userMapVo);
+        userMapVo.setCastleTitles(findCastleTitle(userMap.getRegions(), userMap.getRow(), userMap.getColumn()));
+        return userMapVo;
+    }
 
     /**
      * 找到index 周围的海洋

@@ -42,4 +42,13 @@ public class RespJson {
     public void setResVal(Object resVal) {
         this.resVal = resVal;
     }
+
+    @Override
+    public String toString() {
+        return "RespJson{" +
+                "resCode=" + resCode +
+                ", resMes='" + resMes + '\'' +
+                ", resVal=" + resVal +
+                '}';
+    }
 }

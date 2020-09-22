@@ -25,7 +25,7 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDto;
 import pers.mihao.ancient_empire.common.email.EmailService;
-import pers.mihao.ancient_empire.common.util.RedisHelper;
+import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
@@ -47,7 +47,7 @@ public class UserController {
     @Autowired
     EmailService emailService;
     @Autowired
-    RedisHelper redisHelper;
+    RedisUtil redisUtil;
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -106,7 +106,7 @@ public class UserController {
         // 2.发送邮件
         emailService.sendRegisterEmail(registerDto, uuid);
         // 3.放到缓存中 key email+_REGISTER 时间60s
-        redisHelper.set(uuid, registerDto, 600l);
+        redisUtil.set(uuid, registerDto, 600l);
         return RespUtil.successResJson();
     }
 
@@ -116,7 +116,7 @@ public class UserController {
     @GetMapping("/register")
     public ModelAndView registerCallback(@RequestParam String token) {
         RegisterDto registerDto = null;
-        if ((registerDto = redisHelper.getObject(token, RegisterDto.class)) != null) {
+        if ((registerDto = redisUtil.getObject(token, RegisterDto.class)) != null) {
             userService.save(registerDto);
             return new ModelAndView("registerSuccess");
         }else {

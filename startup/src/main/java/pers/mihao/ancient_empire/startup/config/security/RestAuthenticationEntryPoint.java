@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.startup.config.security;
 
 import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -16,8 +18,12 @@ import java.io.IOException;
  */
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        log.info("用户未登录");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.getWriter().println(JSON.toJSONString(RespUtil.error(40001)));

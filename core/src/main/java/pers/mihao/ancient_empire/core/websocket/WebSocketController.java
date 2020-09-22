@@ -38,7 +38,7 @@ public class WebSocketController {
 
     @Autowired
     WsMoveAreaService moveAreaService;
-    @Autowired
+//    @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     WsActionService actionService;

@@ -31,7 +31,7 @@ import pers.mihao.ancient_empire.common.constant.RedisKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDto;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
-import pers.mihao.ancient_empire.common.util.RedisHelper;
+import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 
 /**
  * <p>
@@ -59,7 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Autowired
     UserRoleRelationDao userRoleRelationDao;
     @Autowired
-    RedisHelper redisHelper;
+    RedisUtil redisUtil;
 
     @Override
     @Cacheable(RedisKey.USER_INFO)
@@ -89,6 +89,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         User loginUser = getUserByNameOrEmail(loginDto.getUserName());
         if (loginUser != null && passwordEncoder.matches(loginDto.getPassword(), loginUser.getPassword())) {
             token = JwtTokenUtil.generateToken(loginUser.getId().toString());
+            log.info("给用户：{}生成token", loginDto);
             return new RespAuthDao(loginUser.getName(), loginDto.getPassword(), token);
         }
         return null;
@@ -156,7 +157,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             return null;
         } else {
             // 清除缓存
-            redisHelper.delKey(RedisKey.USER_INFO_ + userDao.selectById(user.getId()).getName());
+            redisUtil.delKey(RedisKey.USER_INFO_ + userDao.selectById(user.getId()).getName());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userDao.updateByReqUserDto(user.getUserName(), user.getPassword(), user.getId());
             return JwtTokenUtil.generateToken(user.getUserName());

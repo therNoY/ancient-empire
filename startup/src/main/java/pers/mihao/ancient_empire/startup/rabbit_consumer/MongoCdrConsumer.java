@@ -13,7 +13,7 @@ import pers.mihao.ancient_empire.common.constant.RedisKey;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.common.util.MqMessage;
-import pers.mihao.ancient_empire.common.util.RedisHelper;
+import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
 import pers.mihao.ancient_empire.core.dto.RespRepairOcpResult;
 import pers.mihao.ancient_empire.core.util.UserRecordMongoHelper;
@@ -31,7 +31,7 @@ public class MongoCdrConsumer {
     @Autowired
     UserRecordMongoHelper userRecordMongoHelper;
     @Autowired
-    RedisHelper redisHelper;
+    RedisUtil redisUtil;
     @Autowired
     MqHelper mqHelper;
 
@@ -43,9 +43,6 @@ public class MongoCdrConsumer {
                     if (mqMessage != null) {
                         log.info("mongo.cdr 消费 at {}", DateUtil.getNow());
                         switch (mqMessage.getMqMethodEnum()) {
-                            case ADD_RECORD:
-                                consumerMes(mqMessage, this::addRecord);
-                                break;
                             case ACTION_ATTACH:
                                 consumerMes(mqMessage, this::actionAttach);
                                 break;
@@ -101,7 +98,7 @@ public class MongoCdrConsumer {
         UserRecord record = (UserRecord)value;
         // 更新军队坟墓更新当前军队
         userRecordMongoHelper.endRound(record);
-        redisHelper.delKey(RedisKey.USER_RECORD_ + record.getUuid());
+        redisUtil.delKey(RedisKey.USER_RECORD_ + record.getUuid());
     }
 
     /**
@@ -113,7 +110,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：buyUnit");
         BuyUnitDto buyUnitDto = (BuyUnitDto)value;
         userRecordMongoHelper.handleBuyUnit(buyUnitDto);
-        redisHelper.delKey(RedisKey.USER_RECORD_ + buyUnitDto.getUuid());
+        redisUtil.delKey(RedisKey.USER_RECORD_ + buyUnitDto.getUuid());
     }
 
     /**
@@ -125,7 +122,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：actionRepairOcp");
         RespRepairOcpResult repairOcpResult = (RespRepairOcpResult)value;
         userRecordMongoHelper.handleRepairOcp(repairOcpResult);
-        redisHelper.delKey(RedisKey.USER_RECORD_ + repairOcpResult.getRecordId());
+        redisUtil.delKey(RedisKey.USER_RECORD_ + repairOcpResult.getRecordId());
     }
 
     /**
@@ -137,7 +134,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：actionEnd");
         RespEndResultDto endResultDto = (RespEndResultDto)value;
         userRecordMongoHelper.handleEnd(endResultDto);
-        redisHelper.delKey(RedisKey.USER_RECORD_ + endResultDto.getUuid());
+        redisUtil.delKey(RedisKey.USER_RECORD_ + endResultDto.getUuid());
     }
 
     /**
@@ -149,7 +146,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：actionSummon");
         SummonDto summonDto = (SummonDto)value;
         userRecordMongoHelper.handleSummon(summonDto);
-        redisHelper.delKey(RedisKey.USER_RECORD_ + summonDto.getUuid());
+        redisUtil.delKey(RedisKey.USER_RECORD_ + summonDto.getUuid());
     }
 
     /**
@@ -161,19 +158,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：actionAttach");
         UserRecord record = (UserRecord)value;
         userRecordMongoHelper.updateRecord(record);
-        redisHelper.delKey(RedisKey.USER_RECORD_ + record.getUuid());
-    }
-
-    /**
-     * mongo 添加记录
-     *
-     * @param value
-     */
-    private void addRecord(Object value) {
-        log.info("mq 处理：addRecord");
-        UserRecord userRecord = (UserRecord) value;
-        userRecordMongoHelper.updateRecord(userRecord);
-        userRecordRepository.save(userRecord);
+        redisUtil.delKey(RedisKey.USER_RECORD_ + record.getUuid());
     }
 
     private interface ConsumerHandle {

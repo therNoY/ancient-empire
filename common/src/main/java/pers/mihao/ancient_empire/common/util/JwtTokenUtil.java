@@ -133,7 +133,7 @@ public class JwtTokenUtil {
      */
     public static boolean isEffectiveToken(Date date) {
         // TODO 这里需要对过期时间进行判断, 如果即将过期，要重新签发token
-        return date.before(new Date());
+        return date.after(new Date());
     }
 
 

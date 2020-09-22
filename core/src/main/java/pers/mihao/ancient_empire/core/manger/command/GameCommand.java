@@ -39,4 +39,13 @@ public class GameCommand extends AbstractCommand{
     public void setPointSite(Site pointSite) {
         this.pointSite = pointSite;
     }
+
+    @Override
+    public String toString() {
+        return "GameCommand{" +
+                "sendTypeEnum=" + sendTypeEnum +
+                ", gameCommendEnum=" + gameCommendEnum +
+                ", pointSite=" + pointSite +
+                '}';
+    }
 }

@@ -1,11 +1,14 @@
 package pers.mihao.ancient_empire.base.service;
 
-import java.util.List;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
+import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
+import pers.mihao.ancient_empire.base.vo.UserMapVo;
 
-public interface UserMapService {
+import java.util.List;
+
+public interface UserMapService extends MapService{
     List<UserMap> getUserMap();
 
     void saveTempMap(UserMap userMap);
@@ -22,9 +25,15 @@ public interface UserMapService {
 
     void updateMap(UserMap userMap);
 
-    List<UserMap> getEncounterMaps();
+    List<BaseMapInfoVO> getEncounterMaps();
 
     List<String> getInitArmy(String uuid);
 
     UserMap getEncounterMapById(String uuid);
+
+    /**
+     * 根据Id获取用户地图
+     * @return
+     */
+    UserMapVo getUserMapById(String uuid);
 }

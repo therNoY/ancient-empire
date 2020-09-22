@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.MyException;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
@@ -31,13 +31,13 @@ public class MyControllerAdvice {
     }*/
 
     /**
-     * 拦截捕捉自定义异常 MyException.class
+     * 拦截捕捉自定义异常 AncientEmpireException.class
      * @param ex
      * @return
      */
     @ResponseBody
-    @ExceptionHandler(value = MyException.class)
-    public RespJson myErrorHandler(MyException ex) {
+    @ExceptionHandler(value = AncientEmpireException.class)
+    public RespJson myErrorHandler(AncientEmpireException ex) {
         log.error("", ex);
         return RespUtil.error(ex.getMessage());
     }

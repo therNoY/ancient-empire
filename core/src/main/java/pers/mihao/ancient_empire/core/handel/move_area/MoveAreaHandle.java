@@ -16,7 +16,7 @@ import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
-import pers.mihao.ancient_empire.common.vo.MyException;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 public class MoveAreaHandle{
 
@@ -169,7 +169,7 @@ public class MoveAreaHandle{
         String type = userRecord.getGameMap().getRegions().get(index).getType();
         RegionMes regionMes = ApplicationContextHolder.getBean(RegionMesService.class).getRegionByType(type);
         if (regionMes == null)
-            throw new MyException("服务器错误");
+            throw new AncientEmpireException("服务器错误");
         return regionMes.getDeplete();
     }
 

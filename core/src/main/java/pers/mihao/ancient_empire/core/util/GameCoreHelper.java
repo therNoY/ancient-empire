@@ -14,7 +14,7 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.IntegerUtil;
-import pers.mihao.ancient_empire.common.vo.MyException;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 import pers.mihao.ancient_empire.core.dto.RespAction;
 
 /**
@@ -107,7 +107,7 @@ public class GameCoreHelper {
             action4.setColumn((float) (cUnit.getColumn() + 1));
             respActions.add(action4);
         } else {
-            throw new MyException("不可能存在的Action");
+            throw new AncientEmpireException("不可能存在的Action");
         }
 
         return respActions;

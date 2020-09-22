@@ -1,21 +1,21 @@
 package pers.mihao.ancient_empire.core.manger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
-import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
-import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.vo.MyException;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
-import pers.mihao.ancient_empire.core.manger.event.Event;
+import pers.mihao.ancient_empire.core.manger.command.Command;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.Handler;
 
@@ -25,7 +25,6 @@ import pers.mihao.ancient_empire.core.manger.handler.Handler;
  * @Author mh32736
  * @Date 2020/9/10 13:37
  */
-@Manger
 public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     private Logger log = LoggerFactory.getLogger(GameCoreManger.class);
@@ -41,6 +40,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     GameSessionManger gameSessionManger;
     @Autowired
     UserRecordService userRecordService;
+
     /**
      * 线程池处理的任务
      *
@@ -48,10 +48,22 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      */
     @Override
     public void handelTask(GameEvent event) {
-        Handler handler = handlerMap.get(event.getEventEnum());
-        if (handler != null) {
-            handler.setGameContext(null);
-            handler.handler(event);
+        GameContext.setUserId(event.getUserId());
+        try {
+            Handler handler = handlerMap.get(event.getEvent());
+            if (handler != null) {
+                handler.setGameContext(contextMap.get(event.getGameId()));
+                // 处理任务返回 处理任务结果
+                List<Command> commands = handler.handler(event);
+                for (Command command : commands) {
+                    GameCommand gameCommand = (GameCommand) command;
+                    gameSessionManger.sendMessage(gameCommand, event.getGameId());
+                }
+            }
+        } catch (Exception e) {
+            log.error("执行任务出错:{}", event, e);
+        } finally {
+            GameContext.clear();
         }
     }
 
@@ -86,7 +98,21 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     }
 
     /**
-     * 注册新的地图游戏上下文
+     * 添加 游戏上下文
+     * @param recordId
+     */
+    public void registerGameContext(UserRecord userRecord, GameTypeEnum gameTypeEnum){
+        if (!contextMap.containsKey(userRecord.getUuid())) {
+            GameContext gameContext = new GameContext();
+            gameContext.setGameId(userRecord.getUuid());
+            gameContext.setGameTypeEnum(gameTypeEnum);
+            gameContext.setUserRecord(userRecord);
+            contextMap.put(userRecord.getUuid(), gameContext);
+        }
+    }
+
+    /**
+     * 添加 游戏上下文
      * @param recordId
      */
     public void registerGameContext(String recordId){
@@ -95,8 +121,6 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             GameContext gameContext = new GameContext();
             gameContext.setUserRecord(userRecord);
             contextMap.put(recordId, gameContext);
-        }else {
-            throw new MyException();
         }
     }
 

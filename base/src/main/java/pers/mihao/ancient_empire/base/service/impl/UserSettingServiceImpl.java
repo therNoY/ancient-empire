@@ -11,7 +11,7 @@ import pers.mihao.ancient_empire.base.dao.UserSettingDao;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
 import pers.mihao.ancient_empire.base.service.UserSettingService;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
-import pers.mihao.ancient_empire.common.util.RedisHelper;
+import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 
 
 /**
@@ -30,7 +30,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDao, UserSett
     @Autowired
     UserSettingDao userSettingDao;
     @Autowired
-    RedisHelper redisHelper;
+    RedisUtil redisUtil;
 
     @Override
     @Cacheable(RedisKey.USER_SETTING)
@@ -47,7 +47,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDao, UserSett
     @Override
     public void updateByUserId(UserSetting userSetting) {
         // 删除缓存
-        redisHelper.delKey(RedisKey.USER_SETTING_ + AuthUtil.getAuthId());
+        redisUtil.delKey(RedisKey.USER_SETTING_ + AuthUtil.getAuthId());
         QueryWrapper<UserSetting> wrapper = new QueryWrapper();
         wrapper.eq("user_id", userSetting.getUserId());
         userSettingDao.update(userSetting, wrapper);

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
+import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.Event;
@@ -21,7 +22,7 @@ public abstract class AbstractGameEventHandler implements Handler{
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    UserRecord userRecord;
+    GameContext gameContext;
 
     // 命令集合
     List<Command> commandList;
@@ -30,7 +31,7 @@ public abstract class AbstractGameEventHandler implements Handler{
     public List<Command> handler(Event event) {
         log.info("开始处理事件：{}", event);
         handlerGameEvent((GameEvent) event);
-        log.info("处理事件结束：{} ");
+        log.info("处理事件结束 返回的命令集合：{}", commandList);
         return commandList;
     }
 
@@ -69,6 +70,8 @@ public abstract class AbstractGameEventHandler implements Handler{
      */
     public abstract void handlerGameEvent(GameEvent gameEvent);
 
-
-
+    @Override
+    public void setGameContext(GameContext gameContext) {
+        this.gameContext = gameContext;
+    }
 }

@@ -1,21 +1,25 @@
 package pers.mihao.ancient_empire.core.manger;
 
 import com.alibaba.fastjson.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.websocket.Session;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.common.annotation.Manger;
-import pers.mihao.ancient_empire.common.vo.MyException;
 import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
 /**
  * 管理用户游戏连接的
+ *
  * @version 1.0
  * @auther mihao
  * @date 2020\9\14 0014 23:24
@@ -39,7 +43,11 @@ public class GameSessionManger {
      * @param userId
      */
     public void addNewSession(Session session, String recordId, String userId) {
-        List<GameSession> list = sessionMap.getOrDefault(recordId, new ArrayList<>());
+        List<GameSession> list = sessionMap.get(recordId);
+        if (list == null) {
+            list = new ArrayList<>();
+            sessionMap.put(recordId, list);
+        }
         synchronized (list) {
             GameSession gameSession = new GameSession(recordId, userId, session, new Date());
             gameSession.setSessionId(session.getId());
@@ -58,7 +66,7 @@ public class GameSessionManger {
     public void removeSession(String recordId, Session session) {
         List<GameSession> sessionList = sessionMap.get(recordId);
         if (sessionList == null) {
-            throw new MyException("错误的session状态维护 recordId: " + recordId);
+            return;
         }
         GameSession gameSession;
         synchronized (sessionList) {
@@ -70,7 +78,7 @@ public class GameSessionManger {
                     gameSession.setLevelDate(new Date());
                     handlePlayerLevel(gameSession);
                     log.info("玩家:{}从游戏:{}中离开,游戏剩余:{}", gameSession.getUserId(), gameSession.getRecordId(),
-                        sessionList.size());
+                            sessionList.size());
                     break;
                 }
             }
@@ -84,6 +92,7 @@ public class GameSessionManger {
 
     /**
      * 处理玩家离开游戏服务器
+     *
      * @param gameSession
      */
     private void handlePlayerLevel(GameSession gameSession) {
@@ -93,21 +102,22 @@ public class GameSessionManger {
     /**
      * 发送消息
      *
-     * @param session
-     * @param message
+     * @param command
+     * @param gameId
      * @throws IOException
      */
-    public void sendMessage(Session session, RespJson message) {
-        if (session != null) {
-            synchronized (session) {
-                log.info("ws  发送数据：" + message);
-                try {
-                    session.getBasicRemote().sendText(JSONObject.toJSONString(message));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+    public void sendMessage(GameCommand command, String gameId) {
+        switch (command.getSendTypeEnum()) {
+            case SEND_TO_USER:
+                sendMessage2User(command, gameId);
+                break;
+            case SEND_TO_GAME:
+                sendMessage2Game(command, gameId);
+                break;
+            case SEND_TO_SYSTEM:
+                sendMessage2System(command, gameId);
         }
+
     }
 
     /**
@@ -131,19 +141,25 @@ public class GameSessionManger {
     /**
      * 发送消息
      *
-     * @param session
-     * @param message
+     * @param command
+     * @param gameId
      * @throws IOException
      */
-    public void sendMessage2Person(Session session, RespJson message) {
-        if (session != null) {
-            synchronized (session) {
-                log.info("ws  发送数据：" + message);
-                try {
-                    session.getBasicRemote().sendText(JSONObject.toJSONString(message));
-                } catch (IOException e) {
-                    e.printStackTrace();
+    private void sendMessage2User(GameCommand command, String gameId) {
+        List<GameSession> gameSessions = sessionMap.get(gameId);
+        if (gameSessions != null) {
+            GameSession gameSession = null;
+            log.info("ws 发送数据{} 给用户：{}", command, gameId);
+            try {
+                for (int i = 0; i < gameSessions.size(); i++) {
+                    gameSession = gameSessions.get(i);
+                    if (gameSession.getUserId().equals(GameContext.getUserId())) {
+                        gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
+                        break;
+                    }
                 }
+            } catch (IOException e) {
+                log.error("发送数据给用户：{}失败", gameSession.getUserId(), e);
             }
         }
     }
@@ -155,16 +171,21 @@ public class GameSessionManger {
      * @param message
      * @throws IOException
      */
-    public void sendMessage2Game(Session session, RespJson message) {
-        if (session != null) {
-            synchronized (session) {
-                log.info("ws  发送数据：" + message);
-                try {
-                    session.getBasicRemote().sendText(JSONObject.toJSONString(message));
-                } catch (IOException e) {
-                    e.printStackTrace();
+    public void sendMessage2Game(GameCommand command, String gameId) {
+        List<GameSession> gameSessions = sessionMap.get(gameId);
+        if (gameSessions != null) {
+            GameSession gameSession = null;
+            log.info("ws 发送数据{} 给群组：{}", command, gameId);
+            try {
+                for (int i = 0; i < gameSessions.size(); i++) {
+                    gameSession = gameSessions.get(i);
+                    gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
                 }
+            } catch (IOException e) {
+                log.error("发送数据给用户：{}失败", gameSession.getUserId(), e);
             }
+
+
         }
     }
 
@@ -175,15 +196,18 @@ public class GameSessionManger {
      * @param message
      * @throws IOException
      */
-    public void sendMessage2System(Session session, RespJson message) {
-        if (session != null) {
-            synchronized (session) {
-                log.info("ws  发送数据：" + message);
-                try {
-                    session.getBasicRemote().sendText(JSONObject.toJSONString(message));
-                } catch (IOException e) {
-                    e.printStackTrace();
+    public void sendMessage2System(GameCommand command, String gameId) {
+        for (Map.Entry<String, List<GameSession>> entry : sessionMap.entrySet()) {
+            List<GameSession> gameSessions = entry.getValue();
+            GameSession gameSession = null;
+            log.info("ws 发送数据{} 给群组：{}", command, gameId);
+            try {
+                for (int i = 0; i < gameSessions.size(); i++) {
+                    gameSession = gameSessions.get(i);
+                    gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
                 }
+            } catch (IOException e) {
+                log.error("发送数据给用户：{}失败", gameSession.getUserId(), e);
             }
         }
     }

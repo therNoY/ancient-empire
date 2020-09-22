@@ -14,6 +14,10 @@ public class ReqInitMapDto {
     private String mapId;
     @NotEmpty(message = "队伍不能为空")
     private List<Army> armyList;
+
+    /* 游戏的类型 遭遇战单机 多人游戏 故事模式 */
+    private String gameType;
+
     public Integer getMaxPop() {
         return maxPop;
     }
@@ -44,5 +48,13 @@ public class ReqInitMapDto {
 
     public void setArmyList(List<Army> armyList) {
         this.armyList = armyList;
+    }
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
     }
 }

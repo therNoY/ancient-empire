@@ -24,7 +24,7 @@ import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
 import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.common.vo.MyException;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 
 /**
@@ -104,7 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 List<Permission> permissionList = userService.getPermissionList(user.getId());
                 return new MyUserDetails(user,permissionList);
             }
-            throw new MyException(40011);
+            throw new AncientEmpireException(40011);
         };
     }
 

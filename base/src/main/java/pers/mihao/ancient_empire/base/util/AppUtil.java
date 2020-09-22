@@ -13,7 +13,7 @@ import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.UnitEnum;
-import pers.mihao.ancient_empire.common.vo.MyException;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 /**
  * 和业务有关的工具类 方便修改
@@ -50,7 +50,7 @@ public class AppUtil {
             }
         }
         if (cArmy == null)
-            throw new MyException("record 记录错误 根据当前军队颜色找军队");
+            throw new AncientEmpireException("record 记录错误 根据当前军队颜色找军队");
         return cArmy;
     }
 
@@ -195,7 +195,7 @@ public class AppUtil {
                 return i;
             }
         }
-        throw new MyException("错误的军队状态");
+        throw new AncientEmpireException("错误的军队状态");
     }
 
     /**

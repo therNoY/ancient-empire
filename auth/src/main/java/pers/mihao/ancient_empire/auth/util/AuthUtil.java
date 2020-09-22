@@ -6,7 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
-import pers.mihao.ancient_empire.common.vo.MyException;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 /**
  * 和用户身份相关的工具类
@@ -24,7 +24,7 @@ public class AuthUtil {
             UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             if (token == null) {
                 log.error("错误的身份过滤");
-                throw new MyException(40003);
+                throw new AncientEmpireException(40003);
             }
             MyUserDetails userDetails = (MyUserDetails) token.getPrincipal();
             userDetailsThreadLocal.set(userDetails);
@@ -38,7 +38,7 @@ public class AuthUtil {
             UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             if (token == null) {
                 log.error("错误的身份过滤");
-                throw new MyException(40003);
+                throw new AncientEmpireException(40003);
             }
             MyUserDetails userDetails = (MyUserDetails) token.getPrincipal();
             authId.set(userDetails.getUserId());

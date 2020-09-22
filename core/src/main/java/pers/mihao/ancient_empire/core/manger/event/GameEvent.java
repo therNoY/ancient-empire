@@ -10,6 +10,11 @@ import pers.mihao.ancient_empire.core.eums.GameEventEnum;
  * @Date 2020/9/10 16:22
  */
 public class GameEvent extends AbstractEvent {
+    /*游戏ID*/
+    private String gameId;
+
+    /*登录人ID*/
+    private String userId;
 
     /*发起行动的位置*/
     private Site initiateSite;
@@ -18,14 +23,14 @@ public class GameEvent extends AbstractEvent {
     private Site passiveSite;
 
     /*游戏的事件*/
-    private GameEventEnum eventEnum;
+    private GameEventEnum event;
 
-    public GameEventEnum getEventEnum() {
-        return eventEnum;
+    public GameEventEnum getEvent() {
+        return event;
     }
 
-    public void setEventEnum(GameEventEnum eventEnum) {
-        this.eventEnum = eventEnum;
+    public void setEvent(GameEventEnum event) {
+        this.event = event;
     }
 
     public Site getInitiateSite() {
@@ -42,5 +47,21 @@ public class GameEvent extends AbstractEvent {
 
     public void setPassiveSite(Site passiveSite) {
         this.passiveSite = passiveSite;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

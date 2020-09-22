@@ -24,11 +24,13 @@ import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
 import pers.mihao.ancient_empire.base.entity.UserMap;
-import pers.mihao.ancient_empire.base.enums.MapEnum;
+import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserSettingService;
+import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
+import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
@@ -101,10 +103,10 @@ public class UserMapController {
     }
 
     /**
-     * 获取用户地图
+     * 获取用户地图列表
      * @return
      */
-    @GetMapping("/api/userMap")
+    @GetMapping("/api/userMap/list")
     public RespJson getUserMap() {
         // 3.获取用户拥有的地图
         List<UserMap> userAllMaps = userMapService.getUserMap();
@@ -113,6 +115,18 @@ public class UserMapController {
                 .collect(Collectors.toList());
         return RespUtil.successResJson(userMaps);
     }
+
+    /**
+     * 获取用户地图列表
+     * @return
+     */
+    @GetMapping("/api/userMap/{id}")
+    public RespJson getUserMap(@PathVariable("id") String id) {
+        // 3.获取用户拥有的地图
+        UserMapVo map = userMapService.getUserMapById(id);
+        return RespUtil.successResJson(map);
+    }
+
 
     /**
      * 保存用户地图
@@ -125,7 +139,7 @@ public class UserMapController {
         }
         // 管理员创建地图默认是遭遇战地图
         if (AuthUtil.getAuthId().equals(1)) {
-            userMap.setType(MapEnum.ENCOUNTER.type());
+            userMap.setType(GameTypeEnum.ENCOUNTER.type());
             userMapService.saveMap(userMap);
         }else {
             userMapService.saveMap(userMap);
@@ -150,7 +164,7 @@ public class UserMapController {
      */
     @GetMapping("/encounterMap")
     public RespJson getEncounterMap() {
-        List<UserMap> encounterMaps = userMapService.getEncounterMaps();
+        List<BaseMapInfoVO> encounterMaps = userMapService.getEncounterMaps();
         return RespUtil.successResJson(encounterMaps);
     }
 

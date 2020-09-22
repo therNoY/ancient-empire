@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 
 /**
  * @Author mh32736
@@ -10,9 +11,15 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
  */
 @Configuration
 public class WebSocketConfig {
+
     @Bean
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
+    }
+
+    @Bean
+    public GameCoreManger gameCoreManger(){
+        return new GameCoreManger();
     }
 
 }

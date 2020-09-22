@@ -33,7 +33,7 @@ import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.MqHelper;
-import pers.mihao.ancient_empire.common.util.RedisHelper;
+import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 
 @Service
@@ -50,7 +50,7 @@ public class UserRecordServiceImp implements UserRecordService {
     @Autowired
     UnitMesService unitMesService;
     @Autowired
-    RedisHelper redisHelper;
+    RedisUtil redisUtil;
     @Autowired
     MongoTemplate mongoTemplate;
 
@@ -59,20 +59,18 @@ public class UserRecordServiceImp implements UserRecordService {
     private Map<String, UserRecord> recordMap; // key: recordId, value record
 
     private static String tempMap = "临时地图";
+
     /**
-     * 获取初始化地图记录
+     * 根据地图开始游戏 生成存档
      * @param reqInitMapDto
      * @return
      */
+    @Transactional
     @Override
-    public String initMapRecord(ReqInitMapDto reqInitMapDto) {
+    public UserRecord initMapRecord(ReqInitMapDto reqInitMapDto, UserMap userMap) {
         UserRecord userRecord = new UserRecord();
         userRecord.setMaxPop(reqInitMapDto.getMaxPop());
         // 1.获取地图
-        UserMap userMap = userMapService.getEncounterMapById(reqInitMapDto.getMapId());
-        if (userMap == null) {
-            return null;
-        }
         // 1.设置初始化地图
         GameMap map = new GameMap(userMap.getRow(), userMap.getColumn(), userMap.getRegions());
         userRecord.setGameMap(map);
@@ -120,10 +118,9 @@ public class UserRecordServiceImp implements UserRecordService {
                 break;
             }
         }
-        // 4.将record设置到缓存(后续可能放到redis)中 并且通知rabbitMQ 消费这条记录
-        redisHelper.set(RedisKey.USER_RECORD_ + uuid, userRecord, 5 * 60l);
-        mqHelper.sendMongoCdr(MqMethodEnum.ADD_RECORD, userRecord);
-        return uuid;
+        // 4.保存记录
+        userRecordRepository.save(userRecord);
+        return userRecord;
     }
 
     @Override
@@ -142,12 +139,12 @@ public class UserRecordServiceImp implements UserRecordService {
     @Override
     public UserRecord getRecordById(String uuid) {
         UserRecord userRecord = null;
-        if ((userRecord = redisHelper.getObject(RedisKey.USER_RECORD_ + uuid, UserRecord.class)) == null) {
+        if ((userRecord = redisUtil.getObject(RedisKey.USER_RECORD_ + uuid, UserRecord.class)) == null) {
             log.info("从mongo获取 {} 的信息", uuid);
             Optional<UserRecord> optional = userRecordRepository.findById(uuid);
             if (optional.isPresent()) {
                 userRecord = optional.get();
-                redisHelper.set(RedisKey.USER_RECORD_ + uuid, userRecord, 5 * 60l);
+                redisUtil.set(RedisKey.USER_RECORD_ + uuid, userRecord, 5 * 60l);
             }
         }
         return userRecord;

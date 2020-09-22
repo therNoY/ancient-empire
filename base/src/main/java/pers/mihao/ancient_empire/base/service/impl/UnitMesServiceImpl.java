@@ -23,7 +23,7 @@ import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
-import pers.mihao.ancient_empire.common.vo.MyException;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 /**
  * <p>
@@ -79,7 +79,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
                 }
             } else {
                 log.error("没有获取到插入的主键");
-                throw new MyException(500);
+                throw new AncientEmpireException(500);
             }
 
         }

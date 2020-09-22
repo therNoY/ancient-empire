@@ -50,6 +50,14 @@ public class RespUtil {
         return new RespJson(0,"ok",map);
     }
 
+    /**
+     * 返回有错误码和错误原因的结果
+     * @param mes
+     * @return
+     */
+    public static RespJson error() {
+        return error(500);
+    }
 
     /**
      * 返回有错误码和错误原因的结果

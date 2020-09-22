@@ -24,6 +24,8 @@ ancient-empire 是项目远古帝国网页版 的后端项目(现在该项目在
 + 客户端对操作做出校验，校验成功通过websocket长连接发出事件，后端接受事件，封装成事件对象，发送到GameContext，
 GameContext获取对应事件的处理器，处理事件，返回结果，生成相应指令；
 
++ 玩家的websocket连接管理 玩家先连接到服务器,单机验证完信息直接创建一个GameContext,
+
 ### 2.数据库选择（为什么用mongo+mysql+redis）游戏单位
 + 使用redis作为数据缓存服务器是目前项目中基本都会有的的，mysql作为开源免费的开源数据库也是大家常见的
 
@@ -153,3 +155,5 @@ https://github.com/therNoY/ancient-empire-web/
 
 
 ### 回去验证stomp
+
++ 考虑增加随机酒馆功能

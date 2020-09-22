@@ -92,7 +92,6 @@ public class GameSession {
             "recordId='" + recordId + '\'' +
             ", userId='" + userId + '\'' +
             ", sessionId='" + sessionId + '\'' +
-            ", session=" + session +
             ", createDate=" + createDate +
             ", levelDate=" + levelDate +
             '}';

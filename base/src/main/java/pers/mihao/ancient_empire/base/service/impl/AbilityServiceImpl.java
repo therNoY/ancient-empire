@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.base.dao.AbilityDao;
+import pers.mihao.ancient_empire.base.dao.AbilityDAO;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.common.constant.RedisKey;
@@ -19,11 +19,11 @@ import pers.mihao.ancient_empire.common.constant.RedisKey;
  * @since 2019-08-31
  */
 @Service
-public class AbilityServiceImpl extends ServiceImpl<AbilityDao, Ability> implements AbilityService {
+public class AbilityServiceImpl extends ServiceImpl<AbilityDAO, Ability> implements AbilityService {
 
 
     @Autowired
-    AbilityDao abilityDao;
+    AbilityDAO abilityDao;
 
     @Cacheable(RedisKey.UNIT_ABILITY)
     @Override

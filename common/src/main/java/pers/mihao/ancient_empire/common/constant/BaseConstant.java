@@ -16,6 +16,11 @@ public class BaseConstant {
     public static final String NO = "0";
 
     /**
+     * 默认报错
+     */
+    public static final String DEFAULT_ERROR = "请联系管理员";
+
+    /**
      * 点
      */
     public static final String POINT = ".";

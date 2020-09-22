@@ -2,7 +2,6 @@ package pers.mihao.ancient_empire.common.constant;
 
 /*mq 方法枚举*/
 public enum MqMethodEnum {
-    ADD_RECORD, // 添加新的记录
     ACTION_ATTACH, // 处理攻击的结果
     ACTION_REPAIR_OCP, // 处理占领/修复的结果
     ACTION_SUMMON, // 处理 召唤的结果

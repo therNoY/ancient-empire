@@ -33,19 +33,6 @@ public class UserRecordController {
     MqHelper mqHelper;
 
     /**
-     * 用户选择地图 设置初始化地图 获取初始化地图的Id
-     *
-     * @param reqInitMapDto
-     * @param result
-     * @return
-     */
-    @PostMapping("/record/init")
-    public RespJson initMapRecord(@RequestBody @Validated ReqInitMapDto reqInitMapDto, BindingResult result) {
-        String recordId = userRecordService.initMapRecord(reqInitMapDto);
-        return RespUtil.successResJson(recordId);
-    }
-
-    /**
      * 建立WS 连接
      *
      * @return

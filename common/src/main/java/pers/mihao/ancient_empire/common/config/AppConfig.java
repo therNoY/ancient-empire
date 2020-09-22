@@ -16,11 +16,16 @@ public class AppConfig {
 
     static {
         map = new HashMap<>();
-        Properties propertiesSetting = PropertiesUtil.getProperties("application-setting.properties");
-        propertiesSetting.forEach((key, value)-> map.put(key.toString(), value.toString()));
+        // 便于测试
+        try {
+            Properties propertiesSetting = PropertiesUtil.getProperties("application-setting.properties");
+            propertiesSetting.forEach((key, value)-> map.put(key.toString(), value.toString()));
 
-        Properties properties = PropertiesUtil.getProperties("application.properties");
-        properties.forEach((key, value)-> map.put(key.toString(), value.toString()));
+            Properties properties = PropertiesUtil.getProperties("application.properties");
+            properties.forEach((key, value)-> map.put(key.toString(), value.toString()));
+        } catch (Exception e) {
+            log.error("", e);
+        }
     }
 
 

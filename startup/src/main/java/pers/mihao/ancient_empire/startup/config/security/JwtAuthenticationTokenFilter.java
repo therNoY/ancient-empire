@@ -56,7 +56,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring(this.tokenHead.length());
             // 3. 判断token是否过期 如果token 没有过期就设置 信息到Spring Security 上下文中
             JwtTokenUtil.TokenInfo tokenInfo = JwtTokenUtil.getTokenInfoFromToken(authToken);
-            if (tokenInfo != null && !JwtTokenUtil.isEffectiveToken(tokenInfo.getDate())) {
+            if (tokenInfo != null && JwtTokenUtil.isEffectiveToken(tokenInfo.getDate())) {
                 String userId = tokenInfo.getInfo();
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 if (userId != null && securityContext.getAuthentication() == null) {

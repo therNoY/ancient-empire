@@ -10,6 +10,11 @@ public class RedisKey{
     // 用户设定
     public static final String USER_SETTING = "userSetting";
     public static final String USER_SETTING_ = "userSetting::";
+
+    // 遭遇战地图
+    public static final String USER_MAP = "userMap";
+    public static final String USER_MAP_ = "userMap::";
+
     // 遭遇战地图
     public static final String ENCOUNTER_MAP = "encounterMap";
     public static final String ENCOUNTER_MAP_ = "encounterMap::";
