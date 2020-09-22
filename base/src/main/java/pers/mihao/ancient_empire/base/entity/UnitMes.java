@@ -2,8 +2,6 @@ package pers.mihao.ancient_empire.base.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -12,7 +10,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author mihao
- * @since 2019-08-11
+ * @since 2020-09-22
  */
 public class UnitMes implements Serializable {
 
@@ -27,13 +25,11 @@ public class UnitMes implements Serializable {
     /**
      * 单位类型
      */
-    @NotBlank(message = "单位类型不能为空")
     private String type;
 
     /**
      * 单位名称
      */
-    @NotBlank(message = "单位名称不能为空")
     private String name;
 
     /**
@@ -45,32 +41,51 @@ public class UnitMes implements Serializable {
      * 购买价格
      */
     private Integer price;
+
     /**
-     * 最小攻击距离
+     * 最近的攻击距离
      */
-    private Integer minAttachRange;
+    private Boolean minAttachRange;
+
     /**
-     * 最大攻击距离
+     * 最远的攻击距离
      */
-    private Integer maxAttachRange;
+    private Boolean maxAttachRange;
+
     /**
      * 所占人口
      */
-    private Integer population;
+    private Boolean population;
 
     /**
      * 单位描述
      */
     private String description;
 
-    // 创建者Id
+    /**
+     * 创建者Id
+     */
     private Integer createUserId;
 
-    // TODO 字段需要修改 是否是可以购买的
-    private boolean tradeable;
+    /**
+     * 是否是可以购买的0 不可 1可以
+     */
+    private Integer tradeable;
 
-    // 是否可用
-    private boolean enable;
+    /**
+     * 是否是晋升单位，晋升单位无法购买
+     */
+    private Integer promotion;
+
+    /**
+     * 是否启用 0 不启用 1 启用
+     */
+    private Boolean enable;
+
+    /**
+     * 模板id
+     */
+    private Integer tempId;
 
     public Integer getId() {
         return id;
@@ -107,6 +122,27 @@ public class UnitMes implements Serializable {
     public void setPrice(Integer price) {
         this.price = price;
     }
+    public Boolean getMinAttachRange() {
+        return minAttachRange;
+    }
+
+    public void setMinAttachRange(Boolean minAttachRange) {
+        this.minAttachRange = minAttachRange;
+    }
+    public Boolean getMaxAttachRange() {
+        return maxAttachRange;
+    }
+
+    public void setMaxAttachRange(Boolean maxAttachRange) {
+        this.maxAttachRange = maxAttachRange;
+    }
+    public Boolean getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(Boolean population) {
+        this.population = population;
+    }
     public String getDescription() {
         return description;
     }
@@ -114,39 +150,6 @@ public class UnitMes implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public Integer getMinAttachRange() {
-        return minAttachRange;
-    }
-
-    public void setMinAttachRange(Integer minAttachRange) {
-        this.minAttachRange = minAttachRange;
-    }
-
-    public Integer getMaxAttachRange() {
-        return maxAttachRange;
-    }
-
-    public void setMaxAttachRange(Integer maxAttachRange) {
-        this.maxAttachRange = maxAttachRange;
-    }
-
-    public Integer getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(Integer population) {
-        this.population = population;
-    }
-
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
-    }
-
     public Integer getCreateUserId() {
         return createUserId;
     }
@@ -154,28 +157,52 @@ public class UnitMes implements Serializable {
     public void setCreateUserId(Integer createUserId) {
         this.createUserId = createUserId;
     }
-
-
-    public boolean isTradeable() {
+    public Integer getTradeable() {
         return tradeable;
     }
 
-    public void setTradeable(boolean tradeable) {
+    public void setTradeable(Integer tradeable) {
         this.tradeable = tradeable;
+    }
+    public Integer getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(Integer promotion) {
+        this.promotion = promotion;
+    }
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
+    }
+    public Integer getTempId() {
+        return tempId;
+    }
+
+    public void setTempId(Integer tempId) {
+        this.tempId = tempId;
     }
 
     @Override
     public String toString() {
         return "UnitMes{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", name='" + name + '\'' +
-                ", attackType='" + attackType + '\'' +
-                ", price=" + price +
-                ", minAttachRange=" + minAttachRange +
-                ", maxAttachRange=" + maxAttachRange +
-                ", population=" + population +
-                ", description='" + description + '\'' +
-                '}';
+        "id=" + id +
+        ", type=" + type +
+        ", name=" + name +
+        ", attackType=" + attackType +
+        ", price=" + price +
+        ", minAttachRange=" + minAttachRange +
+        ", maxAttachRange=" + maxAttachRange +
+        ", population=" + population +
+        ", description=" + description +
+        ", createUserId=" + createUserId +
+        ", tradeable=" + tradeable +
+        ", promotion=" + promotion +
+        ", enable=" + enable +
+        ", tempId=" + tempId +
+        "}";
     }
 }

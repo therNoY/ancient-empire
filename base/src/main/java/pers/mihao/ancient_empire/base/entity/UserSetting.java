@@ -63,6 +63,16 @@ public class UserSetting implements Serializable {
     // 是否开启优化绘图
     private Boolean simpleDrawing;
 
+    /**
+     * 声音的大小
+     */
+    private Integer bgMusic;
+
+    /**
+     * 语言
+     */
+    private Integer language;
+
     public Integer getId() {
         return id;
     }
@@ -116,19 +126,27 @@ public class UserSetting implements Serializable {
         this.mapInitRegionType = mapInitRegionType;
     }
 
-    // 地形图片 地形信息 地形描述
+    public Integer getBgMusic() {
+        return bgMusic;
+    }
 
-    // 天赋描述 天赋赋予
+    public void setBgMusic(Integer bgMusic) {
+        this.bgMusic = bgMusic;
+    }
 
-    // 是否使用随机攻击
+    public Integer getLanguage() {
+        return language;
+    }
 
-    // 主页颜色
+    public void setLanguage(Integer language) {
+        this.language = language;
+    }
 
-    // 是否开启生3级模式
+    // TODO 字段主页颜色
 
-    // 是否开始异变模式 设定异变的信息
+    // TODO 极简模式 地形图片 地形信息 地形描述 天赋描述 天赋赋予
 
-    // 单位禁用
+
 
     // 作弊模式（减伤20%） 普通模式（无） 困难模式（敌方减伤20%） 地狱模式 （敌方减伤40%）
 

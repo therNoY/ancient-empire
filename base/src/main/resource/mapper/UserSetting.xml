@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.mihao.ancient_empire.base.dao.UserSettingDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UserSetting">
+        <id column="user_id" property="userId" />
+        <result column="map_init_row" property="mapInitRow" />
+        <result column="map_init_column" property="mapInitColumn" />
+        <result column="map_init_region_id" property="mapInitRegionId" />
+        <result column="simple_drawing" property="simpleDrawing" />
+        <result column="bg_music" property="bgMusic" />
+        <result column="language" property="language" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_id, map_init_row, map_init_column, map_init_region_id, simple_drawing, bg_music, language
+    </sql>
+
+</mapper>

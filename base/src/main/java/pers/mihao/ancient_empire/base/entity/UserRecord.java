@@ -16,6 +16,10 @@ public class UserRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     private String uuid;
+
+    /* 模板ID */
+    private Integer templateId;
+
     // 人口上限
     private Integer maxPop;
     //初始化地形图
@@ -38,6 +42,8 @@ public class UserRecord implements Serializable {
     private Integer currCamp;
     // 是否保存 未保存的存档最多有一个
     private boolean isUnSave;
+
+
 
     public Integer getMaxPop() {
         return maxPop;
@@ -134,5 +140,13 @@ public class UserRecord implements Serializable {
 
     public void setCurrCamp(Integer currCamp) {
         this.currCamp = currCamp;
+    }
+
+    public Integer getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
     }
 }
