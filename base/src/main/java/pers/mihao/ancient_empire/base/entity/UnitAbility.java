@@ -6,11 +6,11 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 单位能力信息表
+ * 能力信息表
  * </p>
  *
  * @author mihao
- * @since 2019-08-31
+ * @since 2020-09-23
  */
 public class UnitAbility implements Serializable {
 
@@ -31,6 +31,11 @@ public class UnitAbility implements Serializable {
      * 能力Id
      */
     private Integer abilityId;
+
+    /**
+     * 使用能力的动画
+     */
+    private String useAbilityAnimation;
 
     public Integer getId() {
         return id;
@@ -53,6 +58,13 @@ public class UnitAbility implements Serializable {
     public void setAbilityId(Integer abilityId) {
         this.abilityId = abilityId;
     }
+    public String getUseAbilityAnimation() {
+        return useAbilityAnimation;
+    }
+
+    public void setUseAbilityAnimation(String useAbilityAnimation) {
+        this.useAbilityAnimation = useAbilityAnimation;
+    }
 
     @Override
     public String toString() {
@@ -60,6 +72,7 @@ public class UnitAbility implements Serializable {
         "id=" + id +
         ", unitId=" + unitId +
         ", abilityId=" + abilityId +
+        ", useAbilityAnimation=" + useAbilityAnimation +
         "}";
     }
 }

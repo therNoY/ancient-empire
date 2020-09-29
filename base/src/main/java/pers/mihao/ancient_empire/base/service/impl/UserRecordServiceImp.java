@@ -9,15 +9,14 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.GameMap;
-import pers.mihao.ancient_empire.base.bo.Position;
-import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.*;
+import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.mongo.dao.UserRecordRepository;
 import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
@@ -29,8 +28,7 @@ import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
-import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
@@ -75,9 +73,13 @@ public class UserRecordServiceImp implements UserRecordService {
         GameMap map = new GameMap(userMap.getRow(), userMap.getColumn(), userMap.getRegions());
         userRecord.setGameMap(map);
         // 2.设置初始化军队 完善军队信息
-        List<Army> armyList = reqInitMapDto.getArmyList();
-        for (int i = 0; i < armyList.size(); i++) {
-            Army army = armyList.get(i);
+        List<ReqInitMapDto.ReqArmy> reqArmies = reqInitMapDto.getArmyList();
+        List<Army> armyList = new ArrayList<>();
+        for (int i = 0; i < reqArmies.size(); i++) {
+            ReqInitMapDto.ReqArmy reqArmy = reqArmies.get(i);
+            if (reqArmy.getType().equals(ArmyEnum.NO.type())) continue;
+            Army army = new Army();
+            BeanUtils.copyProperties(reqArmy, army);
             army.setId(i);
             List<Unit> units = new ArrayList<>();
             String color = army.getColor();
@@ -86,6 +88,7 @@ public class UserRecordServiceImp implements UserRecordService {
                     .filter(baseUnit -> baseUnit.getColor().equals(color))
                     .forEach(baseUnit -> {
                         Unit unit = new Unit(baseUnit.getType(), baseUnit.getRow(), baseUnit.getColumn());
+                        unit.setTypeId(baseUnit.getTypeId());
                         UnitMes unitMes = unitMesService.getByType(unit.getType());
                         pop.set(pop.get() + unitMes.getPopulation());
                         units.add(unit);
@@ -93,11 +96,20 @@ public class UserRecordServiceImp implements UserRecordService {
             army.setUnits(units);
             army.setPop(pop.get());
             army.setMoney(reqInitMapDto.getMoney());
+            if (reqArmy.getType().equals(ArmyEnum.USER.type())){
+                army.setPlayer(AuthUtil.getLoginUser().getUsername());
+            }
+            if (army.getOrder() == 1) {
+                userRecord.setCurrPlayer(army.getPlayer());
+            }
+            armyList.add(army);
         }
         userRecord.setArmyList(armyList);
         String uuid = StringUtil.getUUID();
         userRecord.setUuid(uuid);
         userRecord.setCurrentRound(1);
+        userRecord.setCurrPoint(new Site(1, 1));
+        userRecord.setCurrRegion(userRecord.getGameMap().getRegions().get(0));
         // TODO 测试
         if (userMap.getMapName().startsWith("测试地图")) {
             userRecord.setTomb(Arrays.asList(new Position(9, 7)));
@@ -118,6 +130,7 @@ public class UserRecordServiceImp implements UserRecordService {
                 break;
             }
         }
+        userRecord.setTemplateId(userMap.getTemplateId());
         // 4.保存记录
         userRecordRepository.save(userRecord);
         return userRecord;
@@ -139,12 +152,12 @@ public class UserRecordServiceImp implements UserRecordService {
     @Override
     public UserRecord getRecordById(String uuid) {
         UserRecord userRecord = null;
-        if ((userRecord = redisUtil.getObject(RedisKey.USER_RECORD_ + uuid, UserRecord.class)) == null) {
+        if ((userRecord = redisUtil.getObject(CatchKey.getKey(CatchKey.USER_RECORD) + uuid, UserRecord.class)) == null) {
             log.info("从mongo获取 {} 的信息", uuid);
             Optional<UserRecord> optional = userRecordRepository.findById(uuid);
             if (optional.isPresent()) {
                 userRecord = optional.get();
-                redisUtil.set(RedisKey.USER_RECORD_ + uuid, userRecord, 5 * 60l);
+                redisUtil.set(CatchKey.getKey(CatchKey.USER_RECORD) + uuid, userRecord, 5 * 60l);
             }
         }
         return userRecord;
@@ -188,5 +201,10 @@ public class UserRecordServiceImp implements UserRecordService {
         userRecord.setUnSave(true);
         userRecordRepository.save(userRecord);
         return false;
+    }
+
+    @Override
+    public void removeById(String uuid) {
+        userRecordRepository.deleteById(uuid);
     }
 }

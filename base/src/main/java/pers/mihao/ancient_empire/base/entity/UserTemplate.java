@@ -8,7 +8,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author mihao
- * @since 2020-09-22
+ * @since 2020-09-23
  */
 public class UserTemplate implements Serializable {
 
@@ -30,16 +30,6 @@ public class UserTemplate implements Serializable {
      * 模板描述
      */
     private String templateDesc;
-
-    /**
-     * 初始资金
-     */
-    private Integer initMoney;
-
-    /**
-     * 最大人口
-     */
-    private Integer maxPop;
 
     /**
      * 攻击产生的经验
@@ -70,6 +60,11 @@ public class UserTemplate implements Serializable {
      * 召唤坟墓的动画
      */
     private String summonAnimation;
+
+    /**
+     * 升级动画
+     */
+    private String levelupAnimation;
 
     /**
      * 方块的宽度
@@ -104,7 +99,7 @@ public class UserTemplate implements Serializable {
     /**
      * 晋升的模式(1用户选择 2随机 3固定)
      */
-    private Integer promotionModle;
+    private Integer promotionMode;
 
     public Integer getId() {
         return id;
@@ -133,20 +128,6 @@ public class UserTemplate implements Serializable {
 
     public void setTemplateDesc(String templateDesc) {
         this.templateDesc = templateDesc;
-    }
-    public Integer getInitMoney() {
-        return initMoney;
-    }
-
-    public void setInitMoney(Integer initMoney) {
-        this.initMoney = initMoney;
-    }
-    public Integer getMaxPop() {
-        return maxPop;
-    }
-
-    public void setMaxPop(Integer maxPop) {
-        this.maxPop = maxPop;
     }
     public Integer getAttachExperience() {
         return attachExperience;
@@ -190,6 +171,13 @@ public class UserTemplate implements Serializable {
     public void setSummonAnimation(String summonAnimation) {
         this.summonAnimation = summonAnimation;
     }
+    public String getLevelupAnimation() {
+        return levelupAnimation;
+    }
+
+    public void setLevelupAnimation(String levelupAnimation) {
+        this.levelupAnimation = levelupAnimation;
+    }
     public Integer getSquareWidth() {
         return squareWidth;
     }
@@ -232,12 +220,12 @@ public class UserTemplate implements Serializable {
     public void setPromotionLevel(Integer promotionLevel) {
         this.promotionLevel = promotionLevel;
     }
-    public Integer getPromotionModle() {
-        return promotionModle;
+    public Integer getPromotionMode() {
+        return promotionMode;
     }
 
-    public void setPromotionModle(Integer promotionModle) {
-        this.promotionModle = promotionModle;
+    public void setPromotionMode(Integer promotionMode) {
+        this.promotionMode = promotionMode;
     }
 
     @Override
@@ -247,21 +235,20 @@ public class UserTemplate implements Serializable {
         ", userId=" + userId +
         ", templateName=" + templateName +
         ", templateDesc=" + templateDesc +
-        ", initMoney=" + initMoney +
-        ", maxPop=" + maxPop +
         ", attachExperience=" + attachExperience +
         ", counterattackExperience=" + counterattackExperience +
         ", killExperience=" + killExperience +
         ", antikillExperience=" + antikillExperience +
         ", attachAnimation=" + attachAnimation +
         ", summonAnimation=" + summonAnimation +
+        ", levelupAnimation=" + levelupAnimation +
         ", squareWidth=" + squareWidth +
         ", squareHeight=" + squareHeight +
         ", attachModel=" + attachModel +
         ", unitMaxLevel=" + unitMaxLevel +
         ", promotionMaxNum=" + promotionMaxNum +
         ", promotionLevel=" + promotionLevel +
-        ", promotionModle=" + promotionModle +
+        ", promotionMode=" + promotionMode +
         "}";
     }
 }

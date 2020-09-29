@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
@@ -13,38 +14,25 @@ import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
  */
 public class AuthUtil {
 
-    static Logger log = LoggerFactory.getLogger(AuthUtil.class);
+    private static Logger log = LoggerFactory.getLogger(AuthUtil.class);
 
-    static ThreadLocal<Integer> authId = new ThreadLocal<>();
-    static ThreadLocal<MyUserDetails> userDetailsThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<Integer> authId = new ThreadLocal<>();
+    private static ThreadLocal<MyUserDetails> userDetailsThreadLocal = new ThreadLocal<>();
 
     public static MyUserDetails getLoginUser() {
-
-        if (userDetailsThreadLocal.get() == null) {
-            UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-            if (token == null) {
-                log.error("错误的身份过滤");
-                throw new AncientEmpireException(40003);
-            }
-            MyUserDetails userDetails = (MyUserDetails) token.getPrincipal();
-            userDetailsThreadLocal.set(userDetails);
-        }
         return userDetailsThreadLocal.get();
     }
 
+    public static void setLoginUser(UserDetails user) {
+        userDetailsThreadLocal.set((MyUserDetails) user);
+    }
+
     public static Integer getAuthId() {
-
-        if (authId.get() == null) {
-            UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-            if (token == null) {
-                log.error("错误的身份过滤");
-                throw new AncientEmpireException(40003);
-            }
-            MyUserDetails userDetails = (MyUserDetails) token.getPrincipal();
-            authId.set(userDetails.getUserId());
-        }
-
         return authId.get();
+    }
+
+    public static void setUserId(Integer userId){
+        authId.set(userId);
     }
 
 

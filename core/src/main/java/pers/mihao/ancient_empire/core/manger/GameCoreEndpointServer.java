@@ -15,13 +15,9 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
@@ -39,16 +35,18 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 public class GameCoreEndpointServer {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    private GameSessionManger gameSessionManger;
+    private GameCoreManger gameCoreManger;
+    private UserService userService;
+
     /* 单机 */
     public static final String STAND = "stand";
     /* 房间进来的路径 */
     public static final String ROOM = "room";
 
-    GameSessionManger gameSessionManger;
 
-    GameCoreManger gameCoreManger;
 
-    private String userId;
+    private String userName;
 
     private String recordId;
 
@@ -56,6 +54,7 @@ public class GameCoreEndpointServer {
     public GameCoreEndpointServer() {
         this.gameSessionManger = ApplicationContextHolder.getBean(GameSessionManger.class);
         this.gameCoreManger = ApplicationContextHolder.getBean(GameCoreManger.class);
+        this.userService = ApplicationContextHolder.getBean(UserService.class);
     }
 
     /**
@@ -73,11 +72,15 @@ public class GameCoreEndpointServer {
             String userId = JwtTokenUtil.getEffectiveUserId(token);
             if (userId != null) {
                 // 首先接受信息
-                this.userId = userId;
+                this.userName = userService.getById(userId).getName();
                 this.recordId = recordId;
                 gameSessionManger.addNewSession(session, recordId, userId);
                 if (STAND.equals(type)) {
-                    gameCoreManger.registerGameContext(recordId);
+                    boolean success = gameCoreManger.joinGame(recordId);
+                    if (!success) {
+                        log.error("加入失败：{}", recordId);
+                        closeSession(session);
+                    }
                 }else if (ROOM.equals(type)){
                     // TODO room连接
                 }else {
@@ -101,7 +104,7 @@ public class GameCoreEndpointServer {
      */
     @OnMessage
     public void onMessage(String message, Session session) {
-        log.info("收到：{} 发来的消息：{}", userId, message);
+        log.info("收到：{} 发来的消息：{}", userName, message);
         try {
             // 校验session状态
             checkSessionStatus(session);
@@ -120,7 +123,7 @@ public class GameCoreEndpointServer {
      */
     @OnClose
     public void onClose(@PathParam("id") String recordId, Session session) {
-        log.info("玩家{}离开：{}", userId, recordId);
+        log.info("玩家{}离开：{}", userName, recordId);
         gameSessionManger.removeSession(recordId, session);
     }
 
@@ -145,7 +148,7 @@ public class GameCoreEndpointServer {
     private GameEvent warpEventMessage(String message) {
         GameEvent gameEvent = JSON.parseObject(message, GameEvent.class);
         gameEvent.setGameId(recordId);
-        gameEvent.setUserId(recordId);
+        gameEvent.setUserId(userName);
         gameEvent.setCreateTime(new Date());
         return gameEvent;
     }

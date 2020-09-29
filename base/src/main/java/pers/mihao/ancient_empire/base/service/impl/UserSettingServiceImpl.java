@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.base.dao.RegionMesDao;
-import pers.mihao.ancient_empire.base.dao.UserSettingDao;
+import pers.mihao.ancient_empire.base.dao.RegionMesDAO;
+import pers.mihao.ancient_empire.base.dao.UserSettingDAO;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
 import pers.mihao.ancient_empire.base.service.UserSettingService;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 
 
@@ -23,31 +23,25 @@ import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
  * @since 2019-08-13
  */
 @Service
-public class UserSettingServiceImpl extends ServiceImpl<UserSettingDao, UserSetting> implements UserSettingService {
+public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSetting> implements UserSettingService {
 
     @Autowired
-    RegionMesDao regionMesDao;
+    RegionMesDAO regionMesDao;
     @Autowired
-    UserSettingDao userSettingDao;
+    UserSettingDAO userSettingDao;
     @Autowired
     RedisUtil redisUtil;
 
     @Override
-    @Cacheable(RedisKey.USER_SETTING)
+    @Cacheable(CatchKey.USER_SETTING)
     public UserSetting getUserSettingById(Integer id) {
-        UserSetting userSetting = userSettingDao.selectOne(new QueryWrapper<UserSetting>().eq("user_id", id));
-        if (userSetting == null) {
-            userSettingDao.insert(new UserSetting(id));
-            userSetting = userSettingDao.selectById(id);
-        }
-        userSetting.setMapInitRegionType(regionMesDao.selectById(userSetting.getMapInitRegionId()).getType());
-        return userSetting;
+        return null;
     }
 
     @Override
     public void updateByUserId(UserSetting userSetting) {
         // 删除缓存
-        redisUtil.delKey(RedisKey.USER_SETTING_ + AuthUtil.getAuthId());
+        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_SETTING) + AuthUtil.getAuthId());
         QueryWrapper<UserSetting> wrapper = new QueryWrapper();
         wrapper.eq("user_id", userSetting.getUserId());
         userSettingDao.update(userSetting, wrapper);

@@ -15,7 +15,6 @@ import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
 import pers.mihao.ancient_empire.core.RobotActive;
 import pers.mihao.ancient_empire.core.dto.*;
-import pers.mihao.ancient_empire.core.eums.ArmyEnum;
 import pers.mihao.ancient_empire.core.eums.WSPath;
 import pers.mihao.ancient_empire.core.eums.WsMethodEnum;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
@@ -254,7 +253,7 @@ public class WebSocketController {
                 WSPath.TOPIC_USER, WsRespHelper.success(WsMethodEnum.NEW_ROUND.type(), newRoundDto));
 
         // 判断新的回合是不是机器人
-        if (AppUtil.getCurrentArmy(newRoundDto.getRecord()).getType().equals(ArmyEnum.AI.type())) {
+        if (AppUtil.getCurrentArmy(newRoundDto.getRecord()).getPlayer() == null) {
             log.info("======================接下来是机器人的行动============================");
             newRoundDto.getRecord().setGameMap(map);
             RobotActive active = new RobotActive(newRoundDto.getRecord(), AiActiveEnum.SELECT_UNIT);

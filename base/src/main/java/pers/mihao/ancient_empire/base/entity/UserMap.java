@@ -23,10 +23,8 @@ public class UserMap implements Serializable {
     // 单位信息
     private List<BaseUnit> units;
     // 地形信息
-    @NotEmpty(message = "地图信息不能为空")
     private List<BaseSquare> regions;
     // 地图的名字
-    @NotBlank(message = "地图名不能为空")
     private String mapName;
     // 列
     private Integer row;
@@ -42,6 +40,9 @@ public class UserMap implements Serializable {
     private String type;
     // 是否保存 未保存的地图信息 最多只有一个
     private boolean unSave;
+
+    // 模板ID
+    private Integer templateId;
 
 
     public String getUuid() {
@@ -130,5 +131,13 @@ public class UserMap implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Integer getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
     }
 }

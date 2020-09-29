@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.mihao.ancient_empire.base.dao.UnitLevelMesDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UnitLevelMes">
+        <id column="id" property="id" />
+        <result column="unit_id" property="unitId" />
+        <result column="level" property="level" />
+        <result column="min_attack" property="minAttack" />
+        <result column="max_attack" property="maxAttack" />
+        <result column="physical_defense" property="physicalDefense" />
+        <result column="magic_defense" property="magicDefense" />
+        <result column="speed" property="speed" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, unit_id, level, min_attack, max_attack, physical_defense, magic_defense, speed
+    </sql>
+
+</mapper>

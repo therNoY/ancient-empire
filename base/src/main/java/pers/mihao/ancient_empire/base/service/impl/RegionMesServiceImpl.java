@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.base.dao.RegionMesDao;
+import pers.mihao.ancient_empire.base.dao.RegionMesDAO;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 
 /**
  * <p>
@@ -24,10 +24,10 @@ import pers.mihao.ancient_empire.common.constant.RedisKey;
  * @since 2019-08-11
  */
 @Service
-public class RegionMesServiceImpl extends ServiceImpl<RegionMesDao, RegionMes> implements RegionMesService {
+public class RegionMesServiceImpl extends ServiceImpl<RegionMesDAO, RegionMes> implements RegionMesService {
 
     @Autowired
-    RegionMesDao regionMesDao;
+    RegionMesDAO regionMesDao;
 
     @Override
     public IPage<RegionMes> getList(Page<RegionMes> page) {
@@ -47,7 +47,7 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDao, RegionMes> i
     }
 
     @Override
-    @Cacheable(RedisKey.ENABLE_REGION)
+    @Cacheable(CatchKey.ENABLE_REGION)
     public List<RegionMes> getEnableRegionByUserId(Integer id) {
         // 目前没有开启个性化功能 暂不开启
         QueryWrapper wrapper = new QueryWrapper<>().eq("enable", BaseConstant.YES);
@@ -61,7 +61,7 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDao, RegionMes> i
      * @return
      */
     @Override
-    @Cacheable(RedisKey.REGION_MES)
+    @Cacheable(CatchKey.REGION_MES)
     public RegionMes getRegionByType(String type) {
         QueryWrapper wrapper = new QueryWrapper<>().eq("type", type);
         RegionMes regionMes = regionMesDao.selectOne(wrapper);

@@ -9,7 +9,7 @@ import pers.mihao.ancient_empire.base.dto.BuyUnitDto;
 import pers.mihao.ancient_empire.base.dto.SummonDto;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.mongo.dao.UserRecordRepository;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.common.util.MqMessage;
@@ -98,7 +98,7 @@ public class MongoCdrConsumer {
         UserRecord record = (UserRecord)value;
         // 更新军队坟墓更新当前军队
         userRecordMongoHelper.endRound(record);
-        redisUtil.delKey(RedisKey.USER_RECORD_ + record.getUuid());
+        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_RECORD) + record.getUuid());
     }
 
     /**
@@ -110,7 +110,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：buyUnit");
         BuyUnitDto buyUnitDto = (BuyUnitDto)value;
         userRecordMongoHelper.handleBuyUnit(buyUnitDto);
-        redisUtil.delKey(RedisKey.USER_RECORD_ + buyUnitDto.getUuid());
+        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_RECORD) + buyUnitDto.getUuid());
     }
 
     /**
@@ -122,7 +122,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：actionRepairOcp");
         RespRepairOcpResult repairOcpResult = (RespRepairOcpResult)value;
         userRecordMongoHelper.handleRepairOcp(repairOcpResult);
-        redisUtil.delKey(RedisKey.USER_RECORD_ + repairOcpResult.getRecordId());
+        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_RECORD) + repairOcpResult.getRecordId());
     }
 
     /**
@@ -134,7 +134,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：actionEnd");
         RespEndResultDto endResultDto = (RespEndResultDto)value;
         userRecordMongoHelper.handleEnd(endResultDto);
-        redisUtil.delKey(RedisKey.USER_RECORD_ + endResultDto.getUuid());
+        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_RECORD) + endResultDto.getUuid());
     }
 
     /**
@@ -146,7 +146,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：actionSummon");
         SummonDto summonDto = (SummonDto)value;
         userRecordMongoHelper.handleSummon(summonDto);
-        redisUtil.delKey(RedisKey.USER_RECORD_ + summonDto.getUuid());
+        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_RECORD) + summonDto.getUuid());
     }
 
     /**
@@ -158,7 +158,7 @@ public class MongoCdrConsumer {
         log.info("mq 处理：actionAttach");
         UserRecord record = (UserRecord)value;
         userRecordMongoHelper.updateRecord(record);
-        redisUtil.delKey(RedisKey.USER_RECORD_ + record.getUuid());
+        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_RECORD) + record.getUuid());
     }
 
     private interface ConsumerHandle {

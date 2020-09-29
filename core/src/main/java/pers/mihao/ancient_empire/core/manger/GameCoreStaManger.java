@@ -37,7 +37,6 @@ import pers.mihao.ancient_empire.core.dto.ai.EndTurnResult;
 import pers.mihao.ancient_empire.core.dto.ai.EndUnitResult;
 import pers.mihao.ancient_empire.core.dto.ai.SelectUnitResult;
 import pers.mihao.ancient_empire.core.dto.ai.UnitActionResult;
-import pers.mihao.ancient_empire.core.eums.ArmyEnum;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 import pers.mihao.ancient_empire.core.handel.ai.AiActiveHandle;
 import pers.mihao.ancient_empire.core.handel.ai.AiMoveHandle;
@@ -201,7 +200,7 @@ public class GameCoreStaManger {
 
                     // 判断新的回合是不是机器人
                     Army nextArmy = AppUtil.getCurrentArmy(newRoundDto.getRecord());
-                    if (nextArmy.getType().equals(ArmyEnum.AI.type())) {
+                    if (nextArmy.getPlayer() == null) {
                         newRoundDto.getRecord().setGameMap(map);
                         RobotActive newTurnAction = new RobotActive(newRoundDto.getRecord(), AiActiveEnum.SELECT_UNIT);
                         GameCoreStaManger gameCoreStaManger = GameCoreStaManger.getInstance(newRoundDto.getRecord());

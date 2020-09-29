@@ -13,8 +13,10 @@ import javax.websocket.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.annotation.Manger;
-import pers.mihao.ancient_empire.common.vo.RespJson;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
 /**
@@ -28,6 +30,9 @@ import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 public class GameSessionManger {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    UserService userService;
 
     // 保存用户的session
     private ConcurrentHashMap<String, List<GameSession>> sessionMap = new ConcurrentHashMap();
@@ -43,17 +48,18 @@ public class GameSessionManger {
      * @param userId
      */
     public void addNewSession(Session session, String recordId, String userId) {
+        User user = userService.getById(userId);
         List<GameSession> list = sessionMap.get(recordId);
         if (list == null) {
             list = new ArrayList<>();
             sessionMap.put(recordId, list);
         }
         synchronized (list) {
-            GameSession gameSession = new GameSession(recordId, userId, session, new Date());
+            GameSession gameSession = new GameSession(recordId, user.getName(), session, new Date());
             gameSession.setSessionId(session.getId());
             list.add(gameSession);
             playerCount.incrementAndGet();
-            log.info("将玩家：{} 加入到游戏：{}中, sessionId:{}, 此局游戏目前{}人", userId, recordId, session.getId(), list.size());
+            log.info("将玩家：{} 加入到游戏：{}中, sessionId:{}, 此局游戏目前{}人", user.getName(), recordId, session.getId(), list.size());
         }
     }
 
@@ -77,7 +83,7 @@ public class GameSessionManger {
                     playerCount.decrementAndGet();
                     gameSession.setLevelDate(new Date());
                     handlePlayerLevel(gameSession);
-                    log.info("玩家:{}从游戏:{}中离开,游戏剩余:{}", gameSession.getUserId(), gameSession.getRecordId(),
+                    log.info("玩家:{}从游戏:{}中离开,游戏剩余:{}", gameSession.getUserName(), gameSession.getRecordId(),
                             sessionList.size());
                     break;
                 }
@@ -153,13 +159,13 @@ public class GameSessionManger {
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
-                    if (gameSession.getUserId().equals(GameContext.getUserId())) {
+                    if (gameSession.getUserName().equals(GameContext.getUserId())) {
                         gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
                         break;
                     }
                 }
             } catch (IOException e) {
-                log.error("发送数据给用户：{}失败", gameSession.getUserId(), e);
+                log.error("发送数据给用户：{}失败", gameSession.getUserName(), e);
             }
         }
     }
@@ -182,7 +188,7 @@ public class GameSessionManger {
                     gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
                 }
             } catch (IOException e) {
-                log.error("发送数据给用户：{}失败", gameSession.getUserId(), e);
+                log.error("发送数据给用户：{}失败", gameSession.getUserName(), e);
             }
 
 
@@ -207,7 +213,7 @@ public class GameSessionManger {
                     gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
                 }
             } catch (IOException e) {
-                log.error("发送数据给用户：{}失败", gameSession.getUserId(), e);
+                log.error("发送数据给用户：{}失败", gameSession.getUserName(), e);
             }
         }
     }

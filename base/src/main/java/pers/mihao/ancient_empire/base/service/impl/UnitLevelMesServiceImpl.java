@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.base.dao.UnitLevelMesDao;
+import pers.mihao.ancient_empire.base.dao.UnitLevelMesDAO;
 import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 
 /**
  * <p>
@@ -21,10 +21,10 @@ import pers.mihao.ancient_empire.common.constant.RedisKey;
  * @since 2019-08-11
  */
 @Service
-public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDao, UnitLevelMes> implements UnitLevelMesService {
+public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLevelMes> implements UnitLevelMesService {
 
     @Autowired
-    UnitLevelMesDao unitLevelMesDao;
+    UnitLevelMesDAO unitLevelMesDao;
 
     @Override
     public IPage<RespUnitLevelDto> getUnitLevelMesList(Page page) {
@@ -51,7 +51,7 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDao, UnitLe
     }
 
     @Override
-    @Cacheable(RedisKey.UNIT_LEVEL_MES)
+    @Cacheable(CatchKey.UNIT_LEVEL_MES)
     public UnitLevelMes getUnitLevelMes(String type, Integer level) {
         return unitLevelMesDao.getUnitLevelMes(type, level);
     }

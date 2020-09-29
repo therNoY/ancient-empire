@@ -2,6 +2,9 @@ package pers.mihao.ancient_empire.base.enums;
 
 import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
+/**
+ * 军队颜色枚举 固定
+ */
 public enum  ColorEnum implements BaseEnum {
     /**
      * 蓝色

@@ -48,7 +48,7 @@ public class GameController {
      * @param result
      * @return
      */
-    @PostMapping("/record/init")
+    @PostMapping("/api/record/init")
     public RespJson initMapRecord(@RequestBody @Validated ReqInitMapDto reqInitMapDto, BindingResult result) {
         // 1.获取用户地图
         UserMap userMap = userMapService.getEncounterMapById(reqInitMapDto.getMapId());
@@ -59,7 +59,7 @@ public class GameController {
         // 2.生成文档注册上下文
         UserRecord userRecord = userRecordService.initMapRecord(reqInitMapDto, userMap);
         log.info("生成新的存档：{}， 注册游戏上下文", userRecord.getUuid());
-        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, reqInitMapDto.getGameType()));
+        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, reqInitMapDto.getGameType()), 1);
 
         // 2.返回前端保存
         GameVO userMapVo = new GameVO();

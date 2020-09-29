@@ -56,17 +56,18 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring(this.tokenHead.length());
             // 3. 判断token是否过期 如果token 没有过期就设置 信息到Spring Security 上下文中
             JwtTokenUtil.TokenInfo tokenInfo = JwtTokenUtil.getTokenInfoFromToken(authToken);
-            if (tokenInfo != null && JwtTokenUtil.isEffectiveToken(tokenInfo.getDate())) {
-                String userId = tokenInfo.getInfo();
+            String userId;
+            if (tokenInfo != null && JwtTokenUtil.isEffectiveToken(tokenInfo.getDate())
+                    && (userId = tokenInfo.getInfo()) != null) {
+                AuthUtil.setUserId(Integer.parseInt(userId));
                 SecurityContext securityContext = SecurityContextHolder.getContext();
-                if (userId != null && securityContext.getAuthentication() == null) {
-                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(userId);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    securityContext.setAuthentication(authentication);
-                }
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userId);
+                AuthUtil.setLoginUser(userDetails);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                securityContext.setAuthentication(authentication);
             }
-        }else {
+        } else {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
             response.getWriter().println(JSON.toJSONString(RespUtil.error(40003)));

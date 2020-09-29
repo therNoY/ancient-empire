@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.bo;
 import java.io.Serializable;
 
 /**
- * 基础的块元素
+ * 基础的块元素 表示有个位置
  */
 public class BaseSquare implements Serializable {
     private static final long serialVersionUID = 1L;

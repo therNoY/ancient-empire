@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
 import pers.mihao.ancient_empire.base.entity.UnitShow;
-import pers.mihao.ancient_empire.base.dao.UnitShowDao;
+import pers.mihao.ancient_empire.base.dao.UnitShowDAO;
 import pers.mihao.ancient_empire.base.service.UnitShowService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2020-09-22
  */
 @Service
-public class UnitShowServiceImpl extends ServiceImpl<UnitShowDao, UnitShow> implements UnitShowService {
+public class UnitShowServiceImpl extends ServiceImpl<UnitShowDAO, UnitShow> implements UnitShowService {
 
 }

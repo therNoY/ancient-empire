@@ -1,15 +1,19 @@
 package pers.mihao.ancient_empire.core.manger;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -28,6 +32,21 @@ import pers.mihao.ancient_empire.core.manger.handler.Handler;
 public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     private Logger log = LoggerFactory.getLogger(GameCoreManger.class);
+    @Autowired
+    GameSessionManger gameSessionManger;
+    @Autowired
+    UserRecordService userRecordService;
+    @Autowired
+    UserTemplateService userTemplateService;
+
+    /* 线程池的计数器 */
+    private AtomicInteger threadIndex = new AtomicInteger(0);
+    /* 哨兵的名字 */
+    private static final String START_GAME_SENTINEL = "gameContextSentinel-";
+    /* 哨兵监视等待最大时长 */
+    private static final int SENTINEL_TIME = 60;
+    /* 加入游戏等待最大时长 */
+    private static final int JOIN_TIME = 20;
 
     /* 初始化注册是事件处理器 */
     Map<GameEventEnum, Handler> handlerMap = new HashMap<>(GameEventEnum.values().length);
@@ -35,11 +54,16 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     /* 游戏上下文 创建房间 */
     Map<String, GameContext> contextMap = new ConcurrentHashMap<>(16);
 
+    // 注册哨兵线程池
+    Executor sentinelPool = new ThreadPoolExecutor(
+            0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
+            new SynchronousQueue(),
+            runnable -> {
+                Thread thread = new Thread(runnable);
+                thread.setName(START_GAME_SENTINEL + threadIndex.getAndIncrement());
+                return thread;
+            });
 
-    @Autowired
-    GameSessionManger gameSessionManger;
-    @Autowired
-    UserRecordService userRecordService;
 
     /**
      * 线程池处理的任务
@@ -97,31 +121,89 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         }
     }
 
+
     /**
-     * 添加 游戏上下文
+     * 异步注册 游戏上下文
      * @param recordId
      */
-    public void registerGameContext(UserRecord userRecord, GameTypeEnum gameTypeEnum){
+    public void registerGameContext(UserRecord userRecord, GameTypeEnum gameTypeEnum, int playCount){
         if (!contextMap.containsKey(userRecord.getUuid())) {
-            GameContext gameContext = new GameContext();
-            gameContext.setGameId(userRecord.getUuid());
-            gameContext.setGameTypeEnum(gameTypeEnum);
-            gameContext.setUserRecord(userRecord);
-            contextMap.put(userRecord.getUuid(), gameContext);
+            sentinelPool.execute(()->{
+                // 设置初始信息
+                GameContext gameContext = new GameContext();
+                contextMap.put(userRecord.getUuid(), gameContext);
+
+                gameContext.setGameId(userRecord.getUuid());
+                gameContext.setGameTypeEnum(gameTypeEnum);
+                gameContext.setUserRecord(userRecord);
+                gameContext.setUserTemplate(userTemplateService.getById(userRecord.getTemplateId()));
+                gameContext.setPlayerCount(playCount);
+
+                CyclicBarrier cyclicBarrier = new CyclicBarrier(playCount + 1);
+                gameContext.setStartGame(cyclicBarrier);
+
+                try {
+                    log.info("开始检测上下文：{} 如果没有完成 就会撤销", userRecord.getUuid());
+                    cyclicBarrier.await(60, TimeUnit.SECONDS);
+                    doStartGame(gameContext);
+                } catch (InterruptedException e) {
+                    log.error("", e);
+                } catch (BrokenBarrierException e) {
+                    log.error("", e);
+                } catch (TimeoutException e) {
+                    log.error("", e);
+                    log.warn("超时没有完成注册 撤销上下文：{}", userRecord.getUuid());
+                    doRevokeGameContext(userRecord);
+                }
+            });
+        }
+    }
+
+
+    /**
+     * 玩家全部加入可以开始游戏
+     * @param userRecord
+     */
+    private void doStartGame(GameContext gameContext) {
+        log.info("玩家全部加入可以开始游戏:{}", gameContext.getGameId());
+        gameContext.setStartTime(new Date());
+
+        if (gameContext.getUserRecord().getCurrPlayer() == null) {
+            // TODO
+            log.info("开局是robot........");
         }
     }
 
     /**
-     * 添加 游戏上下文
+     * 撤销上下文
+     * @param userRecord
+     */
+    private void doRevokeGameContext(UserRecord userRecord) {
+        contextMap.remove(userRecord.getUuid());
+        userRecordService.removeById(userRecord.getUuid());
+    }
+
+    /**
+     * 玩家加入游戏
      * @param recordId
      */
-    public void registerGameContext(String recordId){
-        if (!contextMap.containsKey(recordId)) {
-            UserRecord userRecord = userRecordService.getRecordById(recordId);
-            GameContext gameContext = new GameContext();
-            gameContext.setUserRecord(userRecord);
-            contextMap.put(recordId, gameContext);
+    public boolean joinGame(String recordId){
+        GameContext gameContext = contextMap.get(recordId);
+        if (gameContext != null) {
+            CyclicBarrier cyclicBarrier = gameContext.getStartGame();
+            try {
+                // 等待其他玩家加入
+                cyclicBarrier.await(20, TimeUnit.SECONDS);
+                return true;
+            } catch (InterruptedException e) {
+                log.error("", e);
+            } catch (BrokenBarrierException e) {
+                log.error("", e);
+            } catch (TimeoutException e) {
+                log.error("", e);
+            }
         }
+        return false;
     }
 
 

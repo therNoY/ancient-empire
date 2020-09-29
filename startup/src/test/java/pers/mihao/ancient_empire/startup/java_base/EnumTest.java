@@ -15,7 +15,7 @@ public class EnumTest {
 //        System.out.println(UnitEnum.SOLDIER.getName());
 //        System.out.println(UnitEnum.SOLDIER.getName());
 //
-//        System.out.println(RedisKey.ENABLE_REGION);
+//        System.out.println(CatchKey.ENABLE_REGION);
     }
 
     @Test

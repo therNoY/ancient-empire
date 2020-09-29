@@ -23,4 +23,10 @@ public interface UserRecordService extends MapService{
     boolean saveRecord(ReqSaveRecordDto saveRecordDto);
 
     boolean saveTempRecord(String uuid);
+
+    /**
+     * 根据ID 删除
+     * @param uuid
+     */
+    void removeById(String uuid);
 }

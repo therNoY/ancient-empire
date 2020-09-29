@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.dao.UnitMesDao;
+import pers.mihao.ancient_empire.base.dao.UnitMesDAO;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
@@ -22,7 +22,7 @@ import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 /**
@@ -34,12 +34,12 @@ import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
  * @since 2019-08-11
  */
 @Service
-public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> implements UnitMesService {
+public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> implements UnitMesService {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    UnitMesDao unitMesDao;
+    UnitMesDAO unitMesDao;
     @Autowired
     UnitLevelMesService unitLevelMesService;
     @Autowired
@@ -92,7 +92,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
      * @return
      */
     @Override
-    @Cacheable(value = RedisKey.ENABLE_UNIT)
+    @Cacheable(value = CatchKey.ENABLE_UNIT)
     public List<UnitMes> getEnableUnitByUserId(Integer id) {
         log.info(">>>>用户从数据库中获取可用单位<<<<");
         QueryWrapper wrapper = new QueryWrapper<UnitMes>();
@@ -108,7 +108,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
      * @param type
      * @return
      */
-    @Cacheable(RedisKey.UNIT_MES)
+    @Cacheable(CatchKey.UNIT_MES)
     @Override
     public UnitMes getByType(String type) {
         UnitMes unitMes = unitMesDao.selectOne(new QueryWrapper<UnitMes>().eq("type", type));
@@ -124,7 +124,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
      * @return
      */
     @Override
-    @Cacheable(RedisKey.UNIT_INFO)
+    @Cacheable(CatchKey.UNIT_INFO)
     public UnitInfo getUnitInfo(String type, Integer level) {
         UnitMes unitMes = getByType(type);
         UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(type, level);
@@ -138,7 +138,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDao, UnitMes> impleme
      * @return
      */
     @Override
-    @Cacheable(RedisKey.UNIT_INFO_LIST)
+    @Cacheable(CatchKey.UNIT_INFO_LIST)
     public List<UnitInfo> getUnitInfoList(boolean hasLoad) {
         List<UnitInfo> unitInfoList = new ArrayList<>();
         // 1. 获取数据库中所有单位信息

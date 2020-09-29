@@ -14,7 +14,7 @@ public class GameSession {
     private String recordId;
 
     /* 用户Id */
-    private String userId;
+    private String userName;
 
     /* sessionId */
     private String sessionId;
@@ -31,9 +31,9 @@ public class GameSession {
     public GameSession() {
     }
 
-    public GameSession(String recordId, String userId, Session session, Date createDate) {
+    public GameSession(String recordId, String userName, Session session, Date createDate) {
         this.recordId = recordId;
-        this.userId = userId;
+        this.userName = userName;
         this.session = session;
         this.createDate = createDate;
     }
@@ -54,12 +54,12 @@ public class GameSession {
         this.recordId = recordId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Session getSession() {
@@ -90,7 +90,7 @@ public class GameSession {
     public String toString() {
         return "GameSession{" +
             "recordId='" + recordId + '\'' +
-            ", userId='" + userId + '\'' +
+            ", userName='" + userName + '\'' +
             ", sessionId='" + sessionId + '\'' +
             ", createDate=" + createDate +
             ", levelDate=" + levelDate +

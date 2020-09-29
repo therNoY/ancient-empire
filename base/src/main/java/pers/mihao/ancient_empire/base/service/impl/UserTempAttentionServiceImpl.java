@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
 import pers.mihao.ancient_empire.base.entity.UserTempAttention;
-import pers.mihao.ancient_empire.base.dao.UserTempAttentionDao;
+import pers.mihao.ancient_empire.base.dao.UserTempAttentionDAO;
 import pers.mihao.ancient_empire.base.service.UserTempAttentionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2020-09-22
  */
 @Service
-public class UserTempAttentionServiceImpl extends ServiceImpl<UserTempAttentionDao, UserTempAttention> implements UserTempAttentionService {
+public class UserTempAttentionServiceImpl extends ServiceImpl<UserTempAttentionDAO, UserTempAttention> implements UserTempAttentionService {
 
 }

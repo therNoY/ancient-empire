@@ -10,7 +10,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author mihao
- * @since 2020-09-22
+ * @since 2020-09-23
  */
 public class UnitMes implements Serializable {
 
@@ -45,17 +45,17 @@ public class UnitMes implements Serializable {
     /**
      * 最近的攻击距离
      */
-    private Boolean minAttachRange;
+    private Integer minAttachRange;
 
     /**
      * 最远的攻击距离
      */
-    private Boolean maxAttachRange;
+    private Integer maxAttachRange;
 
     /**
      * 所占人口
      */
-    private Boolean population;
+    private Integer population;
 
     /**
      * 单位描述
@@ -80,12 +80,7 @@ public class UnitMes implements Serializable {
     /**
      * 是否启用 0 不启用 1 启用
      */
-    private Boolean enable;
-
-    /**
-     * 模板id
-     */
-    private Integer tempId;
+    private Integer enable;
 
     public Integer getId() {
         return id;
@@ -122,25 +117,25 @@ public class UnitMes implements Serializable {
     public void setPrice(Integer price) {
         this.price = price;
     }
-    public Boolean getMinAttachRange() {
+    public Integer getMinAttachRange() {
         return minAttachRange;
     }
 
-    public void setMinAttachRange(Boolean minAttachRange) {
+    public void setMinAttachRange(Integer minAttachRange) {
         this.minAttachRange = minAttachRange;
     }
-    public Boolean getMaxAttachRange() {
+    public Integer getMaxAttachRange() {
         return maxAttachRange;
     }
 
-    public void setMaxAttachRange(Boolean maxAttachRange) {
+    public void setMaxAttachRange(Integer maxAttachRange) {
         this.maxAttachRange = maxAttachRange;
     }
-    public Boolean getPopulation() {
+    public Integer getPopulation() {
         return population;
     }
 
-    public void setPopulation(Boolean population) {
+    public void setPopulation(Integer population) {
         this.population = population;
     }
     public String getDescription() {
@@ -171,19 +166,12 @@ public class UnitMes implements Serializable {
     public void setPromotion(Integer promotion) {
         this.promotion = promotion;
     }
-    public Boolean getEnable() {
+    public Integer getEnable() {
         return enable;
     }
 
-    public void setEnable(Boolean enable) {
+    public void setEnable(Integer enable) {
         this.enable = enable;
-    }
-    public Integer getTempId() {
-        return tempId;
-    }
-
-    public void setTempId(Integer tempId) {
-        this.tempId = tempId;
     }
 
     @Override
@@ -202,7 +190,6 @@ public class UnitMes implements Serializable {
         ", tradeable=" + tradeable +
         ", promotion=" + promotion +
         ", enable=" + enable +
-        ", tempId=" + tempId +
         "}";
     }
 }

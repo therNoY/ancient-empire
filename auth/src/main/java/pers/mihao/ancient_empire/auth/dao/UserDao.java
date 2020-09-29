@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.auth.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
@@ -17,4 +18,6 @@ public interface UserDao extends BaseMapper<User> {
 
     @Update("update user u set u.name= #{name}, u.password=#{pwd} where u.id = #{id}")
     void updateByReqUserDto(@Param("name") String userName, @Param("pwd") String password, @Param("id") Integer id);
+
+    User getUserByNameOrEmail(String username);
 }

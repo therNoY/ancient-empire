@@ -13,4 +13,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserTemplateService extends IService<UserTemplate> {
 
+    /**
+     * 通过ID 获取用户模板
+     * @param id
+     * @return
+     */
+    UserTemplate selectById(String id);
+
 }

@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 
 /**
@@ -8,23 +10,15 @@ import java.io.Serializable;
  * </p>
  *
  * @author mihao
- * @since 2020-09-22
+ * @since 2020-09-23
  */
 public class UnitShow implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId
     private Integer unitId;
 
-    /**
-     * 单位的显示1
-     */
-    private String img;
-
-    /**
-     * 单位的显示2在这两个图片切换显示动态效果
-     */
-    private String img2;
 
     /**
      * 选择单位的动画
@@ -48,20 +42,7 @@ public class UnitShow implements Serializable {
     public void setUnitId(Integer unitId) {
         this.unitId = unitId;
     }
-    public String getImg() {
-        return img;
-    }
 
-    public void setImg(String img) {
-        this.img = img;
-    }
-    public String getImg2() {
-        return img2;
-    }
-
-    public void setImg2(String img2) {
-        this.img2 = img2;
-    }
     public String getChooseAnimation() {
         return chooseAnimation;
     }
@@ -88,8 +69,6 @@ public class UnitShow implements Serializable {
     public String toString() {
         return "UnitShow{" +
         "unitId=" + unitId +
-        ", img=" + img +
-        ", img2=" + img2 +
         ", chooseAnimation=" + chooseAnimation +
         ", endAnimation=" + endAnimation +
         ", deadAnimation=" + deadAnimation +

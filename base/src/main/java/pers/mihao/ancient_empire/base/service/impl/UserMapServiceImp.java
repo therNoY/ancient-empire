@@ -24,7 +24,7 @@ import pers.mihao.ancient_empire.base.mongo.dao.UserMapRepository;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.base.vo.UserMapVo;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.jdbc.mongo.MongoUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -180,7 +180,7 @@ public class UserMapServiceImp implements UserMapService {
      * @return
      */
     @Override
-    @Cacheable(RedisKey.ENCOUNTER_MAP)
+    @Cacheable(CatchKey.ENCOUNTER_MAP)
     public List<BaseMapInfoVO> getEncounterMaps() {
         Criteria criteria = new Criteria()
                 .and("createUserId").is(UserEnum.ADMIN.getId())
@@ -239,7 +239,7 @@ public class UserMapServiceImp implements UserMapService {
      * @param uuid
      * @return
      */
-    @Cacheable(RedisKey.USER_MAP)
+    @Cacheable(CatchKey.USER_MAP)
     @Override
     public UserMapVo getUserMapById(String uuid) {
         UserMapVo userMapVo = new UserMapVo();

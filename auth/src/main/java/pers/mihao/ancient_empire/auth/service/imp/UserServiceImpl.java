@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.auth.service.imp;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,10 +23,9 @@ import pers.mihao.ancient_empire.auth.dto.RespAuthDao;
 import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
-import pers.mihao.ancient_empire.auth.enums.RoleEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.common.constant.RedisKey;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDto;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
@@ -62,14 +60,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     RedisUtil redisUtil;
 
     @Override
-    @Cacheable(RedisKey.USER_INFO)
+    @Cacheable(CatchKey.USER_INFO)
     public User getUserByNameOrEmail(String username) {
-        log.info("query {} from DB", username);
-        QueryWrapper<User> wrapper = new QueryWrapper();
-        wrapper.eq("name", username)
-                .or()
-                .eq("email", username);
-        return userDao.selectOne(wrapper);
+        log.info("查询用户 {} 登录信息", username);
+        return userDao.getUserByNameOrEmail(username);
     }
 
     @Override
@@ -97,20 +91,20 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
 
     /**
      * 管理员登录
-     *
+     * FIXME 改成不需要管理员的
      * @param loginDto
      * @return
      */
     @Override
     public String adminLogin(LoginDto loginDto) {
         User loginUser = getUserByNameOrEmail(loginDto.getUserName());
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getUserName());
-        for (GrantedAuthority author : userDetails.getAuthorities()) {
-            if (author.toString().equals(RoleEnum.ADMIN.type())) {
-                return JwtTokenUtil.generateToken(userDetails.getUsername());
-            }
-        }
-        return null;
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getUserName());
+//        for (GrantedAuthority author : userDetails.getAuthorities()) {
+//            if (author.toString().equals(RoleEnum.ADMIN.type())) {
+//                return JwtTokenUtil.generateToken(userDetails.getUsername());
+//            }
+//        }
+        return JwtTokenUtil.generateToken(loginUser.getId().toString());
     }
 
     @Override
@@ -118,6 +112,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         QueryWrapper<User> wrapper = new QueryWrapper();
         wrapper.eq("name", userName);
         return userDao.selectOne(wrapper);
+    }
+
+    @Cacheable(CatchKey.USER)
+    @Override
+    public User getUserById(Integer id) {
+        return super.getById(id);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             return null;
         } else {
             // 清除缓存
-            redisUtil.delKey(RedisKey.USER_INFO_ + userDao.selectById(user.getId()).getName());
+            redisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO) + userDao.selectById(user.getId()).getName());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userDao.updateByReqUserDto(user.getUserName(), user.getPassword(), user.getId());
             return JwtTokenUtil.generateToken(user.getUserName());

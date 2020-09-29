@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.GameMap;
-import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.*;
 
 /**
  * 这个DTO 属于用户存档 即是进行中的
@@ -16,15 +14,13 @@ public class UserRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     private String uuid;
-
-    /* 模板ID */
+    // 模板ID
     private Integer templateId;
-
     // 人口上限
     private Integer maxPop;
-    //初始化地形图
+    // 初始化地形图
     private GameMap gameMap;
-    //包含所有的军队信息
+    // 包含所有的军队信息
     private List<Army> armyList;
     // 包含的坟墓
     private List<Position> tomb;
@@ -40,9 +36,16 @@ public class UserRecord implements Serializable {
     private String currColor;
     // 当前阵容
     private Integer currCamp;
+    // 当前点
+    private Site currPoint;
     // 是否保存 未保存的存档最多有一个
     private boolean isUnSave;
-
+    // 当前游戏的玩家ID
+    private String currPlayer;
+    // 当前单位
+    private Unit currUnit;
+    // 当前地形
+    private BaseSquare currRegion;
 
 
     public Integer getMaxPop() {
@@ -148,5 +151,57 @@ public class UserRecord implements Serializable {
 
     public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
+    }
+
+    public Site getCurrPoint() {
+        return currPoint;
+    }
+
+    public void setCurrPoint(Site currPoint) {
+        this.currPoint = currPoint;
+    }
+
+    public String getCurrPlayer() {
+        return currPlayer;
+    }
+
+    public void setCurrPlayer(String currPlayer) {
+        this.currPlayer = currPlayer;
+    }
+
+    public Unit getCurrUnit() {
+        return currUnit;
+    }
+
+    public void setCurrUnit(Unit currUnit) {
+        this.currUnit = currUnit;
+    }
+
+    public BaseSquare getCurrRegion() {
+        return currRegion;
+    }
+
+    public void setCurrRegion(BaseSquare currRegion) {
+        this.currRegion = currRegion;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRecord{" +
+                "uuid='" + uuid + '\'' +
+                ", templateId=" + templateId +
+                ", maxPop=" + maxPop +
+                ", gameMap=" + gameMap +
+                ", armyList=" + armyList +
+                ", tomb=" + tomb +
+                ", recordName='" + recordName + '\'' +
+                ", createUserId=" + createUserId +
+                ", createTime='" + createTime + '\'' +
+                ", currentRound=" + currentRound +
+                ", currColor='" + currColor + '\'' +
+                ", currCamp=" + currCamp +
+                ", isUnSave=" + isUnSave +
+                ", currPlayer='" + currPlayer + '\'' +
+                '}';
     }
 }

@@ -30,8 +30,8 @@ public class Army implements Serializable {
     private Integer order;
     // 当前的人口
     private Integer pop;
-    // 单位类型 user ai no
-    private String type;
+    // 玩家 为空时是AI
+    private String player;
 
     public Integer getId() {
         return id;
@@ -89,11 +89,11 @@ public class Army implements Serializable {
         this.pop = pop;
     }
 
-    public String getType() {
-        return type;
+    public String getPlayer() {
+        return player;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setPlayer(String player) {
+        this.player = player;
     }
 }

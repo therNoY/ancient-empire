@@ -22,10 +22,12 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
+import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.mongo.dao.UserMapRepository;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.CollectionEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
+import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.common.util.JacksonUtil;
 import pers.mihao.ancient_empire.common.vo.test_dto.Dog;
 
@@ -39,8 +41,21 @@ public class MongoTest {
     UserMapRepository userMapRepository;
 
     @Autowired
+    UnitMesService unitMesService;
+
+    @Autowired
     MongoTemplate mongoTemplate;
 
+    @Test
+    public void updateAll() {
+        List<UserMap> userMaps = mongoTemplate.findAll(UserMap.class);
+        for(UserMap um : userMaps) {
+            for (BaseUnit baseUnit : um.getUnits()) {
+                baseUnit.setTypeId(unitMesService.getByType(baseUnit.getType()).getId());
+            }
+            mongoTemplate.save(um);
+        }
+    }
 
     @Test
     public void updateMapType() {

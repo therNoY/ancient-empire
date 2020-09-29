@@ -25,7 +25,7 @@ public abstract class AbstractGameEventHandler implements Handler{
     GameContext gameContext;
 
     // 命令集合
-    List<Command> commandList;
+    List<Command> commandList = null;
 
     @Override
     public List<Command> handler(Event event) {
@@ -35,15 +35,20 @@ public abstract class AbstractGameEventHandler implements Handler{
         return commandList;
     }
 
+    protected AbstractGameEventHandler command(){
+        return this;
+    }
+
     /**
      * 返回的命令
      * @param command
      */
-    protected void addCommand(Command command) {
+    protected AbstractGameEventHandler addCommand(Command command) {
         if (commandList == null) {
             commandList = new ArrayList<>();
         }
         commandList.add(command);
+        return this;
     }
 
     protected GameCommand sendToAllCommand(){

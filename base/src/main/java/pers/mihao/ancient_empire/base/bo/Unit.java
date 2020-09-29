@@ -14,6 +14,8 @@ public class Unit extends Site implements Serializable {
     private String id;
     // 类型
     private String type;
+    // 类型ID 寻找图片
+    private Integer typeId;
     // 血量 [1, 0, 0]
     private Integer[] life;
     // 是否已死
@@ -43,6 +45,14 @@ public class Unit extends Site implements Serializable {
         this.isDone = false;
         statusPresenceNum = 0;
         this.experience = 0;
+    }
+
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
     }
 
     public String getId() {

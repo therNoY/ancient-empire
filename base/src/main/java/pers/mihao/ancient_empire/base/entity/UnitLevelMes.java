@@ -2,17 +2,15 @@ package pers.mihao.ancient_empire.base.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-
-import javax.validation.constraints.*;
 import java.io.Serializable;
 
 /**
  * <p>
- * 单位等级属性 不同的单位 不同的属性 成长不一样
+ * 单位等级信息表
  * </p>
  *
  * @author mihao
- * @since 2019-08-11
+ * @since 2020-09-23
  */
 public class UnitLevelMes implements Serializable {
 
@@ -22,19 +20,16 @@ public class UnitLevelMes implements Serializable {
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
-    @NotNull(message = "Id不能为空")
     private Integer id;
 
     /**
      * 单位Id
      */
-    @NotNull(message = "单位Id 不能为空")
     private Integer unitId;
 
     /**
      * 等级
      */
-    @DecimalMin(value = "0", message = "单位等级必须大于0")
     private Integer level;
 
     /**
@@ -73,6 +68,9 @@ public class UnitLevelMes implements Serializable {
         return unitId;
     }
 
+    public void setUnitId(Integer unitId) {
+        this.unitId = unitId;
+    }
     public Integer getLevel() {
         return level;
     }
@@ -80,11 +78,6 @@ public class UnitLevelMes implements Serializable {
     public void setLevel(Integer level) {
         this.level = level;
     }
-
-    public void setUnitId(Integer unitId) {
-        this.unitId = unitId;
-    }
-
     public Integer getMinAttack() {
         return minAttack;
     }

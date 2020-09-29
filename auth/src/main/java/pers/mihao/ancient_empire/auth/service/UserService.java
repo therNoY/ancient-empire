@@ -29,6 +29,8 @@ public interface UserService extends IService<User> {
 
     User getUserByName(String userName);
 
+    User getUserById(Integer id);
+
     User getUserByEmail(String email);
 
     void save(RegisterDto registerDto);

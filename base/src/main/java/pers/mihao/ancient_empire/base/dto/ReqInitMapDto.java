@@ -13,7 +13,7 @@ public class ReqInitMapDto {
     @NotEmpty(message = "地图Id 不能为空")
     private String mapId;
     @NotEmpty(message = "队伍不能为空")
-    private List<Army> armyList;
+    private List<ReqArmy> armyList;
 
     /* 游戏的类型 遭遇战单机 多人游戏 故事模式 */
     private String gameType;
@@ -42,11 +42,11 @@ public class ReqInitMapDto {
         this.mapId = mapId;
     }
 
-    public List<Army> getArmyList() {
+    public List<ReqArmy> getArmyList() {
         return armyList;
     }
 
-    public void setArmyList(List<Army> armyList) {
+    public void setArmyList(List<ReqArmy> armyList) {
         this.armyList = armyList;
     }
 
@@ -56,5 +56,18 @@ public class ReqInitMapDto {
 
     public void setGameType(String gameType) {
         this.gameType = gameType;
+    }
+
+
+    public static class ReqArmy extends Army{
+        private String type;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
     }
 }

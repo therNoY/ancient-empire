@@ -7,6 +7,16 @@ public class BaseUnit extends BaseSquare {
 
     private Integer row;
     private Integer column;
+    /* 类型ID */
+    private Integer typeId;
+
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
 
     public Integer getRow() {
         return row;

@@ -1,9 +1,6 @@
 package pers.mihao.ancient_empire.base.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 
@@ -13,33 +10,16 @@ import java.io.Serializable;
  * </p>
  *
  * @author mihao
- * @since 2019-08-13
+ * @since 2020-09-23
  */
 public class UserSetting implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public UserSetting() {
-    }
-
-    public UserSetting(Integer userId) {
-        this.userId = userId;
-    }
-
-    public UserSetting(Integer mapInitRow, Integer mapInitColumn, Integer mapInitRegionId, String mapInitRegionType, Boolean simpleDrawing) {
-        this.mapInitRow = mapInitRow;
-        this.mapInitColumn = mapInitColumn;
-        this.mapInitRegionId = mapInitRegionId;
-        this.mapInitRegionType = mapInitRegionType;
-        this.simpleDrawing = simpleDrawing;
-    }
-
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
-
     /**
      * 用户ID
      */
+    @TableId
     private Integer userId;
 
     /**
@@ -52,15 +32,14 @@ public class UserSetting implements Serializable {
      */
     private Integer mapInitColumn;
 
-    // 初始化地图的Id
-    @JsonIgnore
+    /**
+     * 初始化地图的RegionId
+     */
     private Integer mapInitRegionId;
 
-    // 初始化地图的Id
-    @TableField(exist = false)
-    private String mapInitRegionType;
-
-    // 是否开启优化绘图
+    /**
+     * 是否开启优化绘图
+     */
     private Boolean simpleDrawing;
 
     /**
@@ -73,13 +52,6 @@ public class UserSetting implements Serializable {
      */
     private Integer language;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
     public Integer getUserId() {
         return userId;
     }
@@ -101,7 +73,6 @@ public class UserSetting implements Serializable {
     public void setMapInitColumn(Integer mapInitColumn) {
         this.mapInitColumn = mapInitColumn;
     }
-
     public Integer getMapInitRegionId() {
         return mapInitRegionId;
     }
@@ -109,7 +80,6 @@ public class UserSetting implements Serializable {
     public void setMapInitRegionId(Integer mapInitRegionId) {
         this.mapInitRegionId = mapInitRegionId;
     }
-
     public Boolean getSimpleDrawing() {
         return simpleDrawing;
     }
@@ -117,15 +87,6 @@ public class UserSetting implements Serializable {
     public void setSimpleDrawing(Boolean simpleDrawing) {
         this.simpleDrawing = simpleDrawing;
     }
-
-    public String getMapInitRegionType() {
-        return mapInitRegionType;
-    }
-
-    public void setMapInitRegionType(String mapInitRegionType) {
-        this.mapInitRegionType = mapInitRegionType;
-    }
-
     public Integer getBgMusic() {
         return bgMusic;
     }
@@ -133,7 +94,6 @@ public class UserSetting implements Serializable {
     public void setBgMusic(Integer bgMusic) {
         this.bgMusic = bgMusic;
     }
-
     public Integer getLanguage() {
         return language;
     }
@@ -142,13 +102,16 @@ public class UserSetting implements Serializable {
         this.language = language;
     }
 
-    // TODO 字段主页颜色
-
-    // TODO 极简模式 地形图片 地形信息 地形描述 天赋描述 天赋赋予
-
-
-
-    // 作弊模式（减伤20%） 普通模式（无） 困难模式（敌方减伤20%） 地狱模式 （敌方减伤40%）
-
-    // AI 模式 ： 随机热血活命附庸联盟
+    @Override
+    public String toString() {
+        return "UserSetting{" +
+        "userId=" + userId +
+        ", mapInitRow=" + mapInitRow +
+        ", mapInitColumn=" + mapInitColumn +
+        ", mapInitRegionId=" + mapInitRegionId +
+        ", simpleDrawing=" + simpleDrawing +
+        ", bgMusic=" + bgMusic +
+        ", language=" + language +
+        "}";
+    }
 }

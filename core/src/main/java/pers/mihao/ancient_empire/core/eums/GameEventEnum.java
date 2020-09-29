@@ -23,6 +23,19 @@ public enum GameEventEnum implements BaseEnum {
     CLICK_ACTIVE_UNIT,
 
     /**
+     * 点击不能行动的单位 或者其他单位
+     * 改变当前点 当前单位 当前地形
+     */
+    CLICK_UN_ACTIVE_UNIT,
+
+    /**
+     * 点击可以行动的单位事件
+     * 领主如果在己方城堡上会获取行动，通知 SHOW_ACTION
+     * 否则通知 SHOW_MOVE_AREA
+     */
+    CLICK_REGION,
+
+    /**
      * 准备攻击事件 获取攻击范围 通知 SHOW_ATTACH_AREA
      */
     ATTACH_UNIT_START,

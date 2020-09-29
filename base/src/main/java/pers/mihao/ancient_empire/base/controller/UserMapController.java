@@ -19,20 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespSimpleDrawing;
-import pers.mihao.ancient_empire.base.dto.RespUserMapDao;
-import pers.mihao.ancient_empire.base.entity.RegionMes;
-import pers.mihao.ancient_empire.base.entity.UnitMes;
-import pers.mihao.ancient_empire.base.entity.UserSetting;
-import pers.mihao.ancient_empire.base.entity.UserMap;
+import pers.mihao.ancient_empire.base.dto.RespUserMapDTO;
+import pers.mihao.ancient_empire.base.entity.*;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
-import pers.mihao.ancient_empire.base.service.RegionMesService;
-import pers.mihao.ancient_empire.base.service.UnitMesService;
-import pers.mihao.ancient_empire.base.service.UserMapService;
-import pers.mihao.ancient_empire.base.service.UserSettingService;
+import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
+
+import javax.websocket.server.PathParam;
 
 /**
  * 用户地图管理的Controller
@@ -47,14 +43,16 @@ public class UserMapController {
     @Autowired
     RegionMesService regionMesService;
     @Autowired
-    UserSettingService userSettingService;
+    UserTemplateService userTemplateService;
 
     /**
      * 获取编辑地图时需要获取的初始数据
+     * FIXME 增加了模板配置这个要改
      * @return
      */
-    @GetMapping("/api/userMap/init")
-    public RespJson getInitUserMap() {
+    @GetMapping("/api/userMap/init/{id}")
+    public RespJson getInitUserMap(@PathParam("id") String templateId) {
+        UserTemplate userTemplate = userTemplateService.getById(templateId);
         // 获取当前用户
         Integer id = AuthUtil.getAuthId();
         // 1.获取可用单位信息
@@ -73,8 +71,7 @@ public class UserMapController {
             unSaveMap = optional.get();
         }
         // 4.获取初始化地图信息
-        UserSetting userSetting = userSettingService.getUserSettingById(id);
-        RespUserMapDao userMapDao = new RespUserMapDao(unitMesList, regionMes, userMaps, unSaveMap, userSetting);
+        RespUserMapDTO userMapDao = new RespUserMapDTO(unitMesList, regionMes, userMaps, unSaveMap, userTemplate);
         return RespUtil.successResJson(userMapDao);
     }
 
