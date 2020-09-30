@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
@@ -15,9 +16,21 @@ public class SummonTombHandler extends AbstractGameEventHandler{
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
         // 添加召唤坟墓事件
-        GameCommand command = sendToGameCommand();
+        GameCommand command = new GameCommand();
         command.setGameCommendEnum(GameCommendEnum.TOMB_DISAPPEAR);
-        command.setPointSite(gameEvent.getPassiveSite());
-        addCommand(command);
+        command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
+        command.setAimSite(gameEvent.getAimSite());
+        addGameCommand(command);
+
+        GameCommand command2 = new GameCommand();
+        command2.setGameCommendEnum(GameCommendEnum.TOMB_DISAPPEAR);
+        command2.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
+        command2.setAimSite(gameEvent.getAimSite());
+        addGameCommand(command2);
+
+        // 使用流式 连续发送多个命令
+        commandStream()
+            .toGameCommand().addCommand(GameCommendEnum.TOMB_DISAPPEAR, gameEvent.getAimSite())
+            .toGameCommand().addCommand(GameCommendEnum.TOMB_DISAPPEAR, gameEvent.getAimSite());
     }
 }

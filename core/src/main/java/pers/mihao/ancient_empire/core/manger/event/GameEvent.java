@@ -20,7 +20,7 @@ public class GameEvent extends AbstractEvent {
     private Site initiateSite;
 
     /* 被动接受的位置 */
-    private Site passiveSite;
+    private Site aimSite;
 
     /*游戏的事件*/
     private GameEventEnum event;
@@ -41,12 +41,12 @@ public class GameEvent extends AbstractEvent {
         this.initiateSite = initiateSite;
     }
 
-    public Site getPassiveSite() {
-        return passiveSite;
+    public Site getAimSite() {
+        return aimSite;
     }
 
-    public void setPassiveSite(Site passiveSite) {
-        this.passiveSite = passiveSite;
+    public void setAimSite(Site aimSite) {
+        this.aimSite = aimSite;
     }
 
     public String getGameId() {

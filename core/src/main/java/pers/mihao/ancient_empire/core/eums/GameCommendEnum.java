@@ -9,6 +9,18 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
  */
 public enum GameCommendEnum implements BaseEnum {
     /**
+     * 改变当前指针
+     */
+    CHANGE_CURR_POINT,
+    /**
+     * 改变当前单位
+     */
+    CHANGE_CURR_UNIT,
+    /**
+     * 改变当前地形
+     */
+    CHANGE_CURR_REGION,
+    /**
      * 展示行动
      */
     SHOW_ACTION,

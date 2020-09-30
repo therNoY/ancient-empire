@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.core.manger.command;
 
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 
@@ -10,11 +12,32 @@ import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
  */
 public class GameCommand extends AbstractCommand{
 
+    /**
+     * 发送消息类型枚举
+     */
     private SendTypeEnum sendTypeEnum;
 
+    /**
+     * 游戏命令类型枚举
+     */
     private GameCommendEnum gameCommendEnum;
 
-    private Site pointSite;
+    /**
+     * 目标点的位置
+     */
+    private Site aimSite;
+
+    /**
+     * 目标点的位置
+     */
+    private Unit aimUnit;
+
+    /**
+     * 目标地形
+     */
+    private BaseSquare aimRegion;
+
+
 
     public SendTypeEnum getSendTypeEnum() {
         return sendTypeEnum;
@@ -32,12 +55,28 @@ public class GameCommand extends AbstractCommand{
         this.gameCommendEnum = gameCommendEnum;
     }
 
-    public Site getPointSite() {
-        return pointSite;
+    public Site getAimSite() {
+        return aimSite;
     }
 
-    public void setPointSite(Site pointSite) {
-        this.pointSite = pointSite;
+    public void setAimSite(Site aimSite) {
+        this.aimSite = aimSite;
+    }
+
+    public Unit getAimUnit() {
+        return aimUnit;
+    }
+
+    public void setAimUnit(Unit aimUnit) {
+        this.aimUnit = aimUnit;
+    }
+
+    public BaseSquare getAimRegion() {
+        return aimRegion;
+    }
+
+    public void setAimRegion(BaseSquare aimRegion) {
+        this.aimRegion = aimRegion;
     }
 
     @Override
@@ -45,7 +84,7 @@ public class GameCommand extends AbstractCommand{
         return "GameCommand{" +
                 "sendTypeEnum=" + sendTypeEnum +
                 ", gameCommendEnum=" + gameCommendEnum +
-                ", pointSite=" + pointSite +
+                ", pointSite=" + aimSite +
                 '}';
     }
 }

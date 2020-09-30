@@ -167,6 +167,8 @@ public class AppUtil {
         return new Position(cUnit.getRow(), cUnit.getColumn());
     }
 
+
+
     /**
      * 获取第几个单位
      *
@@ -480,4 +482,10 @@ public class AppUtil {
         return false;
     }
 
+    // ****************************************新的方法***********************************************
+
+    // 比较位置是否相等
+    public static boolean siteEquals(Unit unit, Site site){
+        return unit.getRow().equals(site.getRow()) && unit.getColumn().equals(site.getColumn());
+    }
 }

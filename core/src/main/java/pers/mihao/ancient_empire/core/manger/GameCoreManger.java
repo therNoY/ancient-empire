@@ -49,7 +49,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     private static final int JOIN_TIME = 20;
 
     /* 初始化注册是事件处理器 */
-    Map<GameEventEnum, Handler> handlerMap = new HashMap<>(GameEventEnum.values().length);
+    Map<GameEventEnum, Class<Handler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
 
     /* 游戏上下文 创建房间 */
     Map<String, GameContext> contextMap = new ConcurrentHashMap<>(16);
@@ -74,8 +74,9 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     public void handelTask(GameEvent event) {
         GameContext.setUserId(event.getUserId());
         try {
-            Handler handler = handlerMap.get(event.getEvent());
-            if (handler != null) {
+            Class clazz = handlerMap.get(event.getEvent());
+            if (clazz != null) {
+                Handler handler = (Handler) clazz.newInstance();
                 handler.setGameContext(contextMap.get(event.getGameId()));
                 // 处理任务返回 处理任务结果
                 List<Command> commands = handler.handler(event);
@@ -111,10 +112,9 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             handlerName = StringUtil.underscoreToHump(gameEventEnum.toString(), true);
             classPathName = packName + BaseConstant.POINT + handlerName + className;
             try {
-                handlerClass = Class.forName(classPathName);
-                handler = (Handler) handlerClass.newInstance();
+                Class clazz = this.getClass().getClassLoader().loadClass(classPathName);
                 log.info("{} 事件处理注册成功", handlerName);
-                handlerMap.put(gameEventEnum, handler);
+                handlerMap.put(gameEventEnum, clazz);
             } catch (Exception e) {
                 log.error("{} 事件处理注册失败", handlerName);
             }
