@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
  * @Author mh32736
  * @Date 2020/9/17 9:51
  */
-public class RoundStartHandler extends AbstractGameEventHandler{
+public class RoundStartHandler extends BaseHandler {
 
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {

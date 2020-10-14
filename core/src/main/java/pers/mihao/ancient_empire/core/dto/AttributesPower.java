@@ -1,11 +1,17 @@
 package pers.mihao.ancient_empire.core.dto;
 
 /**
- * 用于确定单位的攻击力
+ * 单位的攻击力 和结果加成
  */
 public class AttributesPower {
-    public Integer num; // 基础攻击力/防御力
-    public Float addition; // 加成
+    /**
+     * 基础攻击力/防御力
+     */
+    public Integer num;
+    /**
+     * 攻击/防御 加成
+     */
+    public Float addition;
 
     public AttributesPower() {
     }

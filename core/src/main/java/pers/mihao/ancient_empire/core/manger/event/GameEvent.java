@@ -22,6 +22,11 @@ public class GameEvent extends AbstractEvent {
     /* 被动接受的位置 */
     private Site aimSite;
 
+    /**
+     * 地形的index
+     */
+    private Integer regionIndex;
+
     /*游戏的事件*/
     private GameEventEnum event;
 
@@ -63,5 +68,25 @@ public class GameEvent extends AbstractEvent {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public Integer getRegionIndex() {
+        return regionIndex;
+    }
+
+    public void setRegionIndex(Integer regionIndex) {
+        this.regionIndex = regionIndex;
+    }
+
+    @Override
+    public String toString() {
+        return "GameEvent{" +
+                "gameId='" + gameId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", initiateSite=" + initiateSite +
+                ", aimSite=" + aimSite +
+                ", regionIndex=" + regionIndex +
+                ", event=" + event +
+                '}';
     }
 }

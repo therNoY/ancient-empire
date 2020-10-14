@@ -6,6 +6,7 @@ package pers.mihao.ancient_empire.base.bo;
 public class BaseUnit extends BaseSquare {
 
     private Integer row;
+
     private Integer column;
     /* 类型ID */
     private Integer typeId;

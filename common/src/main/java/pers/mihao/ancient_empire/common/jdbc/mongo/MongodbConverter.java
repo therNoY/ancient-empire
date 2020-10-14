@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.common.jdbc.mongo;
 
 import pers.mihao.ancient_empire.common.jdbc.mongo.annotation.QueryField;
-import pers.mihao.ancient_empire.common.reflact.ReflectUtil;
+import pers.mihao.ancient_empire.common.util.ReflectUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 
 import java.lang.reflect.Field;

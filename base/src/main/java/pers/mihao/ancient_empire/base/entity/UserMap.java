@@ -4,6 +4,7 @@ import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import pers.mihao.ancient_empire.base.bo.Region;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -23,7 +24,7 @@ public class UserMap implements Serializable {
     // 单位信息
     private List<BaseUnit> units;
     // 地形信息
-    private List<BaseSquare> regions;
+    private List<Region> regions;
     // 地图的名字
     private String mapName;
     // 列
@@ -61,11 +62,11 @@ public class UserMap implements Serializable {
         this.units = units;
     }
 
-    public List<BaseSquare> getRegions() {
+    public List<Region> getRegions() {
         return regions;
     }
 
-    public void setRegions(List<BaseSquare> regions) {
+    public void setRegions(List<Region> regions) {
         this.regions = regions;
     }
 

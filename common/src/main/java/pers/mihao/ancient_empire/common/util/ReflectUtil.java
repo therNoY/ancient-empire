@@ -1,6 +1,8 @@
-package pers.mihao.ancient_empire.common.reflact;
+package pers.mihao.ancient_empire.common.util;
 
 
+import javafx.util.Pair;
+import pers.mihao.ancient_empire.common.dto.GetSetDTO;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
@@ -8,10 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @version 1.0
@@ -23,6 +22,8 @@ public class ReflectUtil {
     private static final String GET = "get";
 
     private static final String SET = "set";
+
+    private static Map<Class, Map<String, GetSetDTO>> getSetMap = new HashMap<>(16);
 
 
     private ReflectUtil() {
@@ -132,6 +133,7 @@ public class ReflectUtil {
 
     /**
      * 获取字段对应的get方法
+     *
      * @param fieldName
      * @param clazz
      * @return
@@ -139,7 +141,7 @@ public class ReflectUtil {
     public static Method getGetter(String fieldName, Class clazz) {
         String methodName = GET.concat(getMethodField(fieldName));
         Method[] methods = clazz.getMethods();
-        for(Method method : methods) {
+        for (Method method : methods) {
             if (method.getName().equals(methodName) && method.getParameterTypes().length == 0) {
                 return method;
             }
@@ -147,7 +149,46 @@ public class ReflectUtil {
         return null;
     }
 
-    private static String getMethodField(String name){
+    /**
+     * 获取一个类的所有getset
+     *
+     * @param clazz
+     * @return
+     */
+    public static Map<String, GetSetDTO> getAllGetSetMethod(Class clazz) {
+        Map<String, GetSetDTO> all;
+        if ((all = getSetMap.get(clazz)) == null) {
+            all = new HashMap<>();
+            List<Field> fs = listFields(clazz);
+            Method[] methods = clazz.getMethods();
+            String getName, setName;
+            for (Field field : fs) {
+                Method get = null, set = null;
+                getName = GET.concat(getMethodField(field.getName()));
+                setName = SET.concat(getMethodField(field.getName()));
+                for (Method method : methods) {
+                    if (get != null && set != null) {
+                        break;
+                    } else {
+                        if (get == null && method.getName().equals(getName)) {
+                            get = method;
+                            continue;
+                        }
+                        if (set == null && method.getName().equals(setName)) {
+                            set = method;
+                        }
+                    }
+                }
+                if (set != null && get != null) {
+                    all.put(field.getName(), new GetSetDTO(get, set));
+                }
+            }
+            getSetMap.put(clazz, all);
+        }
+        return all;
+    }
+
+    private static String getMethodField(String name) {
         if (name != null && name.length() > 0) {
             return Character.toUpperCase(name.charAt(0)) + name.substring(1);
         }

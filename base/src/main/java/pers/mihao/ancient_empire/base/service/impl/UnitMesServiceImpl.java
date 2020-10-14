@@ -153,8 +153,8 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
                 UnitInfo unitInfo = new UnitInfo();
                 UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(unitMes.getType(), 1);
                 List<Ability> abilityList = abilityService.getUnitAbilityListByType(unitMes.getType());
-                unitInfo.setUnit(unitMes);
-                unitInfo.setLevel(unitLevelMesMes);
+                unitInfo.setUnitMes(unitMes);
+                unitInfo.setLevelMes(unitLevelMesMes);
                 unitInfo.setAbilities(abilityList);
                 unitInfoList.add(unitInfo);
             }else {
@@ -163,8 +163,8 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
                     UnitInfo unitInfo = new UnitInfo();
                     UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(unitMes.getType(), 1);
                     List<Ability> abilityList = abilityService.getUnitAbilityListByType(unitMes.getType());
-                    unitInfo.setUnit(unitMes);
-                    unitInfo.setLevel(unitLevelMesMes);
+                    unitInfo.setUnitMes(unitMes);
+                    unitInfo.setLevelMes(unitLevelMesMes);
                     unitInfo.setAbilities(abilityList);
                     unitInfoList.add(unitInfo);
                 }

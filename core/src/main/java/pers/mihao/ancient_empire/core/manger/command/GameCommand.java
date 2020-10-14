@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.core.manger.command;
 
+import com.alibaba.fastjson.JSONObject;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
@@ -35,7 +37,17 @@ public class GameCommand extends AbstractCommand{
     /**
      * 目标地形
      */
-    private BaseSquare aimRegion;
+    private Region aimRegion;
+
+    /**
+     * 单位的Index
+     */
+    private Integer unitIndex;
+
+    /**
+     * 非通用信息
+     */
+    private JSONObject extMes;
 
 
 
@@ -71,12 +83,28 @@ public class GameCommand extends AbstractCommand{
         this.aimUnit = aimUnit;
     }
 
-    public BaseSquare getAimRegion() {
+    public Region getAimRegion() {
         return aimRegion;
     }
 
-    public void setAimRegion(BaseSquare aimRegion) {
+    public void setAimRegion(Region aimRegion) {
         this.aimRegion = aimRegion;
+    }
+
+    public Integer getUnitIndex() {
+        return unitIndex;
+    }
+
+    public void setUnitIndex(Integer unitIndex) {
+        this.unitIndex = unitIndex;
+    }
+
+    public JSONObject getExtMes() {
+        return extMes;
+    }
+
+    public void setExtMes(JSONObject extMes) {
+        this.extMes = extMes;
     }
 
     @Override
@@ -84,7 +112,11 @@ public class GameCommand extends AbstractCommand{
         return "GameCommand{" +
                 "sendTypeEnum=" + sendTypeEnum +
                 ", gameCommendEnum=" + gameCommendEnum +
-                ", pointSite=" + aimSite +
+                ", aimSite=" + aimSite +
+                ", aimUnit=" + aimUnit +
+                ", aimRegion=" + aimRegion +
+                ", unitIndex=" + unitIndex +
+                ", extMes=" + extMes +
                 '}';
     }
 }

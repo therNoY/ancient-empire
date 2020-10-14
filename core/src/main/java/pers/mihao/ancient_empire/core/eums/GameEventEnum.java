@@ -36,6 +36,24 @@ public enum GameEventEnum implements BaseEnum {
     CLICK_REGION,
 
     /**
+     * 点击移动区域 准备移动事件
+     * 通知 SHOW_MOVE_LINE
+     */
+    CLICK_MOVE_AREA,
+
+    /**
+     * 点击移动的目标点 移动
+     * 通知 移动单位 MOVE_UNIT 通知不展示移动区域 DIS_SHOW_MOVE_AREA 并且展示actionSHOW_ACTION
+     */
+    CLICK_AIM_POINT,
+
+    /**
+     * 点击选择指针框 可能是攻击单位 召唤单位 治疗单位 给一个单位重新加回合 具体
+     * 需要根据状态机判断, 然后通知 攻击/召唤/治疗 动作
+     */
+    CLICK_CHOOSE_POINT,
+
+    /**
      * 准备攻击事件 获取攻击范围 通知 SHOW_ATTACH_AREA
      */
     ATTACH_UNIT_START,

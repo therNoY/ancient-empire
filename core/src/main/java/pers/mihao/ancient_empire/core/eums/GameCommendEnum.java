@@ -13,6 +13,10 @@ public enum GameCommendEnum implements BaseEnum {
      */
     CHANGE_CURR_POINT,
     /**
+     * 改变展示面板的背景颜色
+     */
+    CHANGE_CURR_BG_COLOR,
+    /**
      * 改变当前单位
      */
     CHANGE_CURR_UNIT,
@@ -26,9 +30,19 @@ public enum GameCommendEnum implements BaseEnum {
     SHOW_ACTION,
 
     /**
+     * 展示攻击点
+     */
+    SHOW_ATTACH_POINT,
+
+    /**
      * 展示移动区域
      */
     SHOW_MOVE_AREA,
+
+    /**
+     * 不展示移动区域
+     */
+    DIS_SHOW_MOVE_AREA,
 
     /**
      * 展示移动路线
@@ -36,14 +50,24 @@ public enum GameCommendEnum implements BaseEnum {
     SHOW_MOVE_LINE,
 
     /**
-     * 单位移动
+     * 移动单位
      */
-    UNIT_MOVE,
+    MOVE_UNIT,
 
     /**
      * 展示攻击区域
      */
     SHOW_ATTACH_AREA,
+
+    /**
+     * 不展示攻击区域
+     */
+    DIS_SHOW_ATTACH_AREA,
+
+    /**
+     * 回退移动
+     */
+    ROLLBACK_MOVE,
 
     /**
      * 坟墓消失
@@ -63,9 +87,19 @@ public enum GameCommendEnum implements BaseEnum {
     MOVE_POINT,
 
     /**
-     * 单位攻击的动画
+     * 在特定的点展示攻击动画
      */
-    ATTACH_ACTIVE,
+    RUSH_UNIT,
+
+    /**
+     * 改变单位血量
+     */
+    LEFT_CHANGE,
+
+    /**
+     * 在特定的点展示攻击动画
+     */
+    SHOW_ATTACH_ANIM,
 
     /**
      * 单位被攻击动画

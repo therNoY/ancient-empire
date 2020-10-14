@@ -34,6 +34,8 @@ public class UserRecord implements Serializable {
     private Integer currentRound;
     // 当前行动的军队color
     private String currColor;
+    // 当前军队的index
+    private Integer currArmyIndex;
     // 当前阵容
     private Integer currCamp;
     // 当前点
@@ -43,9 +45,9 @@ public class UserRecord implements Serializable {
     // 当前游戏的玩家ID
     private String currPlayer;
     // 当前单位
-    private Unit currUnit;
+    private UnitInfo currUnit;
     // 当前地形
-    private BaseSquare currRegion;
+    private RegionInfo currRegion;
 
 
     public Integer getMaxPop() {
@@ -99,6 +101,14 @@ public class UserRecord implements Serializable {
 
     public GameMap getGameMap() {
         return gameMap;
+    }
+
+    public Integer getCurrArmyIndex() {
+        return currArmyIndex;
+    }
+
+    public void setCurrArmyIndex(Integer currArmyIndex) {
+        this.currArmyIndex = currArmyIndex;
     }
 
     public void setGameMap(GameMap gameMap) {
@@ -169,19 +179,19 @@ public class UserRecord implements Serializable {
         this.currPlayer = currPlayer;
     }
 
-    public Unit getCurrUnit() {
+    public UnitInfo getCurrUnit() {
         return currUnit;
     }
 
-    public void setCurrUnit(Unit currUnit) {
+    public void setCurrUnit(UnitInfo currUnit) {
         this.currUnit = currUnit;
     }
 
-    public BaseSquare getCurrRegion() {
+    public RegionInfo getCurrRegion() {
         return currRegion;
     }
 
-    public void setCurrRegion(BaseSquare currRegion) {
+    public void setCurrRegion(RegionInfo currRegion) {
         this.currRegion = currRegion;
     }
 

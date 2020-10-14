@@ -26,6 +26,16 @@ public class BaseConstant {
     public static final String POINT = ".";
 
     /**
+     * 逗号
+     */
+    public static final String COMMA = ",";
+
+    /**
+     * linux 分隔符
+     */
+    public static final String LINUX_SEPARATOR = "/";
+
+    /**
      * 下划线
      */
     public static final String UNDER_LINE = "_";

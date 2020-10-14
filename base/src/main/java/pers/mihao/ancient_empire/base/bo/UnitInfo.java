@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.base.bo;
 
-import java.io.Serializable;
 import java.util.List;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
@@ -9,37 +8,50 @@ import pers.mihao.ancient_empire.base.entity.UnitMes;
 /**
  * 返回一个详细的单位 信息
  */
-public class UnitInfo implements Serializable {
+public class UnitInfo extends Unit {
 
     private static final long serialVersionUID = 1L;
 
     public UnitInfo() {
     }
 
-    public UnitInfo(UnitMes unit, UnitLevelMes level, List<Ability> abilities) {
-        this.unit = unit;
-        this.level = level;
+    public UnitInfo(UnitMes unitMes, UnitLevelMes levelMes, List<Ability> abilities) {
+        this.unitMes = unitMes;
+        this.levelMes = levelMes;
         this.abilities = abilities;
     }
 
-    private UnitMes unit;
-    private UnitLevelMes level;
+    /**
+     * 单位的信息
+     */
+    private UnitMes unitMes;
+    /**
+     * 单位的等级信息
+     */
+    private UnitLevelMes levelMes;
+    /**
+     * 单位的能力信息
+     */
     private List<Ability> abilities;
+    /**
+     * 单位脚下的地形信息
+     */
+    private RegionInfo regionInfo;
 
-    public UnitMes getUnit() {
-        return unit;
+    public UnitMes getUnitMes() {
+        return unitMes;
     }
 
-    public void setUnit(UnitMes unit) {
-        this.unit = unit;
+    public void setUnitMes(UnitMes unitMes) {
+        this.unitMes = unitMes;
     }
 
-    public UnitLevelMes getLevel() {
-        return level;
+    public UnitLevelMes getLevelMes() {
+        return levelMes;
     }
 
-    public void setLevel(UnitLevelMes level) {
-        this.level = level;
+    public void setLevelMes(UnitLevelMes levelMes) {
+        this.levelMes = levelMes;
     }
 
     public List<Ability> getAbilities() {
@@ -48,5 +60,22 @@ public class UnitInfo implements Serializable {
 
     public void setAbilities(List<Ability> abilities) {
         this.abilities = abilities;
+    }
+
+    public RegionInfo getRegionInfo() {
+        return regionInfo;
+    }
+
+    public void setRegionInfo(RegionInfo regionInfo) {
+        this.regionInfo = regionInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "UnitInfo{" +
+                "unitMes=" + unitMes +
+                ", levelMes=" + levelMes +
+                ", abilities=" + abilities +
+                '}';
     }
 }

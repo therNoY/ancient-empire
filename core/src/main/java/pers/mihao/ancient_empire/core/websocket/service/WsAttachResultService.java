@@ -60,7 +60,7 @@ public class WsAttachResultService {
 
     @Value("${experience.attach}")
     Integer attachExperience;
-    @Value("${experience.counterattack}")
+    @Value("${experience.antiAttack}")
     Integer counterattackExperience;
     @Value("${experience.kill}")
     Integer killExperience;
@@ -130,7 +130,7 @@ public class WsAttachResultService {
         if (counterattack && beAttachUnitMes.getMinAttachRange() > 1) {
             counterattack = false;
         }
-        resultDto.setCounterattack(counterattack);
+        resultDto.setAntiAttack(counterattack);
 
         // 4.只有可以反击的情况才可以 获取反击结果
         if (counterattack) {
@@ -138,7 +138,7 @@ public class WsAttachResultService {
             AttachResult counterattackResult = getOnceAttachResult(false, attachSituation, record, beAttachUnit,
                 attachUnit,
                 beAttachUnitMes, beAttachLevelUnitMes, attachUnitLevelMes, beAttachAbility, abilityList);
-            resultDto.setCounterattackResult(counterattackResult);
+            resultDto.setAntiAttackResult(counterattackResult);
         }
 
         resultDto.setAttachSituation(attachSituation);

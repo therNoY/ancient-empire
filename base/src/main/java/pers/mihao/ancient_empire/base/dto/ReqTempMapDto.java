@@ -2,26 +2,27 @@ package pers.mihao.ancient_empire.base.dto;
 
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Region;
 
 public class ReqTempMapDto {
 
-    List<BaseSquare> regionList;
+    List<Region> regionList;
 
-    List<BaseSquare> unitList;
+    List<Region> unitList;
 
-    public List<BaseSquare> getRegionList() {
+    public List<Region> getRegionList() {
         return regionList;
     }
 
-    public void setRegionList(List<BaseSquare> regionList) {
+    public void setRegionList(List<Region> regionList) {
         this.regionList = regionList;
     }
 
-    public List<BaseSquare> getUnitList() {
+    public List<Region> getUnitList() {
         return unitList;
     }
 
-    public void setUnitList(List<BaseSquare> unitList) {
+    public void setUnitList(List<Region> unitList) {
         this.unitList = unitList;
     }
 }

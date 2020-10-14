@@ -34,7 +34,7 @@ public abstract class AbstractTaskQueueManger<T> implements TaskQueueManger<T> {
      * @param t
      */
     @Override
-    public void addTask(T t) {
+    public final void addTask(T t) {
         taskPool.submit(new TaskHandel(t));
     }
 

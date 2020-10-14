@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.base.bo.BaseSquare;
-import pers.mihao.ancient_empire.base.bo.GameMap;
-import pers.mihao.ancient_empire.base.bo.Position;
-import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
@@ -57,14 +53,12 @@ public class GameCoreHelper {
             action.setRow((float) (cUnit.getRow() + 1));
             action.setColumn((float) (cUnit.getColumn() + 0.16));
             respActions.add(action);
-
         } else if (actionList.size() == 2) {
             // 2个action一个显示在上面 一个显示下面
             RespAction action = new RespAction(actionList.get(0));
             action.setRow((float) (cUnit.getRow() - 1));
             action.setColumn((float) (cUnit.getColumn() + 0.16));
             respActions.add(action);
-
             RespAction action2 = new RespAction(actionList.get(1));
             action2.setRow((float) (cUnit.getRow() + 1));
             action2.setColumn((float) (cUnit.getColumn() + 0.16));
@@ -106,8 +100,6 @@ public class GameCoreHelper {
             action4.setRow((float) (cUnit.getRow() + 0.16));
             action4.setColumn((float) (cUnit.getColumn() + 1));
             respActions.add(action4);
-        } else {
-            throw new AncientEmpireException("不可能存在的Action");
         }
 
         return respActions;
@@ -158,7 +150,7 @@ public class GameCoreHelper {
      *
      * @return
      */
-    public static BaseSquare getRegionByPosition(List<BaseSquare> regions, int row, int column, Integer mapColumn) {
+    public static BaseSquare getRegionByPosition(List<Region> regions, int row, int column, Integer mapColumn) {
         return regions.get((row - 1) * mapColumn - 1 + column);
     }
 

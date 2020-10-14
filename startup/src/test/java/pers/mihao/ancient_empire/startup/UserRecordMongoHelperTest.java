@@ -31,14 +31,14 @@ public class UserRecordMongoHelperTest {
     @Test
     public void name() {
         String id = "9e6d799da47f452a8afa9c02907b26ad";
-//        UserRecord userRecord = userRecordRepository.findById(id).get();
+//        UserRecord record = userRecordRepository.findById(id).get();
 //        mongoHelper.addRecordTomb(id, new Position(10,10));
         Position tomb = new Position(9,7);
         Query query = Query.query(Criteria.where("_id").is(id));
         Update update = new Update().pull("tomb", tomb);
         UpdateResult result = mongoTemplate.updateFirst(query, update, UserRecord.class);
         System.out.println(result.getMatchedCount());
-//        List<Army> armyList = userRecord.getArmyList();
+//        List<Army> armyList = record.getArmyList();
 //        for (Army army: armyList) {
 //            if (army.getColor().equals("blue")) {
 //                army.setMoney(army.getMoney() + 100);

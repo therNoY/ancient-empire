@@ -3,10 +3,15 @@ package pers.mihao.ancient_empire.base.enums;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 单位拥有的能力类型枚举
  */
 public enum AbilityEnum implements BaseEnum {
+
+
     /**
      * 村庄捕获
      */
@@ -22,19 +27,19 @@ public enum AbilityEnum implements BaseEnum {
     /**
      * 召唤师
      */
-    SUMMONER, 
+    SUMMONER,
     /**
      * 净化光环
      */
-    PURIFY, 
+    PURIFY,
     /**
      * 空军
      */
-    FLY, 
+    FLY,
     /**
      * 森林之子
      */
-    FOREST_CLOSE, 
+    FOREST_CLOSE,
     /**
      * 毒物
      */
@@ -42,67 +47,74 @@ public enum AbilityEnum implements BaseEnum {
     /**
      * 致盲
      */
-    BLINDER, 
+    BLINDER,
     /**
      * 机动部队
      */
-    ASSAULT, 
+    ASSAULT,
     /**
      * 破坏者
      */
-    DESTROYER, 
+    DESTROYER,
     /**
      * 远程防御
      */
-    REMOTE_DEFENSE, 
+    REMOTE_DEFENSE,
     /**
      * 山之子
      */
-    HILL_CLOSE, 
+    HILL_CLOSE,
     /**
      * 虚弱光环
      */
-    WEAKER, 
+    WEAKER,
     /***
      * 近战大师
      */
-    MELEE_MASTER, 
+    MELEE_MASTER,
     /**
      * 城堡捕获者
      */
-    CASTLE_GET, 
+    CASTLE_GET,
     /**
      * 维修者
      */
-    REPAIR, 
+    REPAIR,
     /**
      * 亡灵
      */
-    UNDEAD, 
+    UNDEAD,
     /**
      * 治疗者
      */
-    HEALER, 
+    HEALER,
     /**
      * 攻击光环
      */
-    ATTACKER, 
+    ATTACKER,
     /**
      * 血越少于强
      */
-    BLOOD_THIRSTY, 
+    BLOOD_THIRSTY,
     /**
      * 死亡领主
      */
-    DEAD_KING; 
+    DEAD_KING;
 
+
+    private final static Map<AbilityEnum, Ability> map = new HashMap(16);
 
     /**
      * 用于比较
+     *
      * @return
      */
     public Ability ability() {
-        return new Ability(this.type());
+        Ability ability = null;
+        if (map.get(this) != null) {
+            ability = new Ability(this.type());
+            map.put(this, ability);
+        }
+        return ability;
     }
-
 }

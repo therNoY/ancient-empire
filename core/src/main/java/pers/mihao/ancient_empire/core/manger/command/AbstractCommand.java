@@ -7,4 +7,14 @@ package pers.mihao.ancient_empire.core.manger.command;
  */
 public abstract class AbstractCommand implements Command {
 
+    private Integer order;
+
+    @Override
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
 }

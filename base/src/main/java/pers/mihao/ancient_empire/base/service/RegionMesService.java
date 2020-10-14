@@ -22,5 +22,10 @@ public interface RegionMesService extends IService<RegionMes> {
 
     List<RegionMes> getEnableRegionByUserId(Integer id);
 
+    /**
+     * 根据地形的type 获取地形信息
+     * @param type
+     * @return
+     */
     RegionMes getRegionByType(String type);
 }

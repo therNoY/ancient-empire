@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UnitLevelMes">
         <id column="id" property="id" />
         <result column="unit_id" property="unitId" />
-        <result column="level" property="level" />
+        <result column="levelMes" property="levelMes" />
         <result column="min_attack" property="minAttack" />
         <result column="max_attack" property="maxAttack" />
         <result column="physical_defense" property="physicalDefense" />
@@ -16,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, unit_id, level, min_attack, max_attack, physical_defense, magic_defense, speed
+        id, unit_id, levelMes, min_attack, max_attack, physical_defense, magic_defense, speed
     </sql>
 
 </mapper>

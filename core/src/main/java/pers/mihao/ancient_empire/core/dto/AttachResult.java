@@ -14,7 +14,7 @@ public class AttachResult  implements Serializable {
     private Integer[] lastLife; // 被攻击者剩余血量
     private String endStatus; // 被攻击者的状态 可能会中毒
 
-    private Integer endExperience; // 结束时的经验
+    private Integer endExperience; // 攻击者结束时的经验
     private Boolean leaveUp; // 攻击者是否升级
 
     public Integer[] getAttach() {

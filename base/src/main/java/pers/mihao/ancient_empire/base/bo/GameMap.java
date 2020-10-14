@@ -13,12 +13,12 @@ public class GameMap implements Serializable {
     // 高
     private Integer column;
     // 一个 n*m 的区域组成的地图
-    List<BaseSquare> regions;
+    List<Region> regions;
 
     public GameMap() {
     }
 
-    public GameMap(Integer row, Integer column, List<BaseSquare> regions) {
+    public GameMap(Integer row, Integer column, List<Region> regions) {
         this.row = row;
         this.column = column;
         this.regions = regions;
@@ -40,11 +40,11 @@ public class GameMap implements Serializable {
         this.column = column;
     }
 
-    public List<BaseSquare> getRegions() {
+    public List<Region> getRegions() {
         return regions;
     }
 
-    public void setRegions(List<BaseSquare> regions) {
+    public void setRegions(List<Region> regions) {
         this.regions = regions;
     }
 }

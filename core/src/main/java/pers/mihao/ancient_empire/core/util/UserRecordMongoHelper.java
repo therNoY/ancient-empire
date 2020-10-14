@@ -10,10 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.BaseSquare;
-import pers.mihao.ancient_empire.base.bo.GameMap;
-import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.dto.BuyUnitDto;
 import pers.mihao.ancient_empire.base.dto.SummonDto;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -54,7 +51,7 @@ public class UserRecordMongoHelper {
         // 先删除 在添加
         Query query = Query.query(Criteria.where("_id").is(record.getUuid()));
         mongoTemplate.remove(query, UserRecord.class);
-        mongoTemplate.save(record, "userRecord");
+        mongoTemplate.save(record, "record");
         // 添加
         return 1;
     }
@@ -152,7 +149,7 @@ public class UserRecordMongoHelper {
      */
     public void handleRepairOcp(RespRepairOcpResult repairResult) {
         UserRecord record = userRecordService.getRecordById(repairResult.getRecordId());
-        List<BaseSquare> regions = record.getGameMap().getRegions();
+        List<Region> regions = record.getGameMap().getRegions();
         BaseSquare square = repairResult.getSquare();
         regions.get(repairResult.getRegionIndex()).setColor(square.getColor());
         regions.get(repairResult.getRegionIndex()).setType(square.getType());

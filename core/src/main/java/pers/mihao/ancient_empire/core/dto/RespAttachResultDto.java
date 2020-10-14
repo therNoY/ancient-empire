@@ -10,8 +10,8 @@ import pers.mihao.ancient_empire.base.bo.Position;
 public class RespAttachResultDto implements Serializable {
 
     private AttachResult attachResult; // 攻击结果
-    private Boolean counterattack; //是否被反击
-    private AttachResult counterattackResult; // 反击结果
+    private Boolean antiAttack; //是否被反击
+    private AttachResult antiAttackResult; // 反击结果
     private AttachSituation attachSituation; // 一次攻击加成结果
     private Boolean secondMove; // 单位是否有二次移动
     private List<Position> moveArea; // 单位二次移动的移动范围
@@ -24,20 +24,20 @@ public class RespAttachResultDto implements Serializable {
         this.attachResult = attachResult;
     }
 
-    public Boolean getCounterattack() {
-        return counterattack;
+    public Boolean getAntiAttack() {
+        return antiAttack;
     }
 
-    public void setCounterattack(Boolean counterattack) {
-        this.counterattack = counterattack;
+    public void setAntiAttack(Boolean antiAttack) {
+        this.antiAttack = antiAttack;
     }
 
-    public AttachResult getCounterattackResult() {
-        return counterattackResult;
+    public AttachResult getAntiAttackResult() {
+        return antiAttackResult;
     }
 
-    public void setCounterattackResult(AttachResult counterattackResult) {
-        this.counterattackResult = counterattackResult;
+    public void setAntiAttackResult(AttachResult antiAttackResult) {
+        this.antiAttackResult = antiAttackResult;
     }
 
     public AttachSituation getAttachSituation() {

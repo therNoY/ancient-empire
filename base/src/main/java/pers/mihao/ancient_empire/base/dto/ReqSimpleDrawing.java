@@ -2,13 +2,14 @@ package pers.mihao.ancient_empire.base.dto;
 
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Region;
 
 public class ReqSimpleDrawing {
     private Integer index;
     private String type;
     private Integer row;
     private Integer column;
-    List<BaseSquare> regionList;
+    List<Region> regionList;
 
     public Integer getIndex() {
         return index;
@@ -42,11 +43,11 @@ public class ReqSimpleDrawing {
         this.column = column;
     }
 
-    public List<BaseSquare> getRegionList() {
+    public List<Region> getRegionList() {
         return regionList;
     }
 
-    public void setRegionList(List<BaseSquare> regionList) {
+    public void setRegionList(List<Region> regionList) {
         this.regionList = regionList;
     }
 }

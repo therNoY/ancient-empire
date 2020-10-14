@@ -1,11 +1,9 @@
 package pers.mihao.ancient_empire.core.manger;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +63,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             });
 
 
+
     /**
      * 线程池处理的任务
      *
@@ -80,9 +79,21 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 handler.setGameContext(contextMap.get(event.getGameId()));
                 // 处理任务返回 处理任务结果
                 List<Command> commands = handler.handler(event);
-                for (Command command : commands) {
-                    GameCommand gameCommand = (GameCommand) command;
-                    gameSessionManger.sendMessage(gameCommand, event.getGameId());
+
+                // 过滤掉需要顺序执行的 其他的直接发送
+                List<Command> orderCommand = commands.stream().filter(command -> command.getOrder() != null)
+                        .sorted(Comparator.comparing(Command::getOrder))
+                        .collect(Collectors.toList());
+
+                gameSessionManger.sendOrderMessage2Game(orderCommand, event.getGameId());
+
+                if (commands != null && commands.size() > 0) {
+                    for (Command command : commands) {
+                        if (command.getOrder() == null) {
+                            GameCommand gameCommand = (GameCommand) command;
+                            gameSessionManger.sendMessage(gameCommand, event.getGameId());
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -106,8 +117,6 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         String packName = Handler.class.getPackage().getName();
         String className = Handler.class.getSimpleName();
         String handlerName, classPathName;
-        Class handlerClass;
-        Handler handler;
         for (GameEventEnum gameEventEnum : GameEventEnum.values()) {
             handlerName = StringUtil.underscoreToHump(gameEventEnum.toString(), true);
             classPathName = packName + BaseConstant.POINT + handlerName + className;
@@ -138,6 +147,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 gameContext.setUserRecord(userRecord);
                 gameContext.setUserTemplate(userTemplateService.getById(userRecord.getTemplateId()));
                 gameContext.setPlayerCount(playCount);
+                gameContext.setBgColor(userRecord.getCurrColor());
 
                 CyclicBarrier cyclicBarrier = new CyclicBarrier(playCount + 1);
                 gameContext.setStartGame(cyclicBarrier);

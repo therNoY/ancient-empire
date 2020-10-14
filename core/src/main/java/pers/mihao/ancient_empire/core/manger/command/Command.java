@@ -7,4 +7,7 @@ package pers.mihao.ancient_empire.core.manger.command;
  */
 public interface Command {
 
+    Integer getOrder();
+
+
 }

@@ -1,8 +1,9 @@
 package pers.mihao.ancient_empire.core.dto;
 
 import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Site;
 
-public class PathPosition {
+public class PathPosition{
     private Integer row;
     private Integer column;
     private Integer length;
@@ -11,6 +12,11 @@ public class PathPosition {
     }
 
     public PathPosition(Position position) {
+        this.row = position.getRow();
+        this.column = position.getColumn();
+    }
+
+    public PathPosition(Site position) {
         this.row = position.getRow();
         this.column = position.getColumn();
     }

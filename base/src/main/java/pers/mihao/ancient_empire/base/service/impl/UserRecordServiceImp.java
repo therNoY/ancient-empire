@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.*;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.mongo.dao.UserRecordRepository;
 import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
@@ -25,10 +26,12 @@ import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.ColorEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
@@ -47,6 +50,8 @@ public class UserRecordServiceImp implements UserRecordService {
     UserMapService userMapService;
     @Autowired
     UnitMesService unitMesService;
+    @Autowired
+    RegionMesService regionMesService;
     @Autowired
     RedisUtil redisUtil;
     @Autowired
@@ -109,7 +114,11 @@ public class UserRecordServiceImp implements UserRecordService {
         userRecord.setUuid(uuid);
         userRecord.setCurrentRound(1);
         userRecord.setCurrPoint(new Site(1, 1));
-        userRecord.setCurrRegion(userRecord.getGameMap().getRegions().get(0));
+        Region region = userRecord.getGameMap().getRegions().get(0);
+        RegionMes regionMes = regionMesService.getRegionByType(region.getType());
+        RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
+        regionInfo.setColor(region.getColor());
+        userRecord.setCurrRegion(regionInfo);
         // TODO 测试
         if (userMap.getMapName().startsWith("测试地图")) {
             userRecord.setTomb(Arrays.asList(new Position(9, 7)));
@@ -123,13 +132,17 @@ public class UserRecordServiceImp implements UserRecordService {
                 }
             }
         }
-        for (Army army : armyList) {
+        // 设置当前军队信息
+        for (int i = 0; i < armyList.size(); i++) {
+            Army army = armyList.get(i);
             if (army.getOrder() == 1) {
                 userRecord.setCurrColor(army.getColor());
                 userRecord.setCurrCamp(army.getCamp());
+                userRecord.setCurrArmyIndex(i);
                 break;
             }
         }
+
         userRecord.setTemplateId(userMap.getTemplateId());
         // 4.保存记录
         userRecordRepository.save(userRecord);

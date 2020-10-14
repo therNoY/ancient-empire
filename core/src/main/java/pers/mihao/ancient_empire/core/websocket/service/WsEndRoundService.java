@@ -5,10 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.BaseSquare;
-import pers.mihao.ancient_empire.base.bo.Position;
-import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
@@ -100,7 +97,7 @@ public class WsEndRoundService {
         record.setCurrentRound(currentRound);
         record.setCurrCamp(currentArmy.getCamp());
         // 3.改变当前军队的资金
-        List<BaseSquare> regions = record.getGameMap().getRegions();
+        List<Region> regions = record.getGameMap().getRegions();
         int addMoney = 0;
         for (BaseSquare square : regions) {
             if (square.getColor() != null && square.getColor().equals(currentArmy.getColor())) {

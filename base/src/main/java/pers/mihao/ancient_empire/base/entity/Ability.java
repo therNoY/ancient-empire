@@ -96,7 +96,9 @@ public class Ability implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Ability) {
+        if (obj instanceof AbilityEnum) {
+            return this.getType().equals(obj.toString());
+        } else if (obj instanceof Ability) {
             Ability a2 = (Ability) obj;
             if (a2.getType().equals(type)) {
                 return true;

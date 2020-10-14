@@ -15,6 +15,7 @@ import pers.mihao.ancient_empire.auth.enums.UserEnum;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
+import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
@@ -96,7 +97,7 @@ public class UserMapServiceImp implements UserMapService {
         Integer index = reqSimpleDrawing.getIndex();
         String type = reqSimpleDrawing.getType();
         Integer column = reqSimpleDrawing.getColumn();
-        List<BaseSquare> regionList = reqSimpleDrawing.getRegionList();
+        List<Region> regionList = reqSimpleDrawing.getRegionList();
         // 如果是以sea 或者海开头的话
         if (type.startsWith(SEA) || type.startsWith(BANK)) {
             // 画海 获取周围陆地的信息
@@ -200,7 +201,7 @@ public class UserMapServiceImp implements UserMapService {
             return null;
         }
         List<String> colors = new ArrayList<>();
-        List<BaseSquare> regions = userMap.getRegions();
+        List<Region> regions = userMap.getRegions();
         List<BaseUnit> units = userMap.getUnits();
         units.forEach(unit -> {
             if (!colors.contains(unit.getColor())) {
@@ -257,7 +258,7 @@ public class UserMapServiceImp implements UserMapService {
      * @param column
      * @return
      */
-    private Map<Integer, Integer> getAroundSeaMap(int index, List<BaseSquare> regionList, int column) {
+    private Map<Integer, Integer> getAroundSeaMap(int index, List<Region> regionList, int column) {
         Map<Integer, Integer> isSeaMap = new HashMap<>();
 
         // 1. 判断上面的地形
@@ -339,7 +340,7 @@ public class UserMapServiceImp implements UserMapService {
      * @param column
      * @return
      */
-    private Map<Integer, Integer> getAroundLandMap(int index, List<BaseSquare> regionList, int column) {
+    private Map<Integer, Integer> getAroundLandMap(int index, List<Region> regionList, int column) {
         Map<Integer, Integer> isLandMap = new HashMap<>();
 
         // 1. 判断上面的地形

@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.manger;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
@@ -11,12 +12,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.websocket.Session;
 
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.annotation.Manger;
+import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
 /**
@@ -123,7 +126,31 @@ public class GameSessionManger {
             case SEND_TO_SYSTEM:
                 sendMessage2System(command, gameId);
         }
+    }
 
+    /**
+     * 发送有序消息集合
+     *
+     * @param commandList
+     * @param gameId
+     * @throws IOException
+     */
+    public void sendOrderMessage2Game(List<Command> commandList, String gameId) {
+        List<GameSession> gameSessions = sessionMap.get(gameId);
+        if (gameSessions != null) {
+            GameSession gameSession = null;
+            log.info("发送有序命令{} 给群组：{}", commandList, gameId);
+            try {
+                for (int i = 0; i < gameSessions.size(); i++) {
+                    gameSession = gameSessions.get(i);
+                    gameSession.getSession().getBasicRemote().sendText(JSONArray.toJSONString(commandList, SerializerFeature.DisableCircularReferenceDetect));
+                }
+            } catch (IOException e) {
+                log.error("发送数据给用户：{}失败", gameSession.getUserName(), e);
+            }
+
+
+        }
     }
 
     /**
@@ -155,7 +182,7 @@ public class GameSessionManger {
         List<GameSession> gameSessions = sessionMap.get(gameId);
         if (gameSessions != null) {
             GameSession gameSession = null;
-            log.info("ws 发送数据{} 给用户：{}", command, gameId);
+            log.info("发送数据{} 给用户：{}", command, gameId);
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
@@ -181,7 +208,7 @@ public class GameSessionManger {
         List<GameSession> gameSessions = sessionMap.get(gameId);
         if (gameSessions != null) {
             GameSession gameSession = null;
-            log.info("ws 发送数据{} 给群组：{}", command, gameId);
+            log.info("发送数据{} 给群组：{}", command, gameId);
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
@@ -206,7 +233,7 @@ public class GameSessionManger {
         for (Map.Entry<String, List<GameSession>> entry : sessionMap.entrySet()) {
             List<GameSession> gameSessions = entry.getValue();
             GameSession gameSession = null;
-            log.info("ws 发送数据{} 给群组：{}", command, gameId);
+            log.info("发送数据{} 给群组：{}", command, gameId);
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);

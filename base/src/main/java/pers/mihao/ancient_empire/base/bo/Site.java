@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.bo;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * 坐标信息
@@ -25,6 +26,11 @@ public class Site implements Serializable {
         this.column = column;
     }
 
+    public Site(Site site) {
+        this.row = site.getRow();
+        this.column = site.getColumn();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Site) {
@@ -32,6 +38,11 @@ public class Site implements Serializable {
             return row.equals(that.getRow()) && column.equals(that.getColumn());
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row, column);
     }
 
     @Override

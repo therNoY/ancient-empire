@@ -1,12 +1,16 @@
 package pers.mihao.ancient_empire.core.manger;
 
-import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
+import pers.mihao.ancient_empire.core.dto.PathPosition;
+import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
 
 /**
@@ -14,7 +18,7 @@ import java.util.concurrent.CyclicBarrier;
  * @Author mh32736
  * @Date 2020/9/9 20:53
  */
-public class GameContext {
+public class GameContext extends UserTemplateHelper {
 
     private static ThreadLocal<String> userId = new ThreadLocal<>();
 
@@ -33,10 +37,12 @@ public class GameContext {
      */
     private UserRecord userRecord;
 
+
+
     /**
-     * 游戏模板
+     * 状态机
      */
-    private UserTemplate userTemplate;
+    private StatusMachineEnum statusMachine = StatusMachineEnum.NO_CHOOSE;
 
     /**
      * 玩家数量
@@ -44,9 +50,48 @@ public class GameContext {
     private Integer playerCount;
 
     /**
+     * 展示的背景颜色
+     */
+    private String bgColor;
+
+    /**
      * 控制开始游戏
      */
     private CyclicBarrier startGame;
+
+    /**
+     * 将要移动的区域
+     */
+    private List<Site> willMoveArea;
+
+    /**
+     * 将要移动的区域
+     */
+    private List<Site> willAttachArea;
+
+    /**
+     * 准备移动的点
+     */
+    private List<PathPosition> readyMoveLine;
+
+    /**
+     * action
+     */
+    private Set<String> actions;
+
+    /**
+     * 移动前的点
+     */
+    private Site startMoveSite;
+
+    /**
+     * 将被攻击的单位
+     */
+    private Unit beAttachUnit;
+    /**
+     * 准备移动的点
+     */
+    private Site readyMoveSite;
 
     /**
      * 开始游戏时间
@@ -70,6 +115,14 @@ public class GameContext {
         this.userRecord = userRecord;
     }
 
+
+    public List<Site> getWillAttachArea() {
+        return willAttachArea;
+    }
+
+    public void setWillAttachArea(List<Site> willAttachArea) {
+        this.willAttachArea = willAttachArea;
+    }
 
     public static String getUserId(){
         return userId.get();
@@ -95,6 +148,14 @@ public class GameContext {
         this.gameId = gameId;
     }
 
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+    }
+
     public GameTypeEnum getGameTypeEnum() {
         return gameTypeEnum;
     }
@@ -103,13 +164,7 @@ public class GameContext {
         this.gameTypeEnum = gameTypeEnum;
     }
 
-    public UserTemplate getUserTemplate() {
-        return userTemplate;
-    }
 
-    public void setUserTemplate(UserTemplate userTemplate) {
-        this.userTemplate = userTemplate;
-    }
 
     public Integer getPlayerCount() {
         return playerCount;
@@ -125,5 +180,61 @@ public class GameContext {
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+    }
+
+    public StatusMachineEnum getStatusMachine() {
+        return statusMachine;
+    }
+
+    public List<Site> getWillMoveArea() {
+        return willMoveArea;
+    }
+
+    public void setWillMoveArea(List<Site> willMoveArea) {
+        this.willMoveArea = willMoveArea;
+    }
+
+    public void setStatusMachine(StatusMachineEnum statusMachine) {
+        this.statusMachine = statusMachine;
+    }
+
+    public Site getReadyMoveSite() {
+        return readyMoveSite;
+    }
+
+    public void setReadyMoveSite(Site readyMoveSite) {
+        this.readyMoveSite = readyMoveSite;
+    }
+
+    public Site getStartMoveSite() {
+        return startMoveSite;
+    }
+
+    public void setStartMoveSite(Site startMoveSite) {
+        this.startMoveSite = startMoveSite;
+    }
+
+    public Set<String> getActions() {
+        return actions;
+    }
+
+    public void setActions(Set<String> actions) {
+        this.actions = actions;
+    }
+
+    public List<PathPosition> getReadyMoveLine() {
+        return readyMoveLine;
+    }
+
+    public void setReadyMoveLine(List<PathPosition> readyMoveLine) {
+        this.readyMoveLine = readyMoveLine;
+    }
+
+    public Unit getBeAttachUnit() {
+        return beAttachUnit;
+    }
+
+    public void setBeAttachUnit(Unit beAttachUnit) {
+        this.beAttachUnit = beAttachUnit;
     }
 }

@@ -5,12 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.BaseSquare;
-import pers.mihao.ancient_empire.base.bo.GameMap;
-import pers.mihao.ancient_empire.base.bo.Position;
-import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
@@ -72,7 +67,7 @@ public class AppUtil {
      *
      * @return
      */
-    public static BaseSquare getRegionByPosition(List<BaseSquare> regions, int row, int column, Integer mapColumn) {
+    public static BaseSquare getRegionByPosition(List<Region> regions, int row, int column, Integer mapColumn) {
         return regions.get((row - 1) * mapColumn - 1 + column);
     }
 
@@ -317,6 +312,9 @@ public class AppUtil {
      * 将int 转成 Integer[]
      */
     public static Integer[] getArrayByInt(int num) {
+        if (num <= 0) {
+            return new Integer[]{0};
+        }
         char[] chars = String.valueOf(num).toCharArray();
         Integer[] integers = new Integer[chars.length];
         for (int i = 0; i < integers.length; i++) {

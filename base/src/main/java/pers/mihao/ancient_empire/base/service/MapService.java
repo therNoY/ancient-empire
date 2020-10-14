@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface MapService {
 
-    default List<Site> findCastleTitle(List<BaseSquare> regions, Integer row, Integer column){
+    default List<Site> findCastleTitle(List<Region> regions, Integer row, Integer column){
         List<Site> sites = new ArrayList<>();
         BaseSquare region;
         // 获取所有的城堡index 然后设置绝对定位设置城堡的头部
