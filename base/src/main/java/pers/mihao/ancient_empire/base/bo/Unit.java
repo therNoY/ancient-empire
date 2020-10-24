@@ -142,15 +142,9 @@ public class Unit extends Site implements Serializable {
     @Override
     public String toString() {
         return "Unit{" +
-                "id='" + id + '\'' +
                 ", type='" + type + '\'' +
-                ", life=" + Arrays.toString(life) +
-                ", isDead=" + isDead +
-                ", level=" + level +
-                ", isDone=" + isDone +
-                ", status='" + status + '\'' +
-                ", statusPresenceNum=" + statusPresenceNum +
-                ", experience=" + experience +
+                ", row='" + row + '\'' +
+                ", column='" + column + '\'' +
                 '}';
     }
 }

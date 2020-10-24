@@ -80,12 +80,12 @@ public enum GameEventEnum implements BaseEnum {
     CLICK_BUY_ACTION,
 
     /**
-     * 单位占领事件 通知修改地形，通知信息条
+     * 单位修复事件 通知修改地形，通知信息条
      */
     CLICK_REPAIR_ACTION,
 
     /**
-     * 单位修复事件， 通知修改地形，通知信息条
+     * 单位占领事件， 通知修改地形，通知信息条
      */
     CLICK_OCCUPIED_ACTION,
 
@@ -98,6 +98,11 @@ public enum GameEventEnum implements BaseEnum {
      * 单位结束事件， 改变单位信息，（其他单位加血，该状态）
      */
     CLICK_END_ACTION,
+
+    /**
+     * 点击攻击地区
+     */
+    CLICK_ATTACH_AREA,
 
     /**
      * 结束回合事件，通知信息条，

@@ -84,7 +84,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
                         // 移除死亡的单位
                         ArmyUnitIndexDTO indexDTO = (ArmyUnitIndexDTO) extMes.get(ExtMes.ARMY_UNIT_INDEX);
                         Army army = record().getArmyList().get(indexDTO.getArmyIndex());
-                        army.getUnits().remove(indexDTO.getUnitIndex());
+                        army.getUnits().remove(indexDTO.getUnitIndex().intValue());
                         break;
                     case REMOVE_TOMB:
                         // 移除坟墓
@@ -93,10 +93,15 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
 
                     case CHANGE_UNIT_STATUS:
                         // 处理单位升级
-                        changeUnitStatus(gameCommand);
-                        break;
-                    case CHANGE_CURR_POINT:
-                        record().setCurrPoint(gameCommand.getAimSite());
+                        if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
+                            List<UnitStatusInfoDTO> unitStatusList = (List<UnitStatusInfoDTO>) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
+                            for (UnitStatusInfoDTO unitStatus : unitStatusList) {
+                                updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
+                            }
+                        } else {
+                            UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
+                            updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
+                        }
                         break;
                     case CHANGE_CURR_REGION:
                         record().setCurrRegion((RegionInfo) extMes.get(ExtMes.REGION_INFO));
@@ -107,21 +112,37 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
                     case CHANGE_CURR_BG_COLOR:
                         gameContext.setBgColor(extMes.getString(ExtMes.BG_COLOR));
                         break;
-
-
                 }
             }
         }
         return commandList;
     }
 
-    protected void changeUnitStatus(GameCommand gameCommand) {
+    /**
+     * 处理单位升级
+     *
+     * @param gameCommand
+     */
+    @Override
+    protected final void handlerLevelUp(GameCommand gameCommand) {
+        if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
+            List<UnitStatusInfoDTO> unitStatusList = (List<UnitStatusInfoDTO>) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
+            for (UnitStatusInfoDTO unitStatus : unitStatusList) {
+                handlerLevelUp(unitStatus);
+            }
+        } else {
+            UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
+            handlerLevelUp(unitStatus);
+        }
+
+    }
+
+    private void handlerLevelUp(UnitStatusInfoDTO unitStatus) {
         // 更新单位的状态
-        UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
         Unit unit = getUnitByIndex(unitStatus);
         // 判断是否升级
         Integer levelExp = gameContext.getLevelExp(unit.getLevel());
-        if (unitStatus.getExperience() >= levelExp) {
+        if (unitStatus.getExperience() != null && unitStatus.getExperience() >= levelExp) {
             // 可以升级
             int maxLevel = gameContext.getUserTemplate().getUnitMaxLevel();
             if (maxLevel == unit.getLevel()) {
@@ -178,7 +199,25 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
                 }
             }
         }
-        updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
+    }
+
+    /**
+     * 根据颜色判断是否是同一个阵营的
+     *
+     * @param color
+     * @return
+     */
+    protected boolean colorIsCamp(String color) {
+        return currArmy().getCamp() == getCampByColor(color);
+    }
+
+    protected int getCampByColor(String color) {
+        for (Army army : record().getArmyList()) {
+            if (color.equals(army.getColor())) {
+                return army.getCamp();
+            }
+        }
+        return -1;
     }
 
 
@@ -340,8 +379,19 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
      * @param site
      * @return
      */
+    protected int getRegionIndexBySite(Site site) {
+        return (site.getRow() - 1) * gameMap().getColumn() - 1 + site.getColumn();
+    }
+
+    /**
+     * 基础方法 根据位置获取地形
+     *
+     * @param army
+     * @param site
+     * @return
+     */
     protected Region getRegionBySite(Site site) {
-        return gameMap().getRegions().get((site.getRow() - 1) * gameMap().getColumn() - 1 + site.getColumn());
+        return gameMap().getRegions().get(getRegionIndexBySite(site));
     }
 
     /**

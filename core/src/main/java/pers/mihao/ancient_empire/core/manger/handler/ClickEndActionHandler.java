@@ -14,6 +14,8 @@ public class ClickEndActionHandler extends CommonHandler{
 
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
+        currUnit().setRow(currSite().getRow());
+        currUnit().setColumn(currSite().getColumn());
         // 单位结束移动
         sendEndUnitCommend(currUnit(), currUnitArmyIndex());
         // 考虑是否结束回合

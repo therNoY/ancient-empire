@@ -9,6 +9,7 @@ import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,21 +28,19 @@ public class CastleGetActionStrategy extends ActionStrategy {
 
     @Override
     public List<String> getAction(List<Site> sites, UserRecord record, Site aimSite) {
-        List<String> actions =  super.getAction(sites, record, aimSite);
-        if (!actions.contains(ActionEnum.OCCUPIED.type())) {
-            BaseSquare region = AppUtil
+        List<String> actions = new ArrayList<>(1);
+        BaseSquare region = AppUtil
                 .getRegionByPosition(record.getGameMap().getRegions(), aimSite.getRow(), aimSite.getColumn(), record.getGameMap().getColumn());
-            if (region.getType().equals(RegionEnum.CASTLE.type())){
-                // 判断不是右方城镇
-                Army army = null;
-                if (StringUtil.isEmpty(region.getColor())) {
+        if (region.getType().equals(RegionEnum.CASTLE.type())) {
+            // 判断不是右方城镇
+            Army army = null;
+            if (StringUtil.isEmpty(region.getColor())) {
+                actions.add(ActionEnum.OCCUPIED.type());
+                return actions;
+            }
+            if ((army = AppUtil.getArmyByColor(record, region.getColor())) != null) {
+                if (!army.getCamp().equals(record.getCurrCamp())) {
                     actions.add(ActionEnum.OCCUPIED.type());
-                    return actions;
-                }
-                if ((army = AppUtil.getArmyByColor(record, region.getColor())) != null) {
-                    if (!army.getCamp().equals(record.getCurrCamp())) {
-                        actions.add(ActionEnum.OCCUPIED.type());
-                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class SummonerActionStrategy extends ActionStrategy {
 
     @Override
     public List<String> getAction(List<Site> sites, UserRecord record, Site aimSite) {
-        List<String> actions = super.getAction(sites, record, aimSite);
+        List<String> actions = new ArrayList<>(1);
         List<Site> tombList = record.getTomb();
         if (tombList != null && tombList.size() > 0) {
             for (Site p : tombList) {

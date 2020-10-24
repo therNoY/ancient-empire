@@ -54,6 +54,11 @@ public enum StatusMachineEnum {
     WILL_SUMMON( "7_1"),
 
     /**
+     * 即将攻击地形
+     */
+    WILL_ATTACH_REGION( "7_2"),
+
+    /**
      * 攻击中
      */
     ATTACHING( "8_0"),

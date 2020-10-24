@@ -79,15 +79,15 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 handler.setGameContext(contextMap.get(event.getGameId()));
                 // 处理任务返回 处理任务结果
                 List<Command> commands = handler.handler(event);
-
-                // 过滤掉需要顺序执行的 其他的直接发送
-                List<Command> orderCommand = commands.stream().filter(command -> command.getOrder() != null)
-                        .sorted(Comparator.comparing(Command::getOrder))
-                        .collect(Collectors.toList());
-
-                gameSessionManger.sendOrderMessage2Game(orderCommand, event.getGameId());
-
                 if (commands != null && commands.size() > 0) {
+
+                    // 过滤掉需要顺序执行的 其他的直接发送
+                    List<Command> orderCommand = commands.stream().filter(command -> command.getOrder() != null)
+                            .sorted(Comparator.comparing(Command::getOrder))
+                            .collect(Collectors.toList());
+
+                    gameSessionManger.sendOrderMessage2Game(orderCommand, event.getGameId());
+
                     for (Command command : commands) {
                         if (command.getOrder() == null) {
                             GameCommand gameCommand = (GameCommand) command;

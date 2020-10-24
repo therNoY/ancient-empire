@@ -74,16 +74,13 @@ public class ActionStrategy extends AbstractStrategy<ActionStrategy> {
     protected List<String> getAction(List<Site> sites, UserRecord record, Site aimSite) {
         List<String> actions = new ArrayList<>();
         List<Army> ArmyList = record.getArmyList();
-        for (Site p : sites) {
-            for (Army army : ArmyList) {
-                if (!army.getCamp().equals(record.getCurrCamp())) {
-                    List<Unit> units = army.getUnits();
-                    for (Unit unit : units) {
-                        if (!unit.isDead() && unit.getRow().equals(p.getRow()) && unit.getColumn().equals(p.getColumn())) {
-                            actions.add(ActionEnum.ATTACK.type());
-                            actions.add(ActionEnum.END.type());
-                            return actions;
-                        }
+        for (Army army : ArmyList) {
+            if (!army.getCamp().equals(record.getCurrCamp())) {
+                List<Unit> units = army.getUnits();
+                for (Unit unit : units) {
+                    if (!unit.isDead() && sites.contains(unit)) {
+                        actions.add(ActionEnum.ATTACK.type());
+                        break;
                     }
                 }
             }

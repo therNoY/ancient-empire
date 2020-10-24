@@ -31,6 +31,7 @@ public class CommonHandler extends BaseHandler {
     public void changeCurrPoint(Site site) {
         // 设置当前点
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_POINT, site);
+        record().setCurrPoint(site);
     }
 
 
@@ -42,6 +43,9 @@ public class CommonHandler extends BaseHandler {
     public Pair<Integer, UnitInfo> changeCurrUnit(Site site) {
         // 设置当前单位
         Pair<Integer, UnitInfo> unitInfoPair = getUnitInfoFromMapBySite(site);
+        if (currUnit() == null) {
+            record().setCurrUnit(unitInfoPair.getValue());
+        }
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_UNIT, ExtMes.UNIT_INFO, unitInfoPair.getValue());
         return unitInfoPair;
     }
@@ -63,6 +67,10 @@ public class CommonHandler extends BaseHandler {
     public Pair<Integer, UnitInfo> getUnitInfoFromMapBySite(Site site) {
         // 设置当前单位
         Pair<Integer, Unit> unitMes = getUnitFromMapBySite(site);
+        if (unitMes == null) {
+            // 破化者供给房子
+            return null;
+        }
         String id = unitMes.getValue().getTypeId().toString();
         UnitInfo unitInfo = unitMesService.getUnitInfo(id, unitMes.getValue().getLevel());
 
@@ -158,6 +166,20 @@ public class CommonHandler extends BaseHandler {
         sendEndUnitCommend(currUnit(), armyUnitIndexDTO);
     }
 
+
+    /**
+     * 改变地形信息
+     * @param regionIndex
+     * @param region
+     */
+    protected Stream changeRegion(int regionIndex, Region region) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ExtMes.REGION_INDEX, regionIndex);
+        jsonObject.put(ExtMes.REGION, region);
+        record().getGameMap().getRegions().set(regionIndex, region);
+        return commandStream().toGameCommand().addOrderCommand(GameCommendEnum.CHANG_REGION, jsonObject);
+    }
+
     /**
      * 封装结束单位命令
      *
@@ -174,7 +196,9 @@ public class CommonHandler extends BaseHandler {
 
         // 处理单位血量变化
         if (endUnitDTO.getUnitStatusInfoDTOS().size() > 0) {
-            commandStream().toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_UNIT_STATUS, ExtMes.UNIT_STATUS, endUnitDTO.getUnitStatusInfoDTOS());
+            UnitStatusInfoDTO[] unitStatusInfoDTOS = new UnitStatusInfoDTO[endUnitDTO.getUnitStatusInfoDTOS().size()];
+            endUnitDTO.getUnitStatusInfoDTOS().toArray(unitStatusInfoDTOS);
+            commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTOS);
         }
         // 处理单位死亡
         for (UnitDeadDTO deadDTO : endUnitDTO.getUnitDeadDTOList()) {
@@ -206,7 +230,7 @@ public class CommonHandler extends BaseHandler {
      */
     public UnitStatusInfoDTO updateUnitInfo(ArmyUnitIndexDTO armyUnitIndexDTO) {
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
-        commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_UNIT_STATUS, ExtMes.UNIT_STATUS, unitStatusInfoDTO);
+        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
         return unitStatusInfoDTO;
     }
 
@@ -219,13 +243,7 @@ public class CommonHandler extends BaseHandler {
      */
     public UnitStatusInfoDTO updateOrderUnitInfo(ArmyUnitIndexDTO armyUnitIndexDTO) {
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
-        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_UNIT_STATUS, ExtMes.UNIT_STATUS, unitStatusInfoDTO);
-        return unitStatusInfoDTO;
-    }
-
-    public UnitStatusInfoDTO updateUnitInfo() {
-        UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO();
-        commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_UNIT_STATUS, ExtMes.UNIT_STATUS, unitStatusInfoDTO);
+        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
         return unitStatusInfoDTO;
     }
 

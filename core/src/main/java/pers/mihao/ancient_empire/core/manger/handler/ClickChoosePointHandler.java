@@ -57,11 +57,25 @@ public class ClickChoosePointHandler extends CommonHandler {
             case WILL_ATTACH:
                 handlerAttachUnit(gameEvent);
                 break;
+            case WILL_ATTACH_REGION:
+                handlerAttachRegion(gameEvent);
+                break;
             case WILL_SUMMON:
                 handlerSummon(gameEvent);
                 break;
         }
 
+    }
+
+    /**
+     * 处理单位攻击地形
+     * 1. 改变单位经验
+     * 2. 改变地形
+     * 3. 结束移动
+     * @param gameEvent
+     */
+    private void handlerAttachRegion(GameEvent gameEvent) {
+        System.out.println(gameEvent);
     }
 
     /**
@@ -88,7 +102,6 @@ public class ClickChoosePointHandler extends CommonHandler {
         commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA);
 
         // 展示攻击动画
-        // 单位攻击移动
         showAttachAnim(attachResultDTO.getAttachResult().getAttach(), currUnit(), beAttachUnit, attachArmyUnitIndexDTO, beAttachArmyUnitIndexDTO);
 
         // 判断攻击是否死亡
@@ -111,7 +124,6 @@ public class ClickChoosePointHandler extends CommonHandler {
                 if (attachResultDTO.getAttachResult().getDead()) {
 
                     // 判断是否产生坟墓
-
                 }
             }
 

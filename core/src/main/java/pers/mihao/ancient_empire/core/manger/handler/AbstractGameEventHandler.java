@@ -1,17 +1,16 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
+import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
@@ -154,6 +153,17 @@ public abstract class AbstractGameEventHandler implements Handler {
             return stream;
         }
 
+        public Stream changeUnitStatus(UnitStatusInfoDTO... unitStatusInfoDTOS){
+            setGameCommendEnum(GameCommendEnum.CHANGE_UNIT_STATUS);
+            JSONObject extData = new JSONObject(2);
+            extData.put(ExtMes.UNIT_STATUS, Arrays.asList(unitStatusInfoDTOS));
+            setExtMes(extData);
+            setOrder(orderIndex ++);
+            addGameCommand(this);
+            handlerLevelUp(this);
+            return stream;
+        }
+
         public Stream addOrderCommand(GameCommendEnum gameCommendEnum, String key, Object value){
             setGameCommendEnum(gameCommendEnum);
             JSONObject extData = new JSONObject(2);
@@ -224,4 +234,8 @@ public abstract class AbstractGameEventHandler implements Handler {
 
 
     }
+
+    protected abstract void handlerLevelUp(GameCommand gameCommand);
+
+
 }

@@ -38,7 +38,6 @@ public class GameContext extends UserTemplateHelper {
     private UserRecord userRecord;
 
 
-
     /**
      * 状态机
      */

@@ -31,7 +31,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
     // 点击可以移动的单位
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
-        if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON)) {
+        if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON, StatusMachineEnum.WILL_ATTACH_REGION)) {
             // 点击其他区域的单位就返回
             commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
@@ -49,12 +49,12 @@ public class ClickActiveUnitHandler extends CommonHandler {
             if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())
                     && RegionEnum.CASTLE.type().equals(getRegionBySite(unitInfo).getType())) {
                 Set<String> actions = ActionStrategy.getInstance()
-                        .getActionList(getAttachArea(), record(), currSite());
+                        .getActionList(getAttachArea(), record(), gameEvent.getInitiateSite());
                 actions.add(ActionEnum.BUY.type());
                 actions.add(ActionEnum.MOVE.type());
                 gameContext.setActions(actions);
                 gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
-                gameContext.setStartMoveSite(currSite());
+                gameContext.setStartMoveSite(gameEvent.getInitiateSite());
                 commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, actions);
             } else {
                 List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), unitInfo);

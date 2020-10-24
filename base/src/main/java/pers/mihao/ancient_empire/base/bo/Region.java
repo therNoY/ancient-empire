@@ -5,4 +5,10 @@ package pers.mihao.ancient_empire.base.bo;
  */
 public class Region extends BaseSquare {
 
+    public Region() {
+    }
+
+    public Region(String color, String type) {
+        super(color, type);
+    }
 }

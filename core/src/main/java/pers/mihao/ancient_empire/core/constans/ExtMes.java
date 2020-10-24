@@ -13,6 +13,12 @@ public class ExtMes {
      * 背景颜色
      */
     public static final String BG_COLOR = "bg_color";
+
+    /**
+     * 地形信息
+     */
+    public static final String REGION = "region";
+
     /**
      * 地形信息
      */
@@ -58,6 +64,12 @@ public class ExtMes {
      * 展示军队的index
      */
     public static final String ARMY_INDEX = "army_index";
+
+    /**
+     * region index
+     */
+    public static final String REGION_INDEX = "region_index";
+
     /**
      * 更新单位的装填信息
      */

@@ -8,6 +8,7 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,7 +35,7 @@ public class DestroyerActionStrategy extends ActionStrategy {
      */
     @Override
     public List<String> getAction(List<Site> sites, UserRecord record, Site aimSite) {
-        List<String> actions = super.getAction(sites, record, aimSite);
+        List<String> actions = new ArrayList<>(1);
 
         if (actions.contains(ActionEnum.ATTACK.type())) {
             return actions;

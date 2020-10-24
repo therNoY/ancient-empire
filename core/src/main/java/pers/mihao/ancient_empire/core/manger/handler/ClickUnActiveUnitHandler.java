@@ -31,7 +31,7 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
 
-        if (stateIn(StatusMachineEnum.WILL_ATTACH)) {
+        if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_ATTACH_REGION)) {
             // 如果此时状态是准备攻击 判断是否是准备攻击单位
             if (siteInArea(gameEvent.getInitiateSite(), gameContext.getWillAttachArea())) {
                 Pair<Integer, Unit> pair = getUnitFromMapBySite(gameEvent.getInitiateSite());

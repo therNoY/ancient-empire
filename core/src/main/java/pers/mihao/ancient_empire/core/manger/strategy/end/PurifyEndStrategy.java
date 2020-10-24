@@ -10,20 +10,17 @@ import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
-import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
-import pers.mihao.ancient_empire.core.dto.*;
-import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.dto.EndUnitDTO;
+import pers.mihao.ancient_empire.core.dto.LifeChangeDTO;
+import pers.mihao.ancient_empire.core.dto.UnitDeadDTO;
+import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 返回净化光环的handle
@@ -69,14 +66,16 @@ public class PurifyEndStrategy extends EndStrategy {
             unit = army.getUnits().get(unitIndex);
             abilityList = abilityService.getUnitAbilityList(unit.getTypeId());
             UnitStatusInfoDTO statusInfoDTO = new UnitStatusInfoDTO(armyIndex, unitIndex);
+            boolean isChange = false;
             // 解除deBuff
             if (unit.getStatus() != null
                     && army.getCamp().equals(record.getCurrCamp())
                     && EnumUtil.valueOf(StateEnum.class, unit.getStatus()).isDeBuff) {
+                isChange = true;
                 statusInfoDTO.setStatus(StateEnum.NORMAL.type());
             }
 
-            if (abilityList.contains(AbilityEnum.UNDEAD.type())) {
+            if (abilityList.contains(AbilityEnum.UNDEAD.ability())) {
                 // 亡灵净化
                 int life = AppUtil.getUnitLeft(unit);
                 if (life <= buff) {
@@ -86,6 +85,7 @@ public class PurifyEndStrategy extends EndStrategy {
                     endUnitDTO.getUnitDeadDTOList().add(new UnitDeadDTO(armyIndex, unitIndex));
                 } else {
                     endUnitDTO.getLifeChangeList().add(new LifeChangeDTO(AppUtil.getArrayByInt(-1, buff), unit));
+                    isChange = true;
                     statusInfoDTO.setLife(AppUtil.getArrayByInt(life - buff));
                 }
             }else if (army.getCamp().equals(record.getCurrCamp())) {
@@ -97,10 +97,13 @@ public class PurifyEndStrategy extends EndStrategy {
                     int restore = Math.min(maxRestore, buff);
                     LifeChangeDTO restoreLife = new LifeChangeDTO(AppUtil.getArrayByInt(10, restore), unit);
                     endUnitDTO.getLifeChangeList().add(restoreLife);
+                    isChange = true;
                     statusInfoDTO.setLife(AppUtil.getArrayByInt(restore + unitLife));
                 }
             }
-            endUnitDTO.getUnitStatusInfoDTOS().add(statusInfoDTO);
+            if (isChange) {
+                endUnitDTO.getUnitStatusInfoDTOS().add(statusInfoDTO);
+            }
         }
         return endUnitDTO;
     }
