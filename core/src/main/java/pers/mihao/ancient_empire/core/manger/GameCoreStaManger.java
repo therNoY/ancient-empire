@@ -23,6 +23,7 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.core.RobotActive;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
@@ -172,8 +173,7 @@ public class GameCoreStaManger {
                 } else if (ar instanceof BuyUnitResult) {
                     // 1. 准备发送给前端
                     BuyUnitResult buyUnitResult = (BuyUnitResult) ar;
-                    Unit unit = new Unit(buyUnitResult.getUnitMes().getType(), buyUnitResult.getSite().getRow(),
-                        buyUnitResult.getSite().getColumn());
+                    Unit unit = UnitFactory.createUnit(buyUnitResult.getUnitMes().getId(), buyUnitResult.getSite());
                     UserRecord record = recordMap.get(ar.getRecordId());
                     int currentArmy = AppUtil.getCurrentArmyIndex(record);
                     buyUnitResult.setArmyIndex(currentArmy);

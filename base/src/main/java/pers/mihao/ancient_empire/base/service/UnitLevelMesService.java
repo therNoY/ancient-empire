@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * 单位等级信息表 服务类
@@ -22,7 +25,20 @@ public interface UnitLevelMesService extends IService<UnitLevelMes> {
 
     int getSpeedByUnit(String type, Integer level);
 
-    UnitLevelMes getUnitLevelMes(String type, Integer level);
+    /**
+     * 根据单位的id 和等级获取单位的信息
+     * @param id 单位id
+     * @param level 单位等级
+     * @return
+     */
+    UnitLevelMes getUnitLevelMes(String id, Integer level);
 
     void insert(UnitLevelMes unitLevelMes);
+
+    /**
+     * 通过模板获取单位的等级信息
+     * @param tempId
+     * @return
+     */
+    Map<String, Integer> getUnitLevelByTemp(Integer tempId);
 }

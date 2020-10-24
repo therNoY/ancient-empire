@@ -8,5 +8,30 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
  */
 public enum StateEnum implements BaseEnum {
 
-    BLIND, EXCITED, POISON, WEAK, NORMAL
+    /**
+     * 致盲
+     */
+    BLIND(true),
+    /**
+     * 兴奋
+     */
+    EXCITED(false),
+    /**
+     * 中毒
+     */
+    POISON(true),
+    /**
+     * 虚弱
+     */
+    WEAK(true),
+    /**
+     * 正常
+     */
+    NORMAL(false);
+
+    public final Boolean isDeBuff;
+
+    StateEnum(Boolean isDeBuff) {
+        this.isDeBuff = isDeBuff;
+    }
 }

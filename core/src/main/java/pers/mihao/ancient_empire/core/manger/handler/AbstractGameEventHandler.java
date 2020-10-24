@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
 import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
+import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
@@ -166,6 +167,27 @@ public abstract class AbstractGameEventHandler implements Handler {
         public Stream addCommand(GameCommendEnum gameCommendEnum, JSONObject extData){
             setGameCommendEnum(gameCommendEnum);
             setExtMes(extData);
+            addGameCommand(this);
+            return stream;
+        }
+
+        public Stream removeUnit(ArmyUnitIndexDTO armyUnitIndexDTO){
+            setGameCommendEnum(GameCommendEnum.REMOVE_UNIT);
+            JSONObject addUnit = new JSONObject();
+            addUnit.put(ExtMes.ARMY_UNIT_INDEX, armyUnitIndexDTO);
+            setExtMes(addUnit);
+            setOrder(orderIndex ++);
+            addGameCommand(this);
+            return stream;
+        }
+
+        public Stream addUnit(Unit unit, Integer armyIndex){
+            setGameCommendEnum(GameCommendEnum.ADD_UNIT);
+            JSONObject addUnit = new JSONObject();
+            addUnit.put(ExtMes.UNIT, unit);
+            addUnit.put(ExtMes.ARMY_INDEX, armyIndex);
+            setExtMes(addUnit);
+            setOrder(orderIndex ++);
             addGameCommand(this);
             return stream;
         }

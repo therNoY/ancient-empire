@@ -1,12 +1,18 @@
 package pers.mihao.ancient_empire.core.manger.strategy.end;
 
+import javafx.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.core.dto.LifeChange;
-import pers.mihao.ancient_empire.core.dto.RespEndResultDto;
+import pers.mihao.ancient_empire.common.config.AppConfig;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.core.dto.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,52 +20,33 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * 虚弱光环
  */
 public class WeakerEndStrategy extends EndStrategy {
 
-    private static WeakerEndStrategy endHandle = null;
-
-    public static WeakerEndStrategy instance() {
-        if (endHandle == null) {
-            endHandle = new WeakerEndStrategy();
-        }
-        return endHandle;
-    }
 
     @Override
-    public RespEndResultDto getEndResult(RespEndResultDto respEndResultDto, UserRecord record, Unit cUnit) {
-
-        Integer camp = AppUtil.getCurrentArmy(record).getCamp();
-
-        Map<Integer, List<LifeChange>> lifeChanges = respEndResultDto.getLifeChanges();
-
-        if (lifeChanges == null) {
-            lifeChanges = new HashMap<>();
-        }
-
-        for (int j = 0; j < record.getArmyList().size(); j++) {
-            Army army = record.getArmyList().get(j);
-            List<Unit> units = army.getUnits();
-            List<LifeChange> changeList = lifeChanges.get(army.getColor());
-            for (int i = 0; i < units.size(); i++) {
-                Unit unit = units.get(i);
-                if (AppUtil.isAround(cUnit, unit)) {
-                    if (!army.getCamp().equals(camp)) {
-                        // 是敌军
-                        if (changeList == null) {
-                            changeList = new ArrayList<>();
-                        }
-                        LifeChange lifeChange = new LifeChange(i);
-                        lifeChange.setState(StateEnum.WEAK.type());
-                        changeList.add(lifeChange);
-                    }
-                }
+    protected EndUnitDTO warpEndResult(List<Pair<Integer, Integer>> affectUnits, EndUnitDTO endUnitDTO, UserRecord record) {
+        Unit unit;
+        Army army;
+        Integer armyIndex;
+        Integer unitIndex;
+        List<Ability> abilityList;
+        // 净化者的buff能力
+        for (Pair<Integer, Integer> pair : affectUnits) {
+            unitIndex = pair.getValue();
+            armyIndex = pair.getKey();
+            army = record.getArmyList().get(armyIndex);
+            unit = army.getUnits().get(unitIndex);
+            abilityList = abilityService.getUnitAbilityList(unit.getTypeId());
+            if (!abilityList.contains(AbilityEnum.WEAKER.type()) && !army.getCamp().equals(record.getCurrCamp())) {
+                // 修改单位的状态
+                UnitStatusInfoDTO statusInfoDTO = new UnitStatusInfoDTO(armyIndex, unitIndex);
+                statusInfoDTO.setStatus(StateEnum.WEAK.type());
             }
-            lifeChanges.put(j, changeList);
         }
-
-        respEndResultDto.setLifeChanges(lifeChanges);
-        return respEndResultDto;
+        return endUnitDTO;
     }
+
+
 }

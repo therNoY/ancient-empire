@@ -14,7 +14,17 @@ import pers.mihao.ancient_empire.base.entity.Ability;
  */
 public interface AbilityService extends IService<Ability> {
 
+    /**
+     * 通过ID 获取单位能力
+     * @param id
+     * @return
+     */
     List<Ability> getUnitAbilityList(Integer id);
 
+    /**
+     * 通过类型获取
+     * @param type
+     * @return
+     */
     List<Ability> getUnitAbilityListByType(String type);
 }

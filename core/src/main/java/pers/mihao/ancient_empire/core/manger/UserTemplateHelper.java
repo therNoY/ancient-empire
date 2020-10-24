@@ -3,6 +3,8 @@ package pers.mihao.ancient_empire.core.manger;
 import org.springframework.beans.factory.annotation.Value;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
+import pers.mihao.ancient_empire.base.service.UserTemplateService;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.IntegerUtil;
 
 /**
@@ -15,14 +17,25 @@ import pers.mihao.ancient_empire.common.util.IntegerUtil;
 public class UserTemplateHelper {
 
     private static int maxLevel = 12;
-    @Value("${experience.attach}")
     private static Integer attachExp = 20;
-    @Value("${experience.antiAttack}")
     private static Integer antiAttackExp = 10;
-    @Value("${experience.kill}")
     private static Integer killExp = 40;
-    @Value("${experience.antikill}")
     private static Integer antiKillExp = 40;
+    private static Integer summonExp = 40;
+    private static UserTemplate defaultTemp = null;
+    /**
+     * 游戏模板
+     */
+    private UserTemplate userTemplate;
+
+    /**
+     * 晋升模式
+     */
+    public static final Integer NO = 0;
+    public static final Integer USER_CHOOSE = 1;
+    public static final Integer RANDOM = 2;
+    public static final Integer COMMON = 3;
+
 
     private static int[] dp = new int[maxLevel];
 
@@ -36,6 +49,8 @@ public class UserTemplateHelper {
                 dp[i] = dp[i - 1] + dp[i - 2];
             }
         }
+
+        defaultTemp = ApplicationContextHolder.getBean(UserTemplateService.class).getById(1);
     }
 
     public int getLevelExp(int level) {
@@ -58,10 +73,14 @@ public class UserTemplateHelper {
         return antiKillExp;
     }
 
-    /**
-     * 游戏模板
-     */
-    private UserTemplate userTemplate;
+    public Integer getSummonExp() {
+        return summonExp;
+    }
+
+    public static void setSummonExp(Integer summonExp) {
+        UserTemplateHelper.summonExp = summonExp;
+    }
+
 
     public UserTemplate getUserTemplate() {
         return userTemplate;
@@ -87,5 +106,22 @@ public class UserTemplateHelper {
         }
     }
 
+    public UserTemplate getDefaultTemplate() {
+        return defaultTemp;
+    }
 
+
+    public int getTypePromotionCount() {
+        return 1;
+    }
+
+    /**
+     * 随机模式获取晋级机会
+     *
+     * @return
+     */
+    public boolean getRandomPromotionChance() {
+        return UserTemplateHelper.COMMON.equals(userTemplate.getPromotionMode())
+                || IntegerUtil.getRandomIn(10) < 5;
+    }
 }

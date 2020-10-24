@@ -38,6 +38,7 @@ public class AbilityServiceImpl extends ServiceImpl<AbilityDAO, Ability> impleme
      */
     @Cacheable(CatchKey.UNIT_ABILITY)
     @Override
+    @Deprecated
     public List<Ability> getUnitAbilityListByType(String type) {
         return abilityDao.getUnitAbilityListByType(type);
     }

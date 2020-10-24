@@ -1,10 +1,14 @@
 package pers.mihao.ancient_empire.core.manger.strategy;
 
+import javafx.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.core.dto.EndUnitDTO;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
 
 import java.util.ArrayList;
@@ -61,5 +65,15 @@ public abstract class AbstractStrategy<T> {
 
     protected int getSiteLength(int row, int column, int row2, int column2) {
         return Math.abs(row - row2) + Math.abs(column - column2);
+    }
+
+    /**
+     * 填充处理结果
+     * @param affectUnits
+     * @param endUnitDTO
+     * @param endUnitDTO1
+     */
+    protected EndUnitDTO warpEndResult(List<Pair<Integer, Integer>> affectUnits, EndUnitDTO endUnitDTO, UserRecord record){
+        return endUnitDTO;
     }
 }

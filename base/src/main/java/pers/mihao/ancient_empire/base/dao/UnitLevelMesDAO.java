@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Select;
 import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 
+import java.util.List;
+
 /**
  * <p>
  * 单位等级信息表 Mapper 接口
@@ -21,7 +23,9 @@ public interface UnitLevelMesDAO extends BaseMapper<UnitLevelMes> {
     @Select("SELECT um.type, ulm.* from unit_mes um left JOIN unit_level_mes ulm on um.id = ulm.unit_id ")
     IPage<RespUnitLevelDto> getUnitLevelMesList(Page page);
 
-    @Select("SELECT ulm.* from unit_level_mes ulm LEFT JOIN unit_mes um on ulm.unit_id = um.id " +
-            "WHERE ulm.`level` = #{level} and um.type = #{type}")
-    UnitLevelMes getUnitLevelMes(@Param("type")String type, @Param("level")Integer level);
+    @Select("SELECT ulm.* from unit_level_mes ulm" +
+            " WHERE ulm.level = #{level} and ulm.unit_id = #{id}")
+    UnitLevelMes getUnitLevelMes(@Param("id")String id, @Param("level")Integer level);
+
+    List<UnitLevelMes> getUnitLevelByTemp(Integer tempId);
 }

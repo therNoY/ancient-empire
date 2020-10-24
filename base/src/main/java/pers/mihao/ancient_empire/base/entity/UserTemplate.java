@@ -57,6 +57,11 @@ public class UserTemplate implements Serializable {
     private String attachAnimation;
 
     /**
+     * 单位死亡动画
+     */
+    private String deadAnimation;
+
+    /**
      * 召唤坟墓的动画
      */
     private String summonAnimation;
@@ -82,6 +87,11 @@ public class UserTemplate implements Serializable {
     private Integer attachModel;
 
     /**
+     * 衍生物Id
+     */
+    private Integer derivativeId;
+
+    /**
      * 单位的最大等级
      */
     private Integer unitMaxLevel;
@@ -97,7 +107,7 @@ public class UserTemplate implements Serializable {
     private Integer promotionLevel;
 
     /**
-     * 晋升的模式(1用户选择 2随机 3固定)
+     * 晋升的模式(0不开启 1 用户选择升级 2 随机转职 3 固定)
      */
     private Integer promotionMode;
 
@@ -159,6 +169,22 @@ public class UserTemplate implements Serializable {
     }
     public String getAttachAnimation() {
         return attachAnimation;
+    }
+
+    public Integer getDerivativeId() {
+        return derivativeId;
+    }
+
+    public void setDerivativeId(Integer derivativeId) {
+        this.derivativeId = derivativeId;
+    }
+
+    public String getDeadAnimation() {
+        return deadAnimation;
+    }
+
+    public void setDeadAnimation(String deadAnimation) {
+        this.deadAnimation = deadAnimation;
     }
 
     public void setAttachAnimation(String attachAnimation) {

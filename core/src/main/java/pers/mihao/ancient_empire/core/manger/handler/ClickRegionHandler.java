@@ -20,7 +20,7 @@ public class ClickRegionHandler extends CommonHandler {
             return;
         }
 
-        if (stateIn(StatusMachineEnum.WILL_ATTACH)) {
+        if (stateIn(StatusMachineEnum.WILL_ATTACH , StatusMachineEnum.WILL_SUMMON)) {
             // 如果此时状态是准备攻击 现在的应该回到之前的攻击选择状态
             commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);

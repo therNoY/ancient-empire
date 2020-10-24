@@ -1,28 +1,37 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import javafx.util.Pair;
-import org.springframework.context.annotation.Bean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
+import pers.mihao.ancient_empire.base.service.UnitTransferService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
+import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
-import pers.mihao.ancient_empire.common.util.ReflectUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
+import pers.mihao.ancient_empire.core.dto.ShowAnimDTO;
 import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
+import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.manger.UserTemplateHelper;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.Event;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,35 +48,164 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
 
     private Army currArmy;
 
+    Logger log = LoggerFactory.getLogger(this.getClass());
+
+
     protected static RegionMesService regionMesService;
     protected static UnitMesService unitMesService;
     protected static UnitLevelMesService unitLevelMesService;
+    protected static UnitTransferService unitTransferService;
 
     static {
         regionMesService = ApplicationContextHolder.getBean(RegionMesService.class);
         unitMesService = ApplicationContextHolder.getBean(UnitMesService.class);
         unitLevelMesService = ApplicationContextHolder.getBean(UnitLevelMesService.class);
+        unitTransferService = ApplicationContextHolder.getBean(UnitTransferService.class);
     }
 
     @Override
     public List<Command> handler(Event event) {
         List<Command> commandList = super.handler(event);
-        // 根据时间处理
-        for (Command command : commandList) {
-            GameCommand gameCommand = (GameCommand) command;
-            JSONObject extMes = gameCommand.getExtMes();
-            switch (gameCommand.getGameCommendEnum()) {
-                case CHANGE_UNIT_STATUS:
-                    UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) extMes.get(ExtMes.UNIT_STATUS);
-                    updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
-                    break;
+        if (commandList != null) {
+            // 根据时间处理 增删改的状态
+            for (Command command : commandList) {
+                GameCommand gameCommand = (GameCommand) command;
+                JSONObject extMes = gameCommand.getExtMes();
+                switch (gameCommand.getGameCommendEnum()) {
+                    case ADD_TOMB:
+                        record().getTomb().add(new Site(gameCommand.getAimSite()));
+                        break;
+                    case ADD_UNIT:
+                        List<Unit> units = record().getArmyList().get(extMes.getInteger(ExtMes.ARMY_INDEX)).getUnits();
+                        units.add((Unit) extMes.get(ExtMes.UNIT));
+                        break;
+
+                    case REMOVE_UNIT:
+                        // 移除死亡的单位
+                        ArmyUnitIndexDTO indexDTO = (ArmyUnitIndexDTO) extMes.get(ExtMes.ARMY_UNIT_INDEX);
+                        Army army = record().getArmyList().get(indexDTO.getArmyIndex());
+                        army.getUnits().remove(indexDTO.getUnitIndex());
+                        break;
+                    case REMOVE_TOMB:
+                        // 移除坟墓
+                        record().getTomb().remove(new Site(gameCommand.getAimSite()));
+                        break;
+
+                    case CHANGE_UNIT_STATUS:
+                        // 处理单位升级
+                        changeUnitStatus(gameCommand);
+                        break;
+                    case CHANGE_CURR_POINT:
+                        record().setCurrPoint(gameCommand.getAimSite());
+                        break;
+                    case CHANGE_CURR_REGION:
+                        record().setCurrRegion((RegionInfo) extMes.get(ExtMes.REGION_INFO));
+                        break;
+                    case CHANGE_CURR_UNIT:
+                        record().setCurrUnit((UnitInfo) extMes.get(ExtMes.UNIT_INFO));
+                        break;
+                    case CHANGE_CURR_BG_COLOR:
+                        gameContext.setBgColor(extMes.getString(ExtMes.BG_COLOR));
+                        break;
+
+
+                }
             }
         }
         return commandList;
     }
 
+    protected void changeUnitStatus(GameCommand gameCommand) {
+        // 更新单位的状态
+        UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
+        Unit unit = getUnitByIndex(unitStatus);
+        // 判断是否升级
+        Integer levelExp = gameContext.getLevelExp(unit.getLevel());
+        if (unitStatus.getExperience() >= levelExp) {
+            // 可以升级
+            int maxLevel = gameContext.getUserTemplate().getUnitMaxLevel();
+            if (maxLevel == unit.getLevel()) {
+                // 设置最大经验值 不升级
+                unitStatus.setExperience(levelExp);
+            } else {
+                // 升级
+                boolean isPromotion = false;
+                if ((UserTemplateHelper.COMMON.equals(gameContext.getUserTemplate().getPromotionMode())
+                        || UserTemplateHelper.RANDOM.equals(gameContext.getUserTemplate().getPromotionMode()))
+                        && unit.getLevel() + 1 > gameContext.getUserTemplate().getPromotionLevel()) {
+                    // 开启晋升模式 同一个兵种的最大晋级数量1
+                    Army army = record().getArmyList().get(unitStatus.getArmyIndex());
+                    int count = 0;
+                    int typeCount = 0;
+                    for (Unit u : army.getUnits()) {
+                        if (Boolean.TRUE.equals(u.getPromotion())) {
+                            if (u.getTypeId().equals(unit.getTypeId())) {
+                                typeCount++;
+                            } else {
+                                count++;
+                            }
+                        }
+                    }
+                    // 最大晋升数量 和类型晋升数量都小于模板最大数量才能晋级
+                    if (count < gameContext.getUserTemplate().getPromotionMaxNum() &&
+                            typeCount < gameContext.getTypePromotionCount()) {
+                        if (gameContext.getRandomPromotionChance()) {
+                            log.info("准备晋升");
+                            QueryWrapper<UnitTransfer> queryWrapper = new QueryWrapper<>();
+                            queryWrapper.eq("unitId", unit.getTypeId())
+                                    .eq("order", 1);
+                            UnitTransfer unitTransfer = unitTransferService.getOne(queryWrapper);
+                            if (unitTransfer != null) {
+                                isPromotion = true;
+                                unit.setLevel(unit.getLevel() + 1);
+                                unit.setExperience(unit.getExperience() - levelExp);
+                                Unit newUnit = new Unit();
+                                BeanUtil.copyValue(unit, newUnit);
+                                newUnit.setTypeId(unitTransfer.getTransferUnitId());
+                                commandStream()
+                                        .toGameCommand().removeUnit(unitStatus)
+                                        .toGameCommand().addUnit(newUnit, unitStatus.getArmyIndex());
+                            }
+
+                        }
+
+                    }
+                }
+                if (!isPromotion) {
+                    unitStatus.setLevel(unit.getLevel() + 1);
+                    unitStatus.setExperience(unit.getExperience() - levelExp);
+                    commandStream().toGameCommand().addOrderCommand(GameCommendEnum.SHOW_LEVEL_UP, unit);
+                }
+            }
+        }
+        updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
+    }
+
+
     private void updateUnitInfo(Unit unit, Object from) {
         BeanUtil.copyValue(from, unit);
+    }
+
+    /**
+     * 根据位置和动画构建展示动画DTO
+     *
+     * @param site
+     * @param animStrings
+     * @return
+     */
+    protected ShowAnimDTO getShowAnim(Site site, String animStrings) {
+        String[] anims = animStrings.split(BaseConstant.COMMA);
+        List<String> animList = Arrays.stream(anims)
+                .map(s -> gameContext.getUserTemplate().getId() + BaseConstant.LINUX_SEPARATOR + s)
+                .collect(Collectors.toList());
+        // 这里强行改成偶数个图片
+        if (animList.size() % 2 != 0) {
+            animList.add(animList.get(animList.size() - 1));
+        }
+        ShowAnimDTO showAnimDTO = new ShowAnimDTO(site, animList);
+        // TODO 每个frame的间隔 需要做成配置 默认50
+        showAnimDTO.setFrame(100);
+        return showAnimDTO;
     }
 
     /**
@@ -158,6 +296,19 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
 
     protected Unit getUnitByIndex(ArmyUnitIndexDTO indexDTO) {
         return record().getArmyList().get(indexDTO.getArmyIndex()).getUnits().get(indexDTO.getUnitIndex());
+    }
+
+    /**
+     * 通过index 获取单位的info
+     *
+     * @param indexDTO
+     * @return
+     */
+    protected UnitInfo getUnitInfoByIndex(ArmyUnitIndexDTO indexDTO) {
+        Unit unit = getUnitByIndex(indexDTO);
+        UnitInfo unitInfo = unitMesService.getUnitInfo(unit.getTypeId().toString(), unit.getLevel());
+        BeanUtil.copyValueFromParent(unit, unitInfo);
+        return unitInfo;
     }
 
     protected Unit getUnitFromArmy(String unitId) {

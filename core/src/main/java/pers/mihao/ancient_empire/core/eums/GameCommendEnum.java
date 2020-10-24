@@ -70,21 +70,19 @@ public enum GameCommendEnum implements BaseEnum {
     ROLLBACK_MOVE,
 
     /**
+     * 增加坟墓
+     */
+    ADD_TOMB,
+
+    /**
      * 坟墓消失
      */
-    TOMB_DISAPPEAR,
+    REMOVE_TOMB,
 
     /**
-     *
-     * 移动攻击指针
+     * 展示单位升级
      */
-    MOVE_ATTACH_POINT,
-
-    /**
-     * 移动指针
-     * 修改地图展示，修改单位展示
-     */
-    MOVE_POINT,
+    SHOW_LEVEL_UP,
 
     /**
      * 在特定的点展示攻击动画
@@ -92,7 +90,7 @@ public enum GameCommendEnum implements BaseEnum {
     RUSH_UNIT,
 
     /**
-     * 改变单位血量
+     * TODO 拼写错误 改变单位血量
      */
     LEFT_CHANGE,
 
@@ -102,19 +100,18 @@ public enum GameCommendEnum implements BaseEnum {
     SHOW_ATTACH_ANIM,
 
     /**
-     * 单位被攻击动画
-     */
-    BE_ATTACH_ACTIVE,
-
-    /**
      * 改变单位状态
      */
     CHANGE_UNIT_STATUS,
 
     /**
-     * 单位死亡 （冒烟+出现坟墓）
+     * 移除单位
      */
-    UNIT_DEAD,
+    REMOVE_UNIT,
+    /**
+     * 单位死亡冒烟
+     */
+    SHOW_UNIT_DEAD,
 
     /**
      * 添加新单位
@@ -137,8 +134,8 @@ public enum GameCommendEnum implements BaseEnum {
     SHOW_SYSTEM_NEWS,
 
     /**
-     * 召唤动作
+     * 在特定的点展示攻击动画
      */
-    BE_SUMMON;
+    SHOW_SUMMON_ANIM,
 
 }

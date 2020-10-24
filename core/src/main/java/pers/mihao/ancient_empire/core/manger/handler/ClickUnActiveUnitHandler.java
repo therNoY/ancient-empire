@@ -49,6 +49,10 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             // 点击其他区域的单位就返回
             gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
             commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+        }else if (stateIn(StatusMachineEnum.WILL_SUMMON)) {
+            // 点击其他区域的单位就返回
+            commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
+            gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         }else {
             changeCurrPoint(gameEvent.getInitiateSite());
 

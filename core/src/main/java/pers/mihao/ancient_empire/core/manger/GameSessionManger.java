@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.websocket.Session;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,13 +139,15 @@ public class GameSessionManger {
      */
     public void sendOrderMessage2Game(List<Command> commandList, String gameId) {
         List<GameSession> gameSessions = sessionMap.get(gameId);
-        if (gameSessions != null) {
+        if (gameSessions != null && commandList.size() > 0) {
             GameSession gameSession = null;
             log.info("发送有序命令{} 给群组：{}", commandList, gameId);
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
-                    gameSession.getSession().getBasicRemote().sendText(JSONArray.toJSONString(commandList, SerializerFeature.DisableCircularReferenceDetect));
+                    SerializeConfig config = new SerializeConfig();
+                    config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+                    gameSession.getSession().getBasicRemote().sendText(JSONArray.toJSONString(commandList, config, SerializerFeature.DisableCircularReferenceDetect));
                 }
             } catch (IOException e) {
                 log.error("发送数据给用户：{}失败", gameSession.getUserName(), e);
@@ -187,7 +191,9 @@ public class GameSessionManger {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
                     if (gameSession.getUserName().equals(GameContext.getUserId())) {
-                        gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
+                        SerializeConfig config = new SerializeConfig();
+                        config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+                        gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command, config));
                         break;
                     }
                 }
@@ -212,7 +218,9 @@ public class GameSessionManger {
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
-                    gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
+                    SerializeConfig config = new SerializeConfig();
+                    config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+                    gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command, config));
                 }
             } catch (IOException e) {
                 log.error("发送数据给用户：{}失败", gameSession.getUserName(), e);
@@ -237,7 +245,9 @@ public class GameSessionManger {
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
-                    gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command));
+                    SerializeConfig config = new SerializeConfig();
+                    config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+                    gameSession.getSession().getBasicRemote().sendText(JSONObject.toJSONString(command, config));
                 }
             } catch (IOException e) {
                 log.error("发送数据给用户：{}失败", gameSession.getUserName(), e);

@@ -11,7 +11,18 @@ import java.util.List;
  */
 public class ShowAnimDTO extends Site {
 
-    List<String> animList;
+    /**
+     * 动画
+     */
+    private List<String> animList;
+
+    /**
+     * 动画过度的帧数
+     * @param site
+     * @param animList
+     */
+    private Integer frame;
+
 
     public ShowAnimDTO(Site site, List<String> animList) {
         super(site);
@@ -29,5 +40,13 @@ public class ShowAnimDTO extends Site {
 
     public void setAnimList(List<String> animList) {
         this.animList = animList;
+    }
+
+    public Integer getFrame() {
+        return frame;
+    }
+
+    public void setFrame(Integer frame) {
+        this.frame = frame;
     }
 }

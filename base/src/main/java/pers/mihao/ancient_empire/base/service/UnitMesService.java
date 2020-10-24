@@ -25,7 +25,13 @@ public interface UnitMesService extends IService<UnitMes> {
 
     UnitMes getByType(String type);
 
-    UnitInfo getUnitInfo(String type, Integer level);
+    /**
+     * 通过单位和等级获取单位详情
+     * @param id
+     * @param level
+     * @return
+     */
+    UnitInfo getUnitInfo(String id, Integer level);
 
     List<UnitInfo> getUnitInfoList(boolean hasLoad);
 

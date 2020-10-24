@@ -31,20 +31,12 @@ public class Unit extends Site implements Serializable {
     // 经验值
     private Integer experience;
 
-    public Unit() {
-    }
+    /**
+     * 是否是晋升单位
+     */
+    private Boolean promotion;
 
-    public Unit(String type, Integer row, Integer column) {
-        this.type = type;
-        this.row = row;
-        this.column = column;
-        this.id = StringUtil.getUUID();
-        this.life = new Integer[]{1, 0, 0};
-        this.isDead = false;
-        this.level = 0;
-        this.isDone = false;
-        statusPresenceNum = 0;
-        this.experience = 0;
+    public Unit() {
     }
 
     public Integer getTypeId() {
@@ -139,6 +131,13 @@ public class Unit extends Site implements Serializable {
         this.statusPresenceNum = statusPresenceNum;
     }
 
+    public Boolean getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(Boolean promotion) {
+        this.promotion = promotion;
+    }
 
     @Override
     public String toString() {

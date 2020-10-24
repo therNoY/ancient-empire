@@ -1,9 +1,11 @@
 package pers.mihao.ancient_empire.common.util;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pers.mihao.ancient_empire.common.constant.BaseConstant;
 
 public class StringUtil {
     private static Logger logger = LoggerFactory.getLogger(StringUtil.class);
@@ -38,6 +40,14 @@ public class StringUtil {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
+
+    public static String concat(Serializable s1, Serializable s2) {
+        return concat(s1, s2, BaseConstant.COMMA);
+    }
+
+    public static String concat(Serializable s1, Serializable s2, CharSequence split) {
+        return s1.toString() + split.toString() + s2.toString();
+    }
 
     /**
      * 判断一个字符串不为空

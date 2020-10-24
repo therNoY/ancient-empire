@@ -23,7 +23,7 @@ public class UserRecord implements Serializable {
     // 包含所有的军队信息
     private List<Army> armyList;
     // 包含的坟墓
-    private List<Position> tomb;
+    private List<Site> tomb;
     // 记录的名字
     private String recordName;
     // 创建者Id
@@ -139,11 +139,11 @@ public class UserRecord implements Serializable {
         this.currentRound = currentRound;
     }
 
-    public List<Position> getTomb() {
+    public List<Site> getTomb() {
         return tomb;
     }
 
-    public void setTomb(List<Position> tomb) {
+    public void setTomb(List<Site> tomb) {
         this.tomb = tomb;
     }
 

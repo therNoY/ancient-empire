@@ -6,13 +6,17 @@ import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
+import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
+import pers.mihao.ancient_empire.core.manger.strategy.action.ActionStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author mh32736
@@ -27,7 +31,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
     // 点击可以移动的单位
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
-        if (stateIn(StatusMachineEnum.WILL_ATTACH)) {
+        if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON)) {
             // 点击其他区域的单位就返回
             commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
@@ -42,8 +46,16 @@ public class ClickActiveUnitHandler extends CommonHandler {
             changeCurrRegion(gameEvent.getInitiateSite());
             UnitInfo unitInfo = unitMes.getValue();
             // 判断展示移动区域还是展示行动
-            if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())) {
-
+            if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())
+                    && RegionEnum.CASTLE.type().equals(getRegionBySite(unitInfo).getType())) {
+                Set<String> actions = ActionStrategy.getInstance()
+                        .getActionList(getAttachArea(), record(), currSite());
+                actions.add(ActionEnum.BUY.type());
+                actions.add(ActionEnum.MOVE.type());
+                gameContext.setActions(actions);
+                gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
+                gameContext.setStartMoveSite(currSite());
+                commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, actions);
             } else {
                 List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), unitInfo);
                 gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_AREA);

@@ -125,10 +125,10 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      */
     @Override
     @Cacheable(CatchKey.UNIT_INFO)
-    public UnitInfo getUnitInfo(String type, Integer level) {
-        UnitMes unitMes = getByType(type);
-        UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(type, level);
-        List<Ability> abilityList = abilityService.getUnitAbilityListByType(type);
+    public UnitInfo getUnitInfo(String id, Integer level) {
+        UnitMes unitMes = getById(id);
+        UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(id, level);
+        List<Ability> abilityList = abilityService.getUnitAbilityList(Integer.valueOf(id));
         return new UnitInfo(unitMes, unitLevelMesMes, abilityList);
     }
 

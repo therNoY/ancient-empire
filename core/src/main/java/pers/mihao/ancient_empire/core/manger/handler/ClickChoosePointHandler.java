@@ -8,24 +8,21 @@ import pers.mihao.ancient_empire.base.bo.FloatSite;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
+import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
-import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.defense.DefenseStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 点击攻击召唤治疗 的图标
@@ -38,6 +35,10 @@ public class ClickChoosePointHandler extends CommonHandler {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * 鼓舞状态伤害增加
+     */
+    private static final Integer EXCITED_HARM =  AppConfig.getInt("unitMes.excited.buff.harm");
 
     /**
      * @param gameEvent
@@ -70,7 +71,7 @@ public class ClickChoosePointHandler extends CommonHandler {
      */
     private void handlerAttachUnit(GameEvent gameEvent) {
         // 获取攻击单位和被攻击单位的信息
-        ArmyUnitIndexDTO attachArmyUnitIndexDTO = new ArmyUnitIndexDTO(record().getCurrArmyIndex(), getCurrUnitIndex());
+        ArmyUnitIndexDTO attachArmyUnitIndexDTO = currUnitArmyIndex();
 
         Pair<Integer, UnitInfo> unitInfoPair = getUnitInfoFromMapBySite(gameEvent.getAimSite());
         UnitInfo beAttachUnit = unitInfoPair.getValue();
@@ -93,8 +94,7 @@ public class ClickChoosePointHandler extends CommonHandler {
         // 判断攻击是否死亡
         if (attachResultDTO.getAttachResult().getDead()) {
             // 执行死亡动画
-
-            // 是否产生坟墓
+            sendUnitDeadCommend(beAttachUnit, beAttachArmyUnitIndexDTO);
         } else {
             // 没有死亡
             // 更新被攻击单位的状态 血量/经验/状态
@@ -117,8 +117,8 @@ public class ClickChoosePointHandler extends CommonHandler {
 
         }
         // 修改攻击者单位的状态
-        attachStatus = updateUnitInfo(attachArmyUnitIndexDTO);
-        attachStatus.setExperience(attachResultDTO.getAttachResult().getEndExperience());
+        attachStatus = updateUnitInfo(attachArmyUnitIndexDTO)
+                .setExperience(attachResultDTO.getAttachResult().getEndExperience());
         if (attachResultDTO.getAntiAttack()) {
             attachStatus.setStatus(attachResultDTO.getAntiAttackResult().getEndStatus());
             attachStatus.setLife(attachResultDTO.getAntiAttackResult().getLastLife());
@@ -126,13 +126,8 @@ public class ClickChoosePointHandler extends CommonHandler {
 
         // 判断是否有单位升级
 
-        // 判断二次移动
-
-        // 触发单位结束移动事件
-
-        // 修改单位的状态（结束回合）
-        updateOrderUnitInfo(attachArmyUnitIndexDTO).setDone(true);
-        gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+        // 结束
+        endCurrentUnit(attachArmyUnitIndexDTO);
     }
 
 
@@ -142,6 +137,29 @@ public class ClickChoosePointHandler extends CommonHandler {
      * @param gameEvent
      */
     private void handlerSummon(GameEvent gameEvent) {
+        // 展示召唤攻击区域
+        ShowAnimDTO showAnimDTO = getShowAnim(gameEvent.getAimSite(), gameContext.getUserTemplate().getSummonAnimation());
+        JSONObject showAnim = new JSONObject();
+        showAnim.put(ExtMes.ANIM, showAnimDTO);
+        Integer derivativeId = gameContext.getUserTemplate().getDerivativeId();
+        if (derivativeId == null) {
+            derivativeId = gameContext.getDefaultTemplate().getDerivativeId();
+        }
+        JSONObject addUnit = new JSONObject();
+        Unit unit = UnitFactory.createUnit(derivativeId, gameEvent.getAimSite());
+        addUnit.put(ExtMes.UNIT, unit);
+        addUnit.put(ExtMes.ARMY_INDEX, record().getCurrArmyIndex());
+
+        commandStream()
+                .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA)
+                .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_SUMMON_ANIM, showAnim)
+                .toGameCommand().addOrderCommand(GameCommendEnum.REMOVE_TOMB, gameEvent.getAimSite())
+                .toGameCommand().addOrderCommand(GameCommendEnum.ADD_UNIT, addUnit);
+
+        // 处理状态
+        ArmyUnitIndexDTO indexDTO = currUnitArmyIndex();
+        updateUnitInfo(indexDTO).setExperience(currUnit().getExperience() + gameContext.getSummonExp());
+        endCurrentUnit(currUnitArmyIndex());
     }
 
 
@@ -237,26 +255,10 @@ public class ClickChoosePointHandler extends CommonHandler {
             attachResult.setDead(true);
             // 设置经验
             attachResult.setEndExperience(attachUnit.getExperience() + killExp);
-
-            // 判断是否有坟墓
-            attachResult.setHaveTomb(false);
-            for (Ability ability : beAttachUnit.getAbilities()) {
-                if (!ability.getType().equals(AbilityEnum.CASTLE_GET.type()) && !ability.getType()
-                        .equals(AbilityEnum.UNDEAD.type())) {
-                    attachResult.setHaveTomb(true);
-                    break;
-                }
-            }
         } else {
             // 被攻击者未死
             attachResult.setEndExperience(attachUnit.getExperience() + attachExp);
             attachResult.setDead(false);
-        }
-        // 判断是否升级
-        Integer levelExp = gameContext.getLevelExp(attachUnit.getLevel());
-        if (attachResult.getEndExperience() >= levelExp) {
-            attachResult.setLeaveUp(true);
-            attachResult.setEndExperience(attachResult.getEndExperience() - levelExp);
         }
     }
 
@@ -281,11 +283,17 @@ public class ClickChoosePointHandler extends CommonHandler {
         int harm = (attachNum - defenseNum) * attachUnitLeft / 100;
         // 根据攻击加成和防御加成重新设计 伤害值
         if (attachPower.getAddition() != null) {
-            log.info("伤害加成 {}", attachPower.getAddition());
+            log.info("伤害加成 {} 原始伤害 ：{} 加成结果：{}", attachPower.getAddition(), harm, (int) (harm * attachPower.getAddition()));
             harm = (int) (harm * attachPower.getAddition());
         }
+        // 鼓舞状态 加10攻击力
+        if (StateEnum.EXCITED.type().equals(attachUnit.getStatus())){
+            harm += EXCITED_HARM;
+            log.info("攻击单位鼓舞状态 + {}攻击", EXCITED_HARM);
+        }
+
         if (defensePower.getAddition() != null) {
-            log.info("减伤加成 {}", defensePower.getAddition());
+            log.info("减伤加成 {} 原始伤害：{}, 减伤结果：{}", defensePower.getAddition(), harm, (int) (harm / defensePower.getAddition()));
             harm = (int) (harm / defensePower.getAddition());
         }
         // 判断如果无法破防的结果
@@ -319,23 +327,12 @@ public class ClickChoosePointHandler extends CommonHandler {
      */
     private void showAttachAnim(Integer[] attach, Site attSite, Site beAtt, ArmyUnitIndexDTO attIndex, ArmyUnitIndexDTO beAttIndex) {
 
-        // 1. 展示血量变化, 展示攻击特效
-        List<LeftChangeDTO> leftChangeDTOS = new ArrayList<>();
-        leftChangeDTOS.add(new LeftChangeDTO(attach, beAtt));
+        // 1. 展示血量变化,
+        List<LifeChangeDTO> leftChangeDTOS = new ArrayList<>();
+        leftChangeDTOS.add(new LifeChangeDTO(attach, beAtt));
 
-        String attachAnimInfo = gameContext.getUserTemplate().getAttachAnimation();
-
-        String[] attachAnim = attachAnimInfo.split(BaseConstant.COMMA);
-
-
-        List<String> attachAnimList = Arrays.stream(attachAnim)
-                .map(s -> gameContext.getUserTemplate().getId() + BaseConstant.LINUX_SEPARATOR + s)
-                .collect(Collectors.toList());
-
-        ShowAnimDTO showAnimDTO = new ShowAnimDTO(beAtt, attachAnimList);
-
-
-
+        // 2. 展示攻击动画
+        ShowAnimDTO showAnimDTO = getShowAnim(beAtt, gameContext.getUserTemplate().getAttachAnimation());
         JSONObject showAnim = new JSONObject();
         showAnim.put(ExtMes.ANIM, showAnimDTO);
         showAnim.put(ExtMes.ARMY_UNIT_INDEX, beAttIndex);

@@ -16,6 +16,7 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
 import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.core.dto.ReqUnitIndexDto;
@@ -63,7 +64,7 @@ public class WsBuyUnitService {
             return WsRespHelper.error(21001);
         }
         unitDto.setEndPop(armyPop + buyUnit.getPopulation());
-        Unit addUnit = new Unit(buyUnit.getType(), site.getRow(), site.getColumn());
+        Unit addUnit = UnitFactory.createUnit(buyUnit.getId(), site);
         unitDto.setUnit(addUnit);
 
         result.setBuyUnitDto(unitDto);

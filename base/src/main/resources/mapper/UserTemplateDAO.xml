@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UserTemplate">
         <id column="id" property="id" />
-        <result column="user_id" property="userName" />
+        <result column="user_id" property="userId" />
         <result column="template_name" property="templateName" />
         <result column="template_desc" property="templateDesc" />
         <result column="attach_experience" property="attachExperience" />
@@ -13,8 +13,10 @@
         <result column="kill_experience" property="killExperience" />
         <result column="antikill_experience" property="antikillExperience" />
         <result column="attach_animation" property="attachAnimation" />
+        <result column="dead_animation" property="deadAnimation" />
         <result column="summon_animation" property="summonAnimation" />
         <result column="levelup_animation" property="levelupAnimation" />
+        <result column="derivative_id" property="derivativeId"/>
         <result column="square_width" property="squareWidth" />
         <result column="square_height" property="squareHeight" />
         <result column="attach_model" property="attachModel" />
@@ -26,7 +28,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, template_name, template_desc, attach_experience, counterattack_experience, kill_experience, antikill_experience, attach_animation, summon_animation, levelup_animation, square_width, square_height, attach_model, unit_max_level, promotion_max_num, promotion_level, promotion_mode
+        id, user_id, template_name, template_desc, attach_experience, counterattack_experience,
+         derivative_id, kill_experience, antikill_experience, attach_animation, dead_animation, summon_animation, levelup_animation, square_width, square_height, attach_model, unit_max_level, promotion_max_num, promotion_level, promotion_mode
     </sql>
 
 </mapper>

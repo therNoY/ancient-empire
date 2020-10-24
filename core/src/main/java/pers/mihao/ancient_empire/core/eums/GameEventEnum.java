@@ -36,10 +36,21 @@ public enum GameEventEnum implements BaseEnum {
     CLICK_REGION,
 
     /**
+     * 点击坟墓事件
+     */
+    CLICK_TOMB,
+
+    /**
      * 点击移动区域 准备移动事件
      * 通知 SHOW_MOVE_LINE
      */
     CLICK_MOVE_AREA,
+
+
+    /**
+     * 点击指针
+     */
+    CLICK_POINT,
 
     /**
      * 点击移动的目标点 移动
@@ -56,62 +67,37 @@ public enum GameEventEnum implements BaseEnum {
     /**
      * 准备攻击事件 获取攻击范围 通知 SHOW_ATTACH_AREA
      */
-    ATTACH_UNIT_START,
+    CLICK_ATTACH_ACTION,
 
     /**
-     * 选择攻击单位事件 通知移动攻击指针
+     * 点击移动事件
      */
-    CHOOSE_ATTACH_AIM,
-
-    /**
-     * 攻击单位 通知 展示攻击状态，改变单位信息  移除单位，添加坟墓
-     */
-    ATTACH_UNIT,
+    CLICK_MOVE_ACTION,
 
     /**
      * 购买单位事件, 通知移动指针，添加单位， （如果此处有领主，必须要移动）展示移动范围
      */
-    BUY_UNIT,
+    CLICK_BUY_ACTION,
 
     /**
      * 单位占领事件 通知修改地形，通知信息条
      */
-    REPAIR_BUILD,
+    CLICK_REPAIR_ACTION,
 
     /**
      * 单位修复事件， 通知修改地形，通知信息条
      */
-    OCCUPIED_BUILD,
+    CLICK_OCCUPIED_ACTION,
 
     /**
      * 召唤坟墓事件 通知移除坟墓，添加单位
      */
-    SUMMON_TOMB,
+    CLICK_SUMMON_ACTION,
 
     /**
      * 单位结束事件， 改变单位信息，（其他单位加血，该状态）
      */
-    UNIT_END,
-
-    /**
-     * 准备移动事件, 点击单位移动范围内区域， 展示移动路线命令
-     */
-    READY_MOVE,
-
-    /**
-     * 单位移动 通知单位移动命令
-     */
-    MOVE,
-
-    /**
-     * 撤销移动 修改单位状态
-     */
-    MOVE_BACK,
-
-    /**
-     * 单位移动结束事件， 展示可选行动
-     */
-    MOVE_END,
+    CLICK_END_ACTION,
 
     /**
      * 结束回合事件，通知信息条，

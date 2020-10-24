@@ -28,6 +28,10 @@ public class AppConfig {
         }
     }
 
+    public static Integer getInt(String key) {
+        String info = map.get(key);
+        return Integer.valueOf(info);
+    }
 
     public static String get(String key) {
         String info = map.get(key);

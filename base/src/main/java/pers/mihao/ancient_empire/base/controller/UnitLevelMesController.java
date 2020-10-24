@@ -5,11 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.common.util.RespUtil;
@@ -28,6 +24,11 @@ public class UnitLevelMesController {
 
     @Autowired
     UnitLevelMesService unitLevelMesService;
+
+    @GetMapping("/api/unitLevel/{tempId}")
+    public RespJson getUnitLevelByTemp (@PathVariable("tempId") Integer tempId) {
+        return RespUtil.successResJson(unitLevelMesService.getUnitLevelByTemp(tempId));
+    }
 
     @GetMapping("/root/unitLevel")
     public RespJson getUnitLevelMesList (@RequestParam Long pageSize, @RequestParam Long pageNow) {

@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.*;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
+import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
@@ -29,6 +31,12 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
     }
 
     /**
+     * 虚弱剩余move力
+     */
+    private static final Integer WEAK_LAST_SPEED =  AppConfig.getInt("unitMes.weak.buff.lastSpeed");
+
+
+    /**
      * 获取移动区域
      *
      * @param userRecord
@@ -37,18 +45,20 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
      */
     public List<Site> getMoveArea(UserRecord userRecord, UnitInfo unitInfo) {
         List<Site> sites = new ArrayList<>();
+        int speed = unitInfo.getLevelMes().getSpeed() + 1;
+        if (StateEnum.WEAK.type().equals(unitInfo.getStatus())) {
+            speed = WEAK_LAST_SPEED + 1;
+        }
         int[][] isVisit;
         for (MoveAreaStrategy moveAreaStrategy : getAbilityStrategy(unitInfo.getAbilities())) {
             isVisit = new int[userRecord.getGameMap().getRow()][userRecord.getGameMap().getColumn()];
             if (moveAreaStrategy != null) {
-                moveAreaStrategy.getMoveSite(isVisit, unitInfo.getRow(), unitInfo.getColumn(),
-                        unitInfo.getLevelMes().getSpeed() + 1, userRecord, sites);
+                moveAreaStrategy.getMoveSite(isVisit, unitInfo.getRow(), unitInfo.getColumn(), speed, userRecord, sites);
             }
         }
         if (sites.size() == 0) {
             isVisit = new int[userRecord.getGameMap().getRow()][userRecord.getGameMap().getColumn()];
-            getMoveSite(isVisit, unitInfo.getRow(), unitInfo.getColumn(),
-                    unitInfo.getLevelMes().getSpeed() + 1, userRecord, sites);
+            getMoveSite(isVisit, unitInfo.getRow(), unitInfo.getColumn(), speed, userRecord, sites);
         }
         return sites.stream().distinct().collect(Collectors.toList());
     }

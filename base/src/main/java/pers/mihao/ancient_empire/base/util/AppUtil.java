@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.base.util;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
@@ -59,7 +60,6 @@ public class AppUtil {
     public static Army getArmyByIndex(UserRecord record, Integer index) {
         return record.getArmyList().get(index);
     }
-
 
 
     /**
@@ -161,7 +161,6 @@ public class AppUtil {
     public static Position getPosition(Unit cUnit) {
         return new Position(cUnit.getRow(), cUnit.getColumn());
     }
-
 
 
     /**
@@ -369,20 +368,12 @@ public class AppUtil {
 
     /**
      * 判断一个单位是否在另一个单位的影响范围内
+     * 包括自己
      *
      * @return
      */
     public static boolean isAround(Site s1, Site s2) {
-
-        int length = AppUtil.getLength(s1, s2);
-        if (length > 2) {
-            return false;
-        } else if (length == 2) {
-            if (s1.getRow() == s2.getRow() && s1.getColumn() == s2.getColumn()) {
-                return false;
-            }
-        }
-        return true;
+        return AppUtil.getLength(s1, s2) <= 2;
     }
 
 
@@ -471,8 +462,9 @@ public class AppUtil {
         }
         return null;
     }
+
     public static boolean isUnitsContentSite(List<Unit> units, Site site) {
-        for (Unit u: units) {
+        for (Unit u : units) {
             if (u.getRow().equals(site.getRow()) && u.getColumn().equals(site.getColumn())) {
                 return true;
             }
@@ -483,7 +475,7 @@ public class AppUtil {
     // ****************************************新的方法***********************************************
 
     // 比较位置是否相等
-    public static boolean siteEquals(Unit unit, Site site){
+    public static boolean siteEquals(Unit unit, Site site) {
         return unit.getRow().equals(site.getRow()) && unit.getColumn().equals(site.getColumn());
     }
 }

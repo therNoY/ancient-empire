@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -30,12 +31,11 @@ import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
-import pers.mihao.ancient_empire.common.util.BeanUtil;
-import pers.mihao.ancient_empire.common.util.DateUtil;
-import pers.mihao.ancient_empire.common.util.MqHelper;
+import pers.mihao.ancient_empire.common.util.*;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
-import pers.mihao.ancient_empire.common.util.StringUtil;
 
 @Service
 public class UserRecordServiceImp implements UserRecordService {
@@ -65,6 +65,7 @@ public class UserRecordServiceImp implements UserRecordService {
 
     /**
      * 根据地图开始游戏 生成存档
+     *
      * @param reqInitMapDto
      * @return
      */
@@ -92,7 +93,7 @@ public class UserRecordServiceImp implements UserRecordService {
             userMap.getUnits().stream()
                     .filter(baseUnit -> baseUnit.getColor().equals(color))
                     .forEach(baseUnit -> {
-                        Unit unit = new Unit(baseUnit.getType(), baseUnit.getRow(), baseUnit.getColumn());
+                        Unit unit = UnitFactory.createUnit(baseUnit.getTypeId(), baseUnit.getRow(), baseUnit.getColumn());
                         unit.setTypeId(baseUnit.getTypeId());
                         UnitMes unitMes = unitMesService.getByType(unit.getType());
                         pop.set(pop.get() + unitMes.getPopulation());
@@ -101,7 +102,7 @@ public class UserRecordServiceImp implements UserRecordService {
             army.setUnits(units);
             army.setPop(pop.get());
             army.setMoney(reqInitMapDto.getMoney());
-            if (reqArmy.getType().equals(ArmyEnum.USER.type())){
+            if (reqArmy.getType().equals(ArmyEnum.USER.type())) {
                 army.setPlayer(AuthUtil.getLoginUser().getUsername());
             }
             if (army.getOrder() == 1) {
@@ -120,14 +121,36 @@ public class UserRecordServiceImp implements UserRecordService {
         regionInfo.setColor(region.getColor());
         userRecord.setCurrRegion(regionInfo);
         // TODO 测试
+        int random = IntegerUtil.getRandomIn(5);
+        int index = 0;
         if (userMap.getMapName().startsWith("测试地图")) {
-            userRecord.setTomb(Arrays.asList(new Position(9, 7)));
+            List<Site> tomb = new ArrayList<>();
+            tomb.add(new Site(9, 7));
+            userRecord.setTomb(tomb);
             for (Army army : armyList) {
-                if (army.getColor().equals(ColorEnum.RED.type())) {
-                    for (Unit unit : army.getUnits()) {
-                        if (unit.getRow() == 3 && unit.getColumn() == 9){
-                            unit.setStatus(StateEnum.EXCITED.type());
+                for (Unit unit : army.getUnits()) {
+                    if (index++ < random) {
+                        switch (random) {
+                            case 1:
+                                unit.setStatus(StateEnum.POISON.type());
+                                break;
+                            case 2:
+                                unit.setStatus(StateEnum.BLIND.type());
+                                break;
+                            case 3:
+                                unit.setStatus(StateEnum.WEAK.type());
+                                break;
+                            case 4:
+                                unit.setStatus(StateEnum.EXCITED.type());
+                                break;
                         }
+                        unit.setLevel(IntegerUtil.getRandomIn(3));
+                        unit.setLife(AppUtil.getArrayByInt(IntegerUtil.getRandomIn(100)));
+                        random = IntegerUtil.getRandomIn(5);
+                        index = 0;
+                    }
+                    if (index > 6) {
+                        index = 0;
                     }
                 }
             }
@@ -159,6 +182,7 @@ public class UserRecordServiceImp implements UserRecordService {
     /**
      * 获取 Record By uuid
      * 这里不使用 Spring catchAble 原因是保存改缓存使用的是redishelper 设置 序列化方式不一样
+     *
      * @param uuid
      * @return
      */
@@ -178,6 +202,7 @@ public class UserRecordServiceImp implements UserRecordService {
 
     /**
      * 保存记录如果已经存在就返回false
+     *
      * @param saveRecordDto
      * @return
      */
@@ -199,6 +224,7 @@ public class UserRecordServiceImp implements UserRecordService {
 
     /**
      * 保存临时地图
+     *
      * @param uuid
      * @return
      */

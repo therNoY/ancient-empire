@@ -110,8 +110,8 @@ public enum AbilityEnum implements BaseEnum {
      * @return
      */
     public Ability ability() {
-        Ability ability = null;
-        if (map.get(this) != null) {
+        Ability ability = map.get(this);
+        if (ability == null) {
             ability = new Ability(this.type());
             map.put(this, ability);
         }

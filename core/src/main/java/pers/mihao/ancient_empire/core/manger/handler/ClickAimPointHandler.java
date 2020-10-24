@@ -29,7 +29,7 @@ public class ClickAimPointHandler extends CommonHandler{
         extMes.put(ExtMes.ACTIONS, actions);
         commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
                 .toGameCommand().addCommand(GameCommendEnum.MOVE_UNIT, extMes, getCurrUnitIndex());
-
+        gameContext.setStartMoveSite(currUnit());
         gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         gameContext.setActions(actions);
     }

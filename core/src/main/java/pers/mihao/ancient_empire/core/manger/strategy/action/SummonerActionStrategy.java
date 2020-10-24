@@ -26,9 +26,9 @@ public class SummonerActionStrategy extends ActionStrategy {
     @Override
     public List<String> getAction(List<Site> sites, UserRecord record, Site aimSite) {
         List<String> actions = super.getAction(sites, record, aimSite);
-        List<Position> tombList = record.getTomb();
+        List<Site> tombList = record.getTomb();
         if (tombList != null && tombList.size() > 0) {
-            for (Position p : tombList) {
+            for (Site p : tombList) {
                 if (sites.contains(p)) {
                     actions.add(ActionEnum.SUMMON.type());
                     break;

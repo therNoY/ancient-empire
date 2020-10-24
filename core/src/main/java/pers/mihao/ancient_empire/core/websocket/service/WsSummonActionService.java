@@ -12,6 +12,7 @@ import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.LevelHelper;
+import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
 import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.core.dto.ReqSummonDto;
@@ -57,7 +58,7 @@ public class WsSummonActionService {
         if(respSummonResult.getLeaveUp() != null && respSummonResult.getLeaveUp()) {
             unit.setLevel(unit.getLevel() + 1);
         }
-        Unit newUnit = new Unit(UnitEnum.BONE.type(), summonDto.getTomb().getRow(), summonDto.getTomb().getColumn());
+        Unit newUnit = UnitFactory.createUnit(UnitEnum.BONE.type(), summonDto.getTomb().getRow(), summonDto.getTomb().getColumn());
         newUnit.setLevel(unit.getLevel());
 
         respSummonResult.setArmyIndex(armyIndex);

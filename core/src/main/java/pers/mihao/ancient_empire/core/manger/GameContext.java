@@ -88,6 +88,12 @@ public class GameContext extends UserTemplateHelper {
      * 将被攻击的单位
      */
     private Unit beAttachUnit;
+
+    /**
+     * 将被攻击的单位
+     */
+    private Site beSummonTomb;
+
     /**
      * 准备移动的点
      */
@@ -164,7 +170,13 @@ public class GameContext extends UserTemplateHelper {
         this.gameTypeEnum = gameTypeEnum;
     }
 
+    public Site getBeSummonTomb() {
+        return beSummonTomb;
+    }
 
+    public void setBeSummonTomb(Site beSummonTomb) {
+        this.beSummonTomb = beSummonTomb;
+    }
 
     public Integer getPlayerCount() {
         return playerCount;

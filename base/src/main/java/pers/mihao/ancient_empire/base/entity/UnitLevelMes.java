@@ -57,6 +57,9 @@ public class UnitLevelMes implements Serializable {
      */
     private Integer speed;
 
+    private Integer maxLife;
+
+
     public Integer getId() {
         return id;
     }
@@ -112,6 +115,14 @@ public class UnitLevelMes implements Serializable {
 
     public void setSpeed(Integer speed) {
         this.speed = speed;
+    }
+
+    public Integer getMaxLife() {
+        return maxLife;
+    }
+
+    public void setMaxLife(Integer maxLife) {
+        this.maxLife = maxLife;
     }
 
     @Override

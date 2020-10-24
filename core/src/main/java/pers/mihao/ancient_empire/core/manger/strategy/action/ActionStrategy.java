@@ -5,6 +5,7 @@ import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.manger.strategy.AbstractStrategy;
 
@@ -31,8 +32,22 @@ public class ActionStrategy extends AbstractStrategy<ActionStrategy> {
         return actionStrategy;
     }
 
+    /**
+     * 获取单位action
+     * @param positions 攻击范围
+     * @param record
+     * @param aimPoint
+     * @return
+     */
     public Set<String> getActionList(List<Site> positions, UserRecord record, Site aimPoint){
+        /**
+         * 致盲只能移动结束
+         */
         Set<String> actionSet = new HashSet<>();
+        if (StateEnum.BLIND.type().equals(record.getCurrUnit().getStatus())){
+            actionSet.add(ActionEnum.END.type());
+            return actionSet;
+        }
         // 获取默认处理
         List<String> defaultActions = getAction(positions, record, aimPoint);
         actionSet.addAll(defaultActions);

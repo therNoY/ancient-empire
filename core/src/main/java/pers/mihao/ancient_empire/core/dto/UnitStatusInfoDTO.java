@@ -26,6 +26,10 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
     public UnitStatusInfoDTO() {
     }
 
+    public UnitStatusInfoDTO(Integer armyIndex, Integer unitIndex) {
+        super(armyIndex, unitIndex);
+    }
+
     public UnitStatusInfoDTO(ArmyUnitIndexDTO armyUnitIndexDTO) {
         super(armyUnitIndexDTO.getArmyIndex(), armyUnitIndexDTO.getUnitIndex());
     }
@@ -34,40 +38,49 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
         return updateCurr;
     }
 
-    public void setUpdateCurr(Boolean updateCurr) {
+    public UnitStatusInfoDTO setUpdateCurr(Boolean updateCurr) {
         this.updateCurr = updateCurr;
+        return this;
+
     }
 
     public Integer[] getLife() {
         return life;
     }
 
-    public void setLife(Integer[] life) {
+    public UnitStatusInfoDTO setLife(Integer[] life) {
         this.life = life;
+        return this;
+
     }
 
     public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(Integer level) {
+    public UnitStatusInfoDTO setLevel(Integer level) {
         this.level = level;
+        return this;
+
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public UnitStatusInfoDTO setStatus(String status) {
         this.status = status;
+        return this;
+
     }
 
     public Integer getExperience() {
         return experience;
     }
 
-    public void setExperience(Integer experience) {
+    public UnitStatusInfoDTO setExperience(Integer experience) {
         this.experience = experience;
+        return this;
     }
 
     public Boolean getDone() {

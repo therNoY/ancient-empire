@@ -11,6 +11,11 @@ import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.util.StringUtil;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -52,12 +57,24 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
 
     @Override
     @Cacheable(CatchKey.UNIT_LEVEL_MES)
-    public UnitLevelMes getUnitLevelMes(String type, Integer level) {
-        return unitLevelMesDao.getUnitLevelMes(type, level);
+    public UnitLevelMes getUnitLevelMes(String id, Integer level) {
+        return unitLevelMesDao.getUnitLevelMes(id, level);
     }
 
     @Override
     public void insert(UnitLevelMes unitLevelMes) {
         unitLevelMesDao.insert(unitLevelMes);
+    }
+
+    @Override
+    public Map<String, Integer> getUnitLevelByTemp(Integer tempId) {
+        List<UnitLevelMes> levelMesList = unitLevelMesDao.getUnitLevelByTemp(tempId);
+
+        Map<String, Integer> res = new HashMap<>(levelMesList.size());
+        for (UnitLevelMes levelMes : levelMesList) {
+            res.put(StringUtil.concat(levelMes.getUnitId(), levelMes.getLevel()), levelMes.getMaxLife());
+        }
+
+        return res;
     }
 }

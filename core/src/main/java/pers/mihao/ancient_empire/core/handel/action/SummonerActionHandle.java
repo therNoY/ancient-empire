@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.core.handel.action;
 
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 
@@ -24,9 +25,9 @@ public class SummonerActionHandle extends ActionHandle{
     @Override
     public List<String> getAction(List<Position> positions, UserRecord record, Integer camp, Integer unitIndex, Position aimPoint) {
         List<String> actions = super.getAction(positions, record, camp, unitIndex, aimPoint);
-        List<Position> tombList = record.getTomb();
+        List<Site> tombList = record.getTomb();
         if (tombList != null && tombList.size() > 0) {
-            for (Position p : tombList) {
+            for (Site p : tombList) {
                 if (positions.contains(p)) {
                     actions.add(ActionEnum.SUMMON.type());
                     break;
