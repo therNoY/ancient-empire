@@ -23,6 +23,11 @@ public class GameEvent extends AbstractEvent {
     private Site aimSite;
 
     /**
+     * 单位ID
+     */
+    private Integer unitId;
+
+    /**
      * 地形的index
      */
     private Integer regionIndex;
@@ -76,6 +81,14 @@ public class GameEvent extends AbstractEvent {
 
     public void setRegionIndex(Integer regionIndex) {
         this.regionIndex = regionIndex;
+    }
+
+    public Integer getUnitId() {
+        return unitId;
+    }
+
+    public void setUnitId(Integer unitId) {
+        this.unitId = unitId;
     }
 
     @Override

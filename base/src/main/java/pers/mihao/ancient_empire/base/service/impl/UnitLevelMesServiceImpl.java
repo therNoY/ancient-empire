@@ -67,6 +67,7 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
     }
 
     @Override
+    @Cacheable(CatchKey.TEMP_UNIT_LEVEL)
     public Map<String, Integer> getUnitLevelByTemp(Integer tempId) {
         List<UnitLevelMes> levelMesList = unitLevelMesDao.getUnitLevelByTemp(tempId);
 

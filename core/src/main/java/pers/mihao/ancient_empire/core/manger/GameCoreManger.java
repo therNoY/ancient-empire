@@ -47,13 +47,13 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     private static final int JOIN_TIME = 20;
 
     /* 初始化注册是事件处理器 */
-    Map<GameEventEnum, Class<Handler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
+    private Map<GameEventEnum, Class<Handler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
 
     /* 游戏上下文 创建房间 */
-    Map<String, GameContext> contextMap = new ConcurrentHashMap<>(16);
+    private Map<String, GameContext> contextMap = new ConcurrentHashMap<>(16);
 
     // 注册哨兵线程池
-    Executor sentinelPool = new ThreadPoolExecutor(
+    private Executor sentinelPool = new ThreadPoolExecutor(
             0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
             new SynchronousQueue(),
             runnable -> {
@@ -216,5 +216,8 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         return false;
     }
 
+    public GameContext getGameSessionById(String uuid){
+        return contextMap.get(uuid);
+    }
 
 }

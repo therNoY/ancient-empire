@@ -95,7 +95,7 @@ public class UserRecordServiceImp implements UserRecordService {
                     .forEach(baseUnit -> {
                         Unit unit = UnitFactory.createUnit(baseUnit.getTypeId(), baseUnit.getRow(), baseUnit.getColumn());
                         unit.setTypeId(baseUnit.getTypeId());
-                        UnitMes unitMes = unitMesService.getByType(unit.getType());
+                        UnitMes unitMes = unitMesService.getById(unit.getTypeId());
                         pop.set(pop.get() + unitMes.getPopulation());
                         units.add(unit);
                     });

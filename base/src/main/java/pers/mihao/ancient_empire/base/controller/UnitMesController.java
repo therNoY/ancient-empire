@@ -82,25 +82,4 @@ public class UnitMesController {
         UnitInfo unitInfo = unitMesService.getUnitInfo(type, level);
         return RespUtil.successResJson(unitInfo);
     }
-
-    /**
-     * 获取可购买的所有的单位的详细信息
-     */
-    @GetMapping("/unitInfo/list")
-    public RespJson getUnitInfoList(@RequestParam String uuid) {
-        UserRecord record = userRecordService.getRecordById(uuid);
-        if (record == null) {
-            return RespUtil.error(40010);
-        }
-        Army army = AppUtil.getCurrentArmy(record);
-        boolean hasLord = false;
-        for (Unit unit : army.getUnits()) {
-            if (unit.getType().equals(UnitEnum.LORD.type())) {
-                hasLord = true;
-                break;
-            }
-        }
-        List<UnitInfo> unitInfoList = unitMesService.getUnitInfoList(hasLord);
-        return RespUtil.successResJson(unitInfoList);
-    }
 }

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import java.util.ArrayList;
+
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,45 +133,15 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     }
 
     /**
-     * 获取可购买的所有棋子信息
+     * 获取当前模板单位可以股买的
      * @param hasLoad 领主是否还存活 存活就无法购买
      * @return
      */
     @Override
-    @Cacheable(CatchKey.UNIT_INFO_LIST)
-    public List<UnitInfo> getUnitInfoList(boolean hasLoad) {
-        List<UnitInfo> unitInfoList = new ArrayList<>();
-        // 1. 获取数据库中所有单位信息
-        QueryWrapper<UnitMes> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("tradeable", true);
-        queryWrapper.eq("enable", true);
-        List<UnitMes> unitMesList = unitMesDao.selectList(queryWrapper);
-
-        for (UnitMes unitMes : unitMesList) {
-            // 不是lord 直接添加
-            if (!unitMes.getType().equals(UnitEnum.LORD.type())) {
-                UnitInfo unitInfo = new UnitInfo();
-                UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(unitMes.getType(), 1);
-                List<Ability> abilityList = abilityService.getUnitAbilityListByType(unitMes.getType());
-                unitInfo.setUnitMes(unitMes);
-                unitInfo.setLevelMes(unitLevelMesMes);
-                unitInfo.setAbilities(abilityList);
-                unitInfoList.add(unitInfo);
-            }else {
-                if (!hasLoad) {
-                    // 是lord 而且军队没有 lord 可以添加
-                    UnitInfo unitInfo = new UnitInfo();
-                    UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(unitMes.getType(), 1);
-                    List<Ability> abilityList = abilityService.getUnitAbilityListByType(unitMes.getType());
-                    unitInfo.setUnitMes(unitMes);
-                    unitInfo.setLevelMes(unitLevelMesMes);
-                    unitInfo.setAbilities(abilityList);
-                    unitInfoList.add(unitInfo);
-                }
-            }
-        }
-
-        return unitInfoList;
+    @Cacheable(CatchKey.TEMPLATE_CAN_BUY_UNITS)
+    public List<UnitMes> getUnitInfoList(Integer templateId) {
+        List<UnitMes> list = unitMesDao.selectCanTradeUnit(templateId);
+        return list;
     }
 
 

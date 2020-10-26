@@ -33,7 +33,12 @@ public interface UnitMesService extends IService<UnitMes> {
      */
     UnitInfo getUnitInfo(String id, Integer level);
 
-    List<UnitInfo> getUnitInfoList(boolean hasLoad);
+    /**
+     * 根据模板获取用户可以购买的单位
+     * @param hasLoad
+     * @return
+     */
+    List<UnitMes> getUnitInfoList(Integer templateId);
 
     UnitMes getMaxCheapUnit();
 

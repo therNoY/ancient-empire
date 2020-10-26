@@ -40,11 +40,13 @@ public class CatchKey {
     // 单位等级能力
     public static final String UNIT_LEVEL_MES = "unitLevelMes";
 
+    public static final String TEMP_UNIT_LEVEL = "tempUnitLevel";
+
     // 单位详细信息 包含单等级信息， 基础信息， 能力信息
     public static final String UNIT_INFO = "unitInfo";
 
-    // 单位详细信息 包含单等级信息， 基础信息， 能力信息
-    public static final String UNIT_INFO_LIST = "unitInfoList";
+    // 模板可以购买的单位
+    public static final String TEMPLATE_CAN_BUY_UNITS = "templateCanBuyUnits";
 
     /* 用户模板 */
     public static final String USER_TEMP = "userTemp";

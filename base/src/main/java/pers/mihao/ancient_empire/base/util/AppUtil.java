@@ -201,7 +201,7 @@ public class AppUtil {
      * @return
      */
     public static Army getCurrentArmy(UserRecord userRecord) {
-        return getArmyByColor(userRecord, userRecord.getCurrColor());
+        return userRecord.getArmyList().get(userRecord.getCurrArmyIndex());
     }
 
     /**

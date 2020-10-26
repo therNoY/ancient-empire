@@ -3,6 +3,8 @@ package pers.mihao.ancient_empire.base.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 
+import java.util.List;
+
 /**
  * <p>
  * 单位信息表 Mapper 接口
@@ -13,4 +15,10 @@ import pers.mihao.ancient_empire.base.entity.UnitMes;
  */
 public interface UnitMesDAO extends BaseMapper<UnitMes> {
 
+    /**
+     * 获取可以购买的单位
+     * @param templateId
+     * @return
+     */
+    List<UnitMes> selectCanTradeUnit(Integer templateId);
 }
