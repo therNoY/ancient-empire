@@ -15,10 +15,10 @@ import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy
 import java.util.List;
 
 /**
+ * 点击可以移动的单位处理
  * @Author mh32736
  * @Date 2020/9/17 9:52
  * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_ACTIVE_UNIT}
- * 点击可以移动的单位处理
  */
 public class ClickActiveUnitHandler extends CommonHandler {
 

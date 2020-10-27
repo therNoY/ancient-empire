@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 点击攻击召唤治疗 的图标
+ * 点击攻击/召唤/治疗的选择指针框 此时确定单位的行动
  *
  * @version 1.0
  * @auther mihao
@@ -45,15 +45,17 @@ public class ClickChoosePointHandler extends CommonHandler {
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
 
-        // 此时相当于已经确定了行动
+        // 此时相当于已经确定了行动 先更新单位的位置
         currUnit().setRow(currSite().getRow());
         currUnit().setColumn(currSite().getColumn());
         Unit unit = getCurrUnitFromArmy();
         unit.setRow(currSite().getRow());
         unit.setColumn(currSite().getColumn());
 
+        // 根据地图状态机 判断处理方式
         switch (gameContext.getStatusMachine()) {
             case WILL_ATTACH:
+                // 处理单位
                 handlerAttachUnit(gameEvent);
                 break;
             case WILL_SUMMON:

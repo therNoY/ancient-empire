@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 import java.util.List;
 
 /**
- * 准备攻击
+ * 处理准备攻击事件
  *
  * @version 1.0
  * @auther mihao

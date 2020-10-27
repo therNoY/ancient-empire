@@ -50,7 +50,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
     }
 
     @Override
-    public List<Command> handler(Event event) {
+    public final List<Command> handler(Event event) {
         List<Command> commandList = super.handler(event);
         // 根据时间处理
         for (Command command : commandList) {

@@ -11,7 +11,7 @@ import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
 /**
- * 通用处理类
+ * 通用处理类 一些通用发出命令的方法 本身不处理事件
  * @version 1.0
  * @auther mihao
  * @date 2020\10\4 0004 8:19
@@ -89,7 +89,8 @@ public class CommonHandler extends BaseHandler{
 
     /**
      * 根据Site 获取regionInfo
-     * @param site
+     * @param row
+     * @param column
      * @return
      */
     protected RegionInfo getRegionInfoBySite(int row, int column) {
@@ -115,7 +116,7 @@ public class CommonHandler extends BaseHandler{
     /**
      * 更新单位信息
      * @param armyUnitIndexDTO 单位的index
-     * @param updateCurr 是否更新当前单位
+     * @param armyUnitIndexDTO 是否更新当前单位
      * @return
      */
     public UnitStatusInfoDTO updateUnitInfo(ArmyUnitIndexDTO armyUnitIndexDTO){
@@ -127,7 +128,6 @@ public class CommonHandler extends BaseHandler{
     /**
      * 有顺序的更新单位信息
      * @param armyUnitIndexDTO 单位的index
-     * @param updateCurr 是否更新当前单位
      * @return
      */
     public UnitStatusInfoDTO updateOrderUnitInfo(ArmyUnitIndexDTO armyUnitIndexDTO){

@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.common.util.reflact;
 
+import java.util.UUID;
 import org.junit.Test;
 import pers.mihao.ancient_empire.common.jdbc.mongo.MongodbConverter;
 
@@ -14,6 +15,6 @@ public class ReflectUtilTest {
 
     @Test
     public void testGetField(){
-        List<String> res = new MongodbConverter().getQueryFieldByClass(BaseMapInfoTestVO.class);
+        System.out.println(UUID.randomUUID());
     }
 }
