@@ -64,7 +64,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
     }
 
     @Override
-    public List<Command> handler(Event event) {
+    public final List<Command> handler(Event event) {
         List<Command> commandList = super.handler(event);
         if (commandList != null) {
             // 根据时间处理 增删改的状态
