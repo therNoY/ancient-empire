@@ -218,6 +218,15 @@ public abstract class AbstractGameEventHandler implements Handler {
             return stream;
         }
 
+        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, JSONObject extData, Integer unitIndex){
+            setGameCommendEnum(gameCommendEnum);
+            setExtMes(extData);
+            setUnitIndex(unitIndex);
+            setOrder(orderIndex ++);
+            addGameCommand(this);
+            return stream;
+        }
+
         public Stream addCommand(GameCommendEnum gameCommendEnum, Unit aimUnit){
             setGameCommendEnum(gameCommendEnum);
             setAimUnit(aimUnit);

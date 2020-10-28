@@ -16,6 +16,7 @@ import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UnitTransferService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
+import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
@@ -25,6 +26,7 @@ import pers.mihao.ancient_empire.core.dto.ShowAnimDTO;
 import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.UserTemplateHelper;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
@@ -64,6 +66,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
     }
 
     @Override
+    @ExecuteTime
     public final List<Command> handler(Event event) {
         List<Command> commandList = super.handler(event);
         if (commandList != null) {
@@ -500,6 +503,21 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
     protected boolean stateIn(StatusMachineEnum... enums) {
         for (StatusMachineEnum statusEnum : enums) {
             if (gameContext.getStatusMachine().equals(statusEnum)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断游戏的状态机是否在这些中
+     *
+     * @param enums
+     * @return
+     */
+    protected boolean subStateIn(SubStatusMachineEnum... enums) {
+        for (SubStatusMachineEnum statusEnum : enums) {
+            if (gameContext.getSubStatusMachine().equals(statusEnum)) {
                 return true;
             }
         }

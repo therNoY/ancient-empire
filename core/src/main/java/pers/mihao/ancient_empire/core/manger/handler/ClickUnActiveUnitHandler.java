@@ -9,6 +9,7 @@ import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
 /**
@@ -30,8 +31,9 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
      */
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
-
-        if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_ATTACH_REGION)) {
+        if (stateIn(StatusMachineEnum.SECOND_MOVE, StatusMachineEnum.MAST_MOVE)) {
+            return;
+        }else if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_ATTACH_REGION)) {
             // 如果此时状态是准备攻击 判断是否是准备攻击单位
             if (siteInArea(gameEvent.getInitiateSite(), gameContext.getWillAttachArea())) {
                 Pair<Integer, Unit> pair = getUnitFromMapBySite(gameEvent.getInitiateSite());
@@ -45,6 +47,13 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
                 gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
             }
+        }else if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
+            // 如果当前子状态是 必须移动 那么就返回 并设置必须移动
+            commandStream()
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+            showMoveArea(gameContext.getWillMoveArea());
+            gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
+            return;
         }else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
             // 点击其他区域的单位就返回
             gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
@@ -68,7 +77,6 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             } else if (gameContext.getStatusMachine().equals(StatusMachineEnum.MOVE_DONE)) {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite());
             }
-
             gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
         }
     }

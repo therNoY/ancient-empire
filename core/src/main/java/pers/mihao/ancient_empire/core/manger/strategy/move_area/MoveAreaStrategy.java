@@ -64,6 +64,13 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
     }
 
 
+    /**
+     * 获取二次移动区域
+     * @param userRecord
+     * @param unit
+     * @param path
+     * @return
+     */
     public List<Site> getSecondMoveArea(UserRecord userRecord, UnitInfo unit, List<PathPosition> path) {
         // 2. 判断是否有二次移动
         List<Site> sites = null;

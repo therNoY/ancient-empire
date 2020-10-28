@@ -11,8 +11,12 @@ import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.end.EndStrategy;
+import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
+
+import java.util.List;
 
 /**
  * 通用处理类
@@ -48,6 +52,17 @@ public class CommonHandler extends BaseHandler {
         }
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_UNIT, ExtMes.UNIT_INFO, unitInfoPair.getValue());
         return unitInfoPair;
+    }
+
+    /**
+     * 改变当前单位
+     *
+     * @param site
+     */
+    public void changeCurrUnit(UnitInfo unitInfo) {
+        // 设置当前单位
+        record().setCurrUnit(unitInfo);
+        commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_UNIT, ExtMes.UNIT_INFO, unitInfo);
     }
 
     /**
@@ -158,17 +173,26 @@ public class CommonHandler extends BaseHandler {
 
     /**
      * 结束当前单位
+     *
      * @param armyUnitIndexDTO
      */
     protected void endCurrentUnit(ArmyUnitIndexDTO armyUnitIndexDTO) {
         // 处理二次移动
+        List<Site> secondMoveArea = MoveAreaStrategy.getInstance().getSecondMoveArea(record(), currUnit(), gameContext.getReadyMoveLine());
 
-        sendEndUnitCommend(currUnit(), armyUnitIndexDTO);
+        if (secondMoveArea != null && secondMoveArea.size() > 0) {
+            commandStream().toGameCommand().addOrderCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, secondMoveArea);
+            gameContext.setSubStatusMachine(SubStatusMachineEnum.SECOND_MOVE);
+            gameContext.setStatusMachine(StatusMachineEnum.SECOND_MOVE);
+        } else {
+            sendEndUnitCommend(currUnit(), armyUnitIndexDTO);
+        }
     }
 
 
     /**
      * 改变地形信息
+     *
      * @param regionIndex
      * @param region
      */
@@ -245,6 +269,18 @@ public class CommonHandler extends BaseHandler {
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
         commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
         return unitStatusInfoDTO;
+    }
+
+
+    /**
+     * 展示移动区域
+     *
+     * @param moveArea
+     */
+    protected void showMoveArea(List<Site> moveArea) {
+        gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_AREA);
+        gameContext.setWillMoveArea(moveArea);
+        commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, moveArea);
     }
 
 

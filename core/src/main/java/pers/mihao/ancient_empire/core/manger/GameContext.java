@@ -7,6 +7,7 @@ import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,8 @@ public class GameContext extends UserTemplateHelper {
      * 状态机
      */
     private StatusMachineEnum statusMachine = StatusMachineEnum.NO_CHOOSE;
+    private SubStatusMachineEnum subStatusMachine = SubStatusMachineEnum.INIT;
+
 
     /**
      * 玩家数量
@@ -108,6 +111,7 @@ public class GameContext extends UserTemplateHelper {
         return startGame;
     }
 
+
     public void setStartGame(CyclicBarrier startGame) {
         this.startGame = startGame;
     }
@@ -120,6 +124,13 @@ public class GameContext extends UserTemplateHelper {
         this.userRecord = userRecord;
     }
 
+    public SubStatusMachineEnum getSubStatusMachine() {
+        return subStatusMachine;
+    }
+
+    public void setSubStatusMachine(SubStatusMachineEnum subStatusMachine) {
+        this.subStatusMachine = subStatusMachine;
+    }
 
     public List<Site> getWillAttachArea() {
         return willAttachArea;
@@ -207,6 +218,9 @@ public class GameContext extends UserTemplateHelper {
 
     public void setStatusMachine(StatusMachineEnum statusMachine) {
         this.statusMachine = statusMachine;
+        if (statusMachine.equals(StatusMachineEnum.NO_CHOOSE)) {
+            setSubStatusMachine(SubStatusMachineEnum.INIT);
+        }
     }
 
     public Site getReadyMoveSite() {
@@ -248,4 +262,5 @@ public class GameContext extends UserTemplateHelper {
     public void setBeAttachUnit(Unit beAttachUnit) {
         this.beAttachUnit = beAttachUnit;
     }
+
 }
