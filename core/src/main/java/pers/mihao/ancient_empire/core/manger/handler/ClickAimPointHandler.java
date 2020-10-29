@@ -2,11 +2,14 @@ package pers.mihao.ancient_empire.core.manger.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
+import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.action.ActionStrategy;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -21,16 +24,31 @@ public class ClickAimPointHandler extends CommonHandler{
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
 
-        Set<String> actions = ActionStrategy.getInstance().getActionList(getAttachArea(), record(), record().getCurrPoint());
+        if (subStateIn(SubStatusMachineEnum.SECOND_MOVE)) {
+            ArmyUnitIndexDTO armyUnitIndexDTO = currUnitArmyIndex();
+            JSONObject extMes = new JSONObject();
+            extMes.put(ExtMes.MOVE_LINE, gameContext.getReadyMoveLine());
+            extMes.put(ExtMes.ACTIONS, new ArrayList<>());
+            commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
+                    .toGameCommand().addOrderCommand(GameCommendEnum.MOVE_UNIT, extMes, armyUnitIndexDTO.getUnitIndex());
+            gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+            sendEndUnitCommend(currUnit(), armyUnitIndexDTO);
+        }else {
+            Set<String> actions = ActionStrategy.getInstance().getActionList(getAttachArea(), record(), record().getCurrPoint());
 
-        // 不展示移动范围
-        JSONObject extMes = new JSONObject();
-        extMes.put(ExtMes.MOVE_LINE, gameContext.getReadyMoveLine());
-        extMes.put(ExtMes.ACTIONS, actions);
-        commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
-                .toGameCommand().addCommand(GameCommendEnum.MOVE_UNIT, extMes, getCurrUnitIndex());
-        gameContext.setStartMoveSite(currUnit());
-        gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
-        gameContext.setActions(actions);
+            // 不展示移动范围
+            JSONObject extMes = new JSONObject();
+            extMes.put(ExtMes.MOVE_LINE, gameContext.getReadyMoveLine());
+            extMes.put(ExtMes.ACTIONS, actions);
+            commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
+                    .toGameCommand().addCommand(GameCommendEnum.MOVE_UNIT, extMes, getCurrUnitIndex());
+            gameContext.setStartMoveSite(currUnit());
+            gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
+            gameContext.setActions(actions);
+        }
+
+
+
+
     }
 }

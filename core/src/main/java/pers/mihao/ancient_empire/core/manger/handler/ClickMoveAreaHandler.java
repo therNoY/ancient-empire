@@ -37,7 +37,6 @@ public class ClickMoveAreaHandler extends CommonHandler{
     private List<PathPosition> showMoveLine(Site aimSite) {
         List<PathPosition> path = MovePathStrategy.getInstance().getMovePath(record().getCurrUnit(),
                 aimSite, gameContext.getWillMoveArea());
-
         gameContext.setStatusMachine(StatusMachineEnum.MOVING);
         gameContext.setReadyMoveLine(path);
         gameContext.setStartMoveSite(getCurrentUnitSite());

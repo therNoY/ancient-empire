@@ -27,6 +27,9 @@ public class ClickTombHandler extends CommonHandler{
                 commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
                 gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
             }
+        }else {
+            changeCurrRegion(gameEvent.getInitiateSite());
+            changeCurrPoint(gameEvent.getInitiateSite());
         }
     }
 }

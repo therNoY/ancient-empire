@@ -27,10 +27,6 @@ public class AttachResultDTO implements Serializable {
      */
     private AttachResult antiAttackResult;
 
-    /**
-     * 单位二次移动的移动范围
-     */
-    private List<Site> moveArea;
 
     public AttachResult getAttachResult() {
         return attachResult;
@@ -56,11 +52,4 @@ public class AttachResultDTO implements Serializable {
         this.antiAttackResult = antiAttackResult;
     }
 
-    public List<Site> getMoveArea() {
-        return moveArea;
-    }
-
-    public void setMoveArea(List<Site> moveArea) {
-        this.moveArea = moveArea;
-    }
 }

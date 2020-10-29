@@ -11,89 +11,85 @@ public enum StatusMachineEnum {
     /**
      * 没有选择 初始状态
      */
-    NO_CHOOSE( "0"),
+    NO_CHOOSE,
 
     /**
      * 选中单位
      */
-    CHOOSE_UNIT( "1"),
+    CHOOSE_UNIT,
 
     /**
      * 展示移动区域
      */
-    SHOW_MOVE_AREA( "2"),
+    SHOW_MOVE_AREA,
 
     /**
      * 准备移动
      */
-    WILL_MOVE( "3"),
+    WILL_MOVE,
 
     /**
      * 单位移动中
      */
-    MOVING( "4"),
+    MOVING,
 
     /**
-     * 移动完毕
+     * 移动完毕 还没确定移动
      */
-    MOVE_DONE( "5"),
+    MOVE_DONE,
 
     /**
      * 展示可选行动
      */
-    SHOW_ACTION( "6"),
+    SHOW_ACTION,
 
     /**
      * 即将攻击
      */
-    WILL_ATTACH( "7_0"),
+    WILL_ATTACH,
 
     /**
      * 准备召唤
      */
-    WILL_SUMMON( "7_1"),
+    WILL_SUMMON,
 
     /**
      * 即将攻击地形
      */
-    WILL_ATTACH_REGION( "7_2"),
+    WILL_ATTACH_REGION,
 
     /**
      * 攻击中
      */
-    ATTACHING( "8_0"),
+    ATTACHING,
 
     /**
      * 召唤中
      */
-    SUMMONING( "8_1"),
+    SUMMONING,
 
     /**
      * 攻击结束
      */
-    ATTACH_DONE( "9_0"),
+    ATTACH_DONE,
 
     /**
      * 等级提升
      */
-    LEVEL_UP( "10"),
+    LEVEL_UP,
+
+    /**
+     * 必须移动
+     */
+    MAST_MOVE,
 
     /**
      * 二次移动
      */
-    SECOND_MOVE( "11"),
+    SECOND_MOVE,
 
     /**
      * 行动结束
      */
-    ACTION_DONE( "12");
-
-    String state;
-
-    StatusMachineEnum(String state) {
-        this.state = state;
-    }
-
-
-
+    ACTION_DONE;
 }

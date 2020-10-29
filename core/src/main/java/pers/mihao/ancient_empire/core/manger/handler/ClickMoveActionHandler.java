@@ -21,8 +21,6 @@ public class ClickMoveActionHandler extends CommonHandler{
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
         List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), currUnit());
-        gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_AREA);
-        gameContext.setWillMoveArea(moveArea);
-        commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, moveArea);
+        showMoveArea(moveArea);
     }
 }

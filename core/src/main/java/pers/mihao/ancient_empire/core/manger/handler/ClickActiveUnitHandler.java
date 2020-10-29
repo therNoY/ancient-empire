@@ -11,6 +11,7 @@ import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.action.ActionStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
@@ -31,10 +32,19 @@ public class ClickActiveUnitHandler extends CommonHandler {
     // 点击可以移动的单位
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
-        if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON, StatusMachineEnum.WILL_ATTACH_REGION)) {
+        if (stateIn(StatusMachineEnum.SECOND_MOVE, StatusMachineEnum.MAST_MOVE)) {
+            return;
+        }else if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON, StatusMachineEnum.WILL_ATTACH_REGION)) {
             // 点击其他区域的单位就返回
             commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
+        }else if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
+            // 如果当前子状态是 必须移动 那么就返回 并设置必须移动
+            commandStream()
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+            showMoveArea(gameContext.getWillMoveArea());
+            gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
+            return;
         }else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
             // 点击其他区域的单位就返回
             gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
@@ -58,9 +68,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, actions);
             } else {
                 List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), unitInfo);
-                gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_AREA);
-                gameContext.setWillMoveArea(moveArea);
-                commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, moveArea);
+                showMoveArea(moveArea);
             }
         }
     }

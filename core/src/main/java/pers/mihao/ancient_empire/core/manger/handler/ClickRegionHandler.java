@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.manger.handler;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
 /**
@@ -16,7 +17,7 @@ public class ClickRegionHandler extends CommonHandler {
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
         // 如果现在状态是二次移动 直接返回false
-        if (stateIn(StatusMachineEnum.SECOND_MOVE)) {
+        if (stateIn(StatusMachineEnum.SECOND_MOVE, StatusMachineEnum.MAST_MOVE)) {
             return;
         }
 
@@ -30,11 +31,22 @@ public class ClickRegionHandler extends CommonHandler {
         changeCurrPoint(getSiteByRegionIndex(gameEvent.getRegionIndex()));
         changeCurrRegion(gameEvent.getRegionIndex());
 
+        if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
+            // 如果当前子状态是 必须移动 那么就返回 并设置必须移动
+            commandStream()
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+            showMoveArea(gameContext.getWillMoveArea());
+            gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
+            return;
+        }
+
         if (stateIn(StatusMachineEnum.SHOW_MOVE_AREA, StatusMachineEnum.MOVING)) {
             // 如果此时状态机是展示移动区域 就取消展示
             commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
             gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
         }else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
+
+
             commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
         }
 

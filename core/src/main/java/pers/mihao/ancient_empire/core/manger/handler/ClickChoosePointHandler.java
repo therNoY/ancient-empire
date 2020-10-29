@@ -209,10 +209,6 @@ public class ClickChoosePointHandler extends CommonHandler {
         } else {
             resultDto.setAntiAttack(false);
         }
-
-        // 4.判断是否可以二次移动
-        List<Site> sites = MoveAreaStrategy.getInstance().getSecondMoveArea(record(), currUnit(), gameContext.getReadyMoveLine());
-        resultDto.setMoveArea(sites);
         return resultDto;
     }
 
