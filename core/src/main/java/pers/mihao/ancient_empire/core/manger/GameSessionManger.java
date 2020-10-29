@@ -39,7 +39,9 @@ public class GameSessionManger {
     @Autowired
     UserService userService;
 
-    // 保存用户的session
+    /**
+     * 保存用户的session key gameId, value 该游戏ID对应的所有GameSession
+     */
     private ConcurrentHashMap<String, List<GameSession>> sessionMap = new ConcurrentHashMap();
 
     // 记录当前游戏的人数

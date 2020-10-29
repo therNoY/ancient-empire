@@ -268,7 +268,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
 
 
     /**
-     * 基础方法
+     * 从当前军队中获取单位
      *
      * @param site
      * @return
@@ -278,7 +278,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
     }
 
     /**
-     * 基础方法
+     * 基础方法 在指定军队中 指定位置获取单位
      *
      * @param army
      * @param site
@@ -293,8 +293,13 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         return null;
     }
 
+    /**
+     * 获取单位在地图中的index
+     * @param army
+     * @param uuid
+     * @return
+     */
     protected Integer getUnitIndex(Army army, String uuid) {
-
         if (army != null) {
             for (int i = 0; i < army.getUnits().size(); i++) {
                 if (army.getUnits().get(i).getId().equals(uuid)) {
@@ -310,10 +315,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
                 }
             }
         }
-
-
         return null;
-
     }
 
 
@@ -333,6 +335,11 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         return null;
     }
 
+    /**
+     * 根据军队和单位Index 获取单位
+     * @param indexDTO
+     * @return
+     */
     protected Unit getUnitByIndex(ArmyUnitIndexDTO indexDTO) {
         return record().getArmyList().get(indexDTO.getArmyIndex()).getUnits().get(indexDTO.getUnitIndex());
     }
@@ -350,7 +357,12 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         return unitInfo;
     }
 
-    protected Unit getUnitFromArmy(String unitId) {
+    /**
+     * 从当前单位获取军队
+     * @param unitId
+     * @return
+     */
+    protected Unit getUnitFromCurrArmy(String unitId) {
         List<Unit> units = currArmy().getUnits();
         for (int i = 0; i < units.size(); i++) {
             Unit unit = units.get(i);
@@ -361,6 +373,10 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         return null;
     }
 
+    /**
+     * 获取当前单位的index
+     * @return
+     */
     protected Integer getCurrUnitIndex() {
         List<Unit> units = currArmy().getUnits();
         for (int i = 0; i < units.size(); i++) {

@@ -18,7 +18,7 @@ public abstract class AbstractTaskQueueManger<T> implements TaskQueueManger<T> {
     /**
      * 事件处理线程池
      */
-    ExecutorService taskPool = new ThreadPoolExecutor(
+    protected ExecutorService taskPool = new ThreadPoolExecutor(
         1,
         Runtime.getRuntime().availableProcessors(),
         0, TimeUnit.MINUTES,
