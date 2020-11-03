@@ -32,7 +32,9 @@ public class ClickActiveUnitHandler extends CommonHandler {
     // 点击可以移动的单位
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
+
         if (stateIn(StatusMachineEnum.SECOND_MOVE, StatusMachineEnum.MAST_MOVE)) {
+            // 如果状态是二次移动 或者 必须移动状态 直接返回
             return;
         }else if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON, StatusMachineEnum.WILL_ATTACH_REGION)) {
             // 点击其他区域的单位就返回
@@ -47,7 +49,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
             return;
         }else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
             // 点击其他区域的单位就返回
-            gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+            gameContext.setStatusMachine(StatusMachineEnum.INIT);
             commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
         }else {
             changeCurrPoint(gameEvent.getInitiateSite());

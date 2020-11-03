@@ -56,9 +56,7 @@ public class StringUtil {
      * @return
      */
     public static boolean isEmpty(String string) {
-        if (string != null && !string.equals(""))
-            return false;
-        return true;
+        return string == null || string.equals("");
     }
 
     /**

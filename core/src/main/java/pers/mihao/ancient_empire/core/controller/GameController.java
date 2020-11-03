@@ -69,12 +69,15 @@ public class GameController {
             log.error("错误的地图信息{}", reqInitMapDto);
             return RespUtil.error();
         }
+
+        // TODO 检测是否达到最大游戏数量
+
         // 2.生成文档注册上下文
         UserRecord userRecord = userRecordService.initMapRecord(reqInitMapDto, userMap);
         log.info("生成新的存档：{}， 注册游戏上下文", userRecord.getUuid());
         gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, reqInitMapDto.getGameType()), 1);
 
-        // 2.返回前端保存
+        // 3.返回前端保存
         GameVO userMapVo = new GameVO();
         BeanUtils.copyProperties(userRecord, userMapVo);
         userMapVo.setCastleTitles(userRecordService.findCastleTitle(userMap.getRegions(), userMap.getRow(), userMap.getColumn()));

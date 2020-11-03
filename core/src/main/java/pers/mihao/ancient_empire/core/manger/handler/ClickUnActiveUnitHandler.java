@@ -56,7 +56,7 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             return;
         }else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
             // 点击其他区域的单位就返回
-            gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+            gameContext.setStatusMachine(StatusMachineEnum.INIT);
             commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
         }else if (stateIn(StatusMachineEnum.WILL_SUMMON)) {
             // 点击其他区域的单位就返回
@@ -72,12 +72,12 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             changeCurrRegion(gameEvent.getInitiateSite());
 
             if (gameContext.getStatusMachine().equals(StatusMachineEnum.SHOW_MOVE_AREA) ||
-                    gameContext.getStatusMachine().equals(StatusMachineEnum.MOVING)) {
+                    gameContext.getStatusMachine().equals(StatusMachineEnum.SHOW_MOVE_LINE)) {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
             } else if (gameContext.getStatusMachine().equals(StatusMachineEnum.MOVE_DONE)) {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite());
             }
-            gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+            gameContext.setStatusMachine(StatusMachineEnum.INIT);
         }
     }
 

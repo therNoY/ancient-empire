@@ -1,7 +1,8 @@
-package pers.mihao.ancient_empire.robot.factory;
+package pers.mihao.ancient_empire.core.robot.factory;
 
-import pers.mihao.ancient_empire.robot.DefaultRoot;
-import pers.mihao.ancient_empire.robot.Robot;
+
+import pers.mihao.ancient_empire.core.robot.DefaultRoot;
+import pers.mihao.ancient_empire.core.robot.Robot;
 
 /**
  * 机器人Factory实现类

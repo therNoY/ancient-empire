@@ -168,8 +168,9 @@ public class MoveAreaHandle{
         int index = (row - 1) * userRecord.getGameMap().getColumn() + column - 1;
         String type = userRecord.getGameMap().getRegions().get(index).getType();
         RegionMes regionMes = ApplicationContextHolder.getBean(RegionMesService.class).getRegionByType(type);
-        if (regionMes == null)
+        if (regionMes == null) {
             throw new AncientEmpireException("服务器错误");
+        }
         return regionMes.getDeplete();
     }
 

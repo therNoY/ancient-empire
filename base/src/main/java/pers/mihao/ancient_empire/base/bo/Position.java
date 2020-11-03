@@ -39,7 +39,7 @@ public class Position extends Site {
     public boolean equals(Object obj) {
         if (obj instanceof Position) {
             Position p1 = (Position) obj;
-            if (this.row == p1.getRow() && this.column == p1.getColumn()) {
+            if (this.row.equals(p1.getRow()) && this.column.equals(p1.getColumn())) {
                 // 如果当前的剩剩余移动力比较小就不算了
                 if (p1.getLastMove() != null && this.lastMove != null) {
                     if (p1.getLastMove() > this.lastMove) {
@@ -51,7 +51,7 @@ public class Position extends Site {
             }
         } else if (obj instanceof Site) {
             Site p1 = (Site) obj;
-            if (this.row == p1.getRow() && this.column == p1.getColumn()) {
+            if (this.row.equals(p1.getRow()) && this.column.equals(p1.getColumn())) {
                 return true;
             }
         }

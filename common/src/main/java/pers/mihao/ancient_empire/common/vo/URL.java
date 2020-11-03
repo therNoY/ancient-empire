@@ -45,8 +45,9 @@ public class URL {
             }
             return;
         }
-        if (mess.length > 2)
+        if (mess.length > 2) {
             throw new AncientEmpireException("URL 格式异常");
+        }
         // 解析出path
         this.path = mess[0];
         analyzePath(path);

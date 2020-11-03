@@ -139,7 +139,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         if (!contextMap.containsKey(userRecord.getUuid())) {
             sentinelPool.execute(()->{
                 // 设置初始信息
-                GameContext gameContext = new GameContext();
+                    GameContext gameContext = new GameContext();
                 contextMap.put(userRecord.getUuid(), gameContext);
 
                 gameContext.setGameId(userRecord.getUuid());

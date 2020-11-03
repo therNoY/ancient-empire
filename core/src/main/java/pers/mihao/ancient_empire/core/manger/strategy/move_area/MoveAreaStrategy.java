@@ -201,8 +201,9 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         int index = (row - 1) * gameMap.getColumn() + column - 1;
         String type = gameMap.getRegions().get(index).getType();
         RegionMes regionMes = ApplicationContextHolder.getBean(RegionMesService.class).getRegionByType(type);
-        if (regionMes == null)
+        if (regionMes == null) {
             throw new AncientEmpireException("服务器错误");
+        }
         return regionMes.getDeplete();
     }
 }

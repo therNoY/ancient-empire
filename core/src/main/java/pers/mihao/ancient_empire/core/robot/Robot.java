@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.robot;
+package pers.mihao.ancient_empire.core.robot;
 
 import pers.mihao.ancient_empire.core.manger.GameContext;
 

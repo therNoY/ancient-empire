@@ -305,7 +305,7 @@ public class AiMoveHandle extends AiActiveHandle {
         Unit enemyEnemy = null;
         int minDistance = Integer.MAX_VALUE;
         for (Army army : record.getArmyList()) {
-            if (army.getCamp() != this.army.getCamp()) {
+            if (!army.getCamp().equals(this.army.getCamp())) {
                 for (Unit unit : army.getUnits()) {
                     int distance = AppUtil.getLength(unit, selectUnit);
                     if (distance < minDistance) {
@@ -354,7 +354,7 @@ public class AiMoveHandle extends AiActiveHandle {
         int minDistance = Integer.MAX_VALUE;
         for (Army army : record.getArmyList()) {
 
-            if (army.getCamp() != this.army.getCamp()) {
+            if (!army.getCamp().equals(this.army.getCamp())) {
                 for (Unit unit : army.getUnits()) {
 
                     if (unit.getType().equals(UnitEnum.LORD.type())) {

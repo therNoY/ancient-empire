@@ -14,7 +14,7 @@ import java.util.Set;
 
 /**
  * 点击目标的移动区域 移动单位
- *@see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_AIM_POINT}
+ * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_AIM_POINT}
  * @version 1.0
  * @auther mihao
  * @date 2020\10\4 0004 17:32
@@ -25,13 +25,14 @@ public class ClickAimPointHandler extends CommonHandler{
     public void handlerGameEvent(GameEvent gameEvent) {
 
         if (subStateIn(SubStatusMachineEnum.SECOND_MOVE)) {
+            // 二次移动直接结束单位的移动
             ArmyUnitIndexDTO armyUnitIndexDTO = currUnitArmyIndex();
             JSONObject extMes = new JSONObject();
             extMes.put(ExtMes.MOVE_LINE, gameContext.getReadyMoveLine());
             extMes.put(ExtMes.ACTIONS, new ArrayList<>());
             commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
                     .toGameCommand().addOrderCommand(GameCommendEnum.MOVE_UNIT, extMes, armyUnitIndexDTO.getUnitIndex());
-            gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+            gameContext.setStatusMachine(StatusMachineEnum.INIT);
             sendEndUnitCommend(currUnit(), armyUnitIndexDTO);
         }else {
             Set<String> actions = ActionStrategy.getInstance().getActionList(getAttachArea(), record(), record().getCurrPoint());

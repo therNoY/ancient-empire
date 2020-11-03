@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.robot;
+package pers.mihao.ancient_empire.core.robot;
 
 /**
  * @Author mh32736

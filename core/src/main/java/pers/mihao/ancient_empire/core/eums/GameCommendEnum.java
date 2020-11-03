@@ -138,4 +138,15 @@ public enum GameCommendEnum implements BaseEnum {
      */
     SHOW_SUMMON_ANIM,
 
+    /**
+     * 改变军队信息
+     */
+    CHANGE_ARMY_INFO,
+
+    /**
+     * 改变记录信息
+     */
+    CHANGE_RECORD_INFO,
+    ;
+
 }

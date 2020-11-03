@@ -9,6 +9,8 @@ public abstract class AbstractCommand implements Command {
 
     private Integer order;
 
+    private Boolean isAsync;
+
     @Override
     public Integer getOrder() {
         return order;
@@ -16,5 +18,14 @@ public abstract class AbstractCommand implements Command {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    @Override
+    public Boolean isAsync() {
+        return isAsync;
+    }
+
+    public void setAsync(Boolean async) {
+        isAsync = async;
     }
 }

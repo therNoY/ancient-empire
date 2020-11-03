@@ -85,7 +85,7 @@ public class MovePathStrategy extends AbstractStrategy {
         turningPoint.add(new PathPosition(path.get(0)));
         for (int i = 1; i < path.size(); i++) {
             Site p = path.get(i);
-            if (p.getRow() == startSite.getRow() || p.getColumn() == startSite.getColumn()) {
+            if (p.getRow().equals(startSite.getRow()) || p.getColumn().equals(startSite.getColumn())) {
                 continue;
             }
             startSite = path.get(i - 1);
@@ -153,22 +153,22 @@ public class MovePathStrategy extends AbstractStrategy {
             rowInc = -1;
         }
         // 先水平走 再上下走
-        while (currP.getColumn() != aimP.getColumn()) {
+        while (!currP.getColumn().equals(aimP.getColumn())) {
             currP.setColumn(currP.getColumn() + columnInc);
             if (!isContent(positions, currP.getRow(), currP.getColumn())) {
                 currP.setColumn(currP.getColumn() - columnInc);
                 break;
             }
         }
-        if (currP.getColumn() == aimP.getColumn()) {
-            while (currP.getRow() != aimP.getRow()) {
+        if (currP.getColumn().equals(aimP.getColumn())) {
+            while (!currP.getRow().equals(aimP.getRow())) {
                 currP.setRow(currP.getRow() + rowInc);
                 if (!isContent(positions, currP.getRow(), currP.getColumn())) {
                     break;
                 }
             }
         }
-        if (currP.getRow() == aimP.getRow() && currP.getColumn() == aimP.getColumn()) {
+        if (currP.getRow().equals(aimP.getRow()) && currP.getColumn().equals(aimP.getColumn())) {
             return true;
         }
         return false;
@@ -187,22 +187,22 @@ public class MovePathStrategy extends AbstractStrategy {
             rowInc = -1;
         }
         // 先上下走 再水平走
-        while (currP.getRow() != aimP.getRow()) {
+        while (!currP.getRow().equals(aimP.getRow())) {
             currP.setRow(currP.getRow() + rowInc);
             if (!isContent(positions, currP.getRow(), currP.getColumn())) {
                 currP.setRow(currP.getRow() - rowInc);
                 break;
             }
         }
-        if (currP.getRow() == aimP.getRow()) {
-            while (currP.getColumn() != aimP.getColumn()) {
+        if (currP.getRow().equals(aimP.getRow())) {
+            while (!currP.getColumn().equals(aimP.getColumn())) {
                 currP.setColumn(currP.getColumn() + columnInc);
                 if (!isContent(positions, currP.getRow(), currP.getColumn())) {
                     break;
                 }
             }
         }
-        if (currP.getRow() == aimP.getRow() && currP.getColumn() == aimP.getColumn()) {
+        if (currP.getRow().equals(aimP.getRow()) && currP.getColumn().equals(aimP.getColumn())) {
             return true;
         }
         return false;
@@ -223,7 +223,7 @@ public class MovePathStrategy extends AbstractStrategy {
             rowInc = -1;
         }
         // 先水平走 再上下走
-        while (currP.getColumn() != aimP.getColumn()) {
+        while (!currP.getColumn().equals(aimP.getColumn())) {
             currP.setColumn(currP.getColumn() + columnInc);
             path.add(new Site(currP));
             if (!isContent(positions, currP.getRow(), currP.getColumn())) {
@@ -231,8 +231,8 @@ public class MovePathStrategy extends AbstractStrategy {
                 break;
             }
         }
-        if (currP.getColumn() == aimP.getColumn()) {
-            while (currP.getRow() != aimP.getRow()) {
+        if (currP.getColumn().equals(aimP.getColumn())) {
+            while (!currP.getRow().equals(aimP.getRow())) {
                 currP.setRow(currP.getRow() + rowInc);
                 path.add(new Site(currP));
                 if (!isContent(positions, currP.getRow(), currP.getColumn())) {
@@ -240,7 +240,7 @@ public class MovePathStrategy extends AbstractStrategy {
                 }
             }
         }
-        if (currP.getRow() == aimP.getRow() && currP.getColumn() == aimP.getColumn()) {
+        if (currP.getRow().equals(aimP.getRow()) && currP.getColumn().equals(aimP.getColumn())) {
             return path;
         }
         return null;
@@ -261,7 +261,7 @@ public class MovePathStrategy extends AbstractStrategy {
             rowInc = -1;
         }
         // 先上下走 再水平走
-        while (currP.getRow() != aimP.getRow()) {
+        while (!currP.getRow().equals(aimP.getRow())) {
             currP.setRow(currP.getRow() + rowInc);
             path.add(new Site(currP));
             if (!isContent(positions, currP.getRow(), currP.getColumn())) {
@@ -269,8 +269,8 @@ public class MovePathStrategy extends AbstractStrategy {
                 break;
             }
         }
-        if (currP.getRow() == aimP.getRow()) {
-            while (currP.getColumn() != aimP.getColumn()) {
+        if (currP.getRow().equals(aimP.getRow())) {
+            while (!currP.getColumn().equals(aimP.getColumn())) {
                 currP.setColumn(currP.getColumn() + columnInc);
                 path.add(new Site(currP));
                 if (!isContent(positions, currP.getRow(), currP.getColumn())) {
@@ -278,7 +278,7 @@ public class MovePathStrategy extends AbstractStrategy {
                 }
             }
         }
-        if (currP.getRow() == aimP.getRow() && currP.getColumn() == aimP.getColumn()) {
+        if (currP.getRow().equals(aimP.getRow()) && currP.getColumn().equals(aimP.getColumn())) {
             return path;
         }
         return null;

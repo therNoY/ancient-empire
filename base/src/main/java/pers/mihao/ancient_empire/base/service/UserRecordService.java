@@ -29,4 +29,10 @@ public interface UserRecordService extends MapService{
      * @param uuid
      */
     void removeById(String uuid);
+
+    /**
+     * 保存信息
+     * @param record
+     */
+    void saveRecord(UserRecord record);
 }

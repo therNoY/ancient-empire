@@ -40,17 +40,17 @@ public class ClickRegionHandler extends CommonHandler {
             return;
         }
 
-        if (stateIn(StatusMachineEnum.SHOW_MOVE_AREA, StatusMachineEnum.MOVING)) {
+        if (stateIn(StatusMachineEnum.SHOW_MOVE_AREA, StatusMachineEnum.SHOW_MOVE_LINE)) {
             // 如果此时状态机是展示移动区域 就取消展示
             commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
-            gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+            gameContext.setStatusMachine(StatusMachineEnum.INIT);
         }else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
 
 
             commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
         }
 
-        gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+        gameContext.setStatusMachine(StatusMachineEnum.INIT);
 
     }
 }

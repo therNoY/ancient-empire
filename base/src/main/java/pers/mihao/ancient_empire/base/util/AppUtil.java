@@ -45,8 +45,9 @@ public class AppUtil {
                 break;
             }
         }
-        if (cArmy == null)
+        if (cArmy == null) {
             throw new AncientEmpireException("record 记录错误 根据当前军队颜色找军队");
+        }
         return cArmy;
     }
 
@@ -222,7 +223,7 @@ public class AppUtil {
     public static Unit getUnitByPosition(UserRecord record, Site site, Integer camp) {
         Unit unit = null;
         for (Army army : record.getArmyList()) {
-            if (army.getCamp() == camp) {
+            if (army.getCamp().equals(camp)) {
                 unit = getUnitByPosition(army, site);
                 if (unit != null) {
                     return unit;
@@ -243,7 +244,7 @@ public class AppUtil {
     public static Unit getUnitByPositionNotIn(UserRecord record, Site site, Integer camp) {
         Unit unit = null;
         for (Army army : record.getArmyList()) {
-            if (army.getCamp() != camp) {
+            if (!army.getCamp().equals(camp)) {
                 unit = getUnitByPosition(army, site);
                 if (unit != null) {
                     return unit;
@@ -400,7 +401,7 @@ public class AppUtil {
         List<String> strings = new ArrayList<>();
         Army cArmy = getCurrentArmy(record);
         for (Army army : record.getArmyList()) {
-            if (army.getCamp() == cArmy.getCamp()) {
+            if (army.getCamp().equals(cArmy.getCamp())) {
                 strings.add(army.getColor());
             }
         }

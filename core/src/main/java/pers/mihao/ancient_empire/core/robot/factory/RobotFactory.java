@@ -1,6 +1,7 @@
-package pers.mihao.ancient_empire.robot.factory;
+package pers.mihao.ancient_empire.core.robot.factory;
 
-import pers.mihao.ancient_empire.robot.Robot;
+
+import pers.mihao.ancient_empire.core.robot.Robot;
 
 /**
  * 机器人工厂接口

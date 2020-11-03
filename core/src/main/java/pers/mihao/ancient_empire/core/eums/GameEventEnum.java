@@ -11,11 +11,6 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
 public enum GameEventEnum implements BaseEnum {
 
     /**
-     * 回合开始事件 目前没有指令
-     */
-    ROUND_START,
-
-    /**
      * 点击可以行动的单位事件
      * 领主如果在己方城堡上会获取行动，通知 SHOW_ACTION
      * 否则通知 SHOW_MOVE_AREA

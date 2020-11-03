@@ -9,32 +9,23 @@ package pers.mihao.ancient_empire.core.eums;
 public enum StatusMachineEnum {
 
     /**
-     * 没有选择 初始状态
+     * 初始状态 只有单位被选择 地形被选择
      */
-    NO_CHOOSE,
-
-    /**
-     * 选中单位
-     */
-    CHOOSE_UNIT,
+    INIT,
 
     /**
      * 展示移动区域
      */
     SHOW_MOVE_AREA,
 
-    /**
-     * 准备移动
-     */
-    WILL_MOVE,
 
     /**
-     * 单位移动中
+     * 展示单位移动
      */
-    MOVING,
+    SHOW_MOVE_LINE,
 
     /**
-     * 移动完毕 还没确定移动
+     * 移动完毕 还没确定移动 可以回退状态
      */
     MOVE_DONE,
 
@@ -59,32 +50,12 @@ public enum StatusMachineEnum {
     WILL_ATTACH_REGION,
 
     /**
-     * 攻击中
-     */
-    ATTACHING,
-
-    /**
-     * 召唤中
-     */
-    SUMMONING,
-
-    /**
-     * 攻击结束
-     */
-    ATTACH_DONE,
-
-    /**
-     * 等级提升
-     */
-    LEVEL_UP,
-
-    /**
-     * 必须移动
+     * 在城堡购买单位 必须移动
      */
     MAST_MOVE,
 
     /**
-     * 二次移动
+     * 拥有突袭能力 二次移动
      */
     SECOND_MOVE,
 
