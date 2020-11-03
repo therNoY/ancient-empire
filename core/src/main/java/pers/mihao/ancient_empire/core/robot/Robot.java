@@ -8,10 +8,15 @@ import pers.mihao.ancient_empire.core.manger.GameContext;
  */
 public abstract class Robot implements Runnable{
 
-    private GameContext gameContext;
+    protected final GameContext gameContext;
+
+    public Robot(GameContext gameContext) {
+        this.gameContext = gameContext;
+    }
 
     @Override
     public void run() {
 
     }
+
 }

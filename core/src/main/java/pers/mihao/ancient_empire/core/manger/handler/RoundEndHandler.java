@@ -22,6 +22,7 @@ import pers.mihao.ancient_empire.core.dto.LifeChangeDTO;
 import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
+import pers.mihao.ancient_empire.core.robot.RobotManger;
 
 /**
  * 回合结束事件处理器  当一个回合结束时处理
@@ -44,7 +45,7 @@ public class RoundEndHandler extends CommonHandler {
 
         // 3.判断下局游戏是否是机器人
         if (currArmy().getPlayer() == null){
-
+            robotManger.startRobot(gameContext);
         }
 
     }

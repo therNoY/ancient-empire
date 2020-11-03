@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import pers.mihao.ancient_empire.core.robot.RobotManger;
 
 /**
  * 基础处理类 存放视图方法和基本方法 无业务操作
@@ -60,12 +61,15 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
     protected static UnitTransferService unitTransferService;
     protected static UserRecordService userRecordService;
 
+    protected static RobotManger robotManger;
+
     static {
         regionMesService = ApplicationContextHolder.getBean(RegionMesService.class);
         unitMesService = ApplicationContextHolder.getBean(UnitMesService.class);
         unitLevelMesService = ApplicationContextHolder.getBean(UnitLevelMesService.class);
         unitTransferService = ApplicationContextHolder.getBean(UnitTransferService.class);
         userRecordService = ApplicationContextHolder.getBean(UserRecordService.class);
+        robotManger = ApplicationContextHolder.getBean(RobotManger.class);
     }
 
     @Override

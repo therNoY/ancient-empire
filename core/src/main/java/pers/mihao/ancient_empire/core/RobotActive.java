@@ -8,7 +8,7 @@ import pers.mihao.ancient_empire.core.handel.ai.AiActiveHandle;
 import pers.mihao.ancient_empire.core.manger.GameCoreStaManger;
 
 /**
- * 任务调度的提交类 工具人
+ * 任务调度的提交类
  */
 public class RobotActive implements Supplier<ActiveResult> {
 

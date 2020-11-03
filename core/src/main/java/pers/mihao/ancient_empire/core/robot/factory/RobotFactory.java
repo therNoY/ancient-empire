@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.core.robot.factory;
 
 
+import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.robot.Robot;
 
 /**
@@ -11,6 +12,11 @@ import pers.mihao.ancient_empire.core.robot.Robot;
 public interface RobotFactory {
 
 
-    Robot create();
+    /**
+     * 创建机器人
+     * @param gameContext
+     * @return
+     */
+    Robot create(GameContext gameContext);
 
 }
