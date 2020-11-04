@@ -92,8 +92,9 @@ public class JacksonUtil {
     }
 
     public static <T> String toJson(T t, ObjectMapper objectMapper) {
-        if (Objects.isNull(t))
+        if (Objects.isNull(t)) {
             return null;
+        }
         try {
             return objectMapper == null ? mapper.writeValueAsString(t) : objectMapper.writeValueAsString(t);
         } catch (JsonProcessingException e) {
@@ -103,8 +104,9 @@ public class JacksonUtil {
     }
 
     public static <T> T jsonToBean(String json, Class<T> clazz, ObjectMapper objectMapper) {
-        if (StringUtil.isEmpty(json))
+        if (StringUtil.isEmpty(json)) {
             return null;
+        }
         try {
             return objectMapper == null ? mapper.readValue(json, clazz) : objectMapper.readValue(json, clazz);
         } catch (IOException e) {
@@ -114,8 +116,9 @@ public class JacksonUtil {
     }
 
     public static <T> T fileToBean(File file, Class<T> clazz, ObjectMapper objectMapper) {
-        if (!file.exists())
+        if (!file.exists()) {
             return null;
+        }
         try {
             return objectMapper == null ? mapper.readValue(file, clazz) : objectMapper.readValue(file, clazz);
         } catch (IOException e) {
@@ -125,8 +128,9 @@ public class JacksonUtil {
     }
 
     public static <T> T jsonTo(String json, TypeReference<T> typeReference, ObjectMapper objectMapper) {
-        if (StringUtil.isEmpty(json))
+        if (StringUtil.isEmpty(json)) {
             return null;
+        }
         try {
             return objectMapper == null ? mapper.readValue(json, typeReference) : objectMapper.readValue(json, typeReference);
         } catch (Exception e) {
@@ -136,8 +140,9 @@ public class JacksonUtil {
     }
 
     public static <T> T jsonTo(String json, Class<T> clazz, ObjectMapper objectMapper) {
-        if (StringUtil.isEmpty(json))
+        if (StringUtil.isEmpty(json)) {
             return null;
+        }
         try {
             return mapper.readValue(json, new TypeReference<T>(){});
         } catch (Exception e) {

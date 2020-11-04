@@ -1,22 +1,32 @@
 package pers.mihao.ancient_empire.core.dto;
 
+import java.util.Arrays;
+
 /**
+ * @author mihao
  * @version 1.0
- * @auther mihao
  * @date 2020\10\11 0011 20:11
  */
 public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
-    // 血量 [1, 0, 0]
+    /**
+     * 血量 [1, 0, 0]
+     */
     private Integer[] life;
 
-    // 等级
+    /**
+     * 等级
+     */
     private Integer level;
 
-    // 状态 buff 中毒
+    /**
+     * 状态 buff 中毒
+     */
     private String status;
 
-    // 经验值
+    /**
+     * 经验值
+     */
     private Integer experience;
 
     private Boolean done;
@@ -89,5 +99,18 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
     public void setDone(Boolean done) {
         this.done = done;
+    }
+
+    @Override
+    public String toString() {
+
+        return "UnitStatusInfoDTO{" +
+            "life=" + Arrays.toString(life) +
+            ", level=" + level +
+            ", status='" + status + '\'' +
+            ", experience=" + experience +
+            ", done=" + done +
+            ", updateCurr=" + updateCurr +
+            '}';
     }
 }

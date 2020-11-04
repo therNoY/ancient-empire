@@ -83,7 +83,9 @@ public class UserRecordServiceImp implements UserRecordService {
         List<Army> armyList = new ArrayList<>();
         for (int i = 0; i < reqArmies.size(); i++) {
             ReqInitMapDto.ReqArmy reqArmy = reqArmies.get(i);
-            if (reqArmy.getType().equals(ArmyEnum.NO.type())) continue;
+            if (reqArmy.getType().equals(ArmyEnum.NO.type())) {
+                continue;
+            }
             Army army = new Army();
             BeanUtils.copyProperties(reqArmy, army);
             army.setId(i);
@@ -104,7 +106,7 @@ public class UserRecordServiceImp implements UserRecordService {
             army.setMoney(reqInitMapDto.getMoney());
             if (reqArmy.getType().equals(ArmyEnum.USER.type())) {
                 army.setPlayer(AuthUtil.getLoginUser().getUsername());
-            }
+            }else
             if (army.getOrder() == 1) {
                 userRecord.setCurrPlayer(army.getPlayer());
             }
@@ -178,7 +180,6 @@ public class UserRecordServiceImp implements UserRecordService {
             recordMap = new HashMap<>();
         }
     }
-
     /**
      * 获取 Record By uuid
      * 这里不使用 Spring catchAble 原因是保存改缓存使用的是redishelper 设置 序列化方式不一样
@@ -194,7 +195,7 @@ public class UserRecordServiceImp implements UserRecordService {
             Optional<UserRecord> optional = userRecordRepository.findById(uuid);
             if (optional.isPresent()) {
                 userRecord = optional.get();
-                redisUtil.set(CatchKey.getKey(CatchKey.USER_RECORD) + uuid, userRecord, 5 * 60l);
+                redisUtil.set(CatchKey.getKey(CatchKey.USER_RECORD) + uuid, userRecord, 5 * 60L);
             }
         }
         return userRecord;
@@ -245,5 +246,10 @@ public class UserRecordServiceImp implements UserRecordService {
     @Override
     public void removeById(String uuid) {
         userRecordRepository.deleteById(uuid);
+    }
+
+    @Override
+    public void saveRecord(UserRecord record) {
+        userRecordRepository.save(record);
     }
 }

@@ -14,6 +14,7 @@ import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UnitTransferService;
+import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import pers.mihao.ancient_empire.core.robot.RobotManger;
 
 /**
  * 基础处理类 存放视图方法和基本方法 无业务操作
@@ -57,67 +59,23 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
     protected static UnitMesService unitMesService;
     protected static UnitLevelMesService unitLevelMesService;
     protected static UnitTransferService unitTransferService;
+    protected static UserRecordService userRecordService;
+
+    protected static RobotManger robotManger;
 
     static {
         regionMesService = ApplicationContextHolder.getBean(RegionMesService.class);
         unitMesService = ApplicationContextHolder.getBean(UnitMesService.class);
         unitLevelMesService = ApplicationContextHolder.getBean(UnitLevelMesService.class);
         unitTransferService = ApplicationContextHolder.getBean(UnitTransferService.class);
+        userRecordService = ApplicationContextHolder.getBean(UserRecordService.class);
+        robotManger = ApplicationContextHolder.getBean(RobotManger.class);
     }
 
     @Override
     @ExecuteTime
     public final List<Command> handler(Event event) {
         List<Command> commandList = super.handler(event);
-        if (commandList != null) {
-            // 根据时间处理 增删改的状态
-            for (Command command : commandList) {
-                GameCommand gameCommand = (GameCommand) command;
-                JSONObject extMes = gameCommand.getExtMes();
-                switch (gameCommand.getGameCommendEnum()) {
-                    case ADD_TOMB:
-                        record().getTomb().add(new Site(gameCommand.getAimSite()));
-                        break;
-                    case ADD_UNIT:
-                        List<Unit> units = record().getArmyList().get(extMes.getInteger(ExtMes.ARMY_INDEX)).getUnits();
-                        units.add((Unit) extMes.get(ExtMes.UNIT));
-                        break;
-
-                    case REMOVE_UNIT:
-                        // 移除死亡的单位
-                        ArmyUnitIndexDTO indexDTO = (ArmyUnitIndexDTO) extMes.get(ExtMes.ARMY_UNIT_INDEX);
-                        Army army = record().getArmyList().get(indexDTO.getArmyIndex());
-                        army.getUnits().remove(indexDTO.getUnitIndex().intValue());
-                        break;
-                    case REMOVE_TOMB:
-                        // 移除坟墓
-                        record().getTomb().remove(new Site(gameCommand.getAimSite()));
-                        break;
-
-                    case CHANGE_UNIT_STATUS:
-                        // 处理单位升级
-                        if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
-                            List<UnitStatusInfoDTO> unitStatusList = (List<UnitStatusInfoDTO>) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
-                            for (UnitStatusInfoDTO unitStatus : unitStatusList) {
-                                updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
-                            }
-                        } else {
-                            UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
-                            updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
-                        }
-                        break;
-                    case CHANGE_CURR_REGION:
-                        record().setCurrRegion((RegionInfo) extMes.get(ExtMes.REGION_INFO));
-                        break;
-                    case CHANGE_CURR_UNIT:
-                        record().setCurrUnit((UnitInfo) extMes.get(ExtMes.UNIT_INFO));
-                        break;
-                    case CHANGE_CURR_BG_COLOR:
-                        gameContext.setBgColor(extMes.getString(ExtMes.BG_COLOR));
-                        break;
-                }
-            }
-        }
         return commandList;
     }
 
@@ -204,6 +162,54 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         }
     }
 
+    @Override
+    protected final void addCommand(Command command) {
+        GameCommand gameCommand = (GameCommand) command;
+        JSONObject extMes = gameCommand.getExtMes();
+        switch (gameCommand.getGameCommendEnum()) {
+            case ADD_TOMB:
+                record().getTomb().add(new Site(gameCommand.getAimSite()));
+                break;
+            case ADD_UNIT:
+                List<Unit> units = record().getArmyList().get(extMes.getInteger(ExtMes.ARMY_INDEX)).getUnits();
+                units.add((Unit) extMes.get(ExtMes.UNIT));
+                break;
+
+            case REMOVE_UNIT:
+                // 移除死亡的单位
+                ArmyUnitIndexDTO indexDTO = (ArmyUnitIndexDTO) extMes.get(ExtMes.ARMY_UNIT_INDEX);
+                Army army = record().getArmyList().get(indexDTO.getArmyIndex());
+                army.getUnits().remove(indexDTO.getUnitIndex().intValue());
+                break;
+            case REMOVE_TOMB:
+                // 移除坟墓
+                record().getTomb().remove(new Site(gameCommand.getAimSite()));
+                break;
+
+            case CHANGE_UNIT_STATUS:
+                // 更新单位升级结果
+                if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
+                    List<UnitStatusInfoDTO> unitStatusList = (List<UnitStatusInfoDTO>) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
+                    for (UnitStatusInfoDTO unitStatus : unitStatusList) {
+                        updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
+                    }
+                } else {
+                    UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
+                    updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
+                }
+                break;
+            case CHANGE_CURR_REGION:
+                record().setCurrRegion((RegionInfo) extMes.get(ExtMes.REGION_INFO));
+                break;
+            case CHANGE_CURR_UNIT:
+                record().setCurrUnit((UnitInfo) extMes.get(ExtMes.UNIT_INFO));
+                break;
+            case CHANGE_CURR_BG_COLOR:
+                gameContext.setBgColor(extMes.getString(ExtMes.BG_COLOR));
+                break;
+        }
+    }
+
     /**
      * 根据颜色判断是否是同一个阵营的
      *
@@ -271,7 +277,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
 
 
     /**
-     * 基础方法
+     * 从当前军队中获取单位
      *
      * @param site
      * @return
@@ -281,7 +287,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
     }
 
     /**
-     * 基础方法
+     * 基础方法 在指定军队中 指定位置获取单位
      *
      * @param army
      * @param site
@@ -296,8 +302,13 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         return null;
     }
 
+    /**
+     * 获取单位在地图中的index
+     * @param army
+     * @param uuid
+     * @return
+     */
     protected Integer getUnitIndex(Army army, String uuid) {
-
         if (army != null) {
             for (int i = 0; i < army.getUnits().size(); i++) {
                 if (army.getUnits().get(i).getId().equals(uuid)) {
@@ -313,10 +324,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
                 }
             }
         }
-
-
         return null;
-
     }
 
 
@@ -336,8 +344,25 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         return null;
     }
 
+    /**
+     * 根据军队和单位Index 获取单位
+     * @param indexDTO
+     * @return
+     */
     protected Unit getUnitByIndex(ArmyUnitIndexDTO indexDTO) {
         return record().getArmyList().get(indexDTO.getArmyIndex()).getUnits().get(indexDTO.getUnitIndex());
+    }
+
+    /**
+     * 通过unit 获取单位的info
+     *
+     * @param indexDTO
+     * @return
+     */
+    protected UnitInfo getUnitInfoByUnit(Unit unit) {
+        UnitInfo unitInfo = unitMesService.getUnitInfo(unit.getTypeId().toString(), unit.getLevel());
+        BeanUtil.copyValueFromParent(unit, unitInfo);
+        return unitInfo;
     }
 
     /**
@@ -347,13 +372,15 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
      * @return
      */
     protected UnitInfo getUnitInfoByIndex(ArmyUnitIndexDTO indexDTO) {
-        Unit unit = getUnitByIndex(indexDTO);
-        UnitInfo unitInfo = unitMesService.getUnitInfo(unit.getTypeId().toString(), unit.getLevel());
-        BeanUtil.copyValueFromParent(unit, unitInfo);
-        return unitInfo;
+        return getUnitInfoByUnit(getUnitByIndex(indexDTO));
     }
 
-    protected Unit getUnitFromArmy(String unitId) {
+    /**
+     * 从当前单位获取军队
+     * @param unitId
+     * @return
+     */
+    protected Unit getUnitFromCurrArmy(String unitId) {
         List<Unit> units = currArmy().getUnits();
         for (int i = 0; i < units.size(); i++) {
             Unit unit = units.get(i);
@@ -364,6 +391,10 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         return null;
     }
 
+    /**
+     * 获取当前单位的index
+     * @return
+     */
     protected Integer getCurrUnitIndex() {
         List<Unit> units = currArmy().getUnits();
         for (int i = 0; i < units.size(); i++) {
@@ -570,6 +601,10 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
         }
         Assert.notNull(currArmy, CURR_ARMY_IS_NULL);
         return currArmy;
+    }
+
+    protected void cleanCatch(){
+        currArmy = null;
     }
 
 

@@ -106,7 +106,7 @@ public class UserController {
         // 2.发送邮件
         emailService.sendRegisterEmail(registerDto, uuid);
         // 3.放到缓存中 key email+_REGISTER 时间60s
-        redisUtil.set(uuid, registerDto, 600l);
+        redisUtil.set(uuid, registerDto, 600L);
         return RespUtil.successResJson();
     }
 

@@ -30,7 +30,7 @@ public abstract class AbstractGameEventHandler implements Handler {
     // 游戏上下文
     protected GameContext gameContext;
     // 命令集合
-    private List<Command> commandList = null;
+    protected List<Command> commandList = null;
     // 帮助构建流
     private Stream stream;
 
@@ -45,12 +45,49 @@ public abstract class AbstractGameEventHandler implements Handler {
     }
 
     /**
-     * 获得一个流
+     * 获得一个同步发送消息流
      * @return
      */
     protected Stream commandStream(){
         if (stream == null) {
             stream = new Stream();
+        }
+        return stream;
+    }
+
+    /**
+     * 获得一个异步发送流
+     * @return
+     */
+    protected Stream commandAsyncStream(){
+        if (stream == null) {
+            stream = new Stream();
+            stream.isAsync = true;
+        }
+        return stream;
+    }
+
+    /**
+     * 获得一个异步发送流
+     * @return
+     */
+    protected Stream commandOrderStream(){
+        if (stream == null) {
+            stream = new Stream();
+            stream.isAsync = true;
+        }
+        return stream;
+    }
+
+    /**
+     * 获得一个异步发送流
+     * @return
+     */
+    protected Stream commandAsyncOrderStream(){
+        if (stream == null) {
+            stream = new Stream();
+            stream.isAsync = true;
+            stream.order = false;
         }
         return stream;
     }
@@ -63,7 +100,7 @@ public abstract class AbstractGameEventHandler implements Handler {
         if (commandList == null) {
             commandList = new ArrayList<>();
         }
-        commandList.add(command);
+        addCommand(command);
         return this;
     }
 
@@ -82,25 +119,57 @@ public abstract class AbstractGameEventHandler implements Handler {
     /**
      * 流式
      */
-    class Stream{
+    class Stream implements Command{
+        /**
+         * 是否同步
+         * @return
+         */
+        boolean isAsync = false;
+
+        /**
+         * 是有顺序的
+         */
+        boolean order = false;
+
         public FlowGameCommand toAllCommand(){
             FlowGameCommand command = new FlowGameCommand();
             command.setSendTypeEnum(SendTypeEnum.SEND_TO_SYSTEM);
+            if (order) {
+                command.setOrder(orderIndex ++);
+            }
+            command.setAsync(isAsync);
             return command;
         }
 
         public FlowGameCommand toUserCommand(){
             FlowGameCommand command = new FlowGameCommand();
             command.setSendTypeEnum(SendTypeEnum.SEND_TO_USER);
+            if (order) {
+                command.setOrder(orderIndex ++);
+            }
+            command.setAsync(isAsync);
             return command;
         }
 
         public FlowGameCommand toGameCommand(){
             FlowGameCommand command = new FlowGameCommand();
             command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
+            if (order) {
+                command.setOrder(orderIndex ++);
+            }
+            command.setAsync(isAsync);
             return command;
         }
 
+        @Override
+        public Integer getOrder() {
+            return null;
+        }
+
+        @Override
+        public Boolean isAsync() {
+            return isAsync;
+        }
     }
 
     /**
@@ -150,6 +219,17 @@ public abstract class AbstractGameEventHandler implements Handler {
             extData.put(key, value);
             setExtMes(extData);
             addGameCommand(this);
+            return stream;
+        }
+
+        public Stream changeUnitStatus(List<UnitStatusInfoDTO> unitStatusInfoDTOS){
+            setGameCommendEnum(GameCommendEnum.CHANGE_UNIT_STATUS);
+            JSONObject extData = new JSONObject(2);
+            extData.put(ExtMes.UNIT_STATUS, unitStatusInfoDTOS);
+            setExtMes(extData);
+            setOrder(orderIndex ++);
+            addGameCommand(this);
+            handlerLevelUp(this);
             return stream;
         }
 
@@ -244,7 +324,17 @@ public abstract class AbstractGameEventHandler implements Handler {
 
     }
 
+    /**
+     * 处理单位升级
+     * @param gameCommand
+     */
     protected abstract void handlerLevelUp(GameCommand gameCommand);
 
+
+    /**
+     * 添加命令
+     * @param command
+     */
+    protected abstract void addCommand(Command command);
 
 }

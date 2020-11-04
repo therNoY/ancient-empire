@@ -95,6 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Override
     @Bean
     public UserDetailsService userDetailsService() {
         //获取登录用户信息 Lambda重写loadUserByUsername 方法 为了获取一个UserDetails 的对象

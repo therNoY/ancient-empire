@@ -74,7 +74,8 @@ public class ActionHandle {
                 if (!army.getCamp().equals(camp)) {
                     List<Unit> units = army.getUnits();
                     for (Unit unit : units) {
-                        if (!unit.isDead() && unit.getRow() == p.getRow() && unit.getColumn() == p.getColumn()) {
+                        if (!unit.isDead() && unit.getRow().equals(p.getRow()) && unit.getColumn()
+                            .equals(p.getColumn())) {
                             actions.add(ActionEnum.ATTACK.type());
                             actions.add(ActionEnum.END.type());
                             return actions;

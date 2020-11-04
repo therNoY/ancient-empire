@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.robot;
+package pers.mihao.ancient_empire.core.robot;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
@@ -6,7 +6,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import pers.mihao.ancient_empire.common.annotation.Manger;
-import pers.mihao.ancient_empire.robot.factory.DefaultRobotFactory;
+import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.robot.factory.DefaultRobotFactory;
 
 /**
  * @Author mh32736
@@ -36,9 +37,9 @@ public class RobotManger {
     /**
      * 开始执行一个任务
      */
-    public void startRobot() {
-        Robot robot = DefaultRobotFactory.createRobot();
-        robotPool.submit(robot);
+    public void startRobot(GameContext gameContext) {
+        Robot task = DefaultRobotFactory.createRobot(gameContext);
+        robotPool.submit(task);
     }
 
 

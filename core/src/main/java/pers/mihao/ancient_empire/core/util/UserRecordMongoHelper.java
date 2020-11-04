@@ -60,11 +60,9 @@ public class UserRecordMongoHelper {
      * 修改 记录的 Map
      */
     public long updateMap(String id, GameMap map) {
-        // 先删除 在添加
         Query query = Query.query(Criteria.where("_id").is(id));
         Update update = new Update().set("initMap", map);
         UpdateResult result = mongoTemplate.updateFirst(query, update, UserRecord.class);
-        // 添加
         return result.getMatchedCount();
     }
 

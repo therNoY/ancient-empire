@@ -60,6 +60,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
             this.name = name;
         }
 
+        @Override
         public String getName() {
             return name;
         }

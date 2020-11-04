@@ -3,7 +3,6 @@ package pers.mihao.ancient_empire.core.manger;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
-import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
@@ -13,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
+import pers.mihao.ancient_empire.core.manger.status_machine.GameStatusMachine;
 
 /**
  * 一局游戏的上下文，一局游戏一个context
@@ -42,7 +42,10 @@ public class GameContext extends UserTemplateHelper {
     /**
      * 状态机
      */
-    private StatusMachineEnum statusMachine = StatusMachineEnum.NO_CHOOSE;
+    private GameStatusMachine gameStatusMachine;
+
+    private StatusMachineEnum statusMachine = StatusMachineEnum.INIT;
+
     private SubStatusMachineEnum subStatusMachine = SubStatusMachineEnum.INIT;
 
 
@@ -106,6 +109,8 @@ public class GameContext extends UserTemplateHelper {
      */
     private Date startTime;
 
+    public GameContext() {
+    }
 
     public CyclicBarrier getStartGame() {
         return startGame;
@@ -218,7 +223,7 @@ public class GameContext extends UserTemplateHelper {
 
     public void setStatusMachine(StatusMachineEnum statusMachine) {
         this.statusMachine = statusMachine;
-        if (statusMachine.equals(StatusMachineEnum.NO_CHOOSE)) {
+        if (statusMachine.equals(StatusMachineEnum.INIT)) {
             setSubStatusMachine(SubStatusMachineEnum.INIT);
         }
     }
@@ -263,4 +268,11 @@ public class GameContext extends UserTemplateHelper {
         this.beAttachUnit = beAttachUnit;
     }
 
+    public GameStatusMachine getGameStatusMachine() {
+        return gameStatusMachine;
+    }
+
+    public void setGameStatusMachine(GameStatusMachine gameStatusMachine) {
+        this.gameStatusMachine = gameStatusMachine;
+    }
 }

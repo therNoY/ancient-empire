@@ -231,25 +231,6 @@ public class CommonHandler extends BaseHandler {
         }
         // 修改单位的状态有顺序（结束回合）
         updateOrderUnitInfo(armyUnitIndexDTO).setDone(true);
-
-        // 判断脚下是否有坟墓
-        if (record().getTomb() != null) {
-            for(Site tomb : record().getTomb()) {
-                if (tomb.equals(currUnit())) {
-                    LifeChangeDTO lifeChangeDTO = new LifeChangeDTO(new Integer[]{-1, 1, 0}, currSite());
-                    UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
-                    unitStatusInfoDTO.setLife(AppUtil.getArrayByInt(AppUtil.getUnitLeft(currUnit()) - 10));
-                    // 踩了坟墓
-                    commandStream()
-                            .toGameCommand().addOrderCommand(GameCommendEnum.REMOVE_TOMB, tomb)
-                            .toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChangeDTO)
-                            .toGameCommand().changeUnitStatus(unitStatusInfoDTO);
-
-
-                }
-            }
-        }
-
         gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
     }
 

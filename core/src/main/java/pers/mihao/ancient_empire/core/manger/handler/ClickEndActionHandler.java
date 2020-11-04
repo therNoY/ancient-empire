@@ -18,6 +18,5 @@ public class ClickEndActionHandler extends CommonHandler{
         currUnit().setColumn(currSite().getColumn());
         // 单位结束移动
         sendEndUnitCommend(currUnit(), currUnitArmyIndex());
-        // 考虑是否结束回合
     }
 }

@@ -32,6 +32,7 @@ public class RedisConfig extends CachingConfigurerSupport{
      * 设置缓存的命名生成规则 使用缓存名+"::"+"参数.参数..."的形式
      * @return
      */
+    @Override
     @Bean
     public KeyGenerator keyGenerator() {
         return new KeyGenerator() {

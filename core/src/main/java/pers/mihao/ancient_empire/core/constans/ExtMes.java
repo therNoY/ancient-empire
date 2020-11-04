@@ -25,9 +25,20 @@ public class ExtMes {
     public static final String REGION_INFO = "region_info";
 
     /**
-     * 地形信息
+     * 单位信息
      */
     public static final String UNIT_INFO = "unit_info";
+
+    /**
+     * 军队信息
+     */
+    public static final String ARMY_INFO = "army_info";
+
+    /**
+     * 记录信息
+     */
+    public static final String RECORD_INFO = "record_info";
+
 
 
     /**
@@ -89,5 +100,10 @@ public class ExtMes {
      * 可选行动
      */
     public static final String SITE = "site";
+
+    /**
+     * 发出消息
+     */
+    public static final String MESSAGE = "message";
 
 }
