@@ -208,6 +208,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
                 gameContext.setBgColor(extMes.getString(ExtMes.BG_COLOR));
                 break;
         }
+        commandList.add(command);
     }
 
     /**

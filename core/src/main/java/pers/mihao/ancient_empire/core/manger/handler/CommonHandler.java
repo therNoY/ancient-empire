@@ -231,7 +231,7 @@ public class CommonHandler extends BaseHandler {
         }
         // 修改单位的状态有顺序（结束回合）
         updateOrderUnitInfo(armyUnitIndexDTO).setDone(true);
-        gameContext.setStatusMachine(StatusMachineEnum.NO_CHOOSE);
+        gameContext.setStatusMachine(StatusMachineEnum.INIT);
     }
 
     /**

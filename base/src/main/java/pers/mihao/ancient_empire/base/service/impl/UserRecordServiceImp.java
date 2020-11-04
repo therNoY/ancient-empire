@@ -106,7 +106,7 @@ public class UserRecordServiceImp implements UserRecordService {
             army.setMoney(reqInitMapDto.getMoney());
             if (reqArmy.getType().equals(ArmyEnum.USER.type())) {
                 army.setPlayer(AuthUtil.getLoginUser().getUsername());
-            }else
+            }
             if (army.getOrder() == 1) {
                 userRecord.setCurrPlayer(army.getPlayer());
             }
