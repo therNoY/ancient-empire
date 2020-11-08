@@ -10,16 +10,25 @@ import pers.mihao.ancient_empire.core.eums.GameEventEnum;
  * @Date 2020/9/10 16:22
  */
 public class GameEvent extends AbstractEvent {
-    /*游戏ID*/
+
+    /**
+     * 游戏ID
+     */
     private String gameId;
 
-    /*登录人ID*/
+    /**
+     * 登录人ID
+     */
     private String userId;
 
-    /*发起行动的位置*/
+    /**
+     * 发起行动的位置
+     */
     private Site initiateSite;
 
-    /* 被动接受的位置 */
+    /**
+     * 被动接受的位置
+     */
     private Site aimSite;
 
     /**
@@ -32,7 +41,9 @@ public class GameEvent extends AbstractEvent {
      */
     private Integer regionIndex;
 
-    /*游戏的事件*/
+    /**
+     * 游戏的事件
+     */
     private GameEventEnum event;
 
     public GameEventEnum getEvent() {

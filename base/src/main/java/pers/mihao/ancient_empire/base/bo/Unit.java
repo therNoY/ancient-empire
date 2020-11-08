@@ -1,15 +1,9 @@
 package pers.mihao.ancient_empire.base.bo;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import pers.mihao.ancient_empire.common.util.StringUtil;
-
 /**
  * 单位类 用来渲染地图 和 返回前端的 不包含 单位的基本信息
  */
-public class Unit extends Site implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Unit extends Site {
 
     private String id;
     // 类型
@@ -119,10 +113,6 @@ public class Unit extends Site implements Serializable {
         this.experience = experience;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
     public Integer getStatusPresenceNum() {
         return statusPresenceNum;
     }
@@ -142,7 +132,7 @@ public class Unit extends Site implements Serializable {
     @Override
     public String toString() {
         return "Unit{" +
-                ", type='" + type + '\'' +
+                "type='" + type + '\'' +
                 ", row='" + row + '\'' +
                 ", column='" + column + '\'' +
                 '}';
