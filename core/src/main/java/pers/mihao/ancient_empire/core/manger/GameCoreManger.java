@@ -19,7 +19,7 @@ import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
-import pers.mihao.ancient_empire.core.manger.handler.Handler;
+import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
 
 /**
  * 分发事件 处理事件 生成结果 处理结果
@@ -63,7 +63,6 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             });
 
 
-
     /**
      * 线程池处理的任务
      *
@@ -75,7 +74,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         try {
             Class clazz = handlerMap.get(event.getEvent());
             if (clazz != null) {
-                Handler handler = (Handler) clazz.newInstance();
+                GameHandler handler = (GameHandler) clazz.newInstance();
                 handler.setGameContext(contextMap.get(event.getGameId()));
                 // 处理任务返回 处理任务结果
                 List<Command> commands = handler.handler(event);
@@ -114,7 +113,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         setThreadName("EventHandel-");
 
         // 注册事件对应的处理器
-        String packName = Handler.class.getPackage().getName();
+        String packName = GameHandler.class.getPackage().getName();
         String className = Handler.class.getSimpleName();
         String handlerName, classPathName;
         for (GameEventEnum gameEventEnum : GameEventEnum.values()) {
@@ -133,13 +132,14 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     /**
      * 异步注册 游戏上下文
+     *
      * @param recordId
      */
-    public void registerGameContext(UserRecord userRecord, GameTypeEnum gameTypeEnum, int playCount){
+    public void registerGameContext(UserRecord userRecord, GameTypeEnum gameTypeEnum, int playCount) {
         if (!contextMap.containsKey(userRecord.getUuid())) {
-            sentinelPool.execute(()->{
+            sentinelPool.execute(() -> {
                 // 设置初始信息
-                    GameContext gameContext = new GameContext();
+                GameContext gameContext = new GameContext();
                 contextMap.put(userRecord.getUuid(), gameContext);
 
                 gameContext.setGameId(userRecord.getUuid());
@@ -172,6 +172,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     /**
      * 玩家全部加入可以开始游戏
+     *
      * @param userRecord
      */
     private void doStartGame(GameContext gameContext) {
@@ -186,6 +187,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     /**
      * 撤销上下文
+     *
      * @param userRecord
      */
     private void doRevokeGameContext(UserRecord userRecord) {
@@ -195,9 +197,10 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     /**
      * 玩家加入游戏
+     *
      * @param recordId
      */
-    public boolean joinGame(String recordId){
+    public boolean joinGame(String recordId) {
         GameContext gameContext = contextMap.get(recordId);
         if (gameContext != null) {
             CyclicBarrier cyclicBarrier = gameContext.getStartGame();
@@ -216,7 +219,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         return false;
     }
 
-    public GameContext getGameSessionById(String uuid){
+    public GameContext getGameSessionById(String uuid) {
         return contextMap.get(uuid);
     }
 

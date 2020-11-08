@@ -1,22 +1,17 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
-import java.util.List;
-import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.manger.Handler;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.event.Event;
 
-/**
- * 事件处理器
- * @Author mh32736
- * @Date 2020/9/16 18:57
- */
-public interface Handler {
+import java.util.List;
 
-    /**
-     * 游戏上下文
-     * @param gameContext
-     */
-    void setGameContext(GameContext gameContext);
+/**
+ * @version 1.0
+ * @auther mihao
+ * @date 2020\11\8 0008 15:26
+ */
+public interface GameHandler extends Handler {
 
     /**
      * 处理事件
@@ -24,4 +19,5 @@ public interface Handler {
      * @return
      */
     List<Command> handler(Event event);
+
 }

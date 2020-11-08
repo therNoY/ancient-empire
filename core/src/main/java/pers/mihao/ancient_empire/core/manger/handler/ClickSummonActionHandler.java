@@ -3,9 +3,8 @@ package pers.mihao.ancient_empire.core.manger.handler;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
-import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
-import pers.mihao.ancient_empire.core.manger.command.GameCommand;
+import pers.mihao.ancient_empire.core.manger.GameContextBaseHandler;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 
@@ -17,7 +16,7 @@ import java.util.List;
  * @Author mh32736
  * @Date 2020/9/17 16:07
  */
-public class ClickSummonActionHandler extends BaseHandler {
+public class ClickSummonActionHandler extends CommonHandler {
 
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {

@@ -8,12 +8,15 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.*;
+import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.manger.GameContextBaseHandler;
+import pers.mihao.ancient_empire.core.manger.Handler;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.Event;
@@ -25,10 +28,9 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
  * @Author mh32736
  * @Date 2020/9/16 18:57
  */
-public abstract class AbstractGameEventHandler implements Handler {
+public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler {
+
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    // 游戏上下文
-    protected GameContext gameContext;
     // 命令集合
     protected List<Command> commandList = null;
     // 帮助构建流
@@ -37,7 +39,8 @@ public abstract class AbstractGameEventHandler implements Handler {
     private int orderIndex = 0;
 
     @Override
-    public List<Command> handler(Event event) {
+    @ExecuteTime
+    public final List<Command> handler(Event event) {
         log.info("开始处理事件：{}", event);
         handlerGameEvent((GameEvent) event);
         log.info("处理事件结束 返回的命令集合：{}", commandList);
