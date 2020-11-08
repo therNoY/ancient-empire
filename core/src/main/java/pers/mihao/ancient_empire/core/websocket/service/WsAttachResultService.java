@@ -333,16 +333,6 @@ public class WsAttachResultService {
             } else {
                 attachResult.setEndExperience(ke);
             }
-            // 判断是否有坟墓
-            attachResult.setHaveTomb(false);
-            for (Ability ability : beAttachAbility) {
-                if (!ability.getType().equals(AbilityEnum.CASTLE_GET.type()) && !ability.getType()
-                    .equals(AbilityEnum.UNDEAD.type())) {
-                    record.getTomb().add(new Position(beAttachUnit.getRow(), beAttachUnit.getColumn()));
-                    attachResult.setHaveTomb(true);
-                    break;
-                }
-            }
         } else {
             // 被攻击者未死
             attachResult.setEndExperience(attachUnit.getExperience() + attachExperience);

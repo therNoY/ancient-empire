@@ -1,8 +1,6 @@
 package pers.mihao.ancient_empire.base.bo;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import pers.mihao.ancient_empire.common.util.StringUtil;
 
 /**
  * 单位类 用来渲染地图 和 返回前端的 不包含 单位的基本信息
@@ -19,11 +17,11 @@ public class Unit extends Site implements Serializable {
     // 血量 [1, 0, 0]
     private Integer[] life;
     // 是否已死
-    private Boolean isDead;
+    private Boolean dead;
     // 等级
     private Integer level;
     // 是否死亡
-    private Boolean isDone;
+    private Boolean done;
     // 状态 buff 中毒
     private String status;
     // 状态 存在的回合 超过两个回合 就会消失
@@ -76,11 +74,11 @@ public class Unit extends Site implements Serializable {
     }
 
     public Boolean getDead() {
-        return isDead;
+        return dead;
     }
 
     public void setDead(Boolean dead) {
-        isDead = dead;
+        this.dead = dead;
     }
 
     public Integer getLevel() {
@@ -92,15 +90,15 @@ public class Unit extends Site implements Serializable {
     }
 
     public Boolean isDone() {
-        return isDone;
+        return done;
     }
 
     public Boolean getDone() {
-        return isDone;
+        return done;
     }
 
     public void setDone(Boolean done) {
-        isDone = done;
+        this.done = done;
     }
 
     public String getStatus() {

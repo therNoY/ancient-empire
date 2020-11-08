@@ -9,7 +9,6 @@ public class AttachResult  implements Serializable {
 
     private Integer[] attach; // 被攻击者受到伤害
     private Boolean dead; // 被攻击者是否死
-    private Boolean haveTomb; // 被攻击者死了有坟墓
 
     private Integer[] lastLife; // 被攻击者剩余血量
     private String endStatus; // 被攻击者的状态 可能会中毒
@@ -41,13 +40,6 @@ public class AttachResult  implements Serializable {
         this.lastLife = lastLife;
     }
 
-    public Boolean getHaveTomb() {
-        return haveTomb;
-    }
-
-    public void setHaveTomb(Boolean haveTomb) {
-        this.haveTomb = haveTomb;
-    }
 
     public Boolean getLeaveUp() {
         return leaveUp;

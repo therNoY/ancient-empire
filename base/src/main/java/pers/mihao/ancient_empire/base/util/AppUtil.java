@@ -325,6 +325,9 @@ public class AppUtil {
 
     /**
      * 将int 转成 Integer[] 指定前缀
+     * @param n 前缀
+     * @param num
+     * @return
      */
     public static Integer[] getArrayByInt(int n, int num) {
         char[] chars = String.valueOf(num).toCharArray();

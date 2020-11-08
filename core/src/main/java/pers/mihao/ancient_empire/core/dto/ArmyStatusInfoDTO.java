@@ -8,23 +8,14 @@ package pers.mihao.ancient_empire.core.dto;
 public class ArmyStatusInfoDTO {
 
     /**
-     * 军队Index
-     */
-    private Integer armyIndex;
-
-    /**
      * 资金
      */
     private Integer money;
 
-
-    public Integer getArmyIndex() {
-        return armyIndex;
-    }
-
-    public void setArmyIndex(Integer armyIndex) {
-        this.armyIndex = armyIndex;
-    }
+    /**
+     * 人口
+     */
+    private Integer pop;
 
     public Integer getMoney() {
         return money;
@@ -34,4 +25,11 @@ public class ArmyStatusInfoDTO {
         this.money = money;
     }
 
+    public Integer getPop() {
+        return pop;
+    }
+
+    public void setPop(Integer pop) {
+        this.pop = pop;
+    }
 }

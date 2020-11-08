@@ -113,30 +113,27 @@ public class ClickChoosePointHandler extends CommonHandler {
         } else {
             // 没有死亡
             // 更新被攻击单位的状态 血量/经验/状态
-            beAttachStatus = updateUnitInfo(beAttachArmyUnitIndexDTO);
-            beAttachStatus.setLife(attachResultDTO.getAttachResult().getLastLife());
-            beAttachStatus.setStatus(attachResultDTO.getAttachResult().getEndStatus());
+            UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(beAttachArmyUnitIndexDTO);
+            unitStatusInfoDTO.setLife(attachResultDTO.getAttachResult().getLastLife());
+            unitStatusInfoDTO.setStatus(attachResultDTO.getAttachResult().getEndStatus());
 
             // 判断是否反击
             if (attachResultDTO.getAntiAttack()) {
-                beAttachStatus.setExperience(attachResultDTO.getAntiAttackResult().getEndExperience());
+                unitStatusInfoDTO.setExperience(attachResultDTO.getAntiAttackResult().getEndExperience());
                 // 展示反击动画
                 showAttachAnim(attachResultDTO.getAntiAttackResult().getAttach(), beAttachUnit, currUnit(), beAttachArmyUnitIndexDTO, attachArmyUnitIndexDTO);
-                // 判断反击是否死亡
-                if (attachResultDTO.getAttachResult().getDead()) {
-
-                    // 判断是否产生坟墓
-                }
             }
+
+            commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
 
         }
         // 修改攻击者单位的状态
-        attachStatus = updateUnitInfo(attachArmyUnitIndexDTO)
-                .setExperience(attachResultDTO.getAttachResult().getEndExperience());
+        UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(attachArmyUnitIndexDTO);
         if (attachResultDTO.getAntiAttack()) {
-            attachStatus.setStatus(attachResultDTO.getAntiAttackResult().getEndStatus());
-            attachStatus.setLife(attachResultDTO.getAntiAttackResult().getLastLife());
+            unitStatusInfoDTO.setStatus(attachResultDTO.getAntiAttackResult().getEndStatus());
+            unitStatusInfoDTO.setLife(attachResultDTO.getAntiAttackResult().getLastLife());
         }
+        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
 
         // 判断是否有单位升级
 
@@ -171,8 +168,9 @@ public class ClickChoosePointHandler extends CommonHandler {
                 .toGameCommand().addOrderCommand(GameCommendEnum.ADD_UNIT, addUnit);
 
         // 处理状态
-        ArmyUnitIndexDTO indexDTO = currUnitArmyIndex();
-        updateUnitInfo(indexDTO).setExperience(currUnit().getExperience() + gameContext.getSummonExp());
+        UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(currUnitArmyIndex());
+        unitStatusInfoDTO.setExperience(currUnit().getExperience() + gameContext.getSummonExp());
+        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
         endCurrentUnit(currUnitArmyIndex());
     }
 

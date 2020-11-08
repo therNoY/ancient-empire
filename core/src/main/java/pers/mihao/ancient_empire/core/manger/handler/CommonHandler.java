@@ -230,7 +230,9 @@ public class CommonHandler extends BaseHandler {
             sendUnitDeadCommend(getUnitInfoByIndex(deadDTO), deadDTO);
         }
         // 修改单位的状态有顺序（结束回合）
-        updateOrderUnitInfo(armyUnitIndexDTO).setDone(true);
+        UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
+        unitStatusInfoDTO.setDone(true);
+        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
         gameContext.setStatusMachine(StatusMachineEnum.INIT);
     }
 
@@ -243,33 +245,6 @@ public class CommonHandler extends BaseHandler {
         // 设置前端执行指令
         commandStream()
                 .toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_BG_COLOR, ExtMes.BG_COLOR, color);
-    }
-
-
-    /**
-     * 更新单位信息 自动处理单位升级
-     *
-     * @param armyUnitIndexDTO 单位的index
-     * @param updateCurr       是否更新当前单位
-     * @return
-     */
-    public UnitStatusInfoDTO updateUnitInfo(ArmyUnitIndexDTO armyUnitIndexDTO) {
-        UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
-        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
-        return unitStatusInfoDTO;
-    }
-
-    /**
-     * 有顺序的更新单位信息
-     *
-     * @param armyUnitIndexDTO 单位的index
-     * @param updateCurr       是否更新当前单位
-     * @return
-     */
-    public UnitStatusInfoDTO updateOrderUnitInfo(ArmyUnitIndexDTO armyUnitIndexDTO) {
-        UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
-        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
-        return unitStatusInfoDTO;
     }
 
 

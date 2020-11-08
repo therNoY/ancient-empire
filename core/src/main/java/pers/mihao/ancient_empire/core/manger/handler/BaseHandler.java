@@ -50,8 +50,6 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
 
     private static final String CURR_ARMY_IS_NULL = "currArmyIsNull";
 
-    private Army currArmy;
-
     Logger log = LoggerFactory.getLogger(this.getClass());
 
 
@@ -187,7 +185,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
                 break;
 
             case CHANGE_UNIT_STATUS:
-                // 更新单位升级结果
+                // 更新单位状态变化
                 if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
                     List<UnitStatusInfoDTO> unitStatusList = (List<UnitStatusInfoDTO>) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
                     for (UnitStatusInfoDTO unitStatus : unitStatusList) {
@@ -592,20 +590,7 @@ public abstract class BaseHandler extends AbstractGameEventHandler {
      * @return 当前单位
      */
     protected Army currArmy() {
-        if (currArmy == null) {
-            for (Army army : record().getArmyList()) {
-                if (army.getCamp().equals(record().getCurrCamp())) {
-                    this.currArmy = army;
-                    break;
-                }
-            }
-        }
-        Assert.notNull(currArmy, CURR_ARMY_IS_NULL);
-        return currArmy;
-    }
-
-    protected void cleanCatch(){
-        currArmy = null;
+        return record().getArmyList().get(record().getCurrArmyIndex());
     }
 
 
