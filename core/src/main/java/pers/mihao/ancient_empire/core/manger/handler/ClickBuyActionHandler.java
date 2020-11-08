@@ -26,17 +26,18 @@ public class ClickBuyActionHandler extends CommonHandler {
 
         commandStream().toGameCommand().addUnit(newUnit, record().getCurrArmyIndex());
 
+        UnitInfo newUnitInfo = unitMesService.getUnitInfo(String.valueOf(newUnit.getTypeId()), newUnit.getLevel());
+        BeanUtil.copyValue(newUnit, newUnitInfo);
+        List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), newUnitInfo);
+        showMoveArea(moveArea);
+
         // 判断当前位置
         if(currSite().equals(currUnit())) {
             // 领主购买
-            UnitInfo newUnitInfo = unitMesService.getUnitInfo(String.valueOf(newUnit.getTypeId()), newUnit.getLevel());
-            BeanUtil.copyValue(newUnit, newUnitInfo);
-            List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), newUnitInfo);
-            showMoveArea(moveArea);
-            changeCurrUnit(newUnitInfo);
             gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
             gameContext.setSubStatusMachine(SubStatusMachineEnum.MAST_MOVE);
         }
 
+        changeCurrUnit(newUnitInfo);
     }
 }

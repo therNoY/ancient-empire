@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
-import pers.mihao.ancient_empire.core.manger.status_machine.GameStatusMachine;
 
 /**
  * 一局游戏的上下文，一局游戏一个context
@@ -39,10 +38,6 @@ public class GameContext extends UserTemplateHelper {
     private UserRecord userRecord;
 
 
-    /**
-     * 状态机
-     */
-    private GameStatusMachine gameStatusMachine;
 
     private StatusMachineEnum statusMachine = StatusMachineEnum.INIT;
 
@@ -268,11 +263,4 @@ public class GameContext extends UserTemplateHelper {
         this.beAttachUnit = beAttachUnit;
     }
 
-    public GameStatusMachine getGameStatusMachine() {
-        return gameStatusMachine;
-    }
-
-    public void setGameStatusMachine(GameStatusMachine gameStatusMachine) {
-        this.gameStatusMachine = gameStatusMachine;
-    }
 }

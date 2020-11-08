@@ -52,11 +52,15 @@ public class ClickActiveUnitHandler extends CommonHandler {
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
             commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
         }else {
-            changeCurrPoint(gameEvent.getInitiateSite());
+
+
             Pair<Integer, UnitInfo> unitMes = changeCurrUnit(gameEvent.getInitiateSite());
+            UnitInfo unitInfo = unitMes.getValue();
+
+            changeCurrPoint(gameEvent.getInitiateSite());
             changeCurrBgColor(record().getArmyList().get(unitMes.getKey()).getColor());
             changeCurrRegion(gameEvent.getInitiateSite());
-            UnitInfo unitInfo = unitMes.getValue();
+            changeCurrUnit(unitInfo);
             // 判断展示移动区域还是展示行动
             if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())
                     && RegionEnum.CASTLE.type().equals(getRegionBySite(unitInfo).getType())) {
