@@ -29,6 +29,9 @@ public abstract class GameAnalysis extends GameContextBaseHandler {
         gameCoreManger = ApplicationContextHolder.getBean(GameCoreManger.class);
     }
 
+    private List<Site> threatenedRegion;
+
+
     /**
      * 统计军队的状况
      *
@@ -175,7 +178,7 @@ public abstract class GameAnalysis extends GameContextBaseHandler {
      */
     protected boolean canRepair(Region square) {
         if (square.getType().equals(RegionEnum.RUINS.type())) {
-            return currUnit().getAbilities().contains(AbilityEnum.REPAIR.ability());
+            return unit.getAbilities().contains(AbilityEnum.REPAIR.ability());
         }
         return false;
     }
@@ -189,7 +192,7 @@ public abstract class GameAnalysis extends GameContextBaseHandler {
     protected boolean canOccupyVillage(Region square) {
         if (square.getType().equals(RegionEnum.TOWN.type()) &&
                 !record().getCurrColor().contains(square.getColor())) {
-            return currUnit().getAbilities().contains(AbilityEnum.VILLAGE_GET.ability());
+            return unit.getAbilities().contains(AbilityEnum.VILLAGE_GET.ability());
         }
         return false;
     }
@@ -201,7 +204,7 @@ public abstract class GameAnalysis extends GameContextBaseHandler {
      * @return
      */
     protected boolean canOccupyCastle(BaseSquare square) {
-        if (currUnit().getAbilities().contains(AbilityEnum.CASTLE_GET.ability())) {
+        if (unit.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())) {
             if (square.getType().equals(RegionEnum.CASTLE.type())
                     && !record().getCurrColor().contains(square.getColor())) {
                 return true;
@@ -211,17 +214,28 @@ public abstract class GameAnalysis extends GameContextBaseHandler {
     }
 
     protected boolean isThreatened(Site site) {
+        return threatenedRegion.contains(site);
     }
 
-    protected Site getCanBeOccCastle() {
+    protected List<Site> getThreatened() {
+        return threatenedRegion;
+    }
+
+    protected List<UnitInfo> getAllFriendUnits() {
+    }
+
+    protected List<UnitInfo> getAllEnemyUnits() {
+    }
+
+    protected List<RegionInfo> getAllCanRepairRegion() {
 
     }
 
-    protected Site getCanBeOccVillage() {
+    protected List<RegionInfo> getAllCanOccupyVillage() {
 
     }
 
-    protected Site getCanBeRepVillage(){
+    protected List<RegionInfo> getAllCanOccupyCastle() {
 
     }
 
@@ -237,6 +251,26 @@ public abstract class GameAnalysis extends GameContextBaseHandler {
                     ", lessThanHalf=" + lessThanHalf +
                     '}';
         }
+    }
+
+    static class UnitAble {
+
+        UnitInfo unit;
+
+        boolean hasSummoner;
+        boolean hasHealer;
+        boolean castleGeteer;
+        boolean villageGeteer;
+        boolean repairer;
+
+        {
+            hasSummoner = unit.getAbilities().contains(AbilityEnum.SUMMONER.ability());
+            hasHealer = unit.getAbilities().contains(AbilityEnum.HEALER.ability());
+            castleGeteer = unit.getAbilities().contains(AbilityEnum.CASTLE_GET.ability());
+            villageGeteer = unit.getAbilities().contains(AbilityEnum.VILLAGE_GET.ability());
+            repairer = unit.getAbilities().contains(AbilityEnum.REPAIR.ability());
+        }
+
     }
 
 }

@@ -14,7 +14,6 @@ import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
 import pers.mihao.ancient_empire.core.dto.ai.UnitActionResult;
-import pers.mihao.ancient_empire.core.handel.ai.AiMoveHandle;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
@@ -40,7 +39,82 @@ public class DefaultRobot extends AbstractRobot {
     @Override
     protected ActionIntention chooseUnitAction(List<Site> moveArea, UnitInfo unit) {
 
-     }
+        // TODO
+        UnitAble unitAble = new UnitAble();
+
+        // 获取单位所有的直观的可以进行的行动
+        List<ActionIntention> actionList = new ArrayList();
+
+        // 所有可移动区域的攻击范围
+        Set<Site> attachArea = new HashSet<>();
+        List<Site> area;
+
+        if (unitAble.repairer) {
+            List<RegionInfo> repairer = getAllCanRepairRegion();
+            for (RegionInfo regionInfo : repairer) {
+                actionList.add(new ActionIntention(RobotActiveEnum.REPAIR, regionInfo));
+            }
+        }
+
+        if (unitAble.villageGeteer) {
+            List<RegionInfo> repairer = getAllCanOccupyVillage();
+            for (RegionInfo regionInfo : repairer) {
+                actionList.add(new ActionIntention(RobotActiveEnum.REPAIR, regionInfo));
+            }
+        }
+
+        if (unitAble.castleGeteer) {
+            List<RegionInfo> repairer = getAllCanOccupyCastle();
+            for (RegionInfo regionInfo : repairer) {
+                actionList.add(new ActionIntention(RobotActiveEnum.REPAIR, regionInfo));
+            }
+        }
+
+        // 拥有召唤能力
+        if (unitAble.hasSummoner) {
+            for (Site tomb : record().getTomb()) {
+                actionList.add(new ActionIntention(RobotActiveEnum.SUMMON, tomb));
+            }
+        }
+
+        // 拥有治疗能力
+        if (unitAble.hasHealer) {
+            List<UnitInfo> friendUnit = getAllFriendUnits();
+            for (UnitInfo unitInfo : friendUnit) {
+                int maxLife = unitLevelMesService.getUnitLevelMes(unitInfo.getId(), unitInfo.getLevel()).getMaxLife();
+                if (AppUtil.getUnitLife(unitInfo) < maxLife) {
+                    log.info("{} 可以进行 治疗 操作目标单位:{} 血量：{}", unit.getType(), unitInfo.getType(),
+                            AppUtil.getUnitLife(unitInfo));
+                    actionList.add(new ActionIntention(RobotActiveEnum.HEAL, unitInfo, unitInfo));
+                }
+            }
+        }
+
+        // 可以攻击的单位
+        List<UnitInfo> allEnemyUnits = getAllEnemyUnits();
+        for (UnitInfo unitInfo : allEnemyUnits) {
+            actionList.add(new ActionIntention(RobotActiveEnum.ATTACH, unitInfo, unitInfo));
+        }
+
+        List<Site> threatenedRegion = getThreatened();
+        // 防守
+        if (threatenedRegion.size() > 0) {
+            Site site = getMaxPriceRegion(threatenedRegion);
+            actionList.add(new ActionIntention(RobotActiveEnum.END, site));
+        }
+
+        // 2.3 给每个操作进行打分 选出一个最好的操作
+        if (actionList.size() > 0) {
+            log.info("有许多可选的操作size = {} 选出一个最好的操作", actionList.size());
+            return getPreferredAction(actionList);
+        }
+
+        return new ActionIntention(RobotActiveEnum.END, currSite());
+    }
+
+
+    private Site getMaxPriceRegion(List<Site> threatenedRegion) {
+    }
 
     /**
      * 根据行动选择最佳行动
@@ -140,7 +214,6 @@ public class DefaultRobot extends AbstractRobot {
         }
         return score;
     }
-
 
     /**
      * 获取待在原地的分数
@@ -265,7 +338,6 @@ public class DefaultRobot extends AbstractRobot {
         });
         return map;
     }
-
 
     /**
      * 选出需要的能力

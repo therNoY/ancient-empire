@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.core.robot;
 
 import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.base.bo.RegionInfo;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
@@ -19,7 +20,7 @@ public class ActionIntention {
 
     private UnitInfo aimUnit;
 
-    private Region aimRegion;
+    private RegionInfo aimRegion;
 
     public ActionIntention(RobotActiveEnum resultEnum, Site site) {
         this.resultEnum = resultEnum;
@@ -30,6 +31,11 @@ public class ActionIntention {
         this.resultEnum = resultEnum;
         this.site = site;
         this.aimUnit = aimUnit;
+    }
+
+    public ActionIntention(RobotActiveEnum resultEnum, RegionInfo aimRegion) {
+        this.resultEnum = resultEnum;
+        this.aimRegion = aimRegion;
     }
 
     public Site getSite() {
@@ -56,11 +62,11 @@ public class ActionIntention {
         this.aimUnit = aimUnit;
     }
 
-    public Region getAimRegion() {
+    public RegionInfo getAimRegion() {
         return aimRegion;
     }
 
-    public void setAimRegion(Region aimRegion) {
+    public void setAimRegion(RegionInfo aimRegion) {
         this.aimRegion = aimRegion;
     }
 }
