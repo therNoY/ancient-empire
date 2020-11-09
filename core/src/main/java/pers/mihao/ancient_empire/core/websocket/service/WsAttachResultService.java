@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
@@ -285,12 +284,12 @@ public class WsAttachResultService {
         Unit attachUnit, Unit beAttachUnit, List<Ability> beAttachAbility) {
         int attachNum = attachPower.getNum();
         int defenseNum = defensePower.getNum();
-        int left = AppUtil.getUnitLeft(beAttachUnit);
+        int left = AppUtil.getUnitLife(beAttachUnit);
 
         log.info("{} 经过加成后的攻击力{}， {}最终防御力{}", attachUnit.getType(), attachNum, beAttachUnit.getType(), defenseNum);
         // 设置攻击情况
         AttachResult attachResult = new AttachResult();
-        int harm = (attachNum - defenseNum) * AppUtil.getUnitLeft(attachUnit) / 100;
+        int harm = (attachNum - defenseNum) * AppUtil.getUnitLife(attachUnit) / 100;
         // 根据攻击加成和防御加成重新设计 伤害值
         if (attachPower.getAddition() != null) {
             log.info("伤害加成 {}", attachPower.getAddition());
@@ -302,7 +301,7 @@ public class WsAttachResultService {
         }
         // 判断如果无法破防的结果
         harm = harm < 0 ? 0 : harm;
-        log.info("{} 血量 {}， 最终伤害{}", attachUnit.getType(), AppUtil.getUnitLeft(attachUnit), harm);
+        log.info("{} 血量 {}， 最终伤害{}", attachUnit.getType(), AppUtil.getUnitLife(attachUnit), harm);
         Integer[] attach;
         if (attachNum < defenseNum) {
             attach = new Integer[]{0};

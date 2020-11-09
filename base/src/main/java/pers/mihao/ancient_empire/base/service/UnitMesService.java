@@ -21,7 +21,13 @@ public interface UnitMesService extends IService<UnitMes> {
 
     void saveUnitMes(UnitMes unitMes);
 
-    List<UnitMes> getEnableUnitByUserId(Integer id);
+    /**
+     *
+     * 获取可用单位
+     * @param tempId
+     * @return
+     */
+    List<UnitMes> getEnableUnitByTempId(String tempId);
 
     UnitMes getByType(String type);
 
@@ -38,9 +44,8 @@ public interface UnitMesService extends IService<UnitMes> {
      * @param hasLoad
      * @return
      */
-    List<UnitMes> getUnitInfoList(Integer templateId);
+    List<UnitMes> getCanBuyUnit(Integer templateId);
 
     UnitMes getMaxCheapUnit();
 
-    List<UnitMes> getEnableBuyUnit();
 }

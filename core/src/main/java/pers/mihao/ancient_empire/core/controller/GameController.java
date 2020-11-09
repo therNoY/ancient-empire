@@ -11,19 +11,16 @@ import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
-import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
-import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.vo.GameVO;
-import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
@@ -95,7 +92,7 @@ public class GameController {
             return RespUtil.error(40010);
         }
         // 获取当前模板可以购买的单位
-        List<UnitMes> unitInfoList = unitMesService.getUnitInfoList(context.getUserTemplate().getId());
+        List<UnitMes> unitInfoList = unitMesService.getCanBuyUnit(context.getUserTemplate().getId());
         // 排除存活的领主
         Army army = AppUtil.getCurrentArmy(record);
         UnitInfo unitInfo;

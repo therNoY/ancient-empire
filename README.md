@@ -81,7 +81,7 @@ GameContext获取对应事件的处理器，处理事件，返回结果，生成
     + base 基础模块，维护地图信息等
     + core 维护核心处理模块
         + 网络请求
-    + robot 机器人模块
+    + abstractRobot 机器人模块
     + startup 启动模块
     
 

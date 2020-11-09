@@ -93,12 +93,9 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      */
     @Override
     @Cacheable(value = CatchKey.ENABLE_UNIT)
-    public List<UnitMes> getEnableUnitByUserId(Integer id) {
+    public List<UnitMes> getEnableUnitByTempId(String tempId) {
         log.info(">>>>用户从数据库中获取可用单位<<<<");
-        QueryWrapper wrapper = new QueryWrapper<UnitMes>();
-        wrapper.eq("enable", 1);
-//        wrapper.eq("create_user_id", id);
-        List<UnitMes> unitMes = unitMesDao.selectList(wrapper);
+        List<UnitMes> unitMes = unitMesDao.getEnableUnitByTempId(tempId);
         return unitMes;
     }
 
@@ -139,39 +136,17 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      */
     @Override
     @Cacheable(CatchKey.TEMPLATE_CAN_BUY_UNITS)
-    public List<UnitMes> getUnitInfoList(Integer templateId) {
+    public List<UnitMes> getCanBuyUnit(Integer templateId) {
         List<UnitMes> list = unitMesDao.selectCanTradeUnit(templateId);
         return list;
     }
 
 
-    /**
-     * 获取可以购买的单位
-     * @return
-     */
-    @Override
-    @Cacheable("enableBuyUnit")
-    public List<UnitMes> getEnableBuyUnit(){
-        QueryWrapper<UnitMes> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("tradeable", true);
-        queryWrapper.eq("enable", true);
-        List<UnitMes> unitMesList = unitMesDao.selectList(queryWrapper);
-        return unitMesList;
-    }
 
     @Override
     @Cacheable("maxCheapUnit")
     public UnitMes getMaxCheapUnit() {
-        List<UnitMes> unitMesList = getEnableBuyUnit();
-        int minPrice = Integer.MAX_VALUE;
-        UnitMes maxCheapUnit = null;
-        for (UnitMes mes : unitMesList) {
-            if (mes.getPrice() < minPrice) {
-                maxCheapUnit = mes;
-                minPrice = mes.getPrice();
-            }
-        }
-        return maxCheapUnit;
+        return null;
     }
 
 

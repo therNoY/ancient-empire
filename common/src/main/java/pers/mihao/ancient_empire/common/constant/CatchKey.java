@@ -48,6 +48,7 @@ public class CatchKey {
     // 模板可以购买的单位
     public static final String TEMPLATE_CAN_BUY_UNITS = "templateCanBuyUnits";
 
+
     /* 用户模板 */
     public static final String USER_TEMP = "userTemp";
 

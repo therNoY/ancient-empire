@@ -2,8 +2,8 @@ package pers.mihao.ancient_empire.core.robot.factory;
 
 
 import pers.mihao.ancient_empire.core.manger.GameContext;
-import pers.mihao.ancient_empire.core.robot.DefaultRoot;
-import pers.mihao.ancient_empire.core.robot.Robot;
+import pers.mihao.ancient_empire.core.robot.AbstractRobot;
+import pers.mihao.ancient_empire.core.robot.DefaultRobot;
 
 /**
  * 机器人Factory实现类
@@ -18,12 +18,12 @@ public class DefaultRobotFactory extends AbstractRobotFactory{
     }
 
     @Override
-    public Robot create(GameContext gameContext) {
-        Robot robot = new DefaultRoot(gameContext);
-        return robot;
+    public AbstractRobot create(GameContext gameContext) {
+        AbstractRobot abstractRobot = new DefaultRobot(gameContext);
+        return abstractRobot;
     }
 
-    public static Robot createRobot(GameContext gameContext) {
+    public static AbstractRobot createRobot(GameContext gameContext) {
         return factory.create(gameContext);
     }
 }

@@ -71,7 +71,7 @@ public class PurifyEndHandle extends EndHandle {
                                     changeList = new ArrayList<>();
                                 }
                                 LifeChange lifeChange = new LifeChange(i);
-                                int life = AppUtil.getUnitLeft(unit);
+                                int life = AppUtil.getUnitLife(unit);
                                 // 判断单位是否承受不住
                                 if (life <= buff) {
                                     lifeChange.setChange(AppUtil.getArrayByInt(-1, life));
@@ -93,7 +93,7 @@ public class PurifyEndHandle extends EndHandle {
                             }
                             boolean isChange = false;
                             LifeChange lifeChange = new LifeChange(i);
-                            int life = AppUtil.getUnitLeft(unit);
+                            int life = AppUtil.getUnitLife(unit);
                             if (unit.getStatus() != null && !unit.getStatus().equals(StateEnum.EXCITED.type())) {
                                 lifeChange.setState(StateEnum.NORMAL.type());
                                 isChange = true;

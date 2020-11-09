@@ -119,7 +119,7 @@ public class WsEndRoundService {
             if (square.getType().equals(RegionEnum.TOWN)) {
                 // 所处位置城镇
                 if (square.getColor() != null && campColors.contains(square.getColor())) {
-                    int lastLife = AppUtil.getUnitLeft(unit);
+                    int lastLife = AppUtil.getUnitLife(unit);
                     if (status !=null && !status.equals(StateEnum.POISON.type()) && lastLife < 100) {
                         restoreLife(lifeChange, townRestore, lastLife);
                     }
@@ -127,14 +127,14 @@ public class WsEndRoundService {
             } else if (square.getType().equals(RegionEnum.CASTLE)) {
                 // 所处位置城堡
                 if (square.getColor() != null && campColors.contains(square.getColor())) {
-                    int lastLife = AppUtil.getUnitLeft(unit);
+                    int lastLife = AppUtil.getUnitLife(unit);
                     if (status !=null && !status.equals(StateEnum.POISON.type()) && lastLife < 100) {
                         restoreLife(lifeChange, castleRestore, lastLife);
                     }
                 }
             } else if (square.getType().equals(RegionEnum.TEMPLE)) {
                 // 所处位置神殿
-                int lastLife = AppUtil.getUnitLeft(unit);
+                int lastLife = AppUtil.getUnitLife(unit);
                 if (status !=null && !status.equals(StateEnum.EXCITED.type())) {
                     unit.setStatus(null);
                 }
@@ -143,13 +143,13 @@ public class WsEndRoundService {
                 }
             } else if (square.getType().equals(RegionEnum.STOCK)) {
                 // 所处位置寨子
-                int lastLife = AppUtil.getUnitLeft(unit);
+                int lastLife = AppUtil.getUnitLife(unit);
                 if (status !=null && !status.equals(StateEnum.POISON.type()) && lastLife < 100) {
                     restoreLife(lifeChange, stockRestore, lastLife);
                 }
             } else if (square.getType().equals(RegionEnum.SEA_HOUSE)) {
                 // 所处位置是 海房
-                int lastLife = AppUtil.getUnitLeft(unit);
+                int lastLife = AppUtil.getUnitLife(unit);
                 if (status !=null && !status.equals(StateEnum.EXCITED.type())) {
                     unit.setStatus(null);
                 }
@@ -158,7 +158,7 @@ public class WsEndRoundService {
                 }
             } else if (square.getType().equals(RegionEnum.REMAINS2)) {
                 // 所处位置遗迹
-                int lastLife = AppUtil.getUnitLeft(unit);
+                int lastLife = AppUtil.getUnitLife(unit);
                 if (status !=null && !status.equals(StateEnum.POISON.type()) && lastLife < 100) {
                     restoreLife(lifeChange, remainsRestore, lastLife);
                 }
@@ -166,7 +166,7 @@ public class WsEndRoundService {
 
             // 如果单位是中毒就改成掉血
             if (status !=null && status.equals(StateEnum.POISON.type())) {
-                int lastLife = AppUtil.getUnitLeft(unit);
+                int lastLife = AppUtil.getUnitLife(unit);
                 decreaseLife(lifeChange, poisonDecrease, lastLife, unit, record);
             }
 

@@ -77,7 +77,7 @@ public class PurifyEndStrategy extends EndStrategy {
 
             if (abilityList.contains(AbilityEnum.UNDEAD.ability())) {
                 // 亡灵净化
-                int life = AppUtil.getUnitLeft(unit);
+                int life = AppUtil.getUnitLife(unit);
                 if (life <= buff) {
                     // 亡灵死亡
                     log.info("亡灵：{} 被净化者净化死亡", unit);
@@ -91,7 +91,7 @@ public class PurifyEndStrategy extends EndStrategy {
             }else if (army.getCamp().equals(record.getCurrCamp())) {
                 // 残血友军回血
                 levelMes = levelMesService.getUnitLevelMes(unit.getTypeId().toString(), unit.getLevel());
-                int unitLife = AppUtil.getUnitLeft(unit);
+                int unitLife = AppUtil.getUnitLife(unit);
                 int maxRestore = levelMes.getMaxLife() - unitLife;
                 if (maxRestore != 0) {
                     int restore = Math.min(maxRestore, buff);

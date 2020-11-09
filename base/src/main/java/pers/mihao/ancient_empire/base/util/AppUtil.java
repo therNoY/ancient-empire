@@ -287,7 +287,7 @@ public class AppUtil {
      * @param unit
      * @return
      */
-    public static int getUnitLeft(Unit unit) {
+    public static int getUnitLife(Unit unit) {
         Integer[] life = unit.getLife();
         return getIntByIntegers(life);
     }
@@ -418,13 +418,11 @@ public class AppUtil {
      * @return
      */
     public static boolean hasLoad(Army army) {
-
         for (Unit unit : army.getUnits()) {
             if (unit.getType().equals(UnitEnum.LORD.type())) {
                 return true;
             }
         }
-
         return false;
     }
 

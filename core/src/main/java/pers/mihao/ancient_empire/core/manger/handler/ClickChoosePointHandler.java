@@ -19,7 +19,6 @@ import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.defense.DefenseStrategy;
-import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -282,8 +281,8 @@ public class ClickChoosePointHandler extends CommonHandler {
 
         int attachNum = attachPower.getNum();
         int defenseNum = defensePower.getNum();
-        int attachUnitLeft = AppUtil.getUnitLeft(attachUnit);
-        int beAttachUnitLeft = AppUtil.getUnitLeft(beAttachUnit);
+        int attachUnitLeft = AppUtil.getUnitLife(attachUnit);
+        int beAttachUnitLeft = AppUtil.getUnitLife(beAttachUnit);
 
         log.info("{} 经过加成后的攻击力{}， {} 最终防御力 {}", attachUnit.getType(), attachNum, beAttachUnit.getType(), defenseNum);
 

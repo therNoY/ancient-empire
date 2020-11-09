@@ -74,7 +74,7 @@ public class IntegerTest {
     public void name5() {
         Unit unit = new Unit();
         unit.setLife(new Integer[]{9, 8});
-        System.out.println(AppUtil.getUnitLeft(unit));
+        System.out.println(AppUtil.getUnitLife(unit));
     }
 
     @Test

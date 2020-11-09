@@ -224,7 +224,7 @@ public class AiSelectUnitHandle extends AiActiveHandle {
         // 获取现在需要的能力
         NeedUnitType needUnitType = getNeedAbility(record);
         // 获取可以买的单位列表 TODO 考虑过滤loader
-        List<UnitMes> canBuyUnit = unitMesService.getEnableBuyUnit()
+        List<UnitMes> canBuyUnit = unitMesService.getEnableUnitByTempId("1")
                 .stream().filter(mes -> {
                     if ((mes.getPrice() > army.getMoney() || loadMes.getPopulation() + army.getPop() > record.getMaxPop())
                             || mes.getType().equals(UnitEnum.LORD.type())) {

@@ -56,7 +56,7 @@ public class UserMapController {
         // 获取当前用户
         Integer id = AuthUtil.getAuthId();
         // 1.获取可用单位信息
-        List<UnitMes> unitMesList = unitMesService.getEnableUnitByUserId(id);
+        List<UnitMes> unitMesList = unitMesService.getEnableUnitByTempId(id.toString());
         // 2.获取可用地形信息
         List<RegionMes> regionMes = regionMesService.getEnableRegionByUserId(id);
         // 3.获取用户拥有的地图

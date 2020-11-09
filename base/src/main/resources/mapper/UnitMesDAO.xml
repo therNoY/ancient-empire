@@ -32,7 +32,17 @@
             INNER JOIN ( SELECT * FROM unit_template_relation WHERE temp_id = #{templateId} ) u ON ul.id = u.unit_id
         WHERE
             ul.tradeable = '1'
-            AND ul.`enable` = '1'
+            AND u.`enable` = '1'
+    </select>
+
+    <select id="getEnableUnitByTempId" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
+        SELECT
+            ul.*
+        FROM
+            unit_mes ul
+            INNER JOIN ( SELECT * FROM unit_template_relation WHERE temp_id = #{templateId} ) u ON ul.id = u.unit_id
+        WHERE
+            AND u.`enable` = '1'
     </select>
 
 </mapper>

@@ -136,9 +136,9 @@ public class AiMoveHandle extends AiActiveHandle {
             if (hasHealer) {
                 Unit unit = AppUtil.getUnitByPosition(record, site, army.getCamp());
                 if (unit != null && !unit.getStatus().equals(StateEnum.POISON.type())) {
-                    if (AppUtil.getUnitLeft(unit) < 100) {
+                    if (AppUtil.getUnitLife(unit) < 100) {
                         log.info("{} 可以进行 治疗 操作目标单位:{} 血量：{}", selectUnit.getType(), unit.getType(),
-                            AppUtil.getUnitLeft(unit));
+                            AppUtil.getUnitLife(unit));
                         actionList.add(new UnitActionResult(record.getUuid(), AiActiveEnum.HEAL, site, unit));
                     }
                 }
@@ -268,7 +268,7 @@ public class AiMoveHandle extends AiActiveHandle {
                 Unit target = action.getUnit();
                 UnitLevelMes targetUnitLevelMes = unitLevelMesService
                     .getUnitLevelMes(target.getType(), target.getLevel());
-                score += 10 * (targetUnitLevelMes.getMaxAttack() * AppUtil.getUnitLeft(target) / 100
+                score += 10 * (targetUnitLevelMes.getMaxAttack() * AppUtil.getUnitLife(target) / 100
                     + targetUnitLevelMes.getSpeed() * 5);
                 break;
             case ATTACH:
@@ -320,8 +320,8 @@ public class AiMoveHandle extends AiActiveHandle {
 
     private int getAttackScore(Unit defender, UnitMes targetUnitMes) {
         int score = 0;
-        int lastLeft = AppUtil.getUnitLeft(defender);
-        int left = AppUtil.getUnitLeft(selectUnit);
+        int lastLeft = AppUtil.getUnitLife(defender);
+        int left = AppUtil.getUnitLife(selectUnit);
         if (defender.getType().equals(UnitEnum.LORD.type())) {
             score += (left - lastLeft) / 10 * targetUnitMes.getPrice() * defender.getLevel();
         } else {
@@ -462,35 +462,7 @@ public class AiMoveHandle extends AiActiveHandle {
         return targetSite;
     }
 
-    /**
-     * 判断单位是否可以修复
-     *
-     * @param square
-     * @return
-     */
-    private boolean canRepair(BaseSquare square) {
-        if (square.getType().equals(RegionEnum.RUINS.type())) {
-            if (abilityList.contains(AbilityEnum.REPAIR.ability())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    /**
-     * 是否可以占领
-     *
-     * @param square
-     * @return
-     */
-    private boolean canOccupyVillage(BaseSquare square) {
-        if (square.getType().equals(RegionEnum.TOWN.type()) && !campColors.contains(square.getColor())) {
-            if (abilityList.contains(AbilityEnum.VILLAGE_GET.ability())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * 是否可以占领

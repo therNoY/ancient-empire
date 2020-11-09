@@ -21,4 +21,11 @@ public interface UnitMesDAO extends BaseMapper<UnitMes> {
      * @return
      */
     List<UnitMes> selectCanTradeUnit(Integer templateId);
+
+    /**
+     * 获取所有可用单位
+     * @param tempId
+     * @return
+     */
+    List<UnitMes> getEnableUnitByTempId(String tempId);
 }

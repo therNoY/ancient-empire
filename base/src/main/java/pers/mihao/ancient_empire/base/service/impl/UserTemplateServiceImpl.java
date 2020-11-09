@@ -24,4 +24,5 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
     public UserTemplate selectById(String id) {
         return getById(id);
     }
+
 }

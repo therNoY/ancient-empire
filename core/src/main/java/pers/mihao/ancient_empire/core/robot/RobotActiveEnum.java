@@ -1,0 +1,35 @@
+package pers.mihao.ancient_empire.core.robot;
+
+/**
+ * @version 1.0
+ * @auther mihao
+ * @date 2020\11\8 0008 16:55
+ */
+public enum RobotActiveEnum {
+
+    /**
+     * 召唤
+     */
+    SUMMON,
+    /**
+     * 修复
+     */
+    REPAIR,
+    /**
+     * 占领
+     */
+    OCCUPIED,
+    /**
+     * 治疗
+     */
+    HEAL,
+    /**
+     * 攻击
+     */
+    ATTACH,
+    /**
+     * 结束
+     */
+    END,
+
+}

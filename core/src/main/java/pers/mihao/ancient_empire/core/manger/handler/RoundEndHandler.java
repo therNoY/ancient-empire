@@ -127,7 +127,7 @@ public class RoundEndHandler extends CommonHandler {
             lifeChangeDTO = new LifeChangeDTO();
             unitStatusInfoDTO = new UnitStatusInfoDTO();
             levelMes = unitLevelMesService.getUnitLevelMes(unit.getTypeId().toString(), unit.getLevel());
-            lastLife = AppUtil.getUnitLeft(unit);
+            lastLife = AppUtil.getUnitLife(unit);
             restoreLife = levelMes.getMaxLife() - lastLife;
 
             if (!StateEnum.POISON.type().equals(status)) {
