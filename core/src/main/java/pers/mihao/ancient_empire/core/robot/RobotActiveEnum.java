@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.core.robot;
 
 /**
+ * 机器人行动枚举
  * @version 1.0
  * @auther mihao
  * @date 2020\11\8 0008 16:55
@@ -28,7 +29,17 @@ public enum RobotActiveEnum {
      */
     ATTACH,
     /**
-     * 结束
+     * 防守
+     */
+    DEFENSIVE,
+
+    /**
+     * 恢复
+     */
+    RECOVER,
+
+    /**
+     * 直接结束
      */
     END,
 

@@ -11,6 +11,7 @@ import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
@@ -385,6 +386,25 @@ public class CommonHandler extends AbstractGameEventHandler {
 
 
 
+    /**
+     * 根据Site 获取regionInfo
+     *
+     * @param site
+     * @return
+     */
+    protected RegionInfo getRegionInfoByRegionIndex(Integer reginxIndex) {
+        return getRegionInfoBySite(AppUtil.getSiteByMapIndex(reginxIndex, gameMap().getColumn()));
+    }
+
+    /**
+     * 根据Site 获取regionInfo
+     *
+     * @param site
+     * @return
+     */
+    protected RegionInfo getRegionInfoBySite(Site site) {
+        return getRegionInfoBySite(site.getRow(), site.getColumn());
+    }
 
     /**
      * 根据Site 获取regionInfo

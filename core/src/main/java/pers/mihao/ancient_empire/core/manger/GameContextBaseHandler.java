@@ -383,4 +383,21 @@ public abstract class GameContextBaseHandler implements Handler {
         return Math.abs(row - row2) + Math.abs(column - column2);
     }
 
+    /**
+     * site集合是否包含site
+     * @param sites
+     * @param site
+     * @return
+     */
+    protected boolean containsSite(List<? extends Site> sites, Site site) {
+        if (sites != null) {
+            for (Site s : sites) {
+                if (s.getRow().equals(site) && s.getColumn().equals(site.getColumn())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

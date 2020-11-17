@@ -226,6 +226,14 @@ public class AiMoveHandle extends AiActiveHandle {
         }
     }
 
+    private boolean canOccupyVillage(BaseSquare square) {
+        return false;
+    }
+
+    private boolean canRepair(BaseSquare square) {
+        return false;
+    }
+
     /**
      * 根据行动选择最佳行动
      *
