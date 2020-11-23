@@ -7,6 +7,7 @@ import pers.mihao.ancient_empire.core.manger.event.Event;
 import java.util.List;
 
 /**
+ * 游戏事件处理类
  * @version 1.0
  * @auther mihao
  * @date 2020\11\8 0008 15:26

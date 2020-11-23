@@ -1,10 +1,8 @@
 package pers.mihao.ancient_empire.core.robot;
 
-import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.RegionInfo;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.core.eums.ai.AiActiveEnum;
 
 /**
  * robot的行动意向

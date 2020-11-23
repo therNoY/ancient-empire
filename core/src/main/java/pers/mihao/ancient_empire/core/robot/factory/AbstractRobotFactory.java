@@ -9,6 +9,4 @@ package pers.mihao.ancient_empire.core.robot.factory;
 public abstract class AbstractRobotFactory implements RobotFactory {
 
 
-
-
 }

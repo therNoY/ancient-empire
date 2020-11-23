@@ -44,8 +44,8 @@ public class RobotManger {
      * 开始执行一个任务
      */
     public void startRobot(GameContext gameContext) {
-        AbstractRobot task = DefaultRobotFactory.createRobot(gameContext);
-        robotPool.submit(task);
+        AbstractRobot robot = DefaultRobotFactory.createRobot(gameContext);
+        robotPool.submit(robot);
     }
 
 

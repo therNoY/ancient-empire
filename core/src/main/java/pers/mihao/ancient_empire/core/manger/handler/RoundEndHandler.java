@@ -45,7 +45,6 @@ public class RoundEndHandler extends CommonHandler {
         if (currArmy().getPlayer() == null) {
             robotManger.startRobot(gameContext);
         }
-
     }
 
     /**

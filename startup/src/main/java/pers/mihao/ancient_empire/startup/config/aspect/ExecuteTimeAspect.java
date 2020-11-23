@@ -13,6 +13,7 @@ import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
 
 /**
  * 拦截需要统计方法执行时间的 aop
+ * @author hspcadmin
  */
 @Component
 @Aspect
