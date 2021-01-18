@@ -1,6 +1,11 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -14,6 +19,7 @@ public class UserTemplate implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -110,6 +116,34 @@ public class UserTemplate implements Serializable {
      * 晋升的模式(0不开启 1 用户选择升级 2 随机转职 3 固定)
      */
     private Integer promotionMode;
+
+    /**
+     * 是否共享
+     */
+    private Integer shared;
+
+    /**
+     * 模板状态 -1 废弃 0 草稿 1正常
+     */
+    private Integer status;
+
+    /**
+     * 引用总start
+     */
+    @TableField(exist = false)
+    private Integer countStart;
+
+    /**
+     * 引用次数
+     */
+    @TableField(exist = false)
+    private Integer linkNum;
+
+    /**
+     * 模板绑定的单位
+     */
+    @TableField(exist = false)
+    private List<UnitMes> bindUintList;
 
     public Integer getId() {
         return id;
@@ -252,6 +286,46 @@ public class UserTemplate implements Serializable {
 
     public void setPromotionMode(Integer promotionMode) {
         this.promotionMode = promotionMode;
+    }
+
+    public Integer getCountStart() {
+        return countStart;
+    }
+
+    public void setCountStart(Integer countStart) {
+        this.countStart = countStart;
+    }
+
+    public Integer getLinkNum() {
+        return linkNum;
+    }
+
+    public void setLinkNum(Integer linkNum) {
+        this.linkNum = linkNum;
+    }
+
+    public Integer getShared() {
+        return shared;
+    }
+
+    public void setShared(Integer shared) {
+        this.shared = shared;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public List<UnitMes> getBindUintList() {
+        return bindUintList;
+    }
+
+    public void setBindUintList(List<UnitMes> bindUintList) {
+        this.bindUintList = bindUintList;
     }
 
     @Override

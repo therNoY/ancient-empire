@@ -106,7 +106,7 @@ public class WsAttachResultService {
         resultDto.setAttachResult(attachResult);
         // 2.1 更新
         beAttachUnit.setLife(attachResult.getLastLife());
-        if (!StringUtil.isEmpty(attachResult.getEndStatus())) {
+        if (!StringUtil.isBlack(attachResult.getEndStatus())) {
             beAttachUnit.setStatus(attachResult.getEndStatus());
         }
 

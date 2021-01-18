@@ -41,7 +41,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     @Override
     public void updateByUserId(UserSetting userSetting) {
         // 删除缓存
-        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_SETTING) + AuthUtil.getAuthId());
+        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_SETTING) + AuthUtil.getUserId());
         QueryWrapper<UserSetting> wrapper = new QueryWrapper();
         wrapper.eq("user_id", userSetting.getUserId());
         userSettingDao.update(userSetting, wrapper);

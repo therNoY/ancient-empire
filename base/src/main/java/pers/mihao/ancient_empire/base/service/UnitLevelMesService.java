@@ -21,9 +21,11 @@ public interface UnitLevelMesService extends IService<UnitLevelMes> {
 
     IPage<RespUnitLevelDto> getUnitLevelMesList(Page page);
 
+    /**
+     * 保存单位等级信息
+     * @param unitLevelMes
+     */
     void saveUnitLevelMesList(UnitLevelMes unitLevelMes);
-
-    int getSpeedByUnit(String type, Integer level);
 
     /**
      * 根据单位的id 和等级获取单位的信息
@@ -37,8 +39,8 @@ public interface UnitLevelMesService extends IService<UnitLevelMes> {
 
     /**
      * 通过模板获取单位的等级信息
-     * @param tempId
+     * @param userId
      * @return
      */
-    Map<String, Integer> getUnitLevelByTemp(Integer tempId);
+    List<UnitLevelMes> getUnitLevelInfoById(Integer userId);
 }

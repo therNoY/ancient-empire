@@ -39,7 +39,7 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDAO, RegionMes> i
 
         if (regionMes.getId() == null) {
             // 新增地形
-            regionMes.setCreateUserId(AuthUtil.getAuthId());
+            regionMes.setCreateUserId(AuthUtil.getUserId());
             regionMesDao.insert(regionMes);
         }else {
             regionMesDao.updateById(regionMes);

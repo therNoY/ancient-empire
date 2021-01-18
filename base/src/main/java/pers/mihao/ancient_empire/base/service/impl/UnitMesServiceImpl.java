@@ -1,11 +1,13 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.dao.UnitMesDAO;
+import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
-import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
+import pers.mihao.ancient_empire.base.util.IPageHelper;
+import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
@@ -52,8 +56,9 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      * @return
      */
     @Override
-    public IPage<UnitMes> getList(Page<UnitMes> page) {
-        return unitMesDao.selectPage(page, null);
+    public IPage<UnitMes> selectUnitMesWithPage(ReqGetUnitMesDTO reqGetUnitMesDTO) {
+        List<UnitMes> unitMes = unitMesDao.selectUnitMesWithPage(reqGetUnitMesDTO);
+        return IPageHelper.toPage(unitMes, reqGetUnitMesDTO);
     }
 
     /**
@@ -65,7 +70,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     @Transactional
     public void saveUnitMes(UnitMes unitMes) {
         if (unitMes.getId() != null) {
-            unitMes.setCreateUserId(AuthUtil.getAuthId());
+            unitMes.setCreateUserId(AuthUtil.getUserId());
             unitMesDao.updateById(unitMes);
         } else {
             unitMesDao.insert(unitMes);
@@ -131,6 +136,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
 
     /**
      * 获取当前模板单位可以股买的
+     *
      * @param hasLoad 领主是否还存活 存活就无法购买
      * @return
      */
@@ -142,12 +148,27 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     }
 
 
-
     @Override
     @Cacheable("maxCheapUnit")
     public UnitMes getMaxCheapUnit() {
         return null;
     }
 
+    @Override
+    public List<UnitMes> getUnitListByCreateUser(Integer userId) {
+        QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
+        wrapper.eq("create_user_id", userId);
+        wrapper.eq("enable", BaseConstant.YES);
+        return unitMesDao.selectList(wrapper);
+    }
 
+    @Override
+    public List<UnitMes> getDefaultUnitList() {
+        return getUnitListByCreateUser(BaseConstant.ADMIN_ID);
+    }
+
+    @Override
+    public void updateInfoById(UnitMes baseInfo) {
+        unitMesDao.updateInfoById(baseInfo);
+    }
 }

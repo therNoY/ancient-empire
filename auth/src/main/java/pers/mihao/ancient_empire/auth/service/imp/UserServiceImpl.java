@@ -3,7 +3,6 @@ package pers.mihao.ancient_empire.auth.service.imp;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -153,7 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Override
     public String updateUserInfo(ReqUserDto user) {
         // 1.防止用户伪造 通过Token 获取当前登录对象 当前用户只能更改当前用户
-        if (user.getId() - AuthUtil.getAuthId() != 0) {
+        if (user.getId() - AuthUtil.getUserId() != 0) {
             return null;
         } else {
             // 清除缓存

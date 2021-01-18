@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.base.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 
 import java.util.List;
@@ -28,4 +30,17 @@ public interface UnitMesDAO extends BaseMapper<UnitMes> {
      * @return
      */
     List<UnitMes> getEnableUnitByTempId(String tempId);
+
+    /**
+     * 获取用户的单位分页
+     * @param reqGetUnitMesDTO
+     * @return
+     */
+    List<UnitMes> selectUnitMesWithPage(ReqGetUnitMesDTO reqGetUnitMesDTO);
+
+    /**
+     * 更新单位
+     * @param baseInfo
+     */
+    void updateInfoById(UnitMes baseInfo);
 }

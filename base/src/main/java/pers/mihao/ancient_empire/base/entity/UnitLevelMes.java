@@ -57,6 +57,9 @@ public class UnitLevelMes implements Serializable {
      */
     private Integer speed;
 
+    /**
+     * 最大生命值
+     */
     private Integer maxLife;
 
 

@@ -44,7 +44,7 @@ public class VillageGetActionStrategy extends ActionStrategy {
         if (region.getType().equals(RegionEnum.TOWN.type())) {
             // 判断不是右方城镇
             Army army;
-            if (StringUtil.isEmpty(region.getColor())) {
+            if (StringUtil.isBlack(region.getColor())) {
                 actions.add(ActionEnum.OCCUPIED.type());
                 return actions;
             }

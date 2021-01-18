@@ -47,14 +47,13 @@ public class UserMapController {
 
     /**
      * 获取编辑地图时需要获取的初始数据
-     * FIXME 增加了模板配置这个要改
      * @return
      */
     @GetMapping("/api/userMap/init/{id}")
     public RespJson getInitUserMap(@PathParam("id") String templateId) {
         UserTemplate userTemplate = userTemplateService.getById(templateId);
         // 获取当前用户
-        Integer id = AuthUtil.getAuthId();
+        Integer id = AuthUtil.getUserId();
         // 1.获取可用单位信息
         List<UnitMes> unitMesList = unitMesService.getEnableUnitByTempId(id.toString());
         // 2.获取可用地形信息
@@ -135,7 +134,7 @@ public class UserMapController {
             return RespUtil.error(42000);
         }
         // 管理员创建地图默认是遭遇战地图
-        if (AuthUtil.getAuthId().equals(1)) {
+        if (AuthUtil.getUserId().equals(1)) {
             userMap.setType(GameTypeEnum.ENCOUNTER.type());
             userMapService.saveMap(userMap);
         }else {

@@ -19,7 +19,7 @@ public abstract class AbstractRobotHandler extends GameAnalysis {
     /**
      * 攻击范围
      */
-    protected final List<Site> attachArea = getUnitAttachArea();
+    protected final List<Site> attachArea = getUnitAttachArea(moveArea);
 
     @Override
     public final void setGameContext(GameContext gameContext) {

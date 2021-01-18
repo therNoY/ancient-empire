@@ -20,7 +20,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
+import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.common.annotation.Manger;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.core.constans.ExtMes;
+import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
@@ -62,7 +66,7 @@ public class GameSessionManger {
             sessionMap.put(recordId, list);
         }
         synchronized (list) {
-            GameSession gameSession = new GameSession(recordId, user.getName(), session, new Date());
+            GameSession gameSession = new GameSession(recordId, user.getId(), user.getName(), session, new Date());
             gameSession.setSessionId(session.getId());
             list.add(gameSession);
             playerCount.incrementAndGet();
@@ -120,6 +124,7 @@ public class GameSessionManger {
      * @throws IOException
      */
     public void sendMessage(GameCommand command, String gameId) {
+        setMessagePrefix(command);
         switch (command.getSendTypeEnum()) {
             case SEND_TO_USER:
                 sendMessage2User(command, gameId);
@@ -132,6 +137,17 @@ public class GameSessionManger {
         }
     }
 
+    private void setMessagePrefix(GameCommand command) {
+        if (command.getGameCommendEnum().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
+            String oldMes = command.getExtMes().getString(ExtMes.MESSAGE);
+            if (AuthUtil.getLoginUser() != null) {
+                command.getExtMes().put(ExtMes.MESSAGE, "【" + AuthUtil.getLoginUser().getUsername() + "】" + oldMes);
+            }else {
+                command.getExtMes().put(ExtMes.MESSAGE, "【系统消息】" + oldMes);
+            }
+        }
+    }
+
     /**
      * 发送有序消息集合
      *
@@ -141,6 +157,9 @@ public class GameSessionManger {
      */
     public void sendOrderMessage2Game(List<Command> commandList, String gameId) {
         List<GameSession> gameSessions = sessionMap.get(gameId);
+        for (Command command : commandList) {
+            setMessagePrefix((GameCommand) command);
+        }
         if (gameSessions != null && commandList.size() > 0) {
             GameSession gameSession = null;
             log.info("发送有序命令{} 给群组：{}", commandList, gameId);
@@ -157,6 +176,17 @@ public class GameSessionManger {
 
 
         }
+    }
+
+    public String getUserGameId(Integer userId) {
+        for (Map.Entry<String, List<GameSession>> entry : sessionMap.entrySet()) {
+            for (GameSession session : entry.getValue()) {
+                if (session.getUserId().equals(userId)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        throw new AncientEmpireException();
     }
 
     /**

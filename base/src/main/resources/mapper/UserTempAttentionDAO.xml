@@ -4,15 +4,33 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UserTempAttention">
-        <id column="user_id" property="userName" />
+        <id column="user_id" property="userId" />
         <result column="template_id" property="templateId" />
         <result column="template_start" property="templateStart" />
         <result column="template_comment" property="templateComment" />
+        <result column="create_time" property="createTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        user_id, template_id, template_start, template_comment
+        user_id, template_id, template_start, template_comment, create_time
     </sql>
+
+    <select id="selectCountStartByTempId" resultType="pers.mihao.ancient_empire.base.dto.TemplateCountDTO">
+        SELECT count(t.template_start) as count ,sum(t.template_start) as sum
+        FROM user_temp_attention t where t.template_id = #{id}
+    </select>
+
+    <select id="getAttentionTemplateWithPage" resultMap="pers.mihao.ancient_empire.base.dao.UserTemplateDAO.BaseResultMap">
+        select t.* from user_temp_attention ut left join user_template t on ut.template_id = t.id
+        where ut.user_id = #{userId} ORDER BY ut.create_time desc
+    </select>
+
+    <select id="getDownloadAbleTempWithPage" resultType="pers.mihao.ancient_empire.base.entity.UserTemplate">
+        select t.* from user_template t
+        where t.user_id != #{userId}
+        and t.status != -1 and t.shared = 1
+        and not EXISTS (select 1 from  user_temp_attention ta where ta.user_id = #{userId} and ta.template_id = t.id)
+    </select>
 
 </mapper>

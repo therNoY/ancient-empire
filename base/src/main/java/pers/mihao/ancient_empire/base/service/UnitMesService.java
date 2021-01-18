@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
+
+import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 
 /**
@@ -17,8 +20,17 @@ import pers.mihao.ancient_empire.base.entity.UnitMes;
  */
 public interface UnitMesService extends IService<UnitMes> {
 
-    IPage<UnitMes> getList(Page<UnitMes> page);
+    /**
+     * 获取我的单位信息的
+     * @param reqGetUnitMesDTO
+     * @return
+     */
+    IPage<UnitMes> selectUnitMesWithPage(ReqGetUnitMesDTO reqGetUnitMesDTO);
 
+    /**
+     * 保存单位信息
+     * @param unitMes
+     */
     void saveUnitMes(UnitMes unitMes);
 
     /**
@@ -29,6 +41,7 @@ public interface UnitMesService extends IService<UnitMes> {
      */
     List<UnitMes> getEnableUnitByTempId(String tempId);
 
+    @Deprecated
     UnitMes getByType(String type);
 
     /**
@@ -48,4 +61,22 @@ public interface UnitMesService extends IService<UnitMes> {
 
     UnitMes getMaxCheapUnit();
 
+    /**
+     * 获取用户创建的所有单位
+     * @param userId
+     * @return
+     */
+    List<UnitMes> getUnitListByCreateUser(Integer userId);
+
+    /**
+     * 获取管理员启动的单位 即是默认单位
+     * @return
+     */
+    List<UnitMes> getDefaultUnitList();
+
+    /**
+     * 更新单位信息
+     * @param baseInfo
+     */
+    void updateInfoById(UnitMes baseInfo);
 }

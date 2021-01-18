@@ -33,7 +33,7 @@ public class CastleGetActionHandle extends ActionHandle{
             if (region.getType().equals(RegionEnum.CASTLE.type())){
                 // 判断不是右方城镇
                 Army army = null;
-                if (StringUtil.isEmpty(region.getColor())) {
+                if (StringUtil.isBlack(region.getColor())) {
                     actions.add(ActionEnum.OCCUPIED.type());
                     return actions;
                 }

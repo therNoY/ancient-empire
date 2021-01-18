@@ -3,26 +3,26 @@ package pers.mihao.ancient_empire.base.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.Unit;
+import org.springframework.web.bind.annotation.*;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
+import pers.mihao.ancient_empire.base.dto.ReqSaveUnitMesDTO;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
-import pers.mihao.ancient_empire.base.entity.UserRecord;
-import pers.mihao.ancient_empire.base.enums.UnitEnum;
+import pers.mihao.ancient_empire.base.service.UnitAbilityService;
+import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
-import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 import pers.mihao.ancient_empire.common.util.RespUtil;
+import pers.mihao.ancient_empire.common.util.Validate;
+import pers.mihao.ancient_empire.common.util.ValidateUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
+
+import java.util.List;
 
 /**
  * <p>
@@ -39,6 +39,10 @@ public class UnitMesController {
     UnitMesService unitMesService;
     @Autowired
     UserRecordService userRecordService;
+    @Autowired
+    UnitAbilityService unitAbilityService;
+    @Autowired
+    UnitLevelMesService unitLevelMesService;
 
     /**
      * 获取 单位信息类表
@@ -46,11 +50,22 @@ public class UnitMesController {
      * @param pageNow
      * @return
      */
-    @GetMapping("/root/unit")
-    public RespJson getUnitMesList(@RequestParam Long pageSize, @RequestParam Long pageNow) {
-        Page<UnitMes> page = new Page<>(pageNow, pageSize);
-        IPage<UnitMes> unitMesIPage = unitMesService.getList(page);
+    @PostMapping("/api/unitMes/list")
+    public RespJson getUnitMesListWithPage(@RequestBody ReqGetUnitMesDTO reqGetUnitMesDTO) {
+        IPage<UnitMes> unitMesIPage = unitMesService.selectUnitMesWithPage(reqGetUnitMesDTO);
         return RespUtil.successPageResJson(unitMesIPage);
+    }
+
+    /**
+     * 获取 单位信息类表
+     * @param pageSize
+     * @param pageNow
+     * @return
+     */
+    @PostMapping("/api/unitMes/all")
+    public RespJson getUnitMesList(ApiRequestDTO apiRequestDTO) {
+        List<UnitMes> unitMesIPage = unitMesService.getUnitListByCreateUser(apiRequestDTO.getUserId());
+        return RespUtil.successResJson(unitMesIPage);
     }
 
     /**
@@ -59,26 +74,33 @@ public class UnitMesController {
      * @param result
      * @return
      */
-    @PutMapping("/root/unit")
-    public RespJson saveUnit(@RequestBody @Validated UnitMes unitMes, BindingResult result) {
-        unitMesService.saveUnitMes(unitMes);
+    @PutMapping("/api/unitMes")
+    public RespJson saveUnitMes(@RequestBody @Validated ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
+        // 1.更新基本信息
+        unitMesService.updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
+        // 2.更新能力信息
+        unitAbilityService.updateUnitAbility(reqSaveUnitMesDTO.getBaseInfo().getId(), reqSaveUnitMesDTO.getAbilityInfo());
+        // 3.更新等级信息
+        for (UnitLevelMes levelMes : reqSaveUnitMesDTO.getLevelInfoData()) {
+            unitLevelMesService.saveUnitLevelMesList(levelMes);
+        }
         return RespUtil.successResJson();
     }
 
     /**
      * 获取一个单位详细信息
-     * @param typeLevel
+     * @param idLevelInfo 单位和等级
      * @return
      */
     @GetMapping("/unitInfo")
-    public RespJson getUnitInfo(@RequestParam String typeLevel) {
+    public RespJson getUnitInfo(@RequestParam String idLevelInfo) {
 
-        int index = typeLevel.lastIndexOf("_");
+        int index = idLevelInfo.lastIndexOf("_");
         if (index == 0) {
             return RespUtil.error(40010);
         }
-        String type = typeLevel.substring(0, index);
-        Integer level = Integer.valueOf(typeLevel.substring(index + 1));
+        String type = idLevelInfo.substring(0, index);
+        Integer level = Integer.valueOf(idLevelInfo.substring(index + 1));
         UnitInfo unitInfo = unitMesService.getUnitInfo(type, level);
         return RespUtil.successResJson(unitInfo);
     }

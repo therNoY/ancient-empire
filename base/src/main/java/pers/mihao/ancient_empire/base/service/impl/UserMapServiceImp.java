@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.enums.UserEnum;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
@@ -58,7 +57,7 @@ public class UserMapServiceImp implements UserMapService {
      */
     @Override
     public List<UserMap> getUserMap() {
-        Integer id = AuthUtil.getAuthId();
+        Integer id = AuthUtil.getUserId();
         return userMapRepository.findByCreateUserId(id);
     }
 
@@ -71,9 +70,9 @@ public class UserMapServiceImp implements UserMapService {
     @Transactional
     public void saveTempMap(UserMap userMap) {
         // 1.删除临时的地图
-        userMapRepository.deleteByUnSaveAndCreateUserId(true, AuthUtil.getAuthId());
+        userMapRepository.deleteByUnSaveAndCreateUserId(true, AuthUtil.getUserId());
         // 2.初始化临时数据
-        userMap.setCreateUserId(AuthUtil.getAuthId());
+        userMap.setCreateUserId(AuthUtil.getUserId());
         userMap.setUuid(StringUtil.getUUID());
         userMap.setCreateTime(DateUtil.getNow());
         userMap.setMapName("temp");
@@ -145,24 +144,24 @@ public class UserMapServiceImp implements UserMapService {
     public void saveMap(UserMap userMap) {
         userMap.setUuid(StringUtil.getUUID());
         userMap.setUnSave(false);
-        userMap.setCreateUserId(AuthUtil.getAuthId());
+        userMap.setCreateUserId(AuthUtil.getUserId());
         userMap.setCreateTime(DateUtil.getNow());
         userMapRepository.save(userMap);
     }
 
     @Override
     public UserMap getUserMapByName(String mapName) {
-        UserMap userMap = userMapRepository.getFirstByCreateUserIdAndMapName(AuthUtil.getAuthId(), mapName);
+        UserMap userMap = userMapRepository.getFirstByCreateUserIdAndMapName(AuthUtil.getUserId(), mapName);
         return userMap;
     }
 
-    /**
+    /*
      * 根据Id 删除地图
      */
     @Override
     public void deleteMapById(String id) {
         // 这里删除的时候要加上userId 防止其他用户删除uuid
-        userMapRepository.deleteByCreateUserIdAndUuid(AuthUtil.getAuthId(), id);
+        userMapRepository.deleteByCreateUserIdAndUuid(AuthUtil.getUserId(), id);
     }
 
     /**

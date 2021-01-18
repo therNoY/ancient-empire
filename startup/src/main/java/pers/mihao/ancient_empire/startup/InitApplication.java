@@ -1,5 +1,8 @@
 package pers.mihao.ancient_empire.startup;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import javafx.util.Pair;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -8,15 +11,19 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import pers.mihao.ancient_empire.base.dao.UserTemplateDAO;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
+import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.startup.rabbit_consumer.MongoCdrConsumer;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 项目需要初始化的数据 比如读取全局的配置文件
@@ -38,7 +45,30 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
         log.info("处理初始化工作");
         initAdminSetting();
         initAppCatch();
+        delNoUseImg();
         mongoCdrConsumer.router();
+    }
+
+    /**
+     * 删除无用的图片
+     */
+    private void delNoUseImg() {
+        List<Pair<Class, String[]>> delList = new ArrayList<>();
+        delList.add(new Pair<>(UserTemplateDAO.class, new String[]{"summonAnimation", "attachAnimation", "summonAnimation", "levelupAnimation"}));
+//        doDel(delList);
+    }
+
+    private void doDel(List<Pair<Class, String[]>> delList) {
+        UserTemplateDAO userTemplateDAO;
+        CompletableFuture.runAsync(()->{
+            BaseMapper mapper;
+            List<Object> object;
+            for (Pair<Class, String[]> pair : delList) {
+                mapper = (BaseMapper) ApplicationContextHolder.getBean(pair.getKey());
+                mapper.selectList(new QueryWrapper());
+            }
+        });
+
     }
 
     private void initAppCatch() {

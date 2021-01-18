@@ -23,6 +23,11 @@
     <sql id="Base_Column_List">
         id, type, name, attack_type, price, min_attach_range, max_attach_range, population, description, create_user_id, tradeable, promotion, enable
     </sql>
+    
+    <update id="updateInfoById">
+        UPDATE unit_mes SET type=#{type}, name=#{name}, attack_type=#{attackType}, price=#{price}, min_attach_range=#{minAttachRange}, max_attach_range=#{maxAttachRange},
+        population=#{population}, description=#{description}, create_user_id=#{createUserId}, tradeable=#{tradeable}, enable=#{enable}, promotion=#{promotion} WHERE id=#{id}
+    </update>
 
     <select id="selectCanTradeUnit" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
         SELECT
@@ -43,6 +48,10 @@
             INNER JOIN ( SELECT * FROM unit_template_relation WHERE temp_id = #{templateId} ) u ON ul.id = u.unit_id
         WHERE
             AND u.`enable` = '1'
+    </select>
+    <select id="selectUnitMesWithPage" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
+        select u.* from unit_mes u
+        where u.create_user_id = #{userId}
     </select>
 
 </mapper>

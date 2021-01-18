@@ -16,6 +16,11 @@ public class BaseConstant {
     public static final String NO = "0";
 
     /**
+     * 管理员ID
+     */
+    public static final Integer ADMIN_ID = 1;
+
+    /**
      * 默认报错
      */
     public static final String DEFAULT_ERROR = "请联系管理员";

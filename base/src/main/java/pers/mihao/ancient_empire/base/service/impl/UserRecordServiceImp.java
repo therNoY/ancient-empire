@@ -1,7 +1,6 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
-import pers.mihao.ancient_empire.base.enums.ColorEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
@@ -210,7 +208,7 @@ public class UserRecordServiceImp implements UserRecordService {
     @Override
     public boolean saveRecord(ReqSaveRecordDto saveRecordDto) {
 
-        Integer userId = AuthUtil.getAuthId();
+        Integer userId = AuthUtil.getUserId();
         UserRecord record = userRecordRepository.getFirstByCreateUserIdAndRecordName(userId, saveRecordDto.getName());
         if (record != null) {
             return false;
@@ -233,7 +231,7 @@ public class UserRecordServiceImp implements UserRecordService {
     @Override
     public boolean saveTempRecord(String uuid) {
         // 1.删除原来的用户的临时地图
-        userRecordRepository.deleteByUnSaveAndCreateUserId(true, AuthUtil.getAuthId());
+        userRecordRepository.deleteByUnSaveAndCreateUserId(true, AuthUtil.getUserId());
         // 2.添加
         UserRecord userRecord = getRecordById(uuid);
         userRecord.setRecordName(tempMap);

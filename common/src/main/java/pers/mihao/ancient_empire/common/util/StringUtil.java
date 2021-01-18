@@ -50,13 +50,23 @@ public class StringUtil {
     }
 
     /**
+     * 判断一个字符串为空
+     *
+     * @param string
+     * @return
+     */
+    public static boolean isBlack(String string) {
+        return string == null || string.equals("");
+    }
+
+    /**
      * 判断一个字符串不为空
      *
      * @param string
      * @return
      */
-    public static boolean isEmpty(String string) {
-        return string == null || string.equals("");
+    public static boolean isNotBlack(String string) {
+        return string != null && !"".equals(string);
     }
 
     /**
@@ -71,6 +81,27 @@ public class StringUtil {
         for (char c : types) {
             if ('a' <= c && c <= 'z') {
                 sb.append(Character.toUpperCase(c));
+            }else if ('A' <= c && c <= 'Z' ){
+                sb.append("_").append(c);
+            }else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 驼峰转下划线小写
+     * @param string
+     * @return
+     */
+    public static String humpToLowerUnderscore(String string) {
+        // 1.将type 转成大写
+        char[] types = string.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : types) {
+            if ('a' <= c && c <= 'z') {
+                sb.append(Character.toLowerCase(c));
             }else if ('A' <= c && c <= 'Z' ){
                 sb.append("_").append(c);
             }else {

@@ -1,7 +1,10 @@
 package pers.mihao.ancient_empire.base.service;
 
+import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UnitTemplateRelation;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-09-23
  */
 public interface UnitTemplateRelationService extends IService<UnitTemplateRelation> {
+
 
 }

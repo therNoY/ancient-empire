@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
@@ -24,8 +26,14 @@ import pers.mihao.ancient_empire.base.vo.GameVO;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.core.constans.ExtMes;
+import pers.mihao.ancient_empire.core.dto.SendMessageDTO;
+import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +57,8 @@ public class GameController {
     UnitMesService unitMesService;
     @Autowired
     GameCoreManger gameCoreManger;
+    @Autowired
+    GameSessionManger gameSessionManger;
 
     /**
      * 用于单机遭遇战，联机遭遇战
@@ -108,6 +118,32 @@ public class GameController {
                 .map(unitMes -> unitMesService.getUnitInfo(unitMes.getId().toString(), 0))
                 .collect(Collectors.toList());
         return RespUtil.successResJson(respUnitMes);
+    }
+
+
+    /**
+     * 发送消息
+     * @param sendMessageDTO
+     * @return
+     */
+    @PostMapping("/api/message/send")
+    public RespJson sendMessage(@RequestBody SendMessageDTO sendMessageDTO) {
+        switch (sendMessageDTO.getSendTypeEnum()) {
+            case SEND_TO_GAME:
+                String gameId = gameSessionManger.getUserGameId(AuthUtil.getUserId());
+                GameCommand command = new GameCommand();
+                command.setGameCommendEnum(GameCommendEnum.SHOW_GAME_NEWS);
+                JSONObject extData = new JSONObject(2);
+                extData.put(ExtMes.MESSAGE, sendMessageDTO.getMessage());
+                command.setExtMes(extData);
+                command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
+                gameSessionManger.sendMessage(command, gameId);
+                break;
+            case SEND_TO_SYSTEM:
+            case SEND_TO_USER:
+                break;
+        }
+        return RespUtil.successResJson();
     }
 
 }

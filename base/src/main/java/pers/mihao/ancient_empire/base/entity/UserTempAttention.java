@@ -1,6 +1,11 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import org.springframework.data.annotation.Id;
+
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -17,11 +22,13 @@ public class UserTempAttention implements Serializable {
     /**
      * 用户ID
      */
+    @TableId
     private Integer userId;
 
     /**
      * 模板ID
      */
+    @TableId
     private Integer templateId;
 
     /**
@@ -33,6 +40,19 @@ public class UserTempAttention implements Serializable {
      * 评论
      */
     private String templateComment;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
 
     public Integer getUserId() {
         return userId;

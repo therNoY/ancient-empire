@@ -4,32 +4,50 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UserTemplate">
-        <id column="id" property="id" />
-        <result column="user_id" property="userId" />
-        <result column="template_name" property="templateName" />
-        <result column="template_desc" property="templateDesc" />
-        <result column="attach_experience" property="attachExperience" />
-        <result column="counterattack_experience" property="counterattackExperience" />
-        <result column="kill_experience" property="killExperience" />
-        <result column="antikill_experience" property="antikillExperience" />
-        <result column="attach_animation" property="attachAnimation" />
-        <result column="dead_animation" property="deadAnimation" />
-        <result column="summon_animation" property="summonAnimation" />
-        <result column="levelup_animation" property="levelupAnimation" />
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="template_name" property="templateName"/>
+        <result column="template_desc" property="templateDesc"/>
+        <result column="attach_experience" property="attachExperience"/>
+        <result column="counterattack_experience" property="counterattackExperience"/>
+        <result column="kill_experience" property="killExperience"/>
+        <result column="antikill_experience" property="antikillExperience"/>
+        <result column="attach_animation" property="attachAnimation"/>
+        <result column="dead_animation" property="deadAnimation"/>
+        <result column="summon_animation" property="summonAnimation"/>
+        <result column="levelup_animation" property="levelupAnimation"/>
         <result column="derivative_id" property="derivativeId"/>
-        <result column="square_width" property="squareWidth" />
-        <result column="square_height" property="squareHeight" />
-        <result column="attach_model" property="attachModel" />
-        <result column="unit_max_level" property="unitMaxLevel" />
-        <result column="promotion_max_num" property="promotionMaxNum" />
-        <result column="promotion_level" property="promotionLevel" />
-        <result column="promotion_mode" property="promotionMode" />
+        <result column="square_width" property="squareWidth"/>
+        <result column="square_height" property="squareHeight"/>
+        <result column="attach_model" property="attachModel"/>
+        <result column="unit_max_level" property="unitMaxLevel"/>
+        <result column="promotion_max_num" property="promotionMaxNum"/>
+        <result column="promotion_level" property="promotionLevel"/>
+        <result column="promotion_mode" property="promotionMode"/>
+        <result column="shared" property="shared"/>
+        <result column="status" property="status"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, user_id, template_name, template_desc, attach_experience, counterattack_experience,
-         derivative_id, kill_experience, antikill_experience, attach_animation, dead_animation, summon_animation, levelup_animation, square_width, square_height, attach_model, unit_max_level, promotion_max_num, promotion_level, promotion_mode
+         derivative_id, kill_experience, antikill_experience, attach_animation, dead_animation, summon_animation, levelup_animation, square_width, square_height, attach_model, unit_max_level, promotion_max_num, promotion_level, promotion_mode,shared,status
     </sql>
+    <update id="updateUserTemplateStatusById">
+        update user_template set status = #{status}
+        where user_id = #{userId} and id = #{id}
+    </update>
+    <select id="getUserAllTempUnit" resultMap="pers.mihao.ancient_empire.base.dao.UnitMesDAO.BaseResultMap">
+        select u.* from unit_mes u
+        left join unit_template_relation tr on tr.unit_id = u.id
+        left join user_template t on t.id = tr.temp_id
+        where 1=1
+        <if test="userId!= null and userId != ''">
+            and t.user_id = #{userId}
+        </if>
+        <if test="templateId != null and templateId != ''">
+            and t.id = #{templateId}
+        </if>
+    </select>
 
 </mapper>

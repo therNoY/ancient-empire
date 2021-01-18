@@ -104,7 +104,7 @@ public class JacksonUtil {
     }
 
     public static <T> T jsonToBean(String json, Class<T> clazz, ObjectMapper objectMapper) {
-        if (StringUtil.isEmpty(json)) {
+        if (StringUtil.isBlack(json)) {
             return null;
         }
         try {
@@ -128,7 +128,7 @@ public class JacksonUtil {
     }
 
     public static <T> T jsonTo(String json, TypeReference<T> typeReference, ObjectMapper objectMapper) {
-        if (StringUtil.isEmpty(json)) {
+        if (StringUtil.isBlack(json)) {
             return null;
         }
         try {
@@ -140,7 +140,7 @@ public class JacksonUtil {
     }
 
     public static <T> T jsonTo(String json, Class<T> clazz, ObjectMapper objectMapper) {
-        if (StringUtil.isEmpty(json)) {
+        if (StringUtil.isBlack(json)) {
             return null;
         }
         try {

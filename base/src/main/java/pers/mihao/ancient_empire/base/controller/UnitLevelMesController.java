@@ -25,9 +25,9 @@ public class UnitLevelMesController {
     @Autowired
     UnitLevelMesService unitLevelMesService;
 
-    @GetMapping("/api/unitLevel/{tempId}")
-    public RespJson getUnitLevelByTemp (@PathVariable("tempId") Integer tempId) {
-        return RespUtil.successResJson(unitLevelMesService.getUnitLevelByTemp(tempId));
+    @GetMapping("/api/unitLevel/{unitId}")
+    public RespJson getUnitLevelByTemp (@PathVariable("unitId") Integer unitId) {
+        return RespUtil.successResJson(unitLevelMesService.getUnitLevelInfoById(unitId));
     }
 
     @GetMapping("/root/unitLevel")

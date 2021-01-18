@@ -85,6 +85,7 @@ public class ClickChoosePointHandler extends CommonHandler {
      * @param gameEvent
      */
     private void handlerAttachUnit(GameEvent gameEvent) {
+
         // 获取攻击单位和被攻击单位的信息
         ArmyUnitIndexDTO attachArmyUnitIndexDTO = currUnitArmyIndex();
 

@@ -1,7 +1,11 @@
 package pers.mihao.ancient_empire.base.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitAbility;
+import pers.mihao.ancient_empire.common.annotation.NotGenerator;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,9 @@ import pers.mihao.ancient_empire.base.entity.UnitAbility;
  */
 public interface UnitAbilityService extends IService<UnitAbility> {
 
+    /**
+     * 更新单位能力
+     * @param abilityInfo
+     */
+    void updateUnitAbility(Integer unitId,@NotGenerator List<Ability> abilityInfo);
 }

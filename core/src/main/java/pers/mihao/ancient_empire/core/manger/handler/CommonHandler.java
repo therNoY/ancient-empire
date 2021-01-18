@@ -184,6 +184,8 @@ public class CommonHandler extends AbstractGameEventHandler {
 
     protected void updateUnitInfo(Unit unit, Object from) {
         BeanUtil.copyValue(from, unit);
+        unit.setRow(currSite().getRow());
+        unit.setColumn(currSite().getColumn());
     }
 
     /**

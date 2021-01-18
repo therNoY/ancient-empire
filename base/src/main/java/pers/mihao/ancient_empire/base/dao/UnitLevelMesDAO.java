@@ -27,5 +27,11 @@ public interface UnitLevelMesDAO extends BaseMapper<UnitLevelMes> {
             " WHERE ulm.level = #{level} and ulm.unit_id = #{id}")
     UnitLevelMes getUnitLevelMes(@Param("id")String id, @Param("level")Integer level);
 
-    List<UnitLevelMes> getUnitLevelByTemp(Integer tempId);
+
+    /**
+     * 获取单位的等级信息
+     * @param tempId
+     * @return
+     */
+    List<UnitLevelMes> getUnitLevelInfoById(Integer tempId);
 }

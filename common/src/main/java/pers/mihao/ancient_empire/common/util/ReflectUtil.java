@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.common.util;
 
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -11,8 +12,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import pers.mihao.ancient_empire.common.dto.GetSetDTO;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import sun.misc.Unsafe;
 
 /**
  * @version 1.0
@@ -99,19 +103,18 @@ public class ReflectUtil {
      * @param cls
      * @return
      */
-    public static synchronized Field getFieldByName(String fieldName, Class<?> cls) {
-        Field[] fields = cls.getDeclaredFields();
-        for (Field field : fields) {
-            if (field.getName().equals(fieldName)) {
+    public static Field getFieldByName(String fieldName, Class<?> cls)  {
+        Field field = null;
+        for (; cls != Object.class; cls = cls.getSuperclass()) {
+            try {
+                field = cls.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+            }
+            if (field != null) {
                 return field;
             }
         }
-
-        if (cls.getSuperclass() != null) {
-            return getFieldByName(fieldName, cls.getSuperclass());
-        }
-
-        return null;
+        return field;
     }
 
     /**
@@ -131,6 +134,24 @@ public class ReflectUtil {
 
     public static boolean fieldExist(String fieldName, Class<?> cls) {
         return getFieldByName(fieldName, cls) != null;
+    }
+
+
+    /**
+     * 反射设置对象的字段值
+     * @param object
+     * @param filedName
+     * @param value
+     */
+    public static void reflexSetValue(Object object, String filedName, String value){
+        Method method = getSetter(filedName, object.getClass());
+        try {
+            method.invoke(object, value);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -199,4 +220,76 @@ public class ReflectUtil {
 
 
 
+    private static Unsafe getUnsafe() {
+        try {
+            Field unsafeStaticField =
+                    Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeStaticField.setAccessible(true);
+            return (Unsafe) unsafeStaticField.get(Unsafe.class);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        throw new AncientEmpireException();
+    }
+
+    /**
+     * 通过反射获取对象
+     * @param obj
+     * @param delegate
+     * @return
+     */
+    public static Object getValueByFieldName(Object obj, String delegate) {
+        Object value = null;
+        Field filed = getFieldByName(delegate, obj.getClass());
+        return getValueByField(obj, filed);
+    }
+
+    /**
+     * 通过反射获取对象
+     * @param obj
+     * @param delegate
+     * @return
+     */
+    public static Object getValueByField(Object obj, Field filed) {
+        Object value = null;
+        if (filed != null) {
+            try {
+                if (filed.isAccessible()) {
+                    value = filed.get(obj);
+                }else {
+                    filed.setAccessible(true);
+                    value = filed.get(obj);
+                    filed.setAccessible(false);
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return value;
+    }
+
+    /**
+     * 反射设置值
+     * @param object
+     * @param fieldName
+     * @param fieldValue
+     */
+    public static void setValueByFieldName(Object object, String fieldName, Object fieldValue) {
+        Field field = getFieldByName(fieldName, object.getClass());
+        if (field != null) {
+            try {
+                if (field.isAccessible()) {
+                    field.set(object, fieldValue);
+                }else {
+                    field.setAccessible(true);
+                    field.set(object, fieldValue);
+                    field.setAccessible(false);
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

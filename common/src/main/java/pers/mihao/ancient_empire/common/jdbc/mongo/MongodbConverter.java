@@ -40,7 +40,7 @@ public class MongodbConverter {
                 Method method = ReflectUtil.getGetter(field.getName(), returnClass);
                 if (method != null) {
                     QueryField methodQuery = method.getAnnotation(QueryField.class);
-                    if (methodQuery != null && methodQuery.query() && StringUtil.isEmpty(methodQuery.value())) {
+                    if (methodQuery != null && methodQuery.query() && StringUtil.isBlack(methodQuery.value())) {
                         res.add(methodQuery.value());
                     }else if (methodQuery == null || methodQuery.query()) {
                         res.add(field.getName());
@@ -48,7 +48,7 @@ public class MongodbConverter {
                 }
             }else {
                 if (fieldQuery.query()) {
-                    res.add(StringUtil.isEmpty(fieldQuery.value()) ? field.getName() : fieldQuery.value());
+                    res.add(StringUtil.isBlack(fieldQuery.value()) ? field.getName() : fieldQuery.value());
                 }
             }
         }

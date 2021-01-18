@@ -27,7 +27,7 @@ public class AuthUtil {
         userDetailsThreadLocal.set((MyUserDetails) user);
     }
 
-    public static Integer getAuthId() {
+    public static Integer getUserId() {
         return authId.get();
     }
 

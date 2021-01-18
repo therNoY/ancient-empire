@@ -13,4 +13,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserTempAttentionService extends IService<UserTempAttention> {
 
+    /**
+     * 删除用户关注的模板
+     * @param userId
+     * @param id
+     */
+    void removeUserAttention(Integer userId, String id);
+
 }

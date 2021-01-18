@@ -46,14 +46,6 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
         unitLevelMesDao.updateById(unitLevelMes);
     }
 
-    @Override
-    public int getSpeedByUnit(String type, Integer level) {
-        UnitLevelMes unitLevelMes = null;
-        if ((unitLevelMes = getUnitLevelMes(type, level)) != null) {
-            return unitLevelMes.getSpeed();
-        }
-        return 0;
-    }
 
     @Override
     @Cacheable(CatchKey.UNIT_LEVEL_MES)
@@ -67,15 +59,8 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
     }
 
     @Override
-    @Cacheable(CatchKey.TEMP_UNIT_LEVEL)
-    public Map<String, Integer> getUnitLevelByTemp(Integer tempId) {
-        List<UnitLevelMes> levelMesList = unitLevelMesDao.getUnitLevelByTemp(tempId);
-
-        Map<String, Integer> res = new HashMap<>(levelMesList.size());
-        for (UnitLevelMes levelMes : levelMesList) {
-            res.put(StringUtil.concat(levelMes.getUnitId(), levelMes.getLevel()), levelMes.getMaxLife());
-        }
-
-        return res;
+    public List<UnitLevelMes> getUnitLevelInfoById(Integer userId) {
+        List<UnitLevelMes> levelMesList = unitLevelMesDao.getUnitLevelInfoById(userId);
+        return levelMesList;
     }
 }

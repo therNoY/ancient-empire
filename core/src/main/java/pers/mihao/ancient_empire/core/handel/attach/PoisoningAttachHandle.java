@@ -37,7 +37,7 @@ public class PoisoningAttachHandle extends AttachHandle {
     @Override
     public AttributesPower getAttachPower(UserRecord record, Unit unit, UnitLevelMes levelMes, Unit beAttachUnit,
         AttributesPower attributesPower) {
-        if (!StringUtil.isEmpty(beAttachUnit.getStatus())) {
+        if (!StringUtil.isBlack(beAttachUnit.getStatus())) {
             if (beAttachUnit.getStatus().equals(StateEnum.EXCITED.type())) {
                 if (attributesPower.getNum() != null) {
                     attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(POISONING)));

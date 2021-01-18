@@ -19,12 +19,8 @@
         id, unit_id, level, min_attack, max_attack, physical_defense, magic_defense, speed
     </sql>
 
-    <select id="getUnitLevelByTemp" parameterType="int" resultMap="BaseResultMap">
-        SELECT ul.unit_id, ul.level, ul.max_life FROM unit_level_mes ul
-        INNER join
-        (
-            select * from unit_template_relation where temp_id = #{tempId}
-        ) u on ul.unit_id = u.unit_id
+    <select id="getUnitLevelInfoById" parameterType="int" resultMap="BaseResultMap">
+        SELECT * FROM `unit_level_mes` where unit_id = #{id}
     </select>
 
 

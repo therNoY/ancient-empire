@@ -66,6 +66,20 @@ public class BeanUtil {
         return res;
     }
 
+
+    public static <T> T cloneObject(T t) {
+        try {
+            Object obj = t.getClass().newInstance();
+            copyValue(t, obj);
+            return (T) obj;
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * 从一个类copy到另一个类
      *

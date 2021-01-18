@@ -5,6 +5,7 @@ import javax.websocket.Session;
 
 /**
  * 用户连接gameSession
+ *
  * @Author mh32736
  * @Date 2020/9/15 13:00
  */
@@ -13,7 +14,12 @@ public class GameSession {
     /* 游戏id */
     private String recordId;
 
-    /* 用户Id */
+    /**
+     * 用户ID
+     */
+    private Integer userId;
+
+    /* 用户姓名 */
     private String userName;
 
     /* sessionId */
@@ -31,8 +37,9 @@ public class GameSession {
     public GameSession() {
     }
 
-    public GameSession(String recordId, String userName, Session session, Date createDate) {
+    public GameSession(String recordId, Integer userId, String userName, Session session, Date createDate) {
         this.recordId = recordId;
+        this.userId = userId;
         this.userName = userName;
         this.session = session;
         this.createDate = createDate;
@@ -86,14 +93,22 @@ public class GameSession {
         this.levelDate = levelDate;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         return "GameSession{" +
-            "recordId='" + recordId + '\'' +
-            ", userName='" + userName + '\'' +
-            ", sessionId='" + sessionId + '\'' +
-            ", createDate=" + createDate +
-            ", levelDate=" + levelDate +
-            '}';
+                "recordId='" + recordId + '\'' +
+                ", userName='" + userName + '\'' +
+                ", sessionId='" + sessionId + '\'' +
+                ", createDate=" + createDate +
+                ", levelDate=" + levelDate +
+                '}';
     }
 }

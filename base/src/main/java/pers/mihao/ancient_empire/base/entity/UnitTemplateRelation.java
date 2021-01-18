@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 
 /**
@@ -17,12 +19,16 @@ public class UnitTemplateRelation implements Serializable {
     /**
      * 单位ID
      */
+    @TableId
     private Integer unitId;
 
     /**
      * 模板ID
      */
+    @TableId
     private Integer tempId;
+
+
 
     public Integer getUnitId() {
         return unitId;
@@ -38,6 +44,7 @@ public class UnitTemplateRelation implements Serializable {
     public void setTempId(Integer tempId) {
         this.tempId = tempId;
     }
+
 
     @Override
     public String toString() {
