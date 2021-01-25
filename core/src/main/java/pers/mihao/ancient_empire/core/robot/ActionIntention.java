@@ -13,11 +13,19 @@ public class ActionIntention {
 
     private RobotActiveEnum resultEnum;
 
+    /**
+     * 目标地点
+     */
     private Site site;
 
-
+    /**
+     * 目标单位
+     */
     private UnitInfo aimUnit;
 
+    /**
+     * 目标地形
+     */
     private RegionInfo aimRegion;
 
     public ActionIntention(RobotActiveEnum resultEnum, Site site) {
@@ -66,5 +74,15 @@ public class ActionIntention {
 
     public void setAimRegion(RegionInfo aimRegion) {
         this.aimRegion = aimRegion;
+    }
+
+    @Override
+    public String toString() {
+        return "ActionIntention{" +
+            "resultEnum=" + resultEnum +
+            ", site=" + site +
+            ", aimUnit=" + aimUnit +
+            ", aimRegion=" + aimRegion +
+            '}';
     }
 }

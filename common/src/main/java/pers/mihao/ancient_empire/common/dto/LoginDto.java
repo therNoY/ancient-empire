@@ -3,8 +3,10 @@ package pers.mihao.ancient_empire.common.dto;
 import javax.validation.constraints.NotBlank;
 
 public class LoginDto {
+
     @NotBlank(message = "用户名/邮箱不能为空")
     private String userName;
+
     @NotBlank(message = "密码不能为空")
     private String password;
 

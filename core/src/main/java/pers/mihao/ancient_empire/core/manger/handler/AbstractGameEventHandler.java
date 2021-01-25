@@ -104,6 +104,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             commandList = new ArrayList<>();
         }
         addCommand(command);
+        commandList.add(command);
         return this;
     }
 
@@ -122,7 +123,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     /**
      * 流式
      */
-    class Stream implements Command{
+    protected class Stream implements Command{
         /**
          * 是否同步
          * @return
@@ -178,7 +179,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     /**
      * 帮助构建流式
      */
-    class FlowGameCommand extends GameCommand{
+    protected class FlowGameCommand extends GameCommand{
 
         public Stream addCommand(GameCommendEnum gameCommendEnum){
             setGameCommendEnum(gameCommendEnum);

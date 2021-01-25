@@ -1,7 +1,11 @@
 package pers.mihao.ancient_empire.core.manger;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import javafx.util.Pair;
 import pers.mihao.ancient_empire.base.bo.*;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.util.AppUtil;
@@ -18,7 +22,7 @@ import java.util.List;
  * 方便处理GameContext类 存放视图方法和基本方法 无业务操作
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\2 0002 21:25
  */
 public abstract class GameContextBaseHandler implements Handler {
@@ -114,6 +118,40 @@ public abstract class GameContextBaseHandler implements Handler {
     }
 
     /**
+     * 根据Site 获取regionInfo
+     *
+     * @param site
+     * @return
+     */
+    protected RegionInfo getRegionInfoByRegionIndex(Integer reginxIndex) {
+        return getRegionInfoBySite(AppUtil.getSiteByMapIndex(reginxIndex, gameMap().getColumn()));
+    }
+
+    /**
+     * 根据Site 获取regionInfo
+     *
+     * @param site
+     * @return
+     */
+    protected RegionInfo getRegionInfoBySite(Site site) {
+        return getRegionInfoBySite(site.getRow(), site.getColumn());
+    }
+
+    /**
+     * 根据Site 获取regionInfo
+     *
+     * @param site
+     * @return
+     */
+    protected RegionInfo getRegionInfoBySite(int row, int column) {
+        Region region = getRegionBySite(row, column);
+        RegionMes regionMes = regionMesService.getRegionByType(region.getType());
+        RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
+        regionInfo.setColor(region.getColor());
+        return regionInfo;
+    }
+
+    /**
      * 获取单位在地图中的index
      *
      * @param army
@@ -187,6 +225,68 @@ public abstract class GameContextBaseHandler implements Handler {
     protected UnitInfo getUnitInfoByIndex(ArmyUnitIndexDTO indexDTO) {
         return getUnitInfoByUnit(getUnitByIndex(indexDTO));
     }
+
+
+    /**
+     * 获取当前单位 当前位置的 的 攻击范围
+     *
+     * @param unitMes
+     * @param aimP
+     * @param userRecord
+     * @return
+     */
+    protected List<Site> getCurrUnitAttachArea() {
+        UnitMes unitMes = record().getCurrUnit().getUnitMes();
+        Site currentPoint = record().getCurrPoint();
+        Integer maxRange = unitMes.getMaxAttachRange();
+        List<Site> maxAttach = new ArrayList<>();
+        int minI = Math.max(currentPoint.getRow() - maxRange, 1);
+        int maxI = Math.min(currentPoint.getRow() + maxRange + 1, gameMap().getRow() + 1);
+        int minJ = Math.max(currentPoint.getColumn() - maxRange, 1);
+        int maxJ = Math.min(currentPoint.getColumn() + maxRange + 1, gameMap().getRow() + 1);
+        for (int i = minI; i < maxI; i++) {
+            for (int j = minJ; j < maxJ; j++) {
+                if (getSiteLength(i, j, currentPoint.getRow(), currentPoint.getColumn()) <= maxRange && getSiteLength(i, j, currentPoint.getRow(), currentPoint.getColumn()) > 0) {
+                    maxAttach.add(new Site(i, j));
+                }
+            }
+        }
+        Integer minRange = unitMes.getMinAttachRange();
+        List<Site> notAttach = null;
+        if (minRange != 1) {
+            // 获取无法攻击到的点
+            minRange = minRange - 1;
+            notAttach = new ArrayList<>();
+            minI = Math.max(currentPoint.getRow() - minRange, 0);
+            maxI = Math.min(currentPoint.getRow() + minRange + 1, gameMap().getRow());
+            minJ = Math.max(currentPoint.getColumn() - minRange, 0);
+            maxJ = Math.min(currentPoint.getColumn() + minRange + 1, gameMap().getRow());
+            for (int i = minI; i < maxI; i++) {
+                for (int j = minJ; j < maxJ; j++) {
+                    if (getSiteLength(i, j, currentPoint.getRow(), currentPoint.getColumn()) <= minRange) {
+                        notAttach.add(new Site(i, j));
+                    }
+                }
+            }
+
+        }
+
+        int row = gameMap().getRow();
+        int column = gameMap().getColumn();
+        // 过滤符合条件的点
+        List<Site> finalNotAttach = notAttach;
+        return maxAttach.stream().filter(site -> {
+            // 在地图范围内
+            if (site.getRow() <= row && site.getColumn() <= column) {
+                // 不在不可攻击范围内
+                if (finalNotAttach == null || !finalNotAttach.contains(site)) {
+                    return true;
+                }
+            }
+            return false;
+        }).collect(Collectors.toList());
+    }
+
 
     /**
      * 从当前单位获取军队
@@ -369,6 +469,9 @@ public abstract class GameContextBaseHandler implements Handler {
         return record().getCurrPoint();
     }
 
+    protected int getSiteLength(Site site, Site site2) {
+        return getSiteLength(site.getRow(), site.getColumn(), site2.getRow(), site2.getColumn());
+    }
 
     /**
      * 获取两点的距离
@@ -398,6 +501,36 @@ public abstract class GameContextBaseHandler implements Handler {
             }
         }
         return false;
+    }
+
+    /**
+     * 获取当前单位的范围 获取所有可触发的区域
+     * @param site
+     * @return
+     */
+    protected List<Site> getCurrentUnitCanActionArea(Site site){
+        return getUnitCanActionArea(site, currUnit().getUnitMes().getMinAttachRange(), currUnit().getUnitMes().getMaxAttachRange());
+    }
+
+    protected List<Site> getUnitCanActionArea(Site site, int minAttachRange, int maxAttachRange){
+        List<Site> sites = new ArrayList<>();
+        for (int i = site.getRow() - maxAttachRange; i < site.getColumn() + maxAttachRange; i++) {
+            for (int j = site.getColumn() - maxAttachRange; j < site.getColumn() + maxAttachRange; j++) {
+                int length = getSiteLength(site.getRow(), site.getColumn(), i, j);
+                if (length >= minAttachRange && length <= maxAttachRange) {
+                    sites.add(new Site(i, j));
+                }
+            }
+        }
+        return sites;
+    }
+
+    /**
+     * 打印上下文信息
+     * @return 上下文信息字符串
+     */
+    public String printlnContext(){
+        return gameContext.toString();
     }
 
 }

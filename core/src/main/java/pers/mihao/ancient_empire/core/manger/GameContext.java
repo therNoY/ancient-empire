@@ -37,12 +37,15 @@ public class GameContext extends UserTemplateHelper {
      */
     private UserRecord userRecord;
 
-
-
+    /**
+     * 状态机
+     */
     private StatusMachineEnum statusMachine = StatusMachineEnum.INIT;
 
+    /**
+     * 子状态
+     */
     private SubStatusMachineEnum subStatusMachine = SubStatusMachineEnum.INIT;
-
 
     /**
      * 玩家数量
@@ -262,5 +265,7 @@ public class GameContext extends UserTemplateHelper {
     public void setBeAttachUnit(Unit beAttachUnit) {
         this.beAttachUnit = beAttachUnit;
     }
+
+
 
 }

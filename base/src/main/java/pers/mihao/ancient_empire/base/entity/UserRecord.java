@@ -198,20 +198,16 @@ public class UserRecord implements Serializable {
     @Override
     public String toString() {
         return "UserRecord{" +
-                "uuid='" + uuid + '\'' +
-                ", templateId=" + templateId +
-                ", maxPop=" + maxPop +
-                ", gameMap=" + gameMap +
-                ", armyList=" + armyList +
-                ", tomb=" + tomb +
-                ", recordName='" + recordName + '\'' +
-                ", createUserId=" + createUserId +
-                ", createTime='" + createTime + '\'' +
-                ", currentRound=" + currentRound +
-                ", currColor='" + currColor + '\'' +
-                ", currCamp=" + currCamp +
-                ", isUnSave=" + isUnSave +
-                ", currPlayer='" + currPlayer + '\'' +
-                '}';
+            "uuid='" + uuid + '\'' +
+            ", armyList=" + armyList +
+            ", tomb=" + tomb +
+            ", currentRound=" + currentRound +
+            ", currColor='" + currColor + '\'' +
+            ", currArmyIndex=" + currArmyIndex +
+            ", currPoint=" + currPoint +
+            ", currPlayer='" + currPlayer + '\'' +
+            ", currUnit=" + currUnit +
+            ", currRegion=" + currRegion +
+            '}';
     }
 }

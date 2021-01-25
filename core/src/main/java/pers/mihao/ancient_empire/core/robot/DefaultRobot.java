@@ -2,9 +2,7 @@ package pers.mihao.ancient_empire.core.robot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -12,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
-import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.RegionInfo;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
@@ -131,7 +128,7 @@ public class DefaultRobot extends AbstractRobot {
         if (needUnitType.isNeedAbility) {
             log.info("购买单位需要的能力 {}", needUnitType.abilityEnumList);
             List<UnitInfo> buyUnitList = null;
-            Stream<UnitInfo> stream;
+            java.util.stream.Stream<UnitInfo> stream;
             for (AbilityEnum abilityEnum : needUnitType.abilityEnumList) {
                 stream = canBuyUnitMes.stream()
                     .filter(mes -> mes.getAbilities().contains(abilityEnum.ability()));

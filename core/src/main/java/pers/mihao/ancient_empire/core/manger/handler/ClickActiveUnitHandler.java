@@ -65,7 +65,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
             if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())
                     && RegionEnum.CASTLE.type().equals(getRegionBySite(unitInfo).getType())) {
                 Set<String> actions = ActionStrategy.getInstance()
-                        .getActionList(getAttachArea(), record(), gameEvent.getInitiateSite());
+                        .getActionList(getCurrUnitAttachArea(), record(), gameEvent.getInitiateSite());
                 actions.add(ActionEnum.BUY.type());
                 actions.add(ActionEnum.MOVE.type());
                 gameContext.setActions(actions);

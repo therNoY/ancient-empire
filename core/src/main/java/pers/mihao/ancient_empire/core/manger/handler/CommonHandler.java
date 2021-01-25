@@ -26,6 +26,7 @@ import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.dto.EndUnitDTO;
+import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.dto.ShowAnimDTO;
 import pers.mihao.ancient_empire.core.dto.UnitDeadDTO;
 import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
@@ -38,12 +39,13 @@ import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.end.EndStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
+import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
 
 /**
- * 通用处理类
+ * 通用处理类 处理通用的业务操做
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\4 0004 8:19
  */
 public class CommonHandler extends AbstractGameEventHandler {
@@ -178,8 +180,9 @@ public class CommonHandler extends AbstractGameEventHandler {
             case CHANGE_CURR_BG_COLOR:
                 gameContext.setBgColor(extMes.getString(ExtMes.BG_COLOR));
                 break;
+            default:
+                break;
         }
-        commandList.add(command);
     }
 
     protected void updateUnitInfo(Unit unit, Object from) {
@@ -208,67 +211,6 @@ public class CommonHandler extends AbstractGameEventHandler {
         // TODO 每个frame的间隔 需要做成配置 默认50
         showAnimDTO.setFrame(100);
         return showAnimDTO;
-    }
-
-
-    /**
-     * 获取当前单位 当前位置的 的 攻击范围
-     *
-     * @param unitMes
-     * @param aimP
-     * @param userRecord
-     * @return
-     */
-    protected List<Site> getAttachArea() {
-        UnitMes unitMes = record().getCurrUnit().getUnitMes();
-        Site currentPoint = record().getCurrPoint();
-        Integer maxRange = unitMes.getMaxAttachRange();
-        List<Site> maxAttach = new ArrayList<>();
-        int minI = Math.max(currentPoint.getRow() - maxRange, 1);
-        int maxI = Math.min(currentPoint.getRow() + maxRange + 1, gameMap().getRow() + 1);
-        int minJ = Math.max(currentPoint.getColumn() - maxRange, 1);
-        int maxJ = Math.min(currentPoint.getColumn() + maxRange + 1, gameMap().getRow() + 1);
-        for (int i = minI; i < maxI; i++) {
-            for (int j = minJ; j < maxJ; j++) {
-                if (getSiteLength(i, j, currentPoint.getRow(), currentPoint.getColumn()) <= maxRange && getSiteLength(i, j, currentPoint.getRow(), currentPoint.getColumn()) > 0) {
-                    maxAttach.add(new Site(i, j));
-                }
-            }
-        }
-        Integer minRange = unitMes.getMinAttachRange();
-        List<Site> notAttach = null;
-        if (minRange != 1) {
-            // 获取无法攻击到的点
-            minRange = minRange - 1;
-            notAttach = new ArrayList<>();
-            minI = Math.max(currentPoint.getRow() - minRange, 0);
-            maxI = Math.min(currentPoint.getRow() + minRange + 1, gameMap().getRow());
-            minJ = Math.max(currentPoint.getColumn() - minRange, 0);
-            maxJ = Math.min(currentPoint.getColumn() + minRange + 1, gameMap().getRow());
-            for (int i = minI; i < maxI; i++) {
-                for (int j = minJ; j < maxJ; j++) {
-                    if (getSiteLength(i, j, currentPoint.getRow(), currentPoint.getColumn()) <= minRange) {
-                        notAttach.add(new Site(i, j));
-                    }
-                }
-            }
-
-        }
-
-        int row = gameMap().getRow();
-        int column = gameMap().getColumn();
-        // 过滤符合条件的点
-        List<Site> finalNotAttach = notAttach;
-        return maxAttach.stream().filter(site -> {
-            // 在地图范围内
-            if (site.getRow() <= row && site.getColumn() <= column) {
-                // 不在不可攻击范围内
-                if (finalNotAttach == null || !finalNotAttach.contains(site)) {
-                    return true;
-                }
-            }
-            return false;
-        }).collect(Collectors.toList());
     }
 
     /**
@@ -392,42 +334,6 @@ public class CommonHandler extends AbstractGameEventHandler {
         return changeCurrRegion(region);
     }
 
-
-
-    /**
-     * 根据Site 获取regionInfo
-     *
-     * @param site
-     * @return
-     */
-    protected RegionInfo getRegionInfoByRegionIndex(Integer reginxIndex) {
-        return getRegionInfoBySite(AppUtil.getSiteByMapIndex(reginxIndex, gameMap().getColumn()));
-    }
-
-    /**
-     * 根据Site 获取regionInfo
-     *
-     * @param site
-     * @return
-     */
-    protected RegionInfo getRegionInfoBySite(Site site) {
-        return getRegionInfoBySite(site.getRow(), site.getColumn());
-    }
-
-    /**
-     * 根据Site 获取regionInfo
-     *
-     * @param site
-     * @return
-     */
-    protected RegionInfo getRegionInfoBySite(int row, int column) {
-        Region region = getRegionBySite(row, column);
-        RegionMes regionMes = regionMesService.getRegionByType(region.getType());
-        RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
-        regionInfo.setColor(region.getColor());
-        return regionInfo;
-    }
-
     /**
      * 结束当前单位
      *
@@ -503,7 +409,6 @@ public class CommonHandler extends AbstractGameEventHandler {
                 .toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_BG_COLOR, ExtMes.BG_COLOR, color);
     }
 
-
     /**
      * 展示移动区域
      *
@@ -513,6 +418,20 @@ public class CommonHandler extends AbstractGameEventHandler {
         gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_AREA);
         gameContext.setWillMoveArea(moveArea);
         commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, moveArea);
+    }
+
+    /**
+     * 展示移动路线
+     */
+    protected List<PathPosition> showMoveLine(Site aimSite) {
+        List<PathPosition> path = MovePathStrategy.getInstance().getMovePath(record().getCurrUnit(),
+            aimSite, gameContext.getWillMoveArea());
+        gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_LINE);
+        gameContext.setReadyMoveLine(path);
+        gameContext.setStartMoveSite(getCurrentUnitSite());
+        gameContext.setReadyMoveSite(aimSite);
+        commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_MOVE_LINE, ExtMes.MOVE_LINE, path);
+        return path;
     }
 
     private RegionInfo changeCurrRegion(Region region) {

@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.bo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * 单位类 用来渲染地图 和 返回前端的 不包含 单位的基本信息
@@ -140,9 +141,17 @@ public class Unit extends Site implements Serializable {
     @Override
     public String toString() {
         return "Unit{" +
-                ", type='" + type + '\'' +
-                ", row='" + row + '\'' +
-                ", column='" + column + '\'' +
-                '}';
+            "typeId=" + typeId +
+            ", life=" + Arrays.toString(life) +
+            ", dead=" + dead +
+            ", level=" + level +
+            ", done=" + done +
+            ", status='" + status + '\'' +
+            ", statusPresenceNum=" + statusPresenceNum +
+            ", experience=" + experience +
+            ", promotion=" + promotion +
+            ", row=" + row +
+            ", column=" + column +
+            '}';
     }
 }

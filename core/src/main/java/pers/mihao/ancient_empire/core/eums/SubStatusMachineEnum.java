@@ -7,6 +7,9 @@ package pers.mihao.ancient_empire.core.eums;
  * @date 2020\10\28 0028 21:44
  */
 public enum  SubStatusMachineEnum {
+    /**
+     * 初始状态
+     */
     INIT,
     /**
      * 必须移动

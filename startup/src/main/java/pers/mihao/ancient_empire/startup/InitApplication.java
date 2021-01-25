@@ -17,6 +17,7 @@ import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 import pers.mihao.ancient_empire.startup.rabbit_consumer.MongoCdrConsumer;
 
 import java.io.File;
@@ -73,6 +74,7 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
 
     private void initAppCatch() {
         userRecordService.initMap();
+        AbstractRobot.registerRobotActiveHandler();
     }
 
     /**

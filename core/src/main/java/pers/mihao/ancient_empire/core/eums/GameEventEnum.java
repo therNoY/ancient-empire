@@ -95,6 +95,11 @@ public enum GameEventEnum implements BaseEnum {
     CLICK_END_ACTION,
 
     /**
+     * 单位治疗事件， 改变单位信息，（其他单位加血，该状态）
+     */
+    CLICK_HEAL_ACTION,
+
+    /**
      * 点击攻击地区
      */
     CLICK_ATTACH_AREA,

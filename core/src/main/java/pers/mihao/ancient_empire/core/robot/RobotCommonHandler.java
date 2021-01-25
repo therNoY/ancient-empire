@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.RegionInfo;
@@ -19,7 +22,9 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
+import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
@@ -28,10 +33,12 @@ import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy
  * 分析当前游戏
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\11\8 0008 15:38
  */
-public abstract class GameAnalysis extends CommonHandler {
+public abstract class RobotCommonHandler extends CommonHandler {
+
+    private Logger log = LoggerFactory.getLogger(RobotCommonHandler.class);
 
     private List<RegionInfo> threatenedRegion;
 
@@ -71,6 +78,8 @@ public abstract class GameAnalysis extends CommonHandler {
                                 break;
                             case SHOOTER:
                                 armyUnitSituation.shooterNum++;
+                                break;
+                            default:
                                 break;
                         }
 
@@ -379,5 +388,39 @@ public abstract class GameAnalysis extends CommonHandler {
         }
 
     }
+
+    /**
+     * 生成机器人处理事件
+     * @param eventEnum
+     * @param initiateSite
+     */
+    protected void handleRobotEvent(GameEventEnum eventEnum, Site initiateSite){
+        GameEvent event = new GameEvent();
+        event.setGameId(gameContext.getGameId());
+        event.setEvent(eventEnum);
+        event.setInitiateSite(initiateSite);
+        handleRobotEvent(event);
+    }
+
+    /**
+     * 处理机器人事件
+     */
+    protected void handleRobotEvent(GameEventEnum gameEventEnum, Integer unitId) {
+        GameEvent gameEvent = new GameEvent();
+        gameEvent.setEvent(gameEventEnum);
+        gameEvent.setGameId(gameContext.getGameId());
+        gameEvent.setUnitId(unitId);
+        handleRobotEvent(gameEvent);
+    }
+
+
+    protected void handleRobotEvent(GameEvent event){
+        gameCoreManger.handelTask(event);
+        long wait = RobotWaitTimeCatch.getInstance().getLockTimeByEvent(event.getEvent());
+        log.info("发送命令：{}完成 准备lock:{}ms之后重新运行", event, wait);
+        LockSupport.parkNanos(wait);
+        log.info("休眠完成 准备重新执行任务");
+    }
+
 
 }

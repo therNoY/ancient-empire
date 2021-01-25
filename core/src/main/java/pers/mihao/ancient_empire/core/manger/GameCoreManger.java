@@ -54,13 +54,13 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     // 注册哨兵线程池
     private Executor sentinelPool = new ThreadPoolExecutor(
-            0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
-            new SynchronousQueue(),
-            runnable -> {
-                Thread thread = new Thread(runnable);
-                thread.setName(START_GAME_SENTINEL + threadIndex.getAndIncrement());
-                return thread;
-            });
+        0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
+        new SynchronousQueue(),
+        runnable -> {
+            Thread thread = new Thread(runnable);
+            thread.setName(START_GAME_SENTINEL + threadIndex.getAndIncrement());
+            return thread;
+        });
 
 
     /**
@@ -76,29 +76,38 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             if (clazz != null) {
                 GameHandler handler = (GameHandler) clazz.newInstance();
                 handler.setGameContext(contextMap.get(event.getGameId()));
-                // 处理任务返回 处理任务结果
                 List<Command> commands = handler.handler(event);
-                if (commands != null && commands.size() > 0) {
-
-                    // 过滤掉需要顺序执行的 其他的直接发送
-                    List<Command> orderCommand = commands.stream().filter(command -> command.getOrder() != null)
-                            .sorted(Comparator.comparing(Command::getOrder))
-                            .collect(Collectors.toList());
-
-                    gameSessionManger.sendOrderMessage2Game(orderCommand, event.getGameId());
-
-                    for (Command command : commands) {
-                        if (command.getOrder() == null) {
-                            GameCommand gameCommand = (GameCommand) command;
-                            gameSessionManger.sendMessage(gameCommand, event.getGameId());
-                        }
-                    }
-                }
+                // 处理任务返回 处理任务结果
+                handleCommand(commands, event.getGameId());
             }
         } catch (Exception e) {
             log.error("执行任务出错:{}", event, e);
         } finally {
             GameContext.clear();
+        }
+    }
+
+    /**
+     * 处理命令集合
+     * @param commands
+     * @param gameId
+     */
+    public void handleCommand(List<Command> commands, String gameId) {
+        if (commands != null && commands.size() > 0) {
+
+            // 过滤掉需要顺序执行的 其他的直接发送
+            List<Command> orderCommand = commands.stream().filter(command -> command.getOrder() != null)
+                .sorted(Comparator.comparing(Command::getOrder))
+                .collect(Collectors.toList());
+
+            gameSessionManger.sendOrderMessage2Game(orderCommand, gameId);
+
+            for (Command command : commands) {
+                if (command.getOrder() == null) {
+                    GameCommand gameCommand = (GameCommand) command;
+                    gameSessionManger.sendMessage(gameCommand, gameId);
+                }
+            }
         }
     }
 
