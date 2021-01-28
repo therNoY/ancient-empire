@@ -12,17 +12,4 @@ import java.util.List;
  */
 public class GameVO extends UserRecord {
 
-    /**
-     * 城堡的头部的位置
-     */
-    List<Site> castleTitles;
-
-
-    public List<Site> getCastleTitles() {
-        return castleTitles;
-    }
-
-    public void setCastleTitles(List<Site> castleTitles) {
-        this.castleTitles = castleTitles;
-    }
 }

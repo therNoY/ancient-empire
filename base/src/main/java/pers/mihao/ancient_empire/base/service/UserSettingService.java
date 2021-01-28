@@ -13,6 +13,11 @@ import pers.mihao.ancient_empire.base.entity.UserSetting;
  */
 public interface UserSettingService extends IService<UserSetting> {
 
+    /**
+     * 获取用户个性化设置
+     * @param id
+     * @return
+     */
     UserSetting getUserSettingById(Integer id);
 
     void updateByUserId(UserSetting userSetting);

@@ -48,8 +48,8 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDAO, RegionMes> i
 
     @Override
     @Cacheable(CatchKey.ENABLE_REGION)
-    public List<RegionMes> getEnableRegionByUserId(Integer id) {
-        // 目前没有开启个性化功能 暂不开启
+    public List<RegionMes> getEnableRegionByTempId(Integer id) {
+        // 获取全部地形
         QueryWrapper wrapper = new QueryWrapper<>().eq("enable", BaseConstant.YES);
         List<RegionMes> regionMesList = regionMesDao.selectList(wrapper);
         return regionMesList;

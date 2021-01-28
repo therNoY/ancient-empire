@@ -87,7 +87,6 @@ public class GameController {
         // 3.返回前端保存
         GameVO userMapVo = new GameVO();
         BeanUtils.copyProperties(userRecord, userMapVo);
-        userMapVo.setCastleTitles(userRecordService.findCastleTitle(userMap.getRegions(), userMap.getRow(), userMap.getColumn()));
         return RespUtil.successResJson(userMapVo);
     }
 

@@ -35,7 +35,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     @Override
     @Cacheable(CatchKey.USER_SETTING)
     public UserSetting getUserSettingById(Integer id) {
-        return null;
+        return userSettingDao.selectById(id);
     }
 
     @Override

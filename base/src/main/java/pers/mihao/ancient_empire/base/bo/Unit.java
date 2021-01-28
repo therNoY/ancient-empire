@@ -12,7 +12,7 @@ public class Unit extends Site implements Serializable {
     private String id;
     // 类型
     private String type;
-    // 类型ID 寻找图片
+    // UnitMes ID
     private Integer typeId;
     // 血量 [1, 0, 0]
     private Integer[] life;

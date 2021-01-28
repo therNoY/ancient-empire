@@ -35,7 +35,7 @@ public interface UnitMesService extends IService<UnitMes> {
 
     /**
      *
-     * 获取可用单位
+     * 根据模板获取可用单位
      * @param tempId
      * @return
      */

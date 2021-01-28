@@ -41,14 +41,11 @@
     </select>
 
     <select id="getEnableUnitByTempId" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
-        SELECT
-            ul.*
-        FROM
-            unit_mes ul
-            INNER JOIN ( SELECT * FROM unit_template_relation WHERE temp_id = #{templateId} ) u ON ul.id = u.unit_id
-        WHERE
-            AND u.`enable` = '1'
+        select um.* from unit_mes um left JOIN unit_template_relation utr on um.id = utr.unit_id
+        where utr.temp_id = #{tempId}
+		and um.`enable` = '1'
     </select>
+
     <select id="selectUnitMesWithPage" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
         select u.* from unit_mes u
         where u.create_user_id = #{userId}

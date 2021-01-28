@@ -16,7 +16,6 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
-import pers.mihao.ancient_empire.base.dto.RespSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.CollectionEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
@@ -53,32 +52,34 @@ public class UserMapServiceImp implements UserMapService {
 
     /**
      * 从mongo 中获取用户地图
+     *
      * @return
      */
     @Override
-    public List<UserMap> getUserMap() {
-        Integer id = AuthUtil.getUserId();
-        return userMapRepository.findByCreateUserId(id);
+    public List<UserMap> getUserAllMapByUserId(Integer id) {
+        return userMapRepository.findByCreateUserId(id).stream()
+                .filter(userMap -> Boolean.FALSE.equals(userMap.isUnSave()))
+                .collect(Collectors.toList());
     }
 
 
     /**
      * 保存临时地图
+     *
      * @param userMap
      */
     @Override
     @Transactional
-    public void saveTempMap(UserMap userMap) {
+    public void saveUserTempMap(UserMap userMap, Integer userId) {
         // 1.删除临时的地图
-        userMapRepository.deleteByUnSaveAndCreateUserId(true, AuthUtil.getUserId());
-        // 2.初始化临时数据
-        userMap.setCreateUserId(AuthUtil.getUserId());
-        userMap.setUuid(StringUtil.getUUID());
-        userMap.setCreateTime(DateUtil.getNow());
-        userMap.setMapName("temp");
-        userMap.setUnSave(true);
-        // 3.保存
-        userMapRepository.save(userMap);
+        UserMap map = userMapRepository.getFirstByCreateUserIdAndUnSave(userId, true);
+        if (map != null) {
+            userMap.setUuid(map.getUuid());
+            userMap.setCreateTime(DateUtil.getNow());
+            userMap.setMapName("temp");
+            userMap.setUnSave(true);
+            updateUserMapById(userMap);
+        }
     }
 
     /**
@@ -87,57 +88,93 @@ public class UserMapServiceImp implements UserMapService {
      * 如果要画的是陆地 但是要在海里画 就返回一个小岛
      * <p>
      * 思路 九宫格模型
+     * 当前需要绘画的是九宫格的中心 然后 左上 到右下 一次是 1到8  编号
+     *
      * @param reqSimpleDrawing
      * @return
      */
     @Override
-    public List<RespSimpleDrawing> getSimpleDrawing(ReqSimpleDrawing reqSimpleDrawing) {
-        List<RespSimpleDrawing> simpleDrawings = new ArrayList<>();
+    public Map<Integer, String> getSimpleDrawing(ReqSimpleDrawing reqSimpleDrawing) {
+        Map<Integer, String> simpleDrawings = new HashMap<>(16);
+        simpleDrawings.put(reqSimpleDrawing.getIndex(), reqSimpleDrawing.getType());
+
         Integer index = reqSimpleDrawing.getIndex();
         String type = reqSimpleDrawing.getType();
         Integer column = reqSimpleDrawing.getColumn();
         List<Region> regionList = reqSimpleDrawing.getRegionList();
-        // 如果是以sea 或者海开头的话
-        if (type.startsWith(SEA) || type.startsWith(BANK)) {
+        regionList.get(index).setType(reqSimpleDrawing.getType());
+
+        // 判断当前是不是 海
+        if (isSea(type)) {
             // 画海 获取周围陆地的信息
             Map<Integer, Integer> map = getAroundLandMap(index, regionList, column);
             if (map.size() == 0) {
-                return null;
+                // 周围没有陆地 首先当前设置为sea 不需要有bank
+                regionList.get(index).setType(SEA);
+                // 优化周围海洋
+                optimizationAroundSea(simpleDrawings, index, column, regionList);
+            } else {
+                // 周围有陆地 首先获取当前的名字
+                StringBuffer bankName = new StringBuffer(BANK_);
+                map.keySet().stream().sorted()
+                        .collect(Collectors.toList())
+                        .forEach(integer -> bankName.append(integer));
+                simpleDrawings.put(index, bankName.toString());
+                regionList.get(index).setType(bankName.toString());
+                // 优化周围的海洋
+                optimizationAroundSea(simpleDrawings, index, column, regionList);
             }
-            StringBuffer sb = new StringBuffer(BANK_);
-            map.keySet().stream().sorted()
-                    .collect(Collectors.toList())
-                    .forEach(integer ->  sb.append(integer));
-            RespSimpleDrawing simpleDrawing = new RespSimpleDrawing(index, sb.toString());
-            simpleDrawings.add(simpleDrawing);
             return simpleDrawings;
         } else if (type.startsWith(BRIDGE)) {
 
         } else {
-            // 剩下就是陆地
-            Map<Integer, Integer> map = getAroundSeaMap(index, regionList, column);
-            if (map.size() == 0) {
-                return null;
-            }
-            for (Map.Entry entry : map.entrySet()) {
-                simpleDrawings.add(new RespSimpleDrawing((Integer) entry.getValue(), SEA));
-            }
+            optimizationAroundSea(simpleDrawings, index, column, regionList);
             return simpleDrawings;
         }
-        return null;
+        return simpleDrawings;
+    }
+
+    /**
+     * 优化周围的海洋
+     *
+     * @param simpleDrawings
+     * @param index
+     * @param column
+     * @param regionList
+     */
+    private void optimizationAroundSea(Map<Integer, String> simpleDrawings, Integer index, Integer column, List<Region> regionList) {
+        Map<Integer, Integer> seaMap = getAroundSeaMap(index, regionList, column);
+        for (Map.Entry<Integer, Integer> entry : seaMap.entrySet()) {
+            Map<Integer, Integer> seaLandMap = getAroundLandMap(entry.getValue(), regionList, column);
+            if (seaLandMap.size() == 0) {
+                if (regionList.get(entry.getValue()).getType().startsWith(BANK)) {
+                    simpleDrawings.put(entry.getValue(), SEA);
+                    regionList.get(entry.getValue()).setType(SEA);
+
+                }
+                continue;
+            }
+            StringBuffer aroundBankName = new StringBuffer(BANK_);
+            seaLandMap.keySet().stream().sorted()
+                    .collect(Collectors.toList())
+                    .forEach(integer -> aroundBankName.append(integer));
+            simpleDrawings.put(entry.getValue(), aroundBankName.toString());
+            regionList.get(entry.getValue()).setType(aroundBankName.toString());
+        }
     }
 
     @Override
     public String getType(String type) {
         if (isLand(type)) {
             return LAND;
-        }else {
+        } else {
             return SEA;
         }
     }
 
     /**
      * 保存地图
+     *
      * @param userMap
      */
     @Override
@@ -166,17 +203,22 @@ public class UserMapServiceImp implements UserMapService {
 
     /**
      * 超管 设置地图类型
+     *
      * @param userMap
      */
     @Override
-    public void updateMap(UserMap userMap) {
+    public void updateUserMapById(UserMap userMap) {
         Update update = new Update();
         update.set("type", userMap.getType());
-        mongoTemplate.updateFirst(new Query(Criteria.where("uuid").is(userMap.getUuid())), update, CollectionEnum.USER_MAP.type());
+        update.set("units", userMap.getUnits());
+        update.set("regions", userMap.getRegions());
+        update.set("mapName", userMap.getMapName());
+        mongoTemplate.updateFirst(new Query(Criteria.where("uuid").is(userMap.getUuid())), update, UserMap.class);
     }
 
     /**
      * 获取所有遭遇战 地图
+     *
      * @return
      */
     @Override
@@ -191,6 +233,7 @@ public class UserMapServiceImp implements UserMapService {
 
     /**
      * 获取遭遇战地图 的所有初始化军队
+     *
      * @return
      */
     @Override
@@ -221,6 +264,7 @@ public class UserMapServiceImp implements UserMapService {
 
     /**
      * 获取遭遇战地图
+     *
      * @param uuid
      * @return
      */
@@ -236,17 +280,22 @@ public class UserMapServiceImp implements UserMapService {
 
     /**
      * 获取用户凡人地图
+     *
      * @param uuid
      * @return
      */
     @Cacheable(CatchKey.USER_MAP)
     @Override
-    public UserMapVo getUserMapById(String uuid) {
+    public UserMapVo getUserMapByUUID(String uuid) {
         UserMapVo userMapVo = new UserMapVo();
         UserMap userMap = userMapRepository.getFirstByUuid(uuid);
         BeanUtils.copyProperties(userMap, userMapVo);
-        userMapVo.setCastleTitles(findCastleTitle(userMap.getRegions(), userMap.getRow(), userMap.getColumn()));
         return userMapVo;
+    }
+
+    @Override
+    public UserMap getUserDraftEditMap(Integer userId) {
+        return userMapRepository.getFirstByCreateUserIdAndUnSave(userId, true);
     }
 
     /**
@@ -263,7 +312,7 @@ public class UserMapServiceImp implements UserMapService {
         // 1. 判断上面的地形
         int up = index - column;
         // 判断 1 号
-        if (up > 0 ) {
+        if (up > 0) {
             // 有上
             if (isSea(regionList.get(up).getType())) {
                 // 如果上面的是海洋
@@ -334,6 +383,7 @@ public class UserMapServiceImp implements UserMapService {
 
     /**
      * 获取陆地周围陆地
+     *
      * @param index
      * @param regionList
      * @param column

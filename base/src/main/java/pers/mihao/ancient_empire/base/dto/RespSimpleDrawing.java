@@ -27,4 +27,6 @@ public class RespSimpleDrawing {
     public void setType(String type) {
         this.type = type;
     }
+
+
 }

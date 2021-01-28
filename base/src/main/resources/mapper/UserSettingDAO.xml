@@ -4,10 +4,10 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UserSetting">
-        <id column="user_id" property="userName" />
+        <id column="user_id" property="userId" />
         <result column="map_init_row" property="mapInitRow" />
         <result column="map_init_column" property="mapInitColumn" />
-        <result column="map_init_region_id" property="mapInitRegionId" />
+        <result column="map_init_temp_id" property="mapInitTempId" />
         <result column="simple_drawing" property="simpleDrawing" />
         <result column="bg_music" property="bgMusic" />
         <result column="language" property="language" />
@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        user_id, map_init_row, map_init_column, map_init_region_id, simple_drawing, bg_music, language
+        user_id, map_init_row, map_init_column, map_init_temp_id, simple_drawing, bg_music, language
     </sql>
 
 </mapper>

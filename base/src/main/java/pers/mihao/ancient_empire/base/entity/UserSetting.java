@@ -35,7 +35,7 @@ public class UserSetting implements Serializable {
     /**
      * 初始化地图的RegionId
      */
-    private Integer mapInitRegionId;
+    private Integer mapInitTempId;
 
     /**
      * 是否开启优化绘图
@@ -73,12 +73,12 @@ public class UserSetting implements Serializable {
     public void setMapInitColumn(Integer mapInitColumn) {
         this.mapInitColumn = mapInitColumn;
     }
-    public Integer getMapInitRegionId() {
-        return mapInitRegionId;
+    public Integer getMapInitTempId() {
+        return mapInitTempId;
     }
 
-    public void setMapInitRegionId(Integer mapInitRegionId) {
-        this.mapInitRegionId = mapInitRegionId;
+    public void setMapInitTempId(Integer mapInitTempId) {
+        this.mapInitTempId = mapInitTempId;
     }
     public Boolean getSimpleDrawing() {
         return simpleDrawing;
@@ -108,7 +108,7 @@ public class UserSetting implements Serializable {
         "userId=" + userId +
         ", mapInitRow=" + mapInitRow +
         ", mapInitColumn=" + mapInitColumn +
-        ", mapInitRegionId=" + mapInitRegionId +
+        ", mapInitTempId=" + mapInitTempId +
         ", simpleDrawing=" + simpleDrawing +
         ", bgMusic=" + bgMusic +
         ", language=" + language +

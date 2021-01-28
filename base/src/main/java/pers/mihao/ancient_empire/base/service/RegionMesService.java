@@ -20,7 +20,12 @@ public interface RegionMesService extends IService<RegionMes> {
 
     void saveUnitMes(RegionMes regionMes);
 
-    List<RegionMes> getEnableRegionByUserId(Integer id);
+    /**
+     * 获取模板的可用地形
+     * @param id
+     * @return
+     */
+    List<RegionMes> getEnableRegionByTempId(Integer id);
 
     /**
      * 根据地形的type 获取地形信息
