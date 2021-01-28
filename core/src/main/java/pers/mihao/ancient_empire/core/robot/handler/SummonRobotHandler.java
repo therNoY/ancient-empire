@@ -5,20 +5,20 @@ import pers.mihao.ancient_empire.core.robot.ActionIntention;
 import pers.mihao.ancient_empire.core.robot.RobotActiveEnum;
 
 /**
- * 处理攻击类行动
+ * 处理召唤类行动
  * @Author mh32736
  * @Date 2020/11/10 21:03
- * @see {@link RobotActiveEnum.ATTACH}
+ * @see {@link RobotActiveEnum.SUMMON}
  */
-public class AttachRobotHandler extends AbstractRobotHandler{
-
-    @Override
-    protected GameEventEnum getActionType() {
-        return GameEventEnum.CLICK_ATTACH_ACTION;
-    }
+public class SummonRobotHandler extends AbstractRobotHandler{
 
     @Override
     public void handler(ActionIntention intention) {
-        moveToAimPointAndAction(intention.getAimUnit());
+        moveToAimPointAndAction(intention.getSite());
+    }
+
+    @Override
+    protected GameEventEnum getActionType() {
+        return GameEventEnum.CLICK_SUMMON_ACTION;
     }
 }

@@ -96,4 +96,14 @@ public class Army implements Serializable {
     public void setPlayer(String player) {
         this.player = player;
     }
+
+    @Override
+    public String toString() {
+        return "Army{" +
+            "color='" + color + '\'' +
+            ", money=" + money +
+            ", units=" + units +
+            ", pop=" + pop +
+            '}';
+    }
 }

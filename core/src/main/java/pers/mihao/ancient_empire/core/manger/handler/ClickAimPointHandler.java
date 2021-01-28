@@ -35,7 +35,7 @@ public class ClickAimPointHandler extends CommonHandler{
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
             sendEndUnitCommend(currUnit(), armyUnitIndexDTO);
         }else {
-            Set<String> actions = ActionStrategy.getInstance().getActionList(getAttachArea(), record(), record().getCurrPoint());
+            Set<String> actions = ActionStrategy.getInstance().getActionList(getCurrUnitAttachArea(), record(), record().getCurrPoint());
 
             // 不展示移动范围
             JSONObject extMes = new JSONObject();
@@ -47,9 +47,5 @@ public class ClickAimPointHandler extends CommonHandler{
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
             gameContext.setActions(actions);
         }
-
-
-
-
     }
 }

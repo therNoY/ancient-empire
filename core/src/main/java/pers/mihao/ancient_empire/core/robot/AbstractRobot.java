@@ -22,7 +22,6 @@ import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
 import pers.mihao.ancient_empire.core.dto.robot.BuyUnitDTO;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
-import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.robot.handler.AbstractRobotHandler;
 
 /**
@@ -31,7 +30,7 @@ import pers.mihao.ancient_empire.core.robot.handler.AbstractRobotHandler;
  * @Author mh32736
  * @Date 2020/9/9 20:34
  */
-public abstract class AbstractRobot extends GameAnalysis implements Runnable {
+public abstract class AbstractRobot extends RobotCommonHandler implements Runnable {
 
     /**
      * 物理攻击
@@ -42,15 +41,21 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
      */
     protected static final String MAGIC = "2";
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static Logger log = LoggerFactory.getLogger(AbstractRobot.class);
 
     /**
      * 机器人解析行动的类
      */
-    private Map<RobotActiveEnum, Class> robotHandlerMap = new HashMap<>(16);
+    private static Map<RobotActiveEnum, Class> robotHandlerMap = new HashMap<>(16);
 
     public AbstractRobot(GameContext gameContext) {
         setGameContext(gameContext);
+    }
+
+    /**
+     * 注册机器人事件处理
+     */
+    public static void registerRobotActiveHandler() {
         String packName = AbstractRobotHandler.class.getPackage().getName();
         String className = "RobotHandler";
         String handlerName, classPathName;
@@ -58,10 +63,11 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
             handlerName = StringUtil.underscoreToHump(gameEventEnum.toString(), true);
             classPathName = packName + BaseConstant.POINT + handlerName + className;
             try {
-                Class clazz = this.getClass().getClassLoader().loadClass(classPathName);
+                Class clazz = AbstractRobotHandler.class.getClassLoader().loadClass(classPathName);
                 robotHandlerMap.put(gameEventEnum, clazz);
+                log.info("机器人事件：{}处理器 注册成功：{}", gameEventEnum);
             } catch (Exception e) {
-                log.error("", e);
+                log.error("机器人事件：{}处理器 注册失败：{}");
             }
         }
     }
@@ -77,6 +83,7 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
         activeUnits(canMoveUnit.moreThanHalf);
 
         BuyUnitDTO buyUnit;
+        // 3.购买单位移动
         while ((buyUnit = buyNewUnit(record())) != null) {
             log.info("选择购买的单位是{}", buyUnit.getUnitInfo());
             doActive(buyUnit.getUnitInfo());
@@ -150,18 +157,17 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
         NeedUnitType needUnitType = getNeedAbility();
         buyUnit = getMastNeedUnit(canBuyUnitMes, needUnitType);
         buyUnitDTO.setUnitInfo(buyUnit);
-        sendGameEvent(GameEventEnum.CLICK_BUY_ACTION, buyUnit.getUnitMes().getId());
+        handleRobotEvent(GameEventEnum.CLICK_BUY_ACTION, buyUnit.getUnitMes().getId());
         return buyUnitDTO;
     }
 
     /**
      * 单位行动
      *
-     * @param userRecord
      * @param unit
      */
     private void doActive(Unit unit) {
-        ActionIntention intention = getAllUnitActionIntention(unit);
+        ActionIntention intention = getUnitActionIntention(unit);
         log.info("{} 的行动意向是：{}", unit, intention);
         actionUnit(intention);
     }
@@ -170,13 +176,12 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
      * 获取单位的所有的可以行动的可能
      *
      * @param unit
-     * @param intention
      * @return
      */
-    private ActionIntention getAllUnitActionIntention(Unit unit) {
+    private ActionIntention getUnitActionIntention(Unit unit) {
         UnitAble unitAble = getUnitAble();
         // 1.获取单位所有可以进行的行动
-        List<ActionIntention> actionList = new ArrayList();
+        List<ActionIntention> actionList = new ArrayList<>();
         // 修复城堡
         if (unitAble.repairer) {
             List<RegionInfo> repairer = getAllCanRepairRegion();
@@ -188,14 +193,14 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
         if (unitAble.villageGet) {
             List<RegionInfo> repairer = getAllCanOccupyVillage();
             for (RegionInfo regionInfo : repairer) {
-                actionList.add(new ActionIntention(RobotActiveEnum.REPAIR, regionInfo));
+                actionList.add(new ActionIntention(RobotActiveEnum.OCCUPIED, regionInfo));
             }
         }
         // 占领城堡
         if (unitAble.castleGet) {
             List<RegionInfo> repairer = getAllCanOccupyCastle();
             for (RegionInfo regionInfo : repairer) {
-                actionList.add(new ActionIntention(RobotActiveEnum.REPAIR, regionInfo));
+                actionList.add(new ActionIntention(RobotActiveEnum.OCCUPIED, regionInfo));
             }
         }
         // 召唤坟墓
@@ -256,16 +261,7 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
         return niceAction;
     }
 
-    /**
-     * 处理机器人事件
-     */
-    private void sendGameEvent(GameEventEnum gameEventEnum, Integer unitId) {
-        GameEvent gameEvent = new GameEvent();
-        gameEvent.setEvent(gameEventEnum);
-        gameEvent.setGameId(gameContext.getGameId());
-        gameEvent.setUnitId(unitId);
-        gameCoreManger.handelTask(gameEvent);
-    }
+
 
     /**
      * 获取自己的城堡
@@ -289,7 +285,7 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
     /**
      * 根据单位的行动意愿进行移动
      *
-     * @param unit
+     * @param intention
      * @param intention
      */
     private void actionUnit(ActionIntention intention) {
@@ -303,6 +299,7 @@ public abstract class AbstractRobot extends GameAnalysis implements Runnable {
             } catch (Exception e) {
                 log.error("", e);
             }
+            log.info("机器人准备处理：{}逻辑 当前上下文：{}", intention, robotHandler.printlnContext());
             robotHandler.handler(intention);
         }
     }

@@ -1,8 +1,11 @@
 package pers.mihao.ancient_empire.startup;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import javafx.util.Pair;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -12,18 +15,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import pers.mihao.ancient_empire.base.dao.UserTemplateDAO;
-import pers.mihao.ancient_empire.base.entity.RegionMes;
-import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
-import pers.mihao.ancient_empire.startup.rabbit_consumer.MongoCdrConsumer;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 
 /**
  * 项目需要初始化的数据 比如读取全局的配置文件
@@ -36,8 +31,6 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
     @Autowired
     UserRecordService userRecordService;
     @Autowired
-    MongoCdrConsumer mongoCdrConsumer;
-    @Autowired
     RegionMesService regionMesService;
 
     @Override
@@ -46,7 +39,6 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
         initAdminSetting();
         initAppCatch();
         delNoUseImg();
-        mongoCdrConsumer.router();
     }
 
     /**
@@ -73,6 +65,7 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
 
     private void initAppCatch() {
         userRecordService.initMap();
+        AbstractRobot.registerRobotActiveHandler();
     }
 
     /**

@@ -28,6 +28,7 @@ public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceIm
 
     private static Map<Class<?>, List<FieldInfo>> PRIMARY_KEY_CATCH = new ConcurrentHashMap<>(16);
 
+    @Override
     @Transactional(rollbackFor = {Exception.class})
     public boolean saveOrUpdate(T entity) {
         if (null == entity) {

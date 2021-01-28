@@ -134,6 +134,8 @@ public class GameSessionManger {
                 break;
             case SEND_TO_SYSTEM:
                 sendMessage2System(command, gameId);
+            default:
+                break;
         }
     }
 

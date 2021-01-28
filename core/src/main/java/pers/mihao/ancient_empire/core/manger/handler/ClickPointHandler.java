@@ -22,7 +22,7 @@ public class ClickPointHandler extends CommonHandler{
         // 点前是准备移动阶段 目标还在当前点 不移动
         if (stateIn(StatusMachineEnum.SHOW_MOVE_AREA)) {
             // 原地行动
-            Set<String> actions = ActionStrategy.getInstance().getActionList(getAttachArea(), record(), record().getCurrPoint());
+            Set<String> actions = ActionStrategy.getInstance().getActionList(getCurrUnitAttachArea(), record(), record().getCurrPoint());
             gameContext.setActions(actions);
             gameContext.setStartMoveSite(currSite());
             gameContext.setReadyMoveLine(null);
