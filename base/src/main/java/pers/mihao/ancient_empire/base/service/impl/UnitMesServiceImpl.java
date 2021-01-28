@@ -104,18 +104,6 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
         return unitMes;
     }
 
-    /**
-     * 获取单位信息byTyoe
-     *
-     * @param type
-     * @return
-     */
-    @Cacheable(CatchKey.UNIT_MES)
-    @Override
-    public UnitMes getByType(String type) {
-        UnitMes unitMes = unitMesDao.selectOne(new QueryWrapper<UnitMes>().eq("type", type));
-        return unitMes;
-    }
 
 
     /**
@@ -127,7 +115,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      */
     @Override
     @Cacheable(CatchKey.UNIT_INFO)
-    public UnitInfo getUnitInfo(String id, Integer level) {
+    public UnitInfo getUnitInfo(Integer id, Integer level) {
         UnitMes unitMes = getById(id);
         UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(id, level);
         List<Ability> abilityList = abilityService.getUnitAbilityList(Integer.valueOf(id));

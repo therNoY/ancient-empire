@@ -25,7 +25,7 @@ public interface UnitLevelMesDAO extends BaseMapper<UnitLevelMes> {
 
     @Select("SELECT ulm.* from unit_level_mes ulm" +
             " WHERE ulm.level = #{level} and ulm.unit_id = #{id}")
-    UnitLevelMes getUnitLevelMes(@Param("id")String id, @Param("level")Integer level);
+    UnitLevelMes getUnitLevelMes(@Param("id")Integer id, @Param("level")Integer level);
 
 
     /**
@@ -33,5 +33,5 @@ public interface UnitLevelMesDAO extends BaseMapper<UnitLevelMes> {
      * @param tempId
      * @return
      */
-    List<UnitLevelMes> getUnitLevelInfoById(Integer tempId);
+    List<UnitLevelMes> getUnitLevelInfoByTempId(Integer tempId);
 }

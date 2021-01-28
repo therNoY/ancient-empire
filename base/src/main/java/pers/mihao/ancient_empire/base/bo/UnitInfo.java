@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.bo;
 
 import java.util.List;
+
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
@@ -72,10 +73,14 @@ public class UnitInfo extends Unit {
 
     @Override
     public String toString() {
-        return "UnitInfo{" +
-                "unitMes=" + unitMes +
-                ", levelMes=" + levelMes +
-                ", abilities=" + abilities +
-                '}';
+        return simpleInfoShow();
+    }
+
+    public String simpleInfoShow() {
+        return unitMes.getName() + "-" + levelMes.getLevel() + "(" + getRow() + "," + getColumn() + ");";
+    }
+
+    public String detailInfoShow() {
+        return "[地图信息:" + super.toString() + "]";
     }
 }

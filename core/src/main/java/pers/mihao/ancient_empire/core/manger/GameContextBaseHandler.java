@@ -211,8 +211,9 @@ public abstract class GameContextBaseHandler implements Handler {
      * @return
      */
     protected UnitInfo getUnitInfoByUnit(Unit unit) {
-        UnitInfo unitInfo = unitMesService.getUnitInfo(unit.getTypeId().toString(), unit.getLevel());
+        UnitInfo unitInfo = unitMesService.getUnitInfo(unit.getTypeId(), unit.getLevel());
         BeanUtil.copyValueFromParent(unit, unitInfo);
+        unitInfo.setRegionInfo(getRegionInfoBySite(unitInfo.getRow(), unitInfo.getColumn()));
         return unitInfo;
     }
 

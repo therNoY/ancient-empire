@@ -272,7 +272,7 @@ public class CommonHandler extends AbstractGameEventHandler {
             // 破化者供给房子
             return null;
         }
-        String id = unitMes.getValue().getTypeId().toString();
+        Integer id = unitMes.getValue().getTypeId();
         UnitInfo unitInfo = unitMesService.getUnitInfo(id, unitMes.getValue().getLevel());
 
         BeanUtil.copyValueFromParent(unitMes.getValue(), unitInfo);

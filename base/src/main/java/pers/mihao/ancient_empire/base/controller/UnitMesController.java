@@ -99,9 +99,9 @@ public class UnitMesController {
         if (index == 0) {
             return RespUtil.error(40010);
         }
-        String type = idLevelInfo.substring(0, index);
+        String id = idLevelInfo.substring(0, index);
         Integer level = Integer.valueOf(idLevelInfo.substring(index + 1));
-        UnitInfo unitInfo = unitMesService.getUnitInfo(type, level);
+        UnitInfo unitInfo = unitMesService.getUnitInfo(Integer.valueOf(id), level);
         return RespUtil.successResJson(unitInfo);
     }
 }

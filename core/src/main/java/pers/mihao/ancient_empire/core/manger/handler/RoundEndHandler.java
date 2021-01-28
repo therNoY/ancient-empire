@@ -125,7 +125,7 @@ public class RoundEndHandler extends CommonHandler {
             status = unit.getStatus();
             lifeChangeDTO = new LifeChangeDTO();
             unitStatusInfoDTO = new UnitStatusInfoDTO();
-            levelMes = unitLevelMesService.getUnitLevelMes(unit.getTypeId().toString(), unit.getLevel());
+            levelMes = unitLevelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
             lastLife = AppUtil.getUnitLife(unit);
             restoreLife = levelMes.getMaxLife() - lastLife;
 

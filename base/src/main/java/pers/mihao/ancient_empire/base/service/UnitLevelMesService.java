@@ -33,7 +33,7 @@ public interface UnitLevelMesService extends IService<UnitLevelMes> {
      * @param level 单位等级
      * @return
      */
-    UnitLevelMes getUnitLevelMes(String id, Integer level);
+    UnitLevelMes getUnitLevelMes(Integer id, Integer level);
 
     void insert(UnitLevelMes unitLevelMes);
 
@@ -42,5 +42,5 @@ public interface UnitLevelMesService extends IService<UnitLevelMes> {
      * @param userId
      * @return
      */
-    List<UnitLevelMes> getUnitLevelInfoById(Integer userId);
+    Map<String, UnitLevelMes> getAllUnitLevelInfoByTempId(Integer userId);
 }

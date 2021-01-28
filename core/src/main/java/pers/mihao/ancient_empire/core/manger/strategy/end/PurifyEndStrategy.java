@@ -90,7 +90,7 @@ public class PurifyEndStrategy extends EndStrategy {
                 }
             }else if (army.getCamp().equals(record.getCurrCamp())) {
                 // 残血友军回血
-                levelMes = levelMesService.getUnitLevelMes(unit.getTypeId().toString(), unit.getLevel());
+                levelMes = levelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
                 int unitLife = AppUtil.getUnitLife(unit);
                 int maxRestore = levelMes.getMaxLife() - unitLife;
                 if (maxRestore != 0) {

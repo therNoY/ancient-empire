@@ -46,16 +46,6 @@ public class MongoTest {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @Test
-    public void updateAll() {
-        List<UserMap> userMaps = mongoTemplate.findAll(UserMap.class);
-        for(UserMap um : userMaps) {
-            for (BaseUnit baseUnit : um.getUnits()) {
-                baseUnit.setTypeId(unitMesService.getByType(baseUnit.getType()).getId());
-            }
-            mongoTemplate.save(um);
-        }
-    }
 
     @Test
     public void updateMapType() {

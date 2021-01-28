@@ -75,23 +75,27 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
     @Override
     public void run() {
         log.info("================机器人开始行动===============");
-        // 1.找所有的可移动单位
-        CanMoveUnit canMoveUnit = findAllCanMoveUnit();
-        log.info("找到可以行动的所有单位");
+        try {
+            // 1.找所有的可移动单位
+            CanMoveUnit canMoveUnit = findAllCanMoveUnit();
+            log.info("找到可以行动的所有单位:{}", canMoveUnit);
 
-        // 2.先移动半血以上的单位
-        activeUnits(canMoveUnit.moreThanHalf);
+            // 2.先移动半血以上的单位
+            activeUnits(canMoveUnit.moreThanHalf);
 
-        BuyUnitDTO buyUnit;
-        // 3.购买单位移动
-        while ((buyUnit = buyNewUnit(record())) != null) {
-            log.info("选择购买的单位是{}", buyUnit.getUnitInfo());
-            doActive(buyUnit.getUnitInfo());
+            BuyUnitDTO buyUnit;
+            // 3.购买单位移动
+            while ((buyUnit = buyNewUnit(record())) != null) {
+                log.info("选择购买的单位是{}", buyUnit.getUnitInfo());
+                doActive(buyUnit.getUnitInfo());
+            }
+
+            activeUnits(canMoveUnit.lessThanHalf);
+
+            log.info("================机器人行动结束===============");
+        } catch (Exception e) {
+            log.error("机器人行动出错：", e);
         }
-
-        activeUnits(canMoveUnit.lessThanHalf);
-
-        log.info("================机器人行动结束===============");
     }
 
     private void activeUnits(List<UnitInfo> units) {
@@ -102,7 +106,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
             for (int i = 0; i < units.size(); i++) {
                 if (unit.getId().equals(units.get(i).getId())) {
                     units.remove(i);
-                    return;
+                    break;
                 }
             }
             doActive(unit);
@@ -122,7 +126,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         Army army = currArmy();
         // 1.获取目前能买的单位
         List<UnitInfo> canBuyUnitMes = unitMesService.getCanBuyUnit(record.getTemplateId())
-            .stream().map(unitMes -> unitMesService.getUnitInfo(unitMes.getId().toString(), 1))
+            .stream().map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 1))
             .filter(unitInfo -> (unitInfo.getUnitMes().getPrice() <= army.getMoney() &&
                 unitInfo.getUnitMes().getPopulation() <= record.getMaxPop() - army.getPop()))
             .collect(Collectors.toList());
@@ -167,6 +171,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
      * @param unit
      */
     private void doActive(Unit unit) {
+        handleRobotEvent(GameEventEnum.CLICK_ACTIVE_UNIT, unit);
         ActionIntention intention = getUnitActionIntention(unit);
         log.info("{} 的行动意向是：{}", unit, intention);
         actionUnit(intention);
@@ -214,7 +219,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         if (unitAble.hasHealer && (friendUnit = getAllFriendUnits()) != null) {
             // 治疗友军
             for (UnitInfo unitInfo : friendUnit) {
-                int maxLife = unitLevelMesService.getUnitLevelMes(unitInfo.getId(), unitInfo.getLevel()).getMaxLife();
+                int maxLife = unitLevelMesService.getUnitLevelMes(unitInfo.getTypeId(), unitInfo.getLevel()).getMaxLife();
                 if (AppUtil.getUnitLife(unitInfo) < maxLife) {
                     log.info("{} 可以进行 治疗 操作目标单位:{} 血量：{}", unit.getType(), unitInfo.getType(),
                         AppUtil.getUnitLife(unitInfo));
@@ -320,6 +325,8 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
                 lessThanHalf.add(getUnitInfoByUnit(unit));
             }
         }
+        canMoveUnit.moreThanHalf = moreThanHalf;
+        canMoveUnit.lessThanHalf = lessThanHalf;
         return canMoveUnit;
     }
 

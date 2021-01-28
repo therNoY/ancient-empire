@@ -92,8 +92,8 @@ public class DefaultRobot extends AbstractRobot {
         Army army = currArmy();
         log.info("{} 色方准备 选择单位", army.getColor());
         UnitInfo choose;
-        // 首选有攻击光环的
 
+        // 首选根据能力选择 有攻击光环的 然后选择净化光环 然后治疗 然后城堡之上
         if ((choose = getFirstUnitWithAbility(unitInfos, AbilityEnum.ATTACKER)) != null ||
             (choose = getFirstUnitWithAbility(unitInfos, AbilityEnum.PURIFY)) != null ||
             (choose = getFirstUnitWithAbility(unitInfos, AbilityEnum.HEALER)) != null ||

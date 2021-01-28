@@ -41,16 +41,13 @@ public interface UnitMesService extends IService<UnitMes> {
      */
     List<UnitMes> getEnableUnitByTempId(String tempId);
 
-    @Deprecated
-    UnitMes getByType(String type);
-
     /**
      * 通过单位和等级获取单位详情
      * @param id
      * @param level
      * @return
      */
-    UnitInfo getUnitInfo(String id, Integer level);
+    UnitInfo getUnitInfo(Integer id, Integer level);
 
     /**
      * 根据模板获取用户可以购买的单位

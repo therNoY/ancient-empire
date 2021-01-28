@@ -107,14 +107,14 @@ public class GameController {
         UnitInfo unitInfo;
         List<Integer> aliveLoaderId = new ArrayList<>();
         for (Unit unit : army.getUnits()) {
-            unitInfo = unitMesService.getUnitInfo(unit.getTypeId().toString(), unit.getLevel());
+            unitInfo = unitMesService.getUnitInfo(unit.getTypeId(), unit.getLevel());
             if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())) {
                 aliveLoaderId.add(unit.getTypeId());
             }
         }
         List<UnitInfo> respUnitMes = unitInfoList.stream()
                 .filter(unitMes -> !aliveLoaderId.contains(unitMes.getId()))
-                .map(unitMes -> unitMesService.getUnitInfo(unitMes.getId().toString(), 0))
+                .map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 0))
                 .collect(Collectors.toList());
         return RespUtil.successResJson(respUnitMes);
     }

@@ -10,12 +10,13 @@ import pers.mihao.ancient_empire.base.dao.UnitLevelMesDAO;
 import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
+import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
-import pers.mihao.ancient_empire.common.util.StringUtil;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -39,6 +40,7 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
 
     /**
      * 用于修改单位等级信息
+     *
      * @param unitLevelMes
      */
     @Override
@@ -49,7 +51,7 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
 
     @Override
     @Cacheable(CatchKey.UNIT_LEVEL_MES)
-    public UnitLevelMes getUnitLevelMes(String id, Integer level) {
+    public UnitLevelMes getUnitLevelMes(Integer id, Integer level) {
         return unitLevelMesDao.getUnitLevelMes(id, level);
     }
 
@@ -59,8 +61,12 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
     }
 
     @Override
-    public List<UnitLevelMes> getUnitLevelInfoById(Integer userId) {
-        List<UnitLevelMes> levelMesList = unitLevelMesDao.getUnitLevelInfoById(userId);
-        return levelMesList;
+    public Map<String, UnitLevelMes> getAllUnitLevelInfoByTempId(Integer userId) {
+        List<UnitLevelMes> levelMesList = unitLevelMesDao.getUnitLevelInfoByTempId(userId);
+        Map<String, UnitLevelMes> levelMesMap = levelMesList.stream()
+                .collect(Collectors.toMap(l -> l.getUnitId() + BaseConstant.COMMA + l.getLevel(), Function.identity()));
+        return levelMesMap;
     }
+
+
 }

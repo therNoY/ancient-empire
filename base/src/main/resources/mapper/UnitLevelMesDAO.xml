@@ -19,8 +19,9 @@
         id, unit_id, level, min_attack, max_attack, physical_defense, magic_defense, speed
     </sql>
 
-    <select id="getUnitLevelInfoById" parameterType="int" resultMap="BaseResultMap">
-        SELECT * FROM `unit_level_mes` where unit_id = #{id}
+    <select id="getUnitLevelInfoByTempId" parameterType="int" resultMap="BaseResultMap">
+        select * from unit_level_mes ulm left join unit_template_relation utr on ulm.unit_id = utr.unit_id
+        where utr.temp_id = #{tempId}
     </select>
 
 

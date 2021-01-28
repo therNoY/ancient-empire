@@ -51,7 +51,7 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         }
         int[][] isVisit;
         for (MoveAreaStrategy moveAreaStrategy : getAbilityStrategy(unitInfo.getAbilities())) {
-            isVisit = new int[userRecord.getGameMap().getRow()][userRecord.getGameMap().getColumn()];
+            isVisit = new int[userRecord.getGameMap().getRow() + 1][userRecord.getGameMap().getColumn() + 1];
             if (moveAreaStrategy != null) {
                 moveAreaStrategy.getMoveSite(isVisit, unitInfo.getRow(), unitInfo.getColumn(), speed, userRecord, sites);
             }

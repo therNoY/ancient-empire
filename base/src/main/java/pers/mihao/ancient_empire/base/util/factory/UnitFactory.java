@@ -30,11 +30,8 @@ public class UnitFactory {
         return createUnit(id, site.getRow(), site.getColumn());
     }
 
-    public static final Unit createUnit(Integer id, Integer row, Integer column) {
-        return createUnit(id.toString(), row, column);
-    }
 
-    public static final Unit createUnit(String id, Integer row, Integer column) {
+    public static final Unit createUnit(Integer id, Integer row, Integer column) {
         UnitLevelMes levelMes = levelService.getUnitLevelMes(id, 1);
         UnitMes unitMes = unitService.getById(id);
         Unit unit = new Unit();

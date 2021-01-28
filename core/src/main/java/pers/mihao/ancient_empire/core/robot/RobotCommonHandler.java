@@ -94,7 +94,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
                 } else {
                     // 统计敌方情概况
                     armyUnitSituation.enemyNum++;
-                    UnitLevelMes levelMes = unitMesService.getUnitInfo(unit.getType(), unit.getLevel()).getLevelMes();
+                    UnitLevelMes levelMes = unitMesService.getUnitInfo(unit.getTypeId(), unit.getLevel()).getLevelMes();
                     armyUnitSituation.enemyPhyDefSum = levelMes.getPhysicalDefense();
                     armyUnitSituation.enemyMagDefSum = levelMes.getMagicDefense();
                     List<Ability> abilityList = abilityService.getUnitAbilityListByType(unit.getType());
@@ -119,7 +119,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
      */
     protected UnitAble getUnitAble() {
         List<Ability> abilities = currUnit().getAbilities();
-        UnitAble unitAble = new UnitAble();
+        UnitAble unitAble = new UnitAble(currUnit());
         AbilityEnum abilityEnum;
         for (Ability ability : abilities) {
             abilityEnum = EnumUtil.valueOf(AbilityEnum.class, ability.getType());
@@ -363,8 +363,8 @@ public abstract class RobotCommonHandler extends CommonHandler {
         @Override
         public String toString() {
             return "CanMoveUnit{" +
-                "moreThanHalf=" + moreThanHalf +
-                ", lessThanHalf=" + lessThanHalf +
+                "moreThanHalf=" + moreThanHalf.stream().map(unitInfo -> unitInfo.simpleInfoShow()).collect(Collectors.toList()) +
+                ", lessThanHalf=" + lessThanHalf.stream().map(unitInfo -> unitInfo.simpleInfoShow()).collect(Collectors.toList()) +
                 '}';
         }
     }
@@ -378,6 +378,10 @@ public abstract class RobotCommonHandler extends CommonHandler {
         boolean castleGet;
         boolean villageGet;
         boolean repairer;
+
+        public UnitAble(UnitInfo unit) {
+            this.unit = unit;
+        }
 
         {
             hasSummoner = unit.getAbilities().contains(AbilityEnum.SUMMONER.ability());
