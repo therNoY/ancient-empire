@@ -414,6 +414,13 @@ public abstract class RobotCommonHandler extends CommonHandler {
     }
 
 
+    protected void handleRobotEvent(GameEventEnum gameEventEnum){
+        GameEvent gameEvent = new GameEvent();
+        gameEvent.setEvent(gameEventEnum);
+        gameEvent.setGameId(gameContext.getGameId());
+        handleRobotEvent(gameEvent);
+    }
+
     protected void handleRobotEvent(GameEvent event){
         gameCoreManger.handelTask(event);
         long wait = RobotWaitTimeCatch.getInstance().getLockTimeByEvent(event.getEvent());

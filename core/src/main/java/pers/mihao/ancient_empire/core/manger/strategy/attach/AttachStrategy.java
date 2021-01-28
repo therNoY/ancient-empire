@@ -1,25 +1,17 @@
 package pers.mihao.ancient_empire.core.manger.strategy.attach;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.entity.*;
-import pers.mihao.ancient_empire.base.enums.AbilityEnum;
-import pers.mihao.ancient_empire.base.enums.StateEnum;
-import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.base.util.UserRecordUtil;
-import pers.mihao.ancient_empire.common.constant.MqMethodEnum;
-import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.core.dto.*;
-import pers.mihao.ancient_empire.core.handel.attach.AttachHandle;
-import pers.mihao.ancient_empire.core.handel.defense.DefenseHandle;
-import pers.mihao.ancient_empire.core.manger.GameContext;
-import pers.mihao.ancient_empire.core.manger.strategy.AbstractStrategy;
-import pers.mihao.ancient_empire.core.util.GameCoreHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pers.mihao.ancient_empire.base.bo.GameMap;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.core.dto.AttributesPower;
+import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.manger.strategy.AbstractStrategy;
 
 /**
  * 攻击的策略

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -15,16 +14,21 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.entity.RegionMes;
-import pers.mihao.ancient_empire.base.enums.ArmyEnum;
-import pers.mihao.ancient_empire.base.mongo.dao.UserRecordRepository;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.GameMap;
+import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.base.bo.RegionInfo;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.mongo.dao.UserRecordRepository;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
@@ -32,8 +36,11 @@ import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
-import pers.mihao.ancient_empire.common.util.*;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.util.DateUtil;
+import pers.mihao.ancient_empire.common.util.IntegerUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 
 @Service
 public class UserRecordServiceImp implements UserRecordService {
@@ -42,8 +49,6 @@ public class UserRecordServiceImp implements UserRecordService {
 
     @Autowired
     UserRecordRepository userRecordRepository;
-    @Autowired
-    MqHelper mqHelper;
     @Autowired
     UserMapService userMapService;
     @Autowired

@@ -1,9 +1,6 @@
 package pers.mihao.ancient_empire.core.dto;
 
-import pers.mihao.ancient_empire.base.bo.Site;
-
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 攻击结果

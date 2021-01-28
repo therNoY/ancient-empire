@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
-import pers.mihao.ancient_empire.common.util.MqHelper;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
@@ -29,8 +27,6 @@ public class UserRecordController {
     UserRecordService userRecordService;
     @Autowired
     UnitMesService unitMesService;
-    @Autowired
-    MqHelper mqHelper;
 
     /**
      * 建立WS 连接

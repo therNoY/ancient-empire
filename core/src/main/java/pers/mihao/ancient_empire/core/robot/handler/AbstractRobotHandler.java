@@ -71,15 +71,15 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
 
     protected void robotMoveAndAction() {
         // 1.点击目标区域
-        handleRobotEvent(GameEventEnum.CLICK_AIM_POINT, null);
+        handleRobotEvent(GameEventEnum.CLICK_AIM_POINT);
 
         // 2.点行动按钮
-        handleRobotEvent(getActionType(), null);
+        handleRobotEvent(getActionType());
 
         if (!gameContext.getSubStatusMachine().equals(SubStatusMachineEnum.INIT)) {
             log.info("进行二次移动 此时选择 最不危险的区域");
             // TODO
-            handleRobotEvent(GameEventEnum.CLICK_END_ACTION, null);
+            handleRobotEvent(GameEventEnum.CLICK_END_ACTION);
         }
     }
 

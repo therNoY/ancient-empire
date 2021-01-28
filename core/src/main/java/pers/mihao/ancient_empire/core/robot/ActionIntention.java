@@ -11,6 +11,9 @@ import pers.mihao.ancient_empire.base.bo.UnitInfo;
  */
 public class ActionIntention {
 
+    /**
+     * 结果枚举类
+     */
     private RobotActiveEnum resultEnum;
 
     /**

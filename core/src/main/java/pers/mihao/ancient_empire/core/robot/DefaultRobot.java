@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Army;
@@ -14,7 +13,6 @@ import pers.mihao.ancient_empire.base.bo.RegionInfo;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
@@ -23,7 +21,6 @@ import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
 import pers.mihao.ancient_empire.core.manger.GameContext;
-import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  * 具体选择行动的策略实现类
