@@ -71,7 +71,8 @@ public class ClickActiveUnitHandler extends CommonHandler {
                 gameContext.setActions(actions);
                 gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
                 gameContext.setStartMoveSite(gameEvent.getInitiateSite());
-                commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, actions);
+                commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, actions)
+                        .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
             } else {
                 List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), unitInfo);
                 showMoveArea(moveArea);

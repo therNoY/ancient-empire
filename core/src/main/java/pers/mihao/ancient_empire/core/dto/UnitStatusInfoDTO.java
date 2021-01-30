@@ -31,6 +31,9 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
     private Boolean done;
 
+    /**
+     * 是否更新当前位置
+     */
     private Boolean updateCurr;
 
     public UnitStatusInfoDTO() {
@@ -51,7 +54,6 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
     public UnitStatusInfoDTO setUpdateCurr(Boolean updateCurr) {
         this.updateCurr = updateCurr;
         return this;
-
     }
 
     public Integer[] getLife() {

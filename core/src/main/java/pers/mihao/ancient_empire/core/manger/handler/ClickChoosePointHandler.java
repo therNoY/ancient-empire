@@ -97,9 +97,6 @@ public class ClickChoosePointHandler extends CommonHandler {
         // 获取攻击结果
         AttachResultDTO attachResultDTO = getAttachResult(record().getCurrUnit(), beAttachUnit);
 
-        UnitStatusInfoDTO beAttachStatus;
-        UnitStatusInfoDTO attachStatus;
-
         // 不展示攻击区域
         commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA);
 
@@ -133,6 +130,8 @@ public class ClickChoosePointHandler extends CommonHandler {
             unitStatusInfoDTO.setStatus(attachResultDTO.getAntiAttackResult().getEndStatus());
             unitStatusInfoDTO.setLife(attachResultDTO.getAntiAttackResult().getLastLife());
         }
+        unitStatusInfoDTO.setExperience(attachResultDTO.getAttachResult().getEndExperience());
+        unitStatusInfoDTO.setUpdateCurr(true);
         commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
 
         // 判断是否有单位升级
@@ -170,6 +169,7 @@ public class ClickChoosePointHandler extends CommonHandler {
         // 处理状态
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(currUnitArmyIndex());
         unitStatusInfoDTO.setExperience(currUnit().getExperience() + gameContext.getSummonExp());
+        unitStatusInfoDTO.setUpdateCurr(true);
         commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
         endCurrentUnit(currUnitArmyIndex());
     }

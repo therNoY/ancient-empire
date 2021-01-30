@@ -54,7 +54,7 @@ public class UserTemplateHelper {
     }
 
     public int getLevelExp(int level) {
-        return dp[level];
+        return dp[level] * 100;
     }
 
     public Integer getAttachExp() {

@@ -84,8 +84,7 @@ public class RoundEndHandler extends CommonHandler {
                 addMoney += regionMesService.getRegionByType(square.getType()).getTax();
             }
         }
-        currArmy().setMoney(currArmy().getMoney() + addMoney);
-        armyStatusInfoDTO.setMoney(currArmy().getMoney());
+        armyStatusInfoDTO.setMoney(currArmy().getMoney() + addMoney);
 
         // 4.当前新的军队的生命变化以及状态变化
         changeUnitStatus();

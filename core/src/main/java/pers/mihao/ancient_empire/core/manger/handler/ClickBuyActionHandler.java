@@ -3,7 +3,6 @@ package pers.mihao.ancient_empire.core.manger.handler;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
@@ -32,14 +31,22 @@ public class ClickBuyActionHandler extends CommonHandler {
         if (currArmy().getMoney() < newUnitInfo.getUnitMes().getPrice()) {
             throw new AncientEmpireException("军队购买 资金不足");
         }
+        // 验证军队人口
+        if (currArmy().getPop() + newUnitInfo.getUnitMes().getPopulation() > record().getMaxPop()) {
+            throw new AncientEmpireException("军队购买 超过最大人口");
+        }
+        // 更新
         Unit newUnit = UnitFactory.createUnit(gameEvent.getUnitId(), currSite());
         commandStream().toGameCommand().addUnit(newUnit, record().getCurrArmyIndex());
 
+        // 更新军队信息
         ArmyStatusInfoDTO armyStatusInfoDTO = new ArmyStatusInfoDTO();
-        armyStatusInfoDTO.setMoney(currArmy().getMoney());
+
+        armyStatusInfoDTO.setMoney(currArmy().getMoney() - newUnitInfo.getUnitMes().getPrice());
+        armyStatusInfoDTO.setPop(currArmy().getPop() + newUnitInfo.getUnitMes().getPopulation());
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_ARMY_INFO, ExtMes.ARMY_INFO, armyStatusInfoDTO);
 
-        BeanUtil.copyValue(newUnit, newUnitInfo);
+        BeanUtil.copyValueByGetSet(newUnit, newUnitInfo);
         List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), newUnitInfo);
         showMoveArea(moveArea);
 

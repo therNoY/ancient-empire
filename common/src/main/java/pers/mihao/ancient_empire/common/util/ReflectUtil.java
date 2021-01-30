@@ -143,7 +143,7 @@ public class ReflectUtil {
      * @param filedName
      * @param value
      */
-    public static void reflexSetValue(Object object, String filedName, String value){
+    public static void setValueBySetMethod(Object object, String filedName, String value){
         Method method = getSetter(filedName, object.getClass());
         try {
             method.invoke(object, value);
@@ -241,7 +241,6 @@ public class ReflectUtil {
      * @return
      */
     public static Object getValueByFieldName(Object obj, String delegate) {
-        Object value = null;
         Field filed = getFieldByName(delegate, obj.getClass());
         return getValueByField(obj, filed);
     }

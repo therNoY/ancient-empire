@@ -1,10 +1,10 @@
 package pers.mihao.ancient_empire.common.util;
 
-import javafx.util.Pair;
 import pers.mihao.ancient_empire.common.dto.GetSetDTO;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,10 +67,13 @@ public class BeanUtil {
     }
 
 
-    public static <T> T cloneObject(T t) {
+    public static <T> T deptClone(T t) {
         try {
             Object obj = t.getClass().newInstance();
-            copyValue(t, obj);
+            List<Field> list = ReflectUtil.listFields(t.getClass());
+            for (Field field : list) {
+                ReflectUtil.setValueByFieldName(obj, field.getName(), ReflectUtil.getValueByField(t, field));
+            }
             return (T) obj;
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -87,7 +90,7 @@ public class BeanUtil {
      * @param to 结果类
      * @param <T>
      */
-    public static void copyValue(Object from, Object to) {
+    public static void copyValueByGetSet(Object from, Object to) {
         try {
             Map<String, GetSetDTO> toMap = ReflectUtil.getAllGetSetMethod(to.getClass());
             Map<String, GetSetDTO> fromMap = ReflectUtil.getAllGetSetMethod(from.getClass());

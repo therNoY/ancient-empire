@@ -447,7 +447,7 @@ public abstract class GameContextBaseHandler implements Handler {
      *
      * @return 当前单位
      */
-    protected Army currArmy() {
+    public Army currArmy() {
         return record().getArmyList().get(record().getCurrArmyIndex());
     }
 
@@ -457,7 +457,7 @@ public abstract class GameContextBaseHandler implements Handler {
      *
      * @return 当前单位
      */
-    protected UnitInfo currUnit() {
+    public UnitInfo currUnit() {
         return record().getCurrUnit();
     }
 

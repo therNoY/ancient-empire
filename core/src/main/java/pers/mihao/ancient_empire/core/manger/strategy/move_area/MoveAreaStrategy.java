@@ -57,7 +57,7 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
             }
         }
         if (sites.size() == 0) {
-            isVisit = new int[userRecord.getGameMap().getRow()][userRecord.getGameMap().getColumn()];
+            isVisit = new int[userRecord.getGameMap().getRow() + 1][userRecord.getGameMap().getColumn() + 1];
             getMoveSite(isVisit, unitInfo.getRow(), unitInfo.getColumn(), speed, userRecord, sites);
         }
         return sites.stream().distinct().collect(Collectors.toList());

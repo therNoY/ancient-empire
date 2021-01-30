@@ -232,4 +232,12 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         return contextMap.get(uuid);
     }
 
+    public GameContext getOneGame() {
+        if (contextMap.size() > 0) {
+            return contextMap.entrySet().iterator().next().getValue();
+        }else {
+            return null;
+        }
+    }
+
 }

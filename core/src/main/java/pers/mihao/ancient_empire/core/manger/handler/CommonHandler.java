@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.core.manger.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,19 +17,12 @@ import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
-import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
-import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
-import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
-import pers.mihao.ancient_empire.core.dto.EndUnitDTO;
-import pers.mihao.ancient_empire.core.dto.PathPosition;
-import pers.mihao.ancient_empire.core.dto.ShowAnimDTO;
-import pers.mihao.ancient_empire.core.dto.UnitDeadDTO;
-import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
+import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
@@ -115,7 +108,7 @@ public class CommonHandler extends AbstractGameEventHandler {
                                 unit.setLevel(unit.getLevel() + 1);
                                 unit.setExperience(unit.getExperience() - levelExp);
                                 Unit newUnit = new Unit();
-                                BeanUtil.copyValue(unit, newUnit);
+                                BeanUtil.copyValueByGetSet(unit, newUnit);
                                 newUnit.setTypeId(unitTransfer.getTransferUnitId());
                                 commandStream()
                                         .toGameCommand().removeUnit(unitStatus)
@@ -162,13 +155,25 @@ public class CommonHandler extends AbstractGameEventHandler {
             case CHANGE_UNIT_STATUS:
                 // 更新单位状态变化
                 if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
+                    // 这种是回合结束 回合开始 不更新单位的位置
                     List<UnitStatusInfoDTO> unitStatusList = (List<UnitStatusInfoDTO>) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
                     for (UnitStatusInfoDTO unitStatus : unitStatusList) {
-                        updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
+                        Unit unit = getUnitByIndex(unitStatus);
+                        updateUnitInfo(unit, unitStatus);
+                        if (Boolean.TRUE.equals(unitStatus.getUpdateCurr())) {
+                            unit.setRow(currSite().getRow());
+                            unit.setColumn(currSite().getColumn());
+                        }
                     }
                 } else {
+                    // 单个需要更新当前单位的位置
                     UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
-                    updateUnitInfo(getUnitByIndex(unitStatus), unitStatus);
+                    Unit unit = getUnitByIndex(unitStatus);
+                    updateUnitInfo(unit, unitStatus);
+                    if (Boolean.TRUE.equals(unitStatus.getUpdateCurr())) {
+                        unit.setRow(currSite().getRow());
+                        unit.setColumn(currSite().getColumn());
+                    }
                 }
                 break;
             case CHANGE_CURR_REGION:
@@ -180,15 +185,24 @@ public class CommonHandler extends AbstractGameEventHandler {
             case CHANGE_CURR_BG_COLOR:
                 gameContext.setBgColor(extMes.getString(ExtMes.BG_COLOR));
                 break;
+            case CHANGE_ARMY_INFO:
+                ArmyStatusInfoDTO armyStatusInfoDTO = (ArmyStatusInfoDTO) extMes.get(ExtMes.ARMY_INFO);
+                if (armyStatusInfoDTO.getMoney() != null) {
+                    currArmy().setMoney(armyStatusInfoDTO.getMoney());
+                }
+                if (armyStatusInfoDTO.getPop() != null) {
+                    currArmy().setPop(armyStatusInfoDTO.getPop());
+                }
+                break;
             default:
                 break;
         }
     }
 
     protected void updateUnitInfo(Unit unit, Object from) {
-        BeanUtil.copyValue(from, unit);
-        unit.setRow(currSite().getRow());
-        unit.setColumn(currSite().getColumn());
+        BeanUtil.copyValueByGetSet(from, unit);
+
+
     }
 
     /**
@@ -201,7 +215,6 @@ public class CommonHandler extends AbstractGameEventHandler {
     protected ShowAnimDTO getShowAnim(Site site, String animStrings) {
         String[] anims = animStrings.split(BaseConstant.COMMA);
         List<String> animList = Arrays.stream(anims)
-                .map(s -> gameContext.getUserTemplate().getId() + BaseConstant.LINUX_SEPARATOR + s)
                 .collect(Collectors.toList());
         // 这里强行改成偶数个图片
         if (animList.size() % 2 != 0) {
@@ -383,9 +396,7 @@ public class CommonHandler extends AbstractGameEventHandler {
 
         // 处理单位血量变化
         if (endUnitDTO.getUnitStatusInfoDTOS().size() > 0) {
-            UnitStatusInfoDTO[] unitStatusInfoDTOS = new UnitStatusInfoDTO[endUnitDTO.getUnitStatusInfoDTOS().size()];
-            endUnitDTO.getUnitStatusInfoDTOS().toArray(unitStatusInfoDTOS);
-            commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTOS);
+            commandStream().toGameCommand().changeUnitStatus(endUnitDTO.getUnitStatusInfoDTOS());
         }
         // 处理单位死亡
         for (UnitDeadDTO deadDTO : endUnitDTO.getUnitDeadDTOList()) {
@@ -394,6 +405,7 @@ public class CommonHandler extends AbstractGameEventHandler {
         // 修改单位的状态有顺序（结束回合）
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
         unitStatusInfoDTO.setDone(true);
+        unitStatusInfoDTO.setUpdateCurr(true);
         commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
         gameContext.setStatusMachine(StatusMachineEnum.INIT);
     }

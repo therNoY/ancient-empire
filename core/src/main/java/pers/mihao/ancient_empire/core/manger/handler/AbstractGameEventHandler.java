@@ -227,20 +227,19 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream changeUnitStatus(List<UnitStatusInfoDTO> unitStatusInfoDTOS){
-            setGameCommendEnum(GameCommendEnum.CHANGE_UNIT_STATUS);
-            JSONObject extData = new JSONObject(2);
-            extData.put(ExtMes.UNIT_STATUS, unitStatusInfoDTOS);
-            setExtMes(extData);
-            setOrder(orderIndex ++);
-            addGameCommand(this);
-            handlerLevelUp(this);
+            changeUnitStatusInfo(unitStatusInfoDTOS);
             return stream;
         }
 
-        public Stream changeUnitStatus(UnitStatusInfoDTO... unitStatusInfoDTOS){
+        public Stream changeUnitStatus(UnitStatusInfoDTO unitStatusInfoDTO){
+            changeUnitStatusInfo(unitStatusInfoDTO);
+            return stream;
+        }
+
+        private Stream changeUnitStatusInfo(Object obj){
             setGameCommendEnum(GameCommendEnum.CHANGE_UNIT_STATUS);
             JSONObject extData = new JSONObject(2);
-            extData.put(ExtMes.UNIT_STATUS, Arrays.asList(unitStatusInfoDTOS));
+            extData.put(ExtMes.UNIT_STATUS, obj);
             setExtMes(extData);
             setOrder(orderIndex ++);
             addGameCommand(this);

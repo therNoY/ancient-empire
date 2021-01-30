@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -140,6 +141,9 @@ public class UserRecord implements Serializable {
     }
 
     public List<Site> getTomb() {
+        if (tomb == null) {
+            tomb = new ArrayList<>();
+        }
         return tomb;
     }
 

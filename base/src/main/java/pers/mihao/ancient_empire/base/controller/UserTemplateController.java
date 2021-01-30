@@ -179,7 +179,7 @@ public class UserTemplateController {
             defaultTemp.setLinkNum(null);
             defaultTemp.setCountStart(null);
             defaultTemp.setId(null);
-            draftTemp = BeanUtil.cloneObject(defaultTemp);
+            draftTemp = BeanUtil.deptClone(defaultTemp);
             draftTemp.setUserId(AuthUtil.getUserId());
             draftTemp.setStatus(0);
             userTemplateService.save(draftTemp);
