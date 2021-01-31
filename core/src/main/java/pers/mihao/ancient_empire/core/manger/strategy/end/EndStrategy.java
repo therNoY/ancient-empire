@@ -53,6 +53,18 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
         getAbilityStrategy(record.getCurrUnit().getAbilities())
                 .forEach(endStrategy -> endStrategy.warpEndResult(affectUnits, endUnitDTO, record));
 
+//        poissonEndDesLife(commonHandler, record, endUnitDTO);
+
+        return endUnitDTO;
+    }
+
+    /**
+     * 中毒者回合结束掉血
+     * @param commonHandler
+     * @param record
+     * @param endUnitDTO
+     */
+    private void poissonEndDesLife(CommonHandler commonHandler, UserRecord record, EndUnitDTO endUnitDTO) {
         if (StateEnum.POISON.type().equals(record.getCurrUnit().getStatus())) {
             int descLife = commonHandler.getGameContext().getPoisonDesLife();
             log.info("单位中毒需要减少生命:{}", descLife);
@@ -69,8 +81,6 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
                 endUnitDTO.getUnitStatusInfoDTOS().add(unitStatusInfoDTO);
             }
         }
-
-        return endUnitDTO;
     }
 
 

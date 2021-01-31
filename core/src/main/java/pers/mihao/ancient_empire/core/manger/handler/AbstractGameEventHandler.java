@@ -199,10 +199,18 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             return stream;
         }
 
+        public Stream addOrderCommand(GameCommendEnum gameCommendEnum){
+            setGameCommendEnum(gameCommendEnum);
+            addGameCommand(this);
+            setOrder(orderIndex ++);
+            return stream;
+        }
+
         public Stream addOrderCommand(GameCommendEnum gameCommendEnum, Site aimSite){
             setGameCommendEnum(gameCommendEnum);
             setAimSite(aimSite);
             addGameCommand(this);
+            setOrder(orderIndex ++);
             return stream;
         }
 

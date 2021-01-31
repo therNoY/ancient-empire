@@ -29,9 +29,16 @@ public interface UnitLevelMesDAO extends BaseMapper<UnitLevelMes> {
 
 
     /**
+     * 获取模板所有单位的等级信息
+     * @param tempId
+     * @return
+     */
+    List<UnitLevelMes> getAllUnitLevelInfoByTempId(Integer tempId);
+
+    /**
      * 获取单位的等级信息
      * @param tempId
      * @return
      */
-    List<UnitLevelMes> getUnitLevelInfoByTempId(Integer tempId);
+    List<UnitLevelMes> getUnitLevelInfoById(Integer tempId);
 }

@@ -4,11 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.base.bo.FloatSite;
-import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
@@ -52,6 +50,9 @@ public class ClickChoosePointHandler extends CommonHandler {
         unit.setRow(currSite().getRow());
         unit.setColumn(currSite().getColumn());
 
+        // 更新新的单位信息
+        currUnit().setRegionInfo(getRegionInfoBySite(gameContext.getReadyMoveSite()));
+
         // 根据地图状态机 判断处理方式
         switch (gameContext.getStatusMachine()) {
             case WILL_ATTACH:
@@ -76,7 +77,23 @@ public class ClickChoosePointHandler extends CommonHandler {
      * @param gameEvent
      */
     private void handlerAttachRegion(GameEvent gameEvent) {
-        System.out.println(gameEvent);
+        UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(currUnitArmyIndex());
+        unitStatusInfoDTO.setExperience(currUnit().getExperience() + gameContext.getDestroyerExp());
+        unitStatusInfoDTO.setUpdateCurr(true);
+        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
+        Region region = new Region();
+        region.setType(RegionEnum.RUINS.type());
+        int regionIndex = getRegionIndexBySite(gameEvent.getAimSite());
+        changeCurrRegion(regionIndex);
+
+        ShowAnimDTO showDeadAnimDTO = getShowAnim(gameEvent.getAimSite(), gameContext.getUserTemplate().getDeadAnimation());
+        JSONObject showDeadAnim = new JSONObject();
+        showDeadAnim.put(ExtMes.ANIM, showDeadAnimDTO);
+
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA)
+                .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_UNIT_DEAD, showDeadAnim);
+        changeRegion(regionIndex, region);
+        endCurrentUnit(currUnitArmyIndex());
     }
 
     /**
@@ -242,7 +259,8 @@ public class ClickChoosePointHandler extends CommonHandler {
         AttachResult attachResult = stuffAttachResult(attachPower, defensePower, attachUnit, beAttachUnit);
 
         // 判断修改被攻击者的状态
-        if (attachUnit.getAbilities().contains(AbilityEnum.POISONING.ability())) {
+        if (attachUnit.getAbilities().contains(AbilityEnum.POISONING.ability()) &&
+                !beAttachUnit.getAbilities().contains(AbilityEnum.POISONING.ability())) {
             attachResult.setEndStatus(StateEnum.POISON.type());
             beAttachUnit.setStatus(StateEnum.POISON.type());
         }

@@ -138,15 +138,19 @@ public class UserRecordServiceImp implements UserRecordService {
                         switch (random) {
                             case 1:
                                 unit.setStatus(StateEnum.POISON.type());
+                                unit.setStatusPresenceNum(2);
                                 break;
                             case 2:
                                 unit.setStatus(StateEnum.BLIND.type());
+                                unit.setStatusPresenceNum(2);
                                 break;
                             case 3:
                                 unit.setStatus(StateEnum.WEAK.type());
+                                unit.setStatusPresenceNum(2);
                                 break;
                             case 4:
                                 unit.setStatus(StateEnum.EXCITED.type());
+                                unit.setStatusPresenceNum(2);
                                 break;
                         }
                         unit.setLevel(IntegerUtil.getRandomIn(3));

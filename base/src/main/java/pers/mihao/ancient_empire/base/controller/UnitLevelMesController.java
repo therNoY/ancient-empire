@@ -26,12 +26,22 @@ public class UnitLevelMesController {
     UnitLevelMesService unitLevelMesService;
 
     /**
+     * 获取单个单位的等级信息
+     * @param unitId
+     * @return
+     */
+    @GetMapping("/api/unitLevel/{unitId}")
+    public RespJson getUnitLevelByUnid (@PathVariable("unitId") Integer unitId) {
+        return RespUtil.successResJson(unitLevelMesService.getUnitLevelInfoById(unitId));
+    }
+
+    /**
      * 获取模板中所有的单位等级信息
      * @param tempId
      * @return
      */
-    @GetMapping("/api/unitLevel/{tempId}")
-    public RespJson getUnitLevelByTemp (@PathVariable("tempId") Integer tempId) {
+    @GetMapping("/api/unitLevel/list/{tempId}")
+    public RespJson getAllUnitLevelByTemp (@PathVariable("tempId") Integer tempId) {
         return RespUtil.successResJson(unitLevelMesService.getAllUnitLevelInfoByTempId(tempId));
     }
 

@@ -43,4 +43,11 @@ public interface UnitLevelMesService extends IService<UnitLevelMes> {
      * @return
      */
     Map<String, UnitLevelMes> getAllUnitLevelInfoByTempId(Integer userId);
+
+    /**
+     * 获取单个单位的等级信息
+     * @param userId
+     * @return
+     */
+    List<UnitLevelMes> getUnitLevelInfoById(Integer userId);
 }

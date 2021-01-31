@@ -22,7 +22,8 @@ public class UserTemplateHelper {
     private static Integer antiAttackExp = 10;
     private static Integer killExp = 40;
     private static Integer antiKillExp = 40;
-    private static Integer summonExp = 40;
+    private static Integer summonExp = 20;
+    private static Integer DESTROYER_EXP = 30;
     private static UserTemplate defaultTemp = null;
     /**
      * 游戏模板
@@ -74,8 +75,20 @@ public class UserTemplateHelper {
         return antiKillExp;
     }
 
+    /**
+     * 获取召唤的经验
+     * @return
+     */
     public Integer getSummonExp() {
         return summonExp;
+    }
+
+    /**
+     * 获取破化者的经验
+     * @return
+     */
+    public Integer getDestroyerExp() {
+        return DESTROYER_EXP;
     }
 
     public static void setSummonExp(Integer summonExp) {
@@ -132,5 +145,15 @@ public class UserTemplateHelper {
      */
     public int getPoisonDesLife() {
         return 10;
+    }
+
+    /**
+     *
+     * 状态维持回合数
+     * TODO 后期考虑全局buff  debuff数减少1  buff增加1
+     * @return
+     */
+    public int getStatusRoundNum() {
+        return 2;
     }
 }

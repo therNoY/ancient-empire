@@ -26,6 +26,7 @@ public class ClickPointHandler extends CommonHandler{
             gameContext.setActions(actions);
             gameContext.setStartMoveSite(currSite());
             gameContext.setReadyMoveLine(null);
+            gameContext.setReadyMoveSite(currSite());
             commandStream()
                     .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
                     .toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());

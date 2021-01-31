@@ -62,11 +62,16 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
 
     @Override
     public Map<String, UnitLevelMes> getAllUnitLevelInfoByTempId(Integer userId) {
-        List<UnitLevelMes> levelMesList = unitLevelMesDao.getUnitLevelInfoByTempId(userId);
+        List<UnitLevelMes> levelMesList = unitLevelMesDao.getAllUnitLevelInfoByTempId(userId);
         Map<String, UnitLevelMes> levelMesMap = levelMesList.stream()
                 .collect(Collectors.toMap(l -> l.getUnitId() + BaseConstant.COMMA + l.getLevel(), Function.identity()));
         return levelMesMap;
     }
 
+    @Override
+    public List<UnitLevelMes> getUnitLevelInfoById(Integer userId) {
+        List<UnitLevelMes> levelMesList = unitLevelMesDao.getUnitLevelInfoById(userId);
+        return levelMesList;
+    }
 
 }

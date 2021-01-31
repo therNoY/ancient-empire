@@ -381,16 +381,12 @@ public abstract class RobotCommonHandler extends CommonHandler {
 
         public UnitAble(UnitInfo unit) {
             this.unit = unit;
-        }
-
-        {
             hasSummoner = unit.getAbilities().contains(AbilityEnum.SUMMONER.ability());
             hasHealer = unit.getAbilities().contains(AbilityEnum.HEALER.ability());
             castleGet = unit.getAbilities().contains(AbilityEnum.CASTLE_GET.ability());
             villageGet = unit.getAbilities().contains(AbilityEnum.VILLAGE_GET.ability());
             repairer = unit.getAbilities().contains(AbilityEnum.REPAIR.ability());
         }
-
     }
 
     /**

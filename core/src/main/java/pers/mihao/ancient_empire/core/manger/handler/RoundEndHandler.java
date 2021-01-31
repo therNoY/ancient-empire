@@ -7,6 +7,7 @@ import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
@@ -128,10 +129,25 @@ public class RoundEndHandler extends CommonHandler {
             lastLife = AppUtil.getUnitLife(unit);
             restoreLife = levelMes.getMaxLife() - lastLife;
 
+            // 如果状态数 > 0 就减1
+            if (unit.getStatusPresenceNum() != null && unit.getStatusPresenceNum() > 0) {
+                unit.setStatusPresenceNum(unit.getStatusPresenceNum() - 1);
+                if (unit.getStatusPresenceNum() == 0) {
+                    if (unitStatusInfoDTO.getArmyIndex() == null) {
+                        unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
+                        unitStatusInfoDTO.setUnitIndex(i);
+                    }
+                    unitStatusInfoDTO.setStatus(StateEnum.NORMAL.type());
+                    status = StateEnum.NORMAL.type();
+                }
+            }
+
             if (!StateEnum.POISON.type().equals(status)) {
+                RegionMes regionMes = regionMesService.getRegionByType(square.getType());
                 // 没有中毒根据地形回血
                 if (restoreLife > 0
-                        && (regionRestore = regionMesService.getRegionByType(square.getType()).getRestore()) > 0) {
+                        && (regionRestore = regionMes.getRestore()) > 0
+                        && colorIsCamp(getRegionInfoBySite(unit).getColor())) {
                     lifeChangeDTO.setRow(unit.getRow());
                     lifeChangeDTO.setColumn(unit.getColumn());
                     unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
@@ -157,18 +173,6 @@ public class RoundEndHandler extends CommonHandler {
 
                 } else {
                     lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, descLife));
-                }
-            }
-
-            // 如果状态数 > 0 就减1
-            if (Boolean.TRUE.equals(unit.getDead()) && unit.getStatusPresenceNum() != null && unit.getStatusPresenceNum() > 0) {
-                unit.setStatusPresenceNum(unit.getStatusPresenceNum() - 1);
-                if (unit.getStatusPresenceNum() == 0) {
-                    if (unitStatusInfoDTO.getArmyIndex() == null) {
-                        unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
-                        unitStatusInfoDTO.setUnitIndex(i);
-                    }
-                    unitStatusInfoDTO.setStatus(StateEnum.NORMAL.type());
                 }
             }
 

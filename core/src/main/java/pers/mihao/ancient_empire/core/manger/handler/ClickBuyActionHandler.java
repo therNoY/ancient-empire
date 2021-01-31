@@ -47,6 +47,7 @@ public class ClickBuyActionHandler extends CommonHandler {
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_ARMY_INFO, ExtMes.ARMY_INFO, armyStatusInfoDTO);
 
         BeanUtil.copyValueByGetSet(newUnit, newUnitInfo);
+        newUnitInfo.setRegionInfo(getRegionInfoBySite(newUnit.getRow(), newUnit.getColumn()));
         List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), newUnitInfo);
         showMoveArea(moveArea);
 

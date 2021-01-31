@@ -19,8 +19,10 @@ import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
@@ -199,9 +201,13 @@ public class CommonHandler extends AbstractGameEventHandler {
         }
     }
 
-    protected void updateUnitInfo(Unit unit, Object from) {
-        BeanUtil.copyValueByGetSet(from, unit);
-
+    protected void updateUnitInfo(Unit unit, UnitStatusInfoDTO unitStatusInfoDTO) {
+        BeanUtil.copyValueByGetSet(unitStatusInfoDTO, unit);
+        if (StringUtil.isNotBlack(unitStatusInfoDTO.getStatus())
+                && !StateEnum.NORMAL.type().equals(unitStatusInfoDTO.getStatus())) {
+            // 有非正常状态的要设置回合数
+            unit.setStatusPresenceNum(gameContext.getStatusRoundNum());
+        }
 
     }
 
@@ -381,7 +387,7 @@ public class CommonHandler extends AbstractGameEventHandler {
     }
 
     /**
-     * 封装结束单位命令
+     * TODO 封装结束单位命令 单位踩坟墓事件处理
      *
      * @param armyUnitIndexDTO
      */

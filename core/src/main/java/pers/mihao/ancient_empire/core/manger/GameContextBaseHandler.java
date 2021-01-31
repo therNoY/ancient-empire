@@ -63,7 +63,7 @@ public abstract class GameContextBaseHandler implements Handler {
 
     protected int getCampByColor(String color) {
         for (Army army : record().getArmyList()) {
-            if (color.equals(army.getColor())) {
+            if (army.getColor().equals(color)) {
                 return army.getCamp();
             }
         }

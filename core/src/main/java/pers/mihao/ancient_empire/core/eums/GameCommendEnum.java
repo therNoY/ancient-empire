@@ -95,7 +95,7 @@ public enum GameCommendEnum implements BaseEnum {
     LEFT_CHANGE,
 
     /**
-     * 在特定的点展示攻击动画
+     * 在特定的点展示动画 会让目标点抖动
      */
     SHOW_ATTACH_ANIM,
 
@@ -134,7 +134,7 @@ public enum GameCommendEnum implements BaseEnum {
     SHOW_SYSTEM_NEWS,
 
     /**
-     * 在特定的点展示攻击动画
+     * 在特定的点简单展示动画
      */
     SHOW_SUMMON_ANIM,
 
