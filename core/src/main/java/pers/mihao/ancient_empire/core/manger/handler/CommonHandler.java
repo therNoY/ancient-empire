@@ -269,7 +269,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @return
      */
-    protected ArmyUnitIndexDTO currUnitArmyIndex() {
+    public ArmyUnitIndexDTO currUnitArmyIndex() {
         return new ArmyUnitIndexDTO(record().getCurrArmyIndex(), getCurrUnitIndex());
     }
 
@@ -387,8 +387,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      */
     protected void sendEndUnitCommend(UnitInfo unitInfo, ArmyUnitIndexDTO armyUnitIndexDTO) {
         // 触发单位结束移动事件
-        EndUnitDTO endUnitDTO = EndStrategy.getInstance().getEndUnitResult(record());
-
+        EndUnitDTO endUnitDTO = EndStrategy.getInstance().getEndUnitResult(this);
         // 处理生命值改变
         if (endUnitDTO.getLifeChangeList().size() > 0) {
             commandStream().toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, endUnitDTO.getLifeChangeList());

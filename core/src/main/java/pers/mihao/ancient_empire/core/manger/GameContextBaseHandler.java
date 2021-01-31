@@ -429,7 +429,7 @@ public abstract class GameContextBaseHandler implements Handler {
      *
      * @return 记录视图
      */
-    protected UserRecord record() {
+    public UserRecord record() {
         return gameContext.getUserRecord();
     }
 

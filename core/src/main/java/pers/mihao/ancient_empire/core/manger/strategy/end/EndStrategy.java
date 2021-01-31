@@ -1,13 +1,17 @@
 package pers.mihao.ancient_empire.core.manger.strategy.end;
 
 import javafx.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
-import pers.mihao.ancient_empire.core.dto.EndUnitDTO;
+import pers.mihao.ancient_empire.core.dto.*;
+import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.strategy.AbstractStrategy;
 
 import java.util.ArrayList;
@@ -31,13 +35,16 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
         return instance;
     }
 
+    Logger log = LoggerFactory.getLogger(EndStrategy.class);
+
     /**
      * 获取结束移动的结果
      * @param record
      * @return
      */
-    public EndUnitDTO getEndUnitResult(UserRecord record){
-        List<Pair<Integer, Integer>> affectUnits = getAffectUnit(record);
+    public EndUnitDTO getEndUnitResult(CommonHandler commonHandler){
+        UserRecord record = commonHandler.record();
+        List<Pair<Integer, Integer>> affectUnits = getAffectUnit(commonHandler.record());
         EndUnitDTO endUnitDTO = new EndUnitDTO();
         endUnitDTO.setLifeChangeList(new ArrayList<>());
         endUnitDTO.setUnitDeadDTOList(new ArrayList<>());
@@ -45,6 +52,24 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
 
         getAbilityStrategy(record.getCurrUnit().getAbilities())
                 .forEach(endStrategy -> endStrategy.warpEndResult(affectUnits, endUnitDTO, record));
+
+        if (StateEnum.POISON.type().equals(record.getCurrUnit().getStatus())) {
+            int descLife = commonHandler.getGameContext().getPoisonDesLife();
+            log.info("单位中毒需要减少生命:{}", descLife);
+            endUnitDTO.getLifeChangeList().add(new LifeChangeDTO(AppUtil.getArrayByInt(-1, descLife), record.getCurrUnit()));
+            int lastLife = AppUtil.getIntByIntegers(record.getCurrUnit().getLife());
+            if (lastLife < descLife) {
+                log.info("当前中毒单位死亡");
+                UnitDeadDTO unitDeadDTO = new UnitDeadDTO(commonHandler.currUnitArmyIndex());
+                endUnitDTO.getUnitDeadDTOList().add(unitDeadDTO);
+            }else {
+                UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(commonHandler.currUnitArmyIndex());
+                unitStatusInfoDTO.setUpdateCurr(true)
+                        .setLife(AppUtil.getArrayByInt(lastLife - descLife));
+                endUnitDTO.getUnitStatusInfoDTOS().add(unitStatusInfoDTO);
+            }
+        }
+
         return endUnitDTO;
     }
 

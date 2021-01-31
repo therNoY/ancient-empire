@@ -120,6 +120,11 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         this.gameContext = gameContext;
     }
 
+    public GameContext getGameContext(){
+        return gameContext;
+    }
+
+
     /**
      * 流式
      */

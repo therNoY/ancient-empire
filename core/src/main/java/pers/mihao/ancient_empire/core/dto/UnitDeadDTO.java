@@ -11,6 +11,10 @@ public class UnitDeadDTO extends ArmyUnitIndexDTO {
     public UnitDeadDTO() {
     }
 
+    public UnitDeadDTO(ArmyUnitIndexDTO armyUnitIndexDTO) {
+        super(armyUnitIndexDTO.getArmyIndex(), armyUnitIndexDTO.getUnitIndex());
+    }
+
     public UnitDeadDTO(Integer armyIndex, Integer unitIndex) {
         super(armyIndex, unitIndex);
     }

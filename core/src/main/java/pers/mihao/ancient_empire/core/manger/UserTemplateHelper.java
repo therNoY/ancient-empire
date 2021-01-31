@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.IntegerUtil;
 
@@ -123,5 +124,13 @@ public class UserTemplateHelper {
     public boolean getRandomPromotionChance() {
         return UserTemplateHelper.COMMON.equals(userTemplate.getPromotionMode())
                 || IntegerUtil.getRandomIn(10) < 5;
+    }
+
+    /**
+     * 获取中毒者减少的生命
+     * @return
+     */
+    public int getPoisonDesLife() {
+        return 10;
     }
 }
