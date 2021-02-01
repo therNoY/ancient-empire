@@ -2,14 +2,13 @@ package pers.mihao.ancient_empire.core.dto;
 
 import pers.mihao.ancient_empire.base.util.AppUtil;
 
-import java.util.Arrays;
 
 /**
  * @author mihao
  * @version 1.0
  * @date 2020\10\11 0011 20:11
  */
-public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
+public class UnitStatusInfoDTO extends ArmyUnitIndexDTO {
 
     /**
      * 血量
@@ -72,7 +71,6 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
     public UnitStatusInfoDTO setLife(Integer life) {
         this.life = life;
-        setLifeNum(AppUtil.getArrayByInt(life));
         return this;
 
     }
@@ -83,7 +81,6 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
     public UnitStatusInfoDTO setLevel(Integer level) {
         this.level = level;
-
         return this;
 
     }
@@ -116,7 +113,7 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
     }
 
     public Integer[] getLifeNum() {
-        return lifeNum;
+        return AppUtil.getArrayByInt(life);
     }
 
     public void setLifeNum(Integer[] lifeNum) {
@@ -127,12 +124,12 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
     public String toString() {
 
         return "UnitStatusInfoDTO{" +
-            "life=" + life +
-            ", level=" + level +
-            ", status='" + status + '\'' +
-            ", experience=" + experience +
-            ", done=" + done +
-            ", updateCurr=" + updateCurr +
-            '}';
+                "life=" + life +
+                ", level=" + level +
+                ", status='" + status + '\'' +
+                ", experience=" + experience +
+                ", done=" + done +
+                ", updateCurr=" + updateCurr +
+                '}';
     }
 }
