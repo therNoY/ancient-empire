@@ -90,7 +90,7 @@ public class Unit extends Site implements Serializable {
     }
 
     public Integer[] getLifeNum() {
-        return lifeNum;
+        return AppUtil.getArrayByInt(life);
     }
 
     public void setLifeNum(Integer[] lifeNum) {
@@ -171,7 +171,6 @@ public class Unit extends Site implements Serializable {
 
     public void setLife(Integer life) {
         this.life = life;
-        this.lifeNum = AppUtil.getArrayByInt(life);
     }
 
     @Override
