@@ -278,7 +278,7 @@ public class ClickChoosePointHandler extends CommonHandler {
      * @param beAttachUnit
      */
     private void handlerAttachExp(AttachResult attachResult, int killExp, int attachExp, UnitInfo attachUnit, UnitInfo beAttachUnit) {
-        if (AppUtil.getIntByIntegers(attachResult.getLastLife()) <= 0) {
+        if (attachResult.getLastLife() <= 0) {
             // 被攻击者已死
             attachResult.setDead(true);
             // 设置经验
@@ -302,8 +302,8 @@ public class ClickChoosePointHandler extends CommonHandler {
 
         int attachNum = attachPower.getNum();
         int defenseNum = defensePower.getNum();
-        int attachUnitLeft = AppUtil.getUnitLife(attachUnit);
-        int beAttachUnitLeft = AppUtil.getUnitLife(beAttachUnit);
+        int attachUnitLeft = attachUnit.getLife();
+        int beAttachUnitLeft = beAttachUnit.getLife();
 
         log.info("{} 经过加成后的攻击力{}， {} 最终防御力 {}", attachUnit.getType(), attachNum, beAttachUnit.getType(), defenseNum);
 
@@ -339,8 +339,7 @@ public class ClickChoosePointHandler extends CommonHandler {
         }
         attachResult.setAttach(attach);
         // 设置剩余生命
-        Integer[] lastLeft = AppUtil.getArrayByInt(beAttachUnitLeft - harm);
-        beAttachUnit.setLife(lastLeft);
+        int lastLeft = beAttachUnitLeft - harm;
         attachResult.setLastLife(lastLeft);
         return attachResult;
     }

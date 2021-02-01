@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.core.manger.strategy.action;
 
-import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Tomb;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 
@@ -27,7 +27,7 @@ public class SummonerActionStrategy extends ActionStrategy {
     @Override
     public List<String> getAction(List<Site> sites, UserRecord record, Site aimSite) {
         List<String> actions = new ArrayList<>(1);
-        List<Site> tombList = record.getTomb();
+        List<Tomb> tombList = record.getTombList();
         if (tombList != null && tombList.size() > 0) {
             for (Site p : tombList) {
                 if (sites.contains(p)) {

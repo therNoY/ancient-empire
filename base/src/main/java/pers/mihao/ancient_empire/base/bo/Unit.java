@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.base.bo;
 
+import pers.mihao.ancient_empire.base.util.AppUtil;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -11,23 +13,48 @@ public class Unit extends Site implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
-    // 类型
+    /**
+     * 类型
+     */
     private String type;
-    // UnitMes ID
+    /**
+     * UnitMes ID
+     */
     private Integer typeId;
-    // 血量 [1, 0, 0]
-    private Integer[] life;
-    // 是否已死
+
+    /**
+     * 单位血量
+     */
+    private Integer life;
+
+    /**
+     * 血量方便 [1, 0, 0] 前端展示
+     */
+    private Integer[] lifeNum;
+
+    /**
+     * 是否死亡
+     */
     private Boolean dead;
-    // 等级
+    /**
+     * 等级
+     */
     private Integer level;
-    // 是否死亡
+    /**
+     * 是否死亡
+     */
     private Boolean done;
-    // 状态 buff 中毒
+    /**
+     * 状态 buff 中毒
+     */
     private String status;
-    // 状态 存在的回合 超过两个回合 就会消失
+    /**
+     * 状态 存在的回合 超过两个回合 就会消失
+     */
     private Integer statusPresenceNum;
-    // 经验值
+    /**
+     * 当前经验值
+     */
     private Integer experience;
 
     /**
@@ -62,12 +89,12 @@ public class Unit extends Site implements Serializable {
         this.type = type;
     }
 
-    public Integer[] getLife() {
-        return life;
+    public Integer[] getLifeNum() {
+        return lifeNum;
     }
 
-    public void setLife(Integer[] life) {
-        this.life = life;
+    public void setLifeNum(Integer[] lifeNum) {
+        this.lifeNum = lifeNum;
     }
 
     public Boolean isDead() {
@@ -138,20 +165,29 @@ public class Unit extends Site implements Serializable {
         this.promotion = promotion;
     }
 
+    public Integer getLife() {
+        return life;
+    }
+
+    public void setLife(Integer life) {
+        this.life = life;
+        this.lifeNum = AppUtil.getArrayByInt(life);
+    }
+
     @Override
     public String toString() {
         return "Unit{" +
-            "typeId=" + typeId +
-            ", life=" + Arrays.toString(life) +
-            ", dead=" + dead +
-            ", level=" + level +
-            ", done=" + done +
-            ", status='" + status + '\'' +
-            ", statusPresenceNum=" + statusPresenceNum +
-            ", experience=" + experience +
-            ", promotion=" + promotion +
-            ", row=" + row +
-            ", column=" + column +
-            '}';
+                "typeId=" + typeId +
+                ", lifeNum=" + Arrays.toString(lifeNum) +
+                ", dead=" + dead +
+                ", level=" + level +
+                ", done=" + done +
+                ", status='" + status + '\'' +
+                ", statusPresenceNum=" + statusPresenceNum +
+                ", experience=" + experience +
+                ", promotion=" + promotion +
+                ", row=" + row +
+                ", column=" + column +
+                '}';
     }
 }

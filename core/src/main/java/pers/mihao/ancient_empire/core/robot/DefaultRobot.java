@@ -63,7 +63,7 @@ public class DefaultRobot extends AbstractRobot {
                 score += 4000;
                 break;
             case HEAL:
-                score += 10 * (target.getLevelMes().getMaxAttack() * AppUtil.getUnitLife(target) / 100
+                score += 10 * (target.getLevelMes().getMaxAttack() * target.getLife() / 100
                     + target.getLevelMes().getSpeed() * 5);
                 break;
             case ATTACH:
@@ -102,7 +102,7 @@ public class DefaultRobot extends AbstractRobot {
         }
         // 返回剩余的血量多的
         return unitInfos.stream()
-            .sorted(Comparator.comparingInt(AppUtil::getUnitLife))
+            .sorted(Comparator.comparingInt(Unit::getLife))
             .findFirst().get();
     }
 
@@ -181,7 +181,7 @@ public class DefaultRobot extends AbstractRobot {
             needAbility.add(AbilityEnum.VILLAGE_GET);
         } else if (situation.airEnemyNum > situation.shooterNum * 2) {
             needAbility.add(AbilityEnum.SHOOTER);
-        } else if (record().getTomb() != null && record().getTomb().size() > situation.summonerNum * 3) {
+        } else if (record().getTombList() != null && record().getTombList().size() > situation.summonerNum * 3) {
             needAbility.add(AbilityEnum.SUMMONER);
         } else if (situation.unHealthNum > situation.purifyNum * 3) {
             needAbility.add(AbilityEnum.PURIFY);
@@ -203,8 +203,8 @@ public class DefaultRobot extends AbstractRobot {
      */
     private int getAttackScore(UnitInfo beAttach) {
         int score = 0;
-        int lastLeft = AppUtil.getUnitLife(beAttach);
-        int left = AppUtil.getUnitLife(currUnit());
+        int lastLeft = beAttach.getLife();
+        int left = currUnit().getLife();
         if (beAttach.getType().equals(UnitEnum.LORD.type())) {
             score += (left - lastLeft) / 10 * beAttach.getUnitMes().getPrice() * beAttach.getLevel();
         } else {

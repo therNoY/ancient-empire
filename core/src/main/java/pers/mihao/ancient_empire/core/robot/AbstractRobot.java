@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Army;
@@ -15,7 +16,6 @@ import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
-import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
@@ -126,10 +126,10 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         Army army = currArmy();
         // 1.获取目前能买的单位
         List<UnitInfo> canBuyUnitMes = unitMesService.getCanBuyUnit(record.getTemplateId())
-            .stream().map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 1))
-            .filter(unitInfo -> (unitInfo.getUnitMes().getPrice() <= army.getMoney() &&
-                unitInfo.getUnitMes().getPopulation() <= record.getMaxPop() - army.getPop()))
-            .collect(Collectors.toList());
+                .stream().map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 1))
+                .filter(unitInfo -> (unitInfo.getUnitMes().getPrice() <= army.getMoney() &&
+                        unitInfo.getUnitMes().getPopulation() <= record.getMaxPop() - army.getPop()))
+                .collect(Collectors.toList());
 
         if (canBuyUnitMes.size() > 0) {
             log.info("最便宜的都买不起 直接结束");
@@ -209,8 +209,8 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
             }
         }
         // 召唤坟墓
-        if (unitAble.hasSummoner && record().getTomb() != null) {
-            for (Site tomb : record().getTomb()) {
+        if (unitAble.hasSummoner && record().getTombList() != null) {
+            for (Site tomb : record().getTombList()) {
                 actionList.add(new ActionIntention(RobotActiveEnum.SUMMON, tomb));
             }
         }
@@ -220,9 +220,8 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
             // 治疗友军
             for (UnitInfo unitInfo : friendUnit) {
                 int maxLife = unitLevelMesService.getUnitLevelMes(unitInfo.getTypeId(), unitInfo.getLevel()).getMaxLife();
-                if (AppUtil.getUnitLife(unitInfo) < maxLife) {
-                    log.info("{} 可以进行 治疗 操作目标单位:{} 血量：{}", unit.getType(), unitInfo.getType(),
-                        AppUtil.getUnitLife(unitInfo));
+                if (unitInfo.getLife() < maxLife) {
+                    log.info("{} 可以进行 治疗 操作目标单位:{} 血量：{}", unit.getType(), unitInfo.getType(), unitInfo.getLife());
                     actionList.add(new ActionIntention(RobotActiveEnum.HEAL, unitInfo, unitInfo));
                 }
             }
@@ -265,7 +264,6 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         }
         return niceAction;
     }
-
 
 
     /**
@@ -319,7 +317,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         List<UnitInfo> moreThanHalf = new ArrayList<>();
         List<UnitInfo> lessThanHalf = new ArrayList<>();
         for (Unit unit : currArmy().getUnits()) {
-            if (AppUtil.getUnitLife(unit) > 50) {
+            if (unit.getLife() > 50) {
                 moreThanHalf.add(getUnitInfoByUnit(unit));
             } else {
                 lessThanHalf.add(getUnitInfoByUnit(unit));

@@ -24,7 +24,7 @@ public class UserRecord implements Serializable {
     // 包含所有的军队信息
     private List<Army> armyList;
     // 包含的坟墓
-    private List<Site> tomb;
+    private List<Tomb> tombList;
     // 记录的名字
     private String recordName;
     // 创建者Id
@@ -140,15 +140,15 @@ public class UserRecord implements Serializable {
         this.currentRound = currentRound;
     }
 
-    public List<Site> getTomb() {
-        if (tomb == null) {
-            tomb = new ArrayList<>();
+    public List<Tomb> getTombList() {
+        if (tombList == null) {
+            tombList = new ArrayList<>();
         }
-        return tomb;
+        return tombList;
     }
 
-    public void setTomb(List<Site> tomb) {
-        this.tomb = tomb;
+    public void setTombList(List<Tomb> tombList) {
+        this.tombList = tombList;
     }
 
     public Integer getCurrCamp() {
@@ -204,7 +204,7 @@ public class UserRecord implements Serializable {
         return "UserRecord{" +
             "uuid='" + uuid + '\'' +
             ", armyList=" + armyList +
-            ", tomb=" + tomb +
+            ", tombList=" + tombList +
             ", currentRound=" + currentRound +
             ", currColor='" + currColor + '\'' +
             ", currArmyIndex=" + currArmyIndex +

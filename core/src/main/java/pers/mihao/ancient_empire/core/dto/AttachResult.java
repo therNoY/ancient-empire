@@ -10,7 +10,7 @@ public class AttachResult  implements Serializable {
     private Integer[] attach; // 被攻击者受到伤害
     private Boolean dead; // 被攻击者是否死
 
-    private Integer[] lastLife; // 被攻击者剩余血量
+    private Integer lastLife; // 被攻击者剩余血量
     private String endStatus; // 被攻击者的状态 可能会中毒
 
     private Integer endExperience; // 攻击者结束时的经验
@@ -32,11 +32,11 @@ public class AttachResult  implements Serializable {
         this.dead = dead;
     }
 
-    public Integer[] getLastLife() {
+    public Integer getLastLife() {
         return lastLife;
     }
 
-    public void setLastLife(Integer[] lastLife) {
+    public void setLastLife(Integer lastLife) {
         this.lastLife = lastLife;
     }
 

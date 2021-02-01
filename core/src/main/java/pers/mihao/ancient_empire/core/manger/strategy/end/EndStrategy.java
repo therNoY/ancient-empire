@@ -69,15 +69,14 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
             int descLife = commonHandler.getGameContext().getPoisonDesLife();
             log.info("单位中毒需要减少生命:{}", descLife);
             endUnitDTO.getLifeChangeList().add(new LifeChangeDTO(AppUtil.getArrayByInt(-1, descLife), record.getCurrUnit()));
-            int lastLife = AppUtil.getIntByIntegers(record.getCurrUnit().getLife());
+            int lastLife = record.getCurrUnit().getLife();
             if (lastLife < descLife) {
                 log.info("当前中毒单位死亡");
                 UnitDeadDTO unitDeadDTO = new UnitDeadDTO(commonHandler.currUnitArmyIndex());
                 endUnitDTO.getUnitDeadDTOList().add(unitDeadDTO);
             }else {
                 UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(commonHandler.currUnitArmyIndex());
-                unitStatusInfoDTO.setUpdateCurr(true)
-                        .setLife(AppUtil.getArrayByInt(lastLife - descLife));
+                unitStatusInfoDTO.setUpdateCurr(true).setLife(lastLife - descLife);
                 endUnitDTO.getUnitStatusInfoDTOS().add(unitStatusInfoDTO);
             }
         }

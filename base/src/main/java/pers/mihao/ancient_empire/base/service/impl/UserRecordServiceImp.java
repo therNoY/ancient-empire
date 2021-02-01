@@ -14,12 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.GameMap;
-import pers.mihao.ancient_empire.base.bo.Region;
-import pers.mihao.ancient_empire.base.bo.RegionInfo;
-import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
@@ -33,7 +28,6 @@ import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
-import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
@@ -129,9 +123,10 @@ public class UserRecordServiceImp implements UserRecordService {
         int random = IntegerUtil.getRandomIn(5);
         int index = 0;
         if (userMap.getMapName().startsWith("测试地图")) {
-            List<Site> tomb = new ArrayList<>();
-            tomb.add(new Site(9, 7));
-            userRecord.setTomb(tomb);
+            List<Tomb> tombList = new ArrayList<>();
+            Tomb tomb1 = new Tomb(9, 7, 1);
+            tombList.add(tomb1);
+            userRecord.setTombList(tombList);
             for (Army army : armyList) {
                 for (Unit unit : army.getUnits()) {
                     if (index++ < random) {
@@ -154,7 +149,7 @@ public class UserRecordServiceImp implements UserRecordService {
                                 break;
                         }
                         unit.setLevel(IntegerUtil.getRandomIn(3));
-                        unit.setLife(AppUtil.getArrayByInt(IntegerUtil.getRandomIn(100)));
+                        unit.setLife(IntegerUtil.getRandomIn(100));
                         random = IntegerUtil.getRandomIn(5);
                         index = 0;
                     }

@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.core.dto;
 
+import pers.mihao.ancient_empire.base.util.AppUtil;
+
 import java.util.Arrays;
 
 /**
@@ -10,9 +12,14 @@ import java.util.Arrays;
 public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
     /**
-     * 血量 [1, 0, 0]
+     * 血量
      */
-    private Integer[] life;
+    private Integer life;
+
+    /**
+     * 前端展示
+     */
+    private Integer[] lifeNum;
 
     /**
      * 等级
@@ -29,6 +36,9 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
      */
     private Integer experience;
 
+    /**
+     * 是否结束
+     */
     private Boolean done;
 
     /**
@@ -56,12 +66,13 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
         return this;
     }
 
-    public Integer[] getLife() {
+    public Integer getLife() {
         return life;
     }
 
-    public UnitStatusInfoDTO setLife(Integer[] life) {
+    public UnitStatusInfoDTO setLife(Integer life) {
         this.life = life;
+        setLifeNum(AppUtil.getArrayByInt(life));
         return this;
 
     }
@@ -72,6 +83,7 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
     public UnitStatusInfoDTO setLevel(Integer level) {
         this.level = level;
+
         return this;
 
     }
@@ -103,11 +115,19 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
         this.done = done;
     }
 
+    public Integer[] getLifeNum() {
+        return lifeNum;
+    }
+
+    public void setLifeNum(Integer[] lifeNum) {
+        this.lifeNum = lifeNum;
+    }
+
     @Override
     public String toString() {
 
         return "UnitStatusInfoDTO{" +
-            "life=" + Arrays.toString(life) +
+            "life=" + life +
             ", level=" + level +
             ", status='" + status + '\'' +
             ", experience=" + experience +
