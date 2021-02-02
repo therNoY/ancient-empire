@@ -57,7 +57,7 @@ public class GameMonitorController {
             UserRecord record = BeanUtil.deptClone(gameContext.getUserRecord());
             record.setGameMap(null);
             if (StringUtil.isNotBlack(monitorDTO.getCurrArmyIndex())) {
-                Integer index = Integer.valueOf(monitorDTO.getCurrArmyIndex());
+                int index = Integer.parseInt(monitorDTO.getCurrArmyIndex());
                 List<Army> armyList = new ArrayList<>();
                 armyList.add(record.getArmyList().get(index));
                 record.setArmyList(armyList);

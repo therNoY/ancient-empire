@@ -30,9 +30,7 @@ public class BeanUtil {
                 GetSetDTO cPair = toMap.get(entry.getKey());
                 cPair.getSet().invoke(to, pair.getGet().invoke(from));
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return to;
@@ -56,11 +54,7 @@ public class BeanUtil {
                 GetSetDTO cPair = cMap.get(entry.getKey());
                 cPair.getSet().invoke(res, pair.getGet().invoke(t));
             }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return res;
@@ -75,9 +69,7 @@ public class BeanUtil {
                 ReflectUtil.setValueByFieldName(obj, field.getName(), ReflectUtil.getValueByField(t, field));
             }
             return (T) obj;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
@@ -103,9 +95,7 @@ public class BeanUtil {
                     toMethod.getSet().invoke(to, res);
                 }
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -127,11 +117,7 @@ public class BeanUtil {
                 GetSetDTO pair = entry.getValue();
                 pair.getSet().invoke(res, pair.getGet().invoke(t));
             }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return res;
