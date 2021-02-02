@@ -9,17 +9,13 @@ import java.util.stream.Collectors;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.Region;
-import pers.mihao.ancient_empire.base.bo.RegionInfo;
-import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -136,7 +132,9 @@ public class CommonHandler extends AbstractGameEventHandler {
         JSONObject extMes = gameCommand.getExtMes();
         switch (gameCommand.getGameCommendEnum()) {
             case ADD_TOMB:
-                record().getTomb().add(new Site(gameCommand.getAimSite()));
+                Unit unitInfo = (Unit) gameCommand.getAimSite();
+                Tomb newTomb = new Tomb(unitInfo, unitInfo.getTypeId());
+                record().getTombList().add(newTomb);
                 break;
             case ADD_UNIT:
                 List<Unit> units = record().getArmyList().get(extMes.getInteger(ExtMes.ARMY_INDEX)).getUnits();
@@ -151,7 +149,7 @@ public class CommonHandler extends AbstractGameEventHandler {
                 break;
             case REMOVE_TOMB:
                 // 移除坟墓
-                record().getTomb().remove(new Site(gameCommand.getAimSite()));
+                record().getTombList().remove(new Site(gameCommand.getAimSite()));
                 break;
 
             case CHANGE_UNIT_STATUS:
@@ -407,8 +405,24 @@ public class CommonHandler extends AbstractGameEventHandler {
         for (UnitDeadDTO deadDTO : endUnitDTO.getUnitDeadDTOList()) {
             sendUnitDeadCommend(getUnitInfoByIndex(deadDTO), deadDTO);
         }
+
         // 修改单位的状态有顺序（结束回合）
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
+
+        // 处理单位是否站在坟墓上
+        int changeLifeByDestroyTomb = gameContext.getChangeLifeByDestroyTomb();
+        boolean isDEAD = unitInfo.getAbilities().contains(AbilityEnum.UNDEAD.ability());
+        for (Tomb tomb : record().getTombList()) {
+            if (AppUtil.siteEquals(tomb,currUnit())) {
+                if (isDEAD) {
+                    // TODO
+                }else {
+                    // TODO
+                }
+                break;
+            }
+        }
+
         unitStatusInfoDTO.setDone(true);
         unitStatusInfoDTO.setUpdateCurr(true);
         commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);

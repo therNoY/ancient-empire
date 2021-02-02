@@ -1,15 +1,17 @@
 package pers.mihao.ancient_empire.base.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.*;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.UnitEnum;
+import pers.mihao.ancient_empire.common.util.IntegerUtil;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 和业务有关的工具类 方便修改
@@ -71,86 +73,6 @@ public class AppUtil {
     public static BaseSquare getRegionByPosition(List<Region> regions, int row, int column, Integer mapColumn) {
         return regions.get((row - 1) * mapColumn - 1 + column);
     }
-
-    /**
-     * 根据 单位的action  和 最重点的位置渲染 单位action 图标的位置
-     */
-//    public static List<RespAction> addActionAim(List<String> actionList, Position cUnit) {
-//        List<RespAction> respActions = new ArrayList<>();
-//        for (String s : actionList) {
-//            respActions.add(new RespAction(s, (float) cUnit.getRow(), (float) cUnit.getColumn()));
-//        }
-//        return respActions;
-//    }
-
-    /**
-     * 根据 单位的action  和 最重点的位置渲染 单位action 图标的位置
-     */
-//    public static List<RespAction> addActionPosition(List<String> actionList, Position cUnit) {
-//
-//        List<RespAction> respActions = new ArrayList<>();
-//
-//        if (actionList.size() == 1) {
-//            // 只有一个action 显示在下面
-//            RespAction action = new RespAction(actionList.get(0));
-//            action.setRow((float) (cUnit.getRow() + 1));
-//            action.setColumn((float) (cUnit.getColumn() + 0.16));
-//            respActions.add(action);
-//
-//        } else if (actionList.size() == 2) {
-//            // 2个action一个显示在上面 一个显示下面
-//            RespAction action = new RespAction(actionList.get(0));
-//            action.setRow((float) (cUnit.getRow() - 1));
-//            action.setColumn((float) (cUnit.getColumn() + 0.16));
-//            respActions.add(action);
-//
-//            RespAction action2 = new RespAction(actionList.get(1));
-//            action2.setRow((float) (cUnit.getRow() + 1));
-//            action2.setColumn((float) (cUnit.getColumn() + 0.16));
-//            respActions.add(action2);
-//        } else if (actionList.size() == 3) {
-//            // 3个显示个3交
-//            RespAction action = new RespAction(actionList.get(0));
-//            action.setRow((float) (cUnit.getRow() - 1));
-//            action.setColumn((float) (cUnit.getColumn() + 0.16));
-//            respActions.add(action);
-//
-//            RespAction action2 = new RespAction(actionList.get(1));
-//            action2.setRow((float) (cUnit.getRow() + 1));
-//            action2.setColumn((float) (cUnit.getColumn() + 0.84));
-//            respActions.add(action2);
-//
-//            RespAction action3 = new RespAction(actionList.get(2));
-//            action3.setRow((float) (cUnit.getRow() + 1));
-//            action3.setColumn((float) (cUnit.getColumn() - 0.84));
-//            respActions.add(action3);
-//        } else if (actionList.size() == 4) {
-//            // 4个显示
-//            RespAction action = new RespAction(actionList.get(0));
-//            action.setRow((float) (cUnit.getRow() - 1));
-//            action.setColumn((float) (cUnit.getColumn() + 0.16));
-//            respActions.add(action);
-//
-//            RespAction action2 = new RespAction(actionList.get(1));
-//            action2.setRow((float) (cUnit.getRow() + 1));
-//            action2.setColumn((float) (cUnit.getColumn() + 0.16));
-//            respActions.add(action2);
-//
-//            RespAction action3 = new RespAction(actionList.get(2));
-//            action3.setRow((float) (cUnit.getRow() + 0.16));
-//            action3.setColumn((float) (cUnit.getColumn() - 1));
-//            respActions.add(action3);
-//
-//            RespAction action4 = new RespAction(actionList.get(3));
-//            action4.setRow((float) (cUnit.getRow() + 0.16));
-//            action4.setColumn((float) (cUnit.getColumn() + 1));
-//            respActions.add(action4);
-//        } else {
-//            log.error("不可能存在的Action");
-//        }
-//
-//        return respActions;
-//    }
 
 
     /**
@@ -273,40 +195,14 @@ public class AppUtil {
     /**
      * 获取单位的攻击（大于最小 小于最大）
      */
-//    public static int getAttachNum(UnitLevelMes levelMes) {
-//        int min = levelMes.getMinAttack();
-//        int max = levelMes.getMaxAttack();
-//        int att = IntegerUtil.getRandomIn(min, max);
-//        log.info("获取{} 和 {} 攻击的中间值 {}", min, max, att);
-//        return att;
-//    }
-
-    /**
-     * 获取单位的生命 int[] -> int
-     *
-     * @param unit
-     * @return
-     */
-    public static int getUnitLife(Unit unit) {
-        Integer[] life = unit.getLife();
-        return getIntByIntegers(life);
+    public static int getAttachNum(UnitLevelMes levelMes) {
+        int min = levelMes.getMinAttack();
+        int max = levelMes.getMaxAttack();
+        int att = IntegerUtil.getRandomIn(min, max);
+        log.info("获取{} 和 {} 攻击的中间值 {}", min, max, att);
+        return att;
     }
 
-    public static int getIntByIntegers(Integer[] life) {
-
-        if (life != null && life.length > 0) {
-            if (life[0] == -1) {
-                return 0;
-            } else {
-                double sum = 0;
-                for (int i = 0; i < life.length; i++) {
-                    sum = (life[i] * Math.pow(10, life.length - 1 - i) + sum);
-                }
-                return (int) sum;
-            }
-        }
-        return 0;
-    }
 
     /**
      * 将int 转成 Integer[]
@@ -437,24 +333,6 @@ public class AppUtil {
         return -1;
     }
 
-//    public static int getHpRecover(BaseSquare square) {
-//        RegionEnum regionEnum = EnumUtil.valueOf(RegionEnum.class, square.getType());
-//        switch (regionEnum) {
-//            case RegionEnum.TOWN:
-//            case RegionEnum.CASTLE:
-//                return 20;
-//            case RegionEnum.STOCK:
-//            case RegionEnum.TEMPLE:
-//            case RegionEnum.SEA:
-//            case RegionEnum.SEA_HOUSE:
-//                return 15;
-//            case RegionEnum.REMAINS2:
-//                return 35;
-//            default:
-//                return 0;
-//        }
-//    }
-
     public static Unit getUnitId(UserRecord record, String uuid) {
         Army army = AppUtil.getCurrentArmy(record);
         for (Unit unit : army.getUnits()) {
@@ -465,7 +343,7 @@ public class AppUtil {
         return null;
     }
 
-    public static boolean isUnitsContentSite(List<Unit> units, Site site) {
+    public static boolean unitsContentSite(List<Unit> units, Site site) {
         for (Unit u : units) {
             if (u.getRow().equals(site.getRow()) && u.getColumn().equals(site.getColumn())) {
                 return true;
@@ -477,7 +355,7 @@ public class AppUtil {
     // ****************************************新的方法***********************************************
 
     // 比较位置是否相等
-    public static boolean siteEquals(Unit unit, Site site) {
-        return unit.getRow().equals(site.getRow()) && unit.getColumn().equals(site.getColumn());
+    public static boolean siteEquals(Site Site, Site site) {
+        return Site.getRow().equals(site.getRow()) && Site.getColumn().equals(site.getColumn());
     }
 }

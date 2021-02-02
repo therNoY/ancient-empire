@@ -3,10 +3,7 @@ package pers.mihao.ancient_empire.core.manger.handler;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.BaseSquare;
-import pers.mihao.ancient_empire.base.bo.Region;
-import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -90,7 +87,10 @@ public class RoundEndHandler extends CommonHandler {
         // 4.当前新的军队的生命变化以及状态变化
         changeUnitStatus();
 
-        // 5. 改变记录信息
+        // 5.修改坟墓的状态 会消失
+        changeTombStatus();
+
+        // 6. 改变记录信息
         GameInfoDTO gameInfoDTO = new GameInfoDTO();
         gameInfoDTO.setCurrCamp(currArmy().getCamp());
         gameInfoDTO.setCurrColor(currArmy().getColor());
@@ -102,7 +102,6 @@ public class RoundEndHandler extends CommonHandler {
                 .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_GAME_NEWS, ExtMes.MESSAGE, currArmy().getColor() + "色方回合收入" + addMoney);
 
     }
-
 
     private void changeUnitStatus() {
         List<LifeChangeDTO> lifeChanges = new ArrayList<>();
@@ -126,7 +125,7 @@ public class RoundEndHandler extends CommonHandler {
             lifeChangeDTO = new LifeChangeDTO();
             unitStatusInfoDTO = new UnitStatusInfoDTO();
             levelMes = unitLevelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
-            lastLife = AppUtil.getUnitLife(unit);
+            lastLife = unit.getLife();
             restoreLife = levelMes.getMaxLife() - lastLife;
 
             // 如果状态数 > 0 就减1
@@ -154,8 +153,10 @@ public class RoundEndHandler extends CommonHandler {
                     unitStatusInfoDTO.setUnitIndex(i);
                     if (restoreLife < regionRestore) {
                         lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, restoreLife));
+                        unitStatusInfoDTO.setLife(unit.getLife() + restoreLife);
                     } else {
                         lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, regionRestore));
+                        unitStatusInfoDTO.setLife(unit.getLife() + regionRestore);
                     }
                 }
             } else {
@@ -196,6 +197,17 @@ public class RoundEndHandler extends CommonHandler {
         }
     }
 
+    private void changeTombStatus() {
+        List<Tomb> tombs = record().getTombList();
+        int maxPresenceNum = gameContext.getTombPresenceNum();
+        for (Tomb tomb : tombs) {
+            if (tomb.getPresenceNum() >= maxPresenceNum) {
+                commandStream().toGameCommand().addCommand(GameCommendEnum.REMOVE_TOMB, tomb);
+            }else {
+                tomb.setPresenceNum(tomb.getPresenceNum() + 1);
+            }
+        }
+    }
 
     /**
      * 改变当前回合 修改当前单位

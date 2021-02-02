@@ -77,7 +77,7 @@ public class PurifyEndStrategy extends EndStrategy {
 
             if (abilityList.contains(AbilityEnum.UNDEAD.ability())) {
                 // 亡灵净化
-                int life = AppUtil.getUnitLife(unit);
+                int life = unit.getLife();
                 if (life <= buff) {
                     // 亡灵死亡
                     log.info("亡灵：{} 被净化者净化死亡", unit);
@@ -86,19 +86,19 @@ public class PurifyEndStrategy extends EndStrategy {
                 } else {
                     endUnitDTO.getLifeChangeList().add(new LifeChangeDTO(AppUtil.getArrayByInt(-1, buff), unit));
                     isChange = true;
-                    statusInfoDTO.setLife(AppUtil.getArrayByInt(life - buff));
+                    statusInfoDTO.setLife(life - buff);
                 }
             }else if (army.getCamp().equals(record.getCurrCamp())) {
                 // 残血友军回血
                 levelMes = levelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
-                int unitLife = AppUtil.getUnitLife(unit);
+                int unitLife = unit.getLife();
                 int maxRestore = levelMes.getMaxLife() - unitLife;
                 if (maxRestore != 0) {
                     int restore = Math.min(maxRestore, buff);
                     LifeChangeDTO restoreLife = new LifeChangeDTO(AppUtil.getArrayByInt(10, restore), unit);
                     endUnitDTO.getLifeChangeList().add(restoreLife);
                     isChange = true;
-                    statusInfoDTO.setLife(AppUtil.getArrayByInt(restore + unitLife));
+                    statusInfoDTO.setLife(restore + unitLife);
                 }
             }
             if (isChange) {

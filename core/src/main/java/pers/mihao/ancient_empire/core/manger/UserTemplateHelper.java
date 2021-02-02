@@ -156,4 +156,15 @@ public class UserTemplateHelper {
     public int getStatusRoundNum() {
         return 2;
     }
+
+    /**
+     * 获取这个坟墓存在的回合数
+     */
+    public int getTombPresenceNum() {
+        return 3;
+    }
+
+    public int getChangeLifeByDestroyTomb() {
+        return 10;
+    }
 }
