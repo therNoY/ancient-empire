@@ -64,7 +64,6 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
     }
 
     private void initAppCatch() {
-        userRecordService.initMap();
         AbstractRobot.registerRobotActiveHandler();
     }
 

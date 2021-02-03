@@ -16,8 +16,12 @@ public interface UserRecordService extends MapService{
      */
     UserRecord initMapRecord(ReqInitMapDto reqInitMapDto, UserMap userMap);
 
-    void initMap();
 
+    /**
+     * 根据id获取地图
+     * @param uuid
+     * @return
+     */
     UserRecord getRecordById(String uuid);
 
     boolean saveRecord(ReqSaveRecordDto saveRecordDto);

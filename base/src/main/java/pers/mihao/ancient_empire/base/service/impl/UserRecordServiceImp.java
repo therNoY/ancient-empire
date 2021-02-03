@@ -54,10 +54,6 @@ public class UserRecordServiceImp implements UserRecordService {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    // TODO 这个设计是为了可能出现对缓存和mongo 中的操作过于频繁导致效率不高
-    //  搞成内存操作 但是稍微复杂 且可能会在单多机操作出现问题
-    private Map<String, UserRecord> recordMap; // key: recordId, value record
-
     private static String tempMap = "临时地图";
 
     /**
@@ -176,12 +172,6 @@ public class UserRecordServiceImp implements UserRecordService {
         return userRecord;
     }
 
-    @Override
-    public void initMap() {
-        if (recordMap == null) {
-            recordMap = new HashMap<>();
-        }
-    }
     /**
      * 获取 Record By uuid
      * 这里不使用 Spring catchAble 原因是保存改缓存使用的是redishelper 设置 序列化方式不一样

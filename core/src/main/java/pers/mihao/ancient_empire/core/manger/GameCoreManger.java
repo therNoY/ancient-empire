@@ -14,6 +14,7 @@ import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.manger.command.Command;
@@ -64,24 +65,29 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
 
     /**
-     * 线程池处理的任务
+     * 线程池处理游戏事件任务 支持单个事件事务
      *
      * @param event
      */
     @Override
     public void handelTask(GameEvent event) {
         GameContext.setUserId(event.getUserId());
+        GameContext gameContext = contextMap.get(event.getGameId());
+        // 备份内存数据
+        GameContext cloneContext = BeanUtil.deptClone(gameContext);
         try {
             Class clazz = handlerMap.get(event.getEvent());
             if (clazz != null) {
-                GameHandler handler = (GameHandler) clazz.newInstance();
-                handler.setGameContext(contextMap.get(event.getGameId()));
-                List<Command> commands = handler.handler(event);
+                GameHandler gameHandler = (GameHandler) clazz.newInstance();
+                gameHandler.setGameContext(gameContext);
+                List<Command> commands = gameHandler.handler(event);
                 // 处理任务返回 处理任务结果
                 handleCommand(commands, event.getGameId());
             }
         } catch (Exception e) {
             log.error("执行任务出错:{}", event, e);
+            gameContext = null;
+            contextMap.put(event.getGameId(), cloneContext);
         } finally {
             GameContext.clear();
         }
