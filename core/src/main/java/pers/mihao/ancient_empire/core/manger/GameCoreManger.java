@@ -21,6 +21,7 @@ import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  * 分发事件 处理事件 生成结果 处理结果
@@ -55,13 +56,13 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     // 注册哨兵线程池
     private Executor sentinelPool = new ThreadPoolExecutor(
-        0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
-        new SynchronousQueue(),
-        runnable -> {
-            Thread thread = new Thread(runnable);
-            thread.setName(START_GAME_SENTINEL + threadIndex.getAndIncrement());
-            return thread;
-        });
+            0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
+            new SynchronousQueue(),
+            runnable -> {
+                Thread thread = new Thread(runnable);
+                thread.setName(START_GAME_SENTINEL + threadIndex.getAndIncrement());
+                return thread;
+            });
 
 
     /**
@@ -75,36 +76,39 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         GameContext gameContext = contextMap.get(event.getGameId());
         // 备份内存数据
         GameContext cloneContext = BeanUtil.deptClone(gameContext);
+        GameCoreHelper.setContext(gameContext);
         try {
             Class clazz = handlerMap.get(event.getEvent());
             if (clazz != null) {
                 GameHandler gameHandler = (GameHandler) clazz.newInstance();
                 gameHandler.setGameContext(gameContext);
-                List<Command> commands = gameHandler.handler(event);
+                List<GameCommand> commands = gameHandler.handler(event);
                 // 处理任务返回 处理任务结果
                 handleCommand(commands, event.getGameId());
             }
         } catch (Exception e) {
-            log.error("执行任务出错:{}", event, e);
+            log.error("执行任务出错: {}, 回退", event, e);
             gameContext = null;
             contextMap.put(event.getGameId(), cloneContext);
         } finally {
             GameContext.clear();
+            GameCoreHelper.removeContext();
         }
     }
 
     /**
      * 处理命令集合
+     *
      * @param commands
      * @param gameId
      */
-    public void handleCommand(List<Command> commands, String gameId) {
+    public void handleCommand(List<GameCommand> commands, String gameId) {
         if (commands != null && commands.size() > 0) {
 
             // 过滤掉需要顺序执行的 其他的直接发送
-            List<Command> orderCommand = commands.stream().filter(command -> command.getOrder() != null)
-                .sorted(Comparator.comparing(Command::getOrder))
-                .collect(Collectors.toList());
+            List<GameCommand> orderCommand = commands.stream().filter(command -> command.getOrder() != null)
+                    .sorted(Comparator.comparing(Command::getOrder))
+                    .collect(Collectors.toList());
 
             gameSessionManger.sendOrderMessage2Game(orderCommand, gameId);
 
@@ -241,7 +245,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     public GameContext getOneGame() {
         if (contextMap.size() > 0) {
             return contextMap.entrySet().iterator().next().getValue();
-        }else {
+        } else {
             return null;
         }
     }

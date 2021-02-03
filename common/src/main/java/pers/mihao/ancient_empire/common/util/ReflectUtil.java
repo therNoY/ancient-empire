@@ -287,7 +287,7 @@ public class ReflectUtil {
                     field.setAccessible(false);
                 }
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                // doNoting
             }
         }
     }

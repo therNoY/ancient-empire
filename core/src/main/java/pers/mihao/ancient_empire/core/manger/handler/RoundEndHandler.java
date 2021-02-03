@@ -124,6 +124,8 @@ public class RoundEndHandler extends CommonHandler {
         // 单位状态变化
         UnitStatusInfoDTO unitStatusInfoDTO;
         int descLife, lastLife;
+        // 保证动画顺序
+        boolean isDead = false;
 
         for (int i = 0; i < currArmy().getUnits().size(); i++) {
             Unit unit = currArmy().getUnits().get(i);
@@ -150,7 +152,7 @@ public class RoundEndHandler extends CommonHandler {
                 if (lifeChangeDTO != null) {
                     unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
                     unitStatusInfoDTO.setUnitIndex(i);
-                    unitStatusInfoDTO.setLife(AppUtil.getIntByArray(lifeChangeDTO.getAttach()));
+                    unitStatusInfoDTO.setLife(unit.getLife() + AppUtil.getIntByArray(lifeChangeDTO.getAttach()));
                 }
             } else {
                 // 中毒不能回血 只能扣血
@@ -162,16 +164,22 @@ public class RoundEndHandler extends CommonHandler {
                 unitStatusInfoDTO.setUnitIndex(i);
                 if (descLife >= lastLife) {
                     lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, lastLife));
-                    // 单位死亡
-                    sendUnitDeadCommend(getUnitInfoByUnit(unit), new ArmyUnitIndexDTO(record().getCurrArmyIndex(), i));
+                    isDead = true;
                 } else {
+                    unitStatusInfoDTO.setLife(lastLife - descLife);
                     lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, descLife));
                 }
             }
 
             // 如果生命有变化
             if (lifeChangeDTO != null && lifeChangeDTO.getRow() != null) {
-                lifeChanges.add(lifeChangeDTO);
+                commandStream().toGameCommand()
+                        .addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChangeDTO);
+            }
+
+            if (isDead) {
+                // 单位死亡
+                sendUnitDeadCommend(getUnitInfoByUnit(unit), new ArmyUnitIndexDTO(record().getCurrArmyIndex(), i));
             }
 
             // 根据是否设置index 判断单位状态是否有变化
@@ -180,11 +188,6 @@ public class RoundEndHandler extends CommonHandler {
             }
         }
 
-        // 发送命令
-        if (lifeChanges.size() > 0) {
-            commandStream().toGameCommand()
-                .addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChanges);
-        }
         if (unitStatusChanges.size() > 0) {
             commandStream().toGameCommand().changeUnitStatus(unitStatusChanges);
         }
@@ -193,12 +196,16 @@ public class RoundEndHandler extends CommonHandler {
     private void changeTombStatus() {
         List<Tomb> tombs = record().getTombList();
         int maxPresenceNum = gameContext.getTombPresenceNum();
+        List<Tomb> removeTomb = new ArrayList<>();
         for (Tomb tomb : tombs) {
             if (tomb.getPresenceNum() >= maxPresenceNum) {
-                commandStream().toGameCommand().addCommand(GameCommendEnum.REMOVE_TOMB, tomb);
+                removeTomb.add(tomb);
             } else {
                 tomb.setPresenceNum(tomb.getPresenceNum() + 1);
             }
+        }
+        for (Tomb tomb : removeTomb) {
+            commandStream().toGameCommand().addCommand(GameCommendEnum.REMOVE_TOMB, tomb);
         }
     }
 

@@ -41,7 +41,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
             return;
         }else if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON, StatusMachineEnum.WILL_ATTACH_REGION)) {
             // 点击其他区域的单位就返回
-            commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
+            commandStream().toGameCommand().showAction(gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         }else if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
             // 如果当前子状态是 必须移动 那么就返回 并设置必须移动
@@ -74,7 +74,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
                 gameContext.setActions(actions);
                 gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
                 gameContext.setStartMoveSite(gameEvent.getInitiateSite());
-                commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, actions)
+                commandStream().toGameCommand().showAction(actions)
                         .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
             } else {
                 List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), unitInfo);

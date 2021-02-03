@@ -116,7 +116,7 @@ public class UserRecordServiceImp implements UserRecordService {
         regionInfo.setColor(region.getColor());
         userRecord.setCurrRegion(regionInfo);
         // TODO 测试
-        int random = IntegerUtil.getRandomIn(5);
+        int random = IntegerUtil.getRandomIn(10);
         int index = 0;
         if (userMap.getMapName().startsWith("测试地图")) {
             List<Tomb> tombList = new ArrayList<>();

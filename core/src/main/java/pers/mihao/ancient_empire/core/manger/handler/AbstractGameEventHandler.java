@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.manger.handler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     // 命令集合
-    protected List<Command> commandList = null;
+    protected List<GameCommand> commandList = null;
     // 帮助构建流
     private Stream stream;
 
@@ -40,7 +41,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     @Override
     @ExecuteTime
-    public final List<Command> handler(Event event) {
+    public final List<GameCommand> handler(Event event) {
         log.info("开始处理事件：{}", event);
         handlerGameEvent((GameEvent) event);
         log.info("处理事件结束 返回的命令集合：{}", commandList);
@@ -99,7 +100,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
      * 返回的命令
      * @param command
      */
-    protected AbstractGameEventHandler addGameCommand(Command command) {
+    protected AbstractGameEventHandler addGameCommand(GameCommand command) {
         if (commandList == null) {
             commandList = new ArrayList<>();
         }
@@ -233,6 +234,16 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             setGameCommendEnum(gameCommendEnum);
             JSONObject extData = new JSONObject(2);
             extData.put(key, value);
+            setExtMes(extData);
+            addGameCommand(this);
+            return stream;
+        }
+
+        public Stream showAction(Set<String> action){
+            setGameCommendEnum(GameCommendEnum.SHOW_ACTION);
+            JSONObject extData = new JSONObject(2);
+            extData.put(ExtMes.ACTIONS, action);
+            extData.put(ExtMes.SITE, currSite());
             setExtMes(extData);
             addGameCommand(this);
             return stream;

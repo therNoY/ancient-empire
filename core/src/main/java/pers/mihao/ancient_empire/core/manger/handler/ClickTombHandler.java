@@ -24,7 +24,7 @@ public class ClickTombHandler extends CommonHandler{
                 gameContext.setBeSummonTomb(gameEvent.getInitiateSite());
             } else {
                 // 点击其他区域的单位就返回
-                commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ACTION, ExtMes.ACTIONS, gameContext.getActions());
+                commandStream().toGameCommand().showAction(gameContext.getActions());
                 gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
             }
         }else {

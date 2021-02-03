@@ -13,7 +13,7 @@ public class HillCloseStartStrategy extends StartStrategy{
 
     @Override
     protected int recoverLife(RegionMes regionMes) {
-        if (regionMes.getType().equals(RegionEnum.GROVE.type())) {
+        if (regionMes.getType().equals(RegionEnum.STONE.type())) {
             return GameCoreHelper.getContext().getRecoverByAbility(AbilityEnum.HILL_CLOSE);
         }
         return 0;

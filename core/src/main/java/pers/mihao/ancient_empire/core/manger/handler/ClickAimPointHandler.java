@@ -41,6 +41,7 @@ public class ClickAimPointHandler extends CommonHandler{
             JSONObject extMes = new JSONObject();
             extMes.put(ExtMes.MOVE_LINE, gameContext.getReadyMoveLine());
             extMes.put(ExtMes.ACTIONS, actions);
+            extMes.put(ExtMes.SITE, currSite());
             commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
                     .toGameCommand().addCommand(GameCommendEnum.MOVE_UNIT, extMes, getCurrUnitIndex());
             gameContext.setStartMoveSite(currUnit());

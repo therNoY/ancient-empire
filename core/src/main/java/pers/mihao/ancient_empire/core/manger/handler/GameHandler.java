@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.manger.handler;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.Handler;
 import pers.mihao.ancient_empire.core.manger.command.Command;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.Event;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface GameHandler extends Handler {
      * @param event
      * @return
      */
-    List<Command> handler(Event event);
+    List<GameCommand> handler(Event event);
 
     /**
      * 游戏上下文

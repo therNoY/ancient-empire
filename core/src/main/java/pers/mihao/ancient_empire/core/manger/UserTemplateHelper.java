@@ -155,7 +155,7 @@ public class UserTemplateHelper {
      * @return
      */
     public int getStatusRoundNum() {
-        return 2;
+        return 3;
     }
 
     /**

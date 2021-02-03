@@ -49,8 +49,8 @@ public class StartStrategy extends AbstractStrategy<StartStrategy> {
         // 单位等级信息
         UnitLevelMes levelMes  = unitLevelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
         needRestoreLife = levelMes.getMaxLife() - lastLife;
+        LifeChangeDTO lifeChangeDTO = null;
         if (needRestoreLife > 0) {
-            LifeChangeDTO lifeChangeDTO = null;
             if ((regionRestore = regionInfo.getRestore()) > 0 && colorIsCamp(record, regionInfo.getColor())) {
                 log.info("根据建筑物回血 需要回血：{} 地形可以回血：{}", needRestoreLife, regionRestore);
                 lifeChangeDTO = new LifeChangeDTO();
@@ -68,20 +68,19 @@ public class StartStrategy extends AbstractStrategy<StartStrategy> {
                     int recoverLife = startStrategy.recoverLife(regionInfo);
                     count += recoverLife;
                 }
-                if (needRestoreLife < count) {
-                    lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, needRestoreLife));
-                } else {
-                    lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, count));
-                }
                 if (count > 0) {
                     lifeChangeDTO = new LifeChangeDTO();
-                    lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, count));
+                    lifeChangeDTO.setRow(unit.getRow());
+                    lifeChangeDTO.setColumn(unit.getColumn());
+                    if (needRestoreLife < count) {
+                        lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, needRestoreLife));
+                    } else {
+                        lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, count));
+                    }
                 }
             }
         }
-
-
-        return null;
+        return lifeChangeDTO;
     }
 
     protected int recoverLife(RegionMes regionMes) {

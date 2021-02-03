@@ -72,6 +72,7 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
     public UnitStatusInfoDTO setLife(Integer life) {
         this.life = life;
+        setLifeNum(AppUtil.getArrayByInt(life));
         return this;
 
     }
@@ -82,7 +83,6 @@ public class UnitStatusInfoDTO extends ArmyUnitIndexDTO{
 
     public UnitStatusInfoDTO setLevel(Integer level) {
         this.level = level;
-        setLifeNum(AppUtil.getArrayByInt(level));
         return this;
 
     }

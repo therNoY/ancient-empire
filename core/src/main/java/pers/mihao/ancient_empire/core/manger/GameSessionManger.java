@@ -157,7 +157,7 @@ public class GameSessionManger {
      * @param gameId
      * @throws IOException
      */
-    public void sendOrderMessage2Game(List<Command> commandList, String gameId) {
+    public void sendOrderMessage2Game(List<? extends Command> commandList, String gameId) {
         List<GameSession> gameSessions = sessionMap.get(gameId);
         for (Command command : commandList) {
             setMessagePrefix((GameCommand) command);

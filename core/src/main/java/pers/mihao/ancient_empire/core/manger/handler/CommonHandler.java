@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,8 @@ import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy
 /**
  * 通用处理类 处理通用的业务操做
  *
- * @version 1.0
  * @author mihao
+ * @version 1.0
  * @date 2020\10\4 0004 8:19
  */
 public class CommonHandler extends AbstractGameEventHandler {
@@ -63,6 +64,9 @@ public class CommonHandler extends AbstractGameEventHandler {
     }
 
     private void handlerLevelUp(UnitStatusInfoDTO unitStatus) {
+        if (!isInvalidCommand(unitStatus)) {
+            return;
+        }
         // 更新单位的状态
         Unit unit = getUnitByIndex(unitStatus);
         // 判断是否升级
@@ -158,22 +162,12 @@ public class CommonHandler extends AbstractGameEventHandler {
                     // 这种是回合结束 回合开始 不更新单位的位置
                     List<UnitStatusInfoDTO> unitStatusList = (List<UnitStatusInfoDTO>) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
                     for (UnitStatusInfoDTO unitStatus : unitStatusList) {
-                        Unit unit = getUnitByIndex(unitStatus);
-                        updateUnitInfo(unit, unitStatus);
-                        if (Boolean.TRUE.equals(unitStatus.getUpdateCurr())) {
-                            unit.setRow(currSite().getRow());
-                            unit.setColumn(currSite().getColumn());
-                        }
+                        updateUnitInfo(unitStatus);
                     }
                 } else {
                     // 单个需要更新当前单位的位置
                     UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
-                    Unit unit = getUnitByIndex(unitStatus);
-                    updateUnitInfo(unit, unitStatus);
-                    if (Boolean.TRUE.equals(unitStatus.getUpdateCurr())) {
-                        unit.setRow(currSite().getRow());
-                        unit.setColumn(currSite().getColumn());
-                    }
+                    updateUnitInfo(unitStatus);
                 }
                 break;
             case CHANGE_CURR_REGION:
@@ -197,6 +191,27 @@ public class CommonHandler extends AbstractGameEventHandler {
             default:
                 break;
         }
+    }
+
+    private void updateUnitInfo(UnitStatusInfoDTO unitStatus) {
+        if (isInvalidCommand(unitStatus)) {
+            Unit unit = getUnitByIndex(unitStatus);
+            updateUnitInfo(unit, unitStatus);
+            if (Boolean.TRUE.equals(unitStatus.getUpdateCurr())) {
+                unit.setRow(currSite().getRow());
+                unit.setColumn(currSite().getColumn());
+            }
+        }
+    }
+
+    private boolean isInvalidCommand(UnitStatusInfoDTO unitStatusInfoDTO) {
+        return unitStatusInfoDTO != null &&
+                (StringUtil.isNotBlack(unitStatusInfoDTO.getStatus())
+                        || (unitStatusInfoDTO.getExperience()) != null
+                        || (unitStatusInfoDTO.getDone()) != null
+                        || (unitStatusInfoDTO.getLevel()) != null
+                        || (unitStatusInfoDTO.getLife()) != null
+                );
     }
 
     protected void updateUnitInfo(Unit unit, UnitStatusInfoDTO unitStatusInfoDTO) {
@@ -413,19 +428,19 @@ public class CommonHandler extends AbstractGameEventHandler {
         int changeLifeByDestroyTomb = gameContext.getChangeLifeByDestroyTomb();
         boolean isUnDead = unitInfo.getAbilities().contains(AbilityEnum.UNDEAD.ability()), unitDead = false;
         for (Tomb tomb : record().getTombList()) {
-            if (AppUtil.siteEquals(tomb,currUnit())) {
+            if (AppUtil.siteEquals(tomb, currUnit())) {
                 // 摧毁坟墓消失
                 commandStream().toGameCommand().addCommand(GameCommendEnum.REMOVE_TOMB, tomb);
                 if (isUnDead) {
                     log.info("亡灵单位摧毁坟墓,需要加血");
-                    int restoreLife = currUnit().getLevelMes().getMaxLife() - currUnit().getLife(), restore = restoreLife;
+                    int restoreLife = currUnit().getLevelMes().getMaxLife() - currUnit().getLife(), restore = changeLifeByDestroyTomb;
                     if (restoreLife < changeLifeByDestroyTomb) {
                         restore = restoreLife - changeLifeByDestroyTomb;
                     }
                     LifeChangeDTO lifeChangeDTO = new LifeChangeDTO(AppUtil.getArrayByInt(10, restore), currUnit());
                     commandStream().toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChangeDTO);
-                    unitStatusInfoDTO.setLife(unitStatusInfoDTO.getLife() + restore);
-                }else {
+                    unitStatusInfoDTO.setLife(unitInfo.getLife() + restore);
+                } else {
                     log.info("非亡灵单位摧毁坟墓,需要减少血");
                     int desLift = changeLifeByDestroyTomb;
                     if (currUnit().getLife() < changeLifeByDestroyTomb) {
@@ -433,8 +448,8 @@ public class CommonHandler extends AbstractGameEventHandler {
                         desLift = changeLifeByDestroyTomb - currUnit().getLife();
                         unitDead = true;
                         sendUnitDeadCommend(currUnit(), currUnitArmyIndex());
-                    }else {
-                        unitStatusInfoDTO.setLife(unitStatusInfoDTO.getLife() - changeLifeByDestroyTomb);
+                    } else {
+                        unitStatusInfoDTO.setLife(unitInfo.getLife() - changeLifeByDestroyTomb);
                     }
                     LifeChangeDTO lifeChangeDTO = new LifeChangeDTO(AppUtil.getArrayByInt(-1, desLift), currUnit());
                     commandStream().toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChangeDTO);
@@ -478,7 +493,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      */
     protected List<PathPosition> showMoveLine(Site aimSite) {
         List<PathPosition> path = MovePathStrategy.getInstance().getMovePath(record().getCurrUnit(),
-            aimSite, gameContext.getWillMoveArea());
+                aimSite, gameContext.getWillMoveArea());
         gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_LINE);
         gameContext.setReadyMoveLine(path);
         gameContext.setStartMoveSite(getCurrentUnitSite());

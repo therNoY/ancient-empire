@@ -5,6 +5,10 @@ import java.util.List;
 
 public class Dog {
 
+    private final static String age1 = "1";
+    public final static String age2 = "1";
+    private  static String age3 = "1";
+
     public Dog() {
     }
 

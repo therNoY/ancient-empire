@@ -14,6 +14,8 @@ import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
+import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.defense.DefenseStrategy;
@@ -144,6 +146,8 @@ public class ClickChoosePointHandler extends CommonHandler {
         if (attachResultDTO.getAntiAttack() && attachResultDTO.getAntiAttackResult().getDead()) {
             // 发送单位死亡命令
             sendUnitDeadCommend(currUnit(), currUnitArmyIndex());
+            gameContext.setSubStatusMachine(SubStatusMachineEnum.INIT);
+            gameContext.setStatusMachine(StatusMachineEnum.INIT);
         }else {
             // 修改攻击者单位的状态
             UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(attachArmyUnitIndexDTO);
@@ -154,9 +158,9 @@ public class ClickChoosePointHandler extends CommonHandler {
             unitStatusInfoDTO.setExperience(attachResultDTO.getAttachResult().getEndExperience());
             unitStatusInfoDTO.setUpdateCurr(true);
             commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
+            // 结束
+            endCurrentUnit(attachArmyUnitIndexDTO);
         }
-        // 结束
-        endCurrentUnit(attachArmyUnitIndexDTO);
     }
 
 
