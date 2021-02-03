@@ -41,7 +41,7 @@ import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy
  */
 public class CommonHandler extends AbstractGameEventHandler {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * 处理单位升级
@@ -385,7 +385,7 @@ public class CommonHandler extends AbstractGameEventHandler {
     }
 
     /**
-     * TODO 封装结束单位命令 单位踩坟墓事件处理
+     * 封装结束单位命令 单位踩坟墓事件处理
      *
      * @param armyUnitIndexDTO
      */
@@ -411,21 +411,43 @@ public class CommonHandler extends AbstractGameEventHandler {
 
         // 处理单位是否站在坟墓上
         int changeLifeByDestroyTomb = gameContext.getChangeLifeByDestroyTomb();
-        boolean isDEAD = unitInfo.getAbilities().contains(AbilityEnum.UNDEAD.ability());
+        boolean isUnDead = unitInfo.getAbilities().contains(AbilityEnum.UNDEAD.ability()), unitDead = false;
         for (Tomb tomb : record().getTombList()) {
             if (AppUtil.siteEquals(tomb,currUnit())) {
-                if (isDEAD) {
-                    // TODO
+                // 摧毁坟墓消失
+                commandStream().toGameCommand().addCommand(GameCommendEnum.REMOVE_TOMB, tomb);
+                if (isUnDead) {
+                    log.info("亡灵单位摧毁坟墓,需要加血");
+                    int restoreLife = currUnit().getLevelMes().getMaxLife() - currUnit().getLife(), restore = restoreLife;
+                    if (restoreLife < changeLifeByDestroyTomb) {
+                        restore = restoreLife - changeLifeByDestroyTomb;
+                    }
+                    LifeChangeDTO lifeChangeDTO = new LifeChangeDTO(AppUtil.getArrayByInt(10, restore), currUnit());
+                    commandStream().toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChangeDTO);
+                    unitStatusInfoDTO.setLife(unitStatusInfoDTO.getLife() + restore);
                 }else {
-                    // TODO
+                    log.info("非亡灵单位摧毁坟墓,需要减少血");
+                    int desLift = changeLifeByDestroyTomb;
+                    if (currUnit().getLife() < changeLifeByDestroyTomb) {
+                        log.info("非亡灵单位摧毁坟墓 血量不够死亡");
+                        desLift = changeLifeByDestroyTomb - currUnit().getLife();
+                        unitDead = true;
+                        sendUnitDeadCommend(currUnit(), currUnitArmyIndex());
+                    }else {
+                        unitStatusInfoDTO.setLife(unitStatusInfoDTO.getLife() - changeLifeByDestroyTomb);
+                    }
+                    LifeChangeDTO lifeChangeDTO = new LifeChangeDTO(AppUtil.getArrayByInt(-1, desLift), currUnit());
+                    commandStream().toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChangeDTO);
                 }
                 break;
             }
         }
 
-        unitStatusInfoDTO.setDone(true);
-        unitStatusInfoDTO.setUpdateCurr(true);
-        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
+        if (!unitDead) {
+            unitStatusInfoDTO.setDone(true);
+            unitStatusInfoDTO.setUpdateCurr(true);
+            commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
+        }
         gameContext.setStatusMachine(StatusMachineEnum.INIT);
     }
 

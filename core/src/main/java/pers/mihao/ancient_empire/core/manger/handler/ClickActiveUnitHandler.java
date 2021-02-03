@@ -29,7 +29,10 @@ public class ClickActiveUnitHandler extends CommonHandler {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    // 点击可以移动的单位
+    /**
+     * 点击可以移动的单位
+     * @param gameEvent
+     */
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
 

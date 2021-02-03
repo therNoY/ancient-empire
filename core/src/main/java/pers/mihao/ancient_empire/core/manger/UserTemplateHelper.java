@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.manger;
 import org.springframework.beans.factory.annotation.Value;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
@@ -165,6 +166,15 @@ public class UserTemplateHelper {
     }
 
     public int getChangeLifeByDestroyTomb() {
+        return 10;
+    }
+
+    /**
+     * 根据能力回血
+     * @param ability
+     * @return
+     */
+    public int getRecoverByAbility(AbilityEnum ability) {
         return 10;
     }
 }

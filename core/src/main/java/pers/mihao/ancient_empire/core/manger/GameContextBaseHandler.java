@@ -14,6 +14,7 @@ import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
+import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
 import pers.mihao.ancient_empire.core.robot.RobotManger;
 
 import java.util.List;
@@ -25,49 +26,27 @@ import java.util.List;
  * @author mihao
  * @date 2020\10\2 0002 21:25
  */
-public abstract class GameContextBaseHandler implements Handler {
+public abstract class GameContextBaseHandler extends BaseHandler implements GameHandler {
 
-    private static final String CURR_ARMY_IS_NULL = "currArmyIsNull";
-
-    protected GameContext gameContext;
-
-    protected static RegionMesService regionMesService;
-    protected static UnitMesService unitMesService;
-    protected static UnitLevelMesService unitLevelMesService;
-    protected static UnitTransferService unitTransferService;
-    protected static UserRecordService userRecordService;
-    protected static AbilityService abilityService;
-
-
-    protected static RobotManger robotManger;
-
-    static {
-        regionMesService = ApplicationContextHolder.getBean(RegionMesService.class);
-        unitMesService = ApplicationContextHolder.getBean(UnitMesService.class);
-        abilityService = ApplicationContextHolder.getBean(AbilityService.class);
-        unitLevelMesService = ApplicationContextHolder.getBean(UnitLevelMesService.class);
-        unitTransferService = ApplicationContextHolder.getBean(UnitTransferService.class);
-        userRecordService = ApplicationContextHolder.getBean(UserRecordService.class);
-        robotManger = ApplicationContextHolder.getBean(RobotManger.class);
-    }
 
     /**
-     * 根据颜色判断是否是同一个阵营的
+     * 游戏上下文
+     */
+    protected GameContext gameContext;
+
+
+    /**
+     * 根据Site 获取regionInfo
      *
-     * @param color
+     * @param site
      * @return
      */
-    protected boolean colorIsCamp(String color) {
-        return currArmy().getCamp() == getCampByColor(color);
-    }
-
-    protected int getCampByColor(String color) {
-        for (Army army : record().getArmyList()) {
-            if (army.getColor().equals(color)) {
-                return army.getCamp();
-            }
-        }
-        return -1;
+    protected RegionInfo getRegionInfoBySite(int row, int column) {
+        Region region = getRegionBySite(row, column);
+        RegionMes regionMes = regionMesService.getRegionByType(region.getType());
+        RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
+        regionInfo.setColor(region.getColor());
+        return regionInfo;
     }
 
 
@@ -88,67 +67,6 @@ public abstract class GameContextBaseHandler implements Handler {
             }
         }
         return null;
-    }
-
-
-    /**
-     * 从当前军队中获取单位
-     *
-     * @param site
-     * @return
-     */
-    protected Unit getUnitFromCurrArmyBySite(Site site) {
-        return getUnitFromArmyBySite(currArmy(), site);
-    }
-
-    /**
-     * 基础方法 在指定军队中 指定位置获取单位
-     *
-     * @param army
-     * @param site
-     * @return
-     */
-    protected Unit getUnitFromArmyBySite(Army army, Site site) {
-        for (Unit unit : army.getUnits()) {
-            if (AppUtil.siteEquals(unit, site)) {
-                return unit;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 根据Site 获取regionInfo
-     *
-     * @param site
-     * @return
-     */
-    protected RegionInfo getRegionInfoByRegionIndex(Integer reginxIndex) {
-        return getRegionInfoBySite(AppUtil.getSiteByMapIndex(reginxIndex, gameMap().getColumn()));
-    }
-
-    /**
-     * 根据Site 获取regionInfo
-     *
-     * @param site
-     * @return
-     */
-    protected RegionInfo getRegionInfoBySite(Site site) {
-        return getRegionInfoBySite(site.getRow(), site.getColumn());
-    }
-
-    /**
-     * 根据Site 获取regionInfo
-     *
-     * @param site
-     * @return
-     */
-    protected RegionInfo getRegionInfoBySite(int row, int column) {
-        Region region = getRegionBySite(row, column);
-        RegionMes regionMes = regionMesService.getRegionByType(region.getType());
-        RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
-        regionInfo.setColor(region.getColor());
-        return regionInfo;
     }
 
     /**
@@ -175,6 +93,51 @@ public abstract class GameContextBaseHandler implements Handler {
             }
         }
         return null;
+    }
+
+
+    /**
+     * 根据颜色判断是否是同一个阵营的
+     *
+     * @param color
+     * @return
+     */
+    protected boolean colorIsCamp(String color) {
+        return currArmy().getCamp() == getCampByColor(color);
+    }
+
+    protected int getCampByColor(String color) {
+        return getCampByColor(record(), color);
+    }
+
+    /**
+     * 从当前军队中获取单位
+     *
+     * @param site
+     * @return
+     */
+    protected Unit getUnitFromCurrArmyBySite(Site site) {
+        return getUnitFromArmyBySite(currArmy(), site);
+    }
+
+    /**
+     * 根据Site 获取regionInfo
+     *
+     * @param site
+     * @return
+     */
+    protected RegionInfo getRegionInfoByRegionIndex(Integer reginxIndex) {
+        return getRegionInfoBySite(AppUtil.getSiteByMapIndex(reginxIndex, gameMap().getColumn()));
+    }
+
+    /**
+     * 根据Site 获取regionInfo
+     *
+     * @param site
+     * @return
+     */
+    protected RegionInfo getRegionInfoBySite(Site site) {
+        return getRegionInfoBySite(site.getRow(), site.getColumn());
     }
 
 
@@ -448,9 +411,8 @@ public abstract class GameContextBaseHandler implements Handler {
      * @return 当前单位
      */
     public Army currArmy() {
-        return record().getArmyList().get(record().getCurrArmyIndex());
+        return currArmy(record());
     }
-
 
     /**
      * game视图
@@ -470,22 +432,6 @@ public abstract class GameContextBaseHandler implements Handler {
         return record().getCurrPoint();
     }
 
-    protected int getSiteLength(Site site, Site site2) {
-        return getSiteLength(site.getRow(), site.getColumn(), site2.getRow(), site2.getColumn());
-    }
-
-    /**
-     * 获取两点的距离
-     *
-     * @param row
-     * @param column
-     * @param row2
-     * @param column2
-     * @return
-     */
-    protected int getSiteLength(int row, int column, int row2, int column2) {
-        return Math.abs(row - row2) + Math.abs(column - column2);
-    }
 
     /**
      * site集合是否包含site
@@ -533,5 +479,8 @@ public abstract class GameContextBaseHandler implements Handler {
     public String printlnContext(){
         return gameContext.toString();
     }
+
+
+
 
 }

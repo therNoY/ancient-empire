@@ -235,6 +235,27 @@ public class AppUtil {
         return integers;
     }
 
+    public static int getIntByArray(Integer[] life) {
+
+        if (life != null && life.length > 0) {
+            double sum = 0;
+            int multiply = 1;
+            for (int i = 0; i < life.length; i++) {
+                if (i == 0) {
+                    if (life[i] == 10) {
+                        continue;
+                    }else if (life[i] == -1) {
+                        multiply = -1;
+                        continue;
+                    }
+                }
+                sum = (life[i] * Math.pow(10, life.length - 1 - i) + sum);
+            }
+            return (int) sum * multiply;
+        }
+        return 0;
+    }
+
     /**
      * 判断两点是否是直接挨着的
      *

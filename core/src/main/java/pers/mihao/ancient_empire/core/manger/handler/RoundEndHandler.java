@@ -2,9 +2,12 @@ package pers.mihao.ancient_empire.core.manger.handler;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.entity.RegionMes;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.base.bo.RegionInfo;
+import pers.mihao.ancient_empire.base.bo.Tomb;
+import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
@@ -19,9 +22,10 @@ import pers.mihao.ancient_empire.core.dto.LifeChangeDTO;
 import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
+import pers.mihao.ancient_empire.core.manger.strategy.start.StartStrategy;
 
 /**
- * 回合结束事件处理器  当一个回合结束时处理
+ * 回合结束事件处理器 也是回合开始处理器  当一个回合结束时处理
  *
  * @Author mh32736
  * @Date 2020/9/17 9:51
@@ -97,36 +101,35 @@ public class RoundEndHandler extends CommonHandler {
         gameInfoDTO.setCurrPlayer(currArmy().getPlayer());
         gameInfoDTO.setCurrArmyIndex(record().getCurrArmyIndex());
         commandStream()
-                .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_RECORD_INFO, ExtMes.RECORD_INFO, gameInfoDTO)
-                .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_ARMY_INFO, ExtMes.ARMY_INFO, armyStatusInfoDTO)
-                .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_GAME_NEWS, ExtMes.MESSAGE, currArmy().getColor() + "色方回合收入" + addMoney);
+            .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_RECORD_INFO, ExtMes.RECORD_INFO, gameInfoDTO)
+            .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_ARMY_INFO, ExtMes.ARMY_INFO, armyStatusInfoDTO)
+            .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_GAME_NEWS, ExtMes.MESSAGE,
+            currArmy().getColor() + "色方回合收入" + addMoney);
 
     }
 
+
+    /**
+     * 回合开始改变单位信息
+     */
     private void changeUnitStatus() {
         List<LifeChangeDTO> lifeChanges = new ArrayList<>();
         List<UnitStatusInfoDTO> unitStatusChanges = new ArrayList<>();
         // 单位地形
-        Region square;
+        RegionInfo regionInfo;
         // 状态
         String status;
-        // 单位等级信息
-        UnitLevelMes levelMes;
         // 生命变化
         LifeChangeDTO lifeChangeDTO;
         // 单位状态变化
         UnitStatusInfoDTO unitStatusInfoDTO;
-        int restoreLife, regionRestore, descLife, lastLife;
+        int descLife, lastLife;
 
         for (int i = 0; i < currArmy().getUnits().size(); i++) {
             Unit unit = currArmy().getUnits().get(i);
-            square = getRegionBySite(unit);
             status = unit.getStatus();
-            lifeChangeDTO = new LifeChangeDTO();
             unitStatusInfoDTO = new UnitStatusInfoDTO();
-            levelMes = unitLevelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
             lastLife = unit.getLife();
-            restoreLife = levelMes.getMaxLife() - lastLife;
 
             // 如果状态数 > 0 就减1
             if (unit.getStatusPresenceNum() != null && unit.getStatusPresenceNum() > 0) {
@@ -140,49 +143,38 @@ public class RoundEndHandler extends CommonHandler {
                     status = StateEnum.NORMAL.type();
                 }
             }
-
             if (!StateEnum.POISON.type().equals(status)) {
-                RegionMes regionMes = regionMesService.getRegionByType(square.getType());
                 // 没有中毒根据地形回血
-                if (restoreLife > 0
-                        && (regionRestore = regionMes.getRestore()) > 0
-                        && colorIsCamp(getRegionInfoBySite(unit).getColor())) {
-                    lifeChangeDTO.setRow(unit.getRow());
-                    lifeChangeDTO.setColumn(unit.getColumn());
+                regionInfo = getRegionInfoBySite(unit);
+                lifeChangeDTO = StartStrategy.getInstance().getStartNewRoundLifeChange(regionInfo, unit, record());
+                if (lifeChangeDTO != null) {
                     unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
                     unitStatusInfoDTO.setUnitIndex(i);
-                    if (restoreLife < regionRestore) {
-                        lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, restoreLife));
-                        unitStatusInfoDTO.setLife(unit.getLife() + restoreLife);
-                    } else {
-                        lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, regionRestore));
-                        unitStatusInfoDTO.setLife(unit.getLife() + regionRestore);
-                    }
+                    unitStatusInfoDTO.setLife(AppUtil.getIntByArray(lifeChangeDTO.getAttach()));
                 }
             } else {
                 // 中毒不能回血 只能扣血
                 descLife = AppConfig.getInt(POISON);
+                lifeChangeDTO = new LifeChangeDTO();
                 lifeChangeDTO.setRow(unit.getRow());
                 lifeChangeDTO.setColumn(unit.getColumn());
                 unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
                 unitStatusInfoDTO.setUnitIndex(i);
                 if (descLife >= lastLife) {
                     lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, lastLife));
-                    unit.setDead(true);
                     // 单位死亡
                     sendUnitDeadCommend(getUnitInfoByUnit(unit), new ArmyUnitIndexDTO(record().getCurrArmyIndex(), i));
-
                 } else {
                     lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, descLife));
                 }
             }
 
             // 如果生命有变化
-            if (lifeChangeDTO.getRow() != null) {
+            if (lifeChangeDTO != null && lifeChangeDTO.getRow() != null) {
                 lifeChanges.add(lifeChangeDTO);
             }
 
-            // 单位状态有变化
+            // 根据是否设置index 判断单位状态是否有变化
             if (unitStatusInfoDTO.getArmyIndex() != null) {
                 unitStatusChanges.add(unitStatusInfoDTO);
             }
@@ -190,7 +182,8 @@ public class RoundEndHandler extends CommonHandler {
 
         // 发送命令
         if (lifeChanges.size() > 0) {
-            commandStream().toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChanges);
+            commandStream().toGameCommand()
+                .addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChanges);
         }
         if (unitStatusChanges.size() > 0) {
             commandStream().toGameCommand().changeUnitStatus(unitStatusChanges);
@@ -203,7 +196,7 @@ public class RoundEndHandler extends CommonHandler {
         for (Tomb tomb : tombs) {
             if (tomb.getPresenceNum() >= maxPresenceNum) {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.REMOVE_TOMB, tomb);
-            }else {
+            } else {
                 tomb.setPresenceNum(tomb.getPresenceNum() + 1);
             }
         }

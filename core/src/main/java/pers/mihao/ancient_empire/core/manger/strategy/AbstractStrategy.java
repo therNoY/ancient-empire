@@ -1,27 +1,26 @@
 package pers.mihao.ancient_empire.core.manger.strategy;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javafx.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.dto.EndUnitDTO;
-import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import pers.mihao.ancient_empire.core.manger.BaseHandler;
 
 /**
+ * 抽象能力处理类
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\4 0004 8:46
  */
-public abstract class AbstractStrategy<T> {
+public abstract class AbstractStrategy<T> extends BaseHandler {
 
     /**
      * 每个能力对应的处理类
@@ -59,13 +58,6 @@ public abstract class AbstractStrategy<T> {
         return strategies;
     }
 
-    protected int getSiteLength(Site p1, Site p2) {
-        return Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p1.getColumn() - p2.getColumn());
-    }
-
-    protected int getSiteLength(int row, int column, int row2, int column2) {
-        return Math.abs(row - row2) + Math.abs(column - column2);
-    }
 
     /**
      * 填充处理结果

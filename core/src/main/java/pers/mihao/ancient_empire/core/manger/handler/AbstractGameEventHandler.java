@@ -114,7 +114,6 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
      */
     public abstract void handlerGameEvent(GameEvent gameEvent);
 
-
     @Override
     public void setGameContext(GameContext gameContext) {
         this.gameContext = gameContext;

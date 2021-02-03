@@ -9,11 +9,4 @@ package pers.mihao.ancient_empire.core.manger;
  */
 public interface Handler {
 
-    /**
-     * 游戏上下文
-     *
-     * @param gameContext
-     */
-    void setGameContext(GameContext gameContext);
-
 }

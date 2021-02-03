@@ -12,6 +12,7 @@ import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.IntegerUtil;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 import pers.mihao.ancient_empire.core.dto.RespAction;
+import pers.mihao.ancient_empire.core.manger.GameContext;
 
 /**
  * @Author mh32736
@@ -20,6 +21,20 @@ import pers.mihao.ancient_empire.core.dto.RespAction;
 public class GameCoreHelper {
 
     static Logger log = LoggerFactory.getLogger(GameCoreHelper.class);
+
+    private static ThreadLocal<GameContext> gameContextThreadLocal = new ThreadLocal<>();
+
+    public static GameContext getContext() {
+        return gameContextThreadLocal.get();
+    }
+
+    public static void setContext(GameContext gameContext) {
+        gameContextThreadLocal.set(gameContext);
+    }
+
+    public static void removeContext() {
+        gameContextThreadLocal.remove();
+    }
 
     /**
      * 获得单位的位置
