@@ -6,7 +6,7 @@ import java.io.File;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\5 0005 22:53
  */
 public class UploadPathUtil {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\12 0012 21:52
  */
 public class FloatSite implements Serializable {

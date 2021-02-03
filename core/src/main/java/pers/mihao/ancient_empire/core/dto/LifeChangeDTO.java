@@ -1,10 +1,12 @@
 package pers.mihao.ancient_empire.core.dto;
 
+import java.util.Arrays;
 import pers.mihao.ancient_empire.base.bo.Site;
 
 /**
+ * 生命修改
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\11 0011 10:16
  */
 public class LifeChangeDTO extends Site{
@@ -38,4 +40,10 @@ public class LifeChangeDTO extends Site{
         this.attach = attach;
     }
 
+    @Override
+    public String toString() {
+        return "LifeChangeDTO{" +
+            "attach=" + Arrays.toString(attach) +
+            '}';
+    }
 }

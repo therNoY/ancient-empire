@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 /**
  * 点击占领
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\24 0024 16:01
  */
 public class ClickOccupiedActionHandler extends CommonHandler{

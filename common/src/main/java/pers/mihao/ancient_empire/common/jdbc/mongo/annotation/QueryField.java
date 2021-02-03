@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * 指定该字段是否查询
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\9\20 0020 11:08
  */
 @Target({ElementType.FIELD, ElementType.METHOD})

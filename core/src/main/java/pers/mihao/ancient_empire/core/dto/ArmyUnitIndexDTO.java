@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\11 0011 18:58
  */
 public class ArmyUnitIndexDTO implements Serializable {

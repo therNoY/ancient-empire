@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\12\1 0001 23:54
  */
 public class TemplateCountDTO implements Serializable {

@@ -12,7 +12,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
  * 点击攻击区域
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\24 0024 22:59
  */
 public class ClickAttachAreaHandler extends CommonHandler {

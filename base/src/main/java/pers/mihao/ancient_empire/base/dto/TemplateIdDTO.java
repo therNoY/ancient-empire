@@ -7,7 +7,7 @@ import java.util.List;
 /**
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\1 0001 19:20
  */
 public class TemplateIdDTO extends ApiRequestDTO {

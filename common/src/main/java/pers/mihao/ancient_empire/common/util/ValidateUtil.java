@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\17 0017 19:26
  */
 public class ValidateUtil {

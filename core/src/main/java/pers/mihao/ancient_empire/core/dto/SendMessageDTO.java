@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\11\25 0025 22:42
  */
 public class SendMessageDTO implements Serializable {

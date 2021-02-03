@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 扩展mybatis-plus 支持联合主键 的serviceImpl
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\16 0016 14:32
  */
 public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> {

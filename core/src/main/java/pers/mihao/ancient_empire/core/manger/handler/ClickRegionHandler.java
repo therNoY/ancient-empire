@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\3 0003 15:36
  * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_REGION}
  */

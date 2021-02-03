@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * 游戏监控的
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\30 0030 14:40
  */
 @RestController

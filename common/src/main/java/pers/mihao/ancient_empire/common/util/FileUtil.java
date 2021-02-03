@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\10 0010 16:56
  */
 public class FileUtil {

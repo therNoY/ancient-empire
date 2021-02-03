@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.common.util.ValidateUtil;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\17 0017 19:48
  */
 public class ValidateUtilTest {

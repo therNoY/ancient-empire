@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.core.dto;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\30 0030 15:39
  */
 public class MonitorDTO {

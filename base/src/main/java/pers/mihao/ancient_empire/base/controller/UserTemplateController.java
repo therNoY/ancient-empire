@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\9\26 0026 13:54
  */
 @RestController

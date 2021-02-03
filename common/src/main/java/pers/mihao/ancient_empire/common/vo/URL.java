@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.common.util.Validate;
 
 /**
- * String u = "https://127.0.0.1:8080/song/get?name=1&auther=2";
+ * String u = "https://127.0.0.1:8080/song/get?name=1&author=2";
  */
 public class URL {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private String url; // url https://127.0.0.1:8080/song/get?name=1&auther=2
+    private String url; // url https://127.0.0.1:8080/song/get?name=1&author=2
     private String path; // 路径 https://127.0.0.1:8080/song/get
     private String query; // 参数 name=1&author=2
     private String file; // 文件 song/get?name=1&author=2o

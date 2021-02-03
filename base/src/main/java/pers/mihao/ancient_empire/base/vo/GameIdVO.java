@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.base.vo;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\9\20 0020 22:31
  */
 public class GameIdVO {

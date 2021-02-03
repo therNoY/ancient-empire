@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_POINT}
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\17 0017 16:10
  */
 public class ClickPointHandler extends CommonHandler{

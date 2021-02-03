@@ -13,7 +13,7 @@ import java.util.List;
  * 处理准备攻击事件
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\6 0006 19:32
  * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.ATTACH_UNIT_START}
  */

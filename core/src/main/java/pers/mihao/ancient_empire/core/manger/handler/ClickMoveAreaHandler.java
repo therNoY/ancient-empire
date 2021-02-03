@@ -14,7 +14,7 @@ import java.util.List;
  * 点击启动区域
  * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_MOVE_AREA}
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\4 0004 15:37
  */
 public class ClickMoveAreaHandler extends CommonHandler{

@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.bo;
 /**
  * 坟墓
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\2\1 0001 21:39
  */
 public class Tomb extends Site{

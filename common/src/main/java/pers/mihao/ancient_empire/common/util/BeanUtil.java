@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\3 0003 8:23
  */
 public class BeanUtil {

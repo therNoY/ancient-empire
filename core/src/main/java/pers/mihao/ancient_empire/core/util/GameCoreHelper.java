@@ -45,82 +45,6 @@ public class GameCoreHelper {
     }
 
     /**
-     * 根据 单位的action  和 最重点的位置渲染 单位action 图标的位置
-     */
-    public static List<RespAction> addActionAim(List<String> actionList, Position cUnit) {
-        List<RespAction> respActions = new ArrayList<>();
-        for (String s : actionList) {
-            respActions.add(new RespAction(s, (float) cUnit.getRow(), (float) cUnit.getColumn()));
-        }
-        return respActions;
-    }
-
-    /**
-     * 根据 单位的action  和 最重点的位置渲染 单位action 图标的位置
-     */
-    public static List<RespAction> addActionPosition(List<String> actionList, Position cUnit) {
-
-        List<RespAction> respActions = new ArrayList<>();
-
-        if (actionList.size() == 1) {
-            // 只有一个action 显示在下面
-            RespAction action = new RespAction(actionList.get(0));
-            action.setRow((float) (cUnit.getRow() + 1));
-            action.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action);
-        } else if (actionList.size() == 2) {
-            // 2个action一个显示在上面 一个显示下面
-            RespAction action = new RespAction(actionList.get(0));
-            action.setRow((float) (cUnit.getRow() - 1));
-            action.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action);
-            RespAction action2 = new RespAction(actionList.get(1));
-            action2.setRow((float) (cUnit.getRow() + 1));
-            action2.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action2);
-        } else if (actionList.size() == 3) {
-            // 3个显示个3交
-            RespAction action = new RespAction(actionList.get(0));
-            action.setRow((float) (cUnit.getRow() - 1));
-            action.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action);
-
-            RespAction action2 = new RespAction(actionList.get(1));
-            action2.setRow((float) (cUnit.getRow() + 1));
-            action2.setColumn((float) (cUnit.getColumn() + 0.84));
-            respActions.add(action2);
-
-            RespAction action3 = new RespAction(actionList.get(2));
-            action3.setRow((float) (cUnit.getRow() + 1));
-            action3.setColumn((float) (cUnit.getColumn() - 0.84));
-            respActions.add(action3);
-        } else if (actionList.size() == 4) {
-            // 4个显示
-            RespAction action = new RespAction(actionList.get(0));
-            action.setRow((float) (cUnit.getRow() - 1));
-            action.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action);
-
-            RespAction action2 = new RespAction(actionList.get(1));
-            action2.setRow((float) (cUnit.getRow() + 1));
-            action2.setColumn((float) (cUnit.getColumn() + 0.16));
-            respActions.add(action2);
-
-            RespAction action3 = new RespAction(actionList.get(2));
-            action3.setRow((float) (cUnit.getRow() + 0.16));
-            action3.setColumn((float) (cUnit.getColumn() - 1));
-            respActions.add(action3);
-
-            RespAction action4 = new RespAction(actionList.get(3));
-            action4.setRow((float) (cUnit.getRow() + 0.16));
-            action4.setColumn((float) (cUnit.getColumn() + 1));
-            respActions.add(action4);
-        }
-
-        return respActions;
-    }
-
-    /**
      * 获取单位的攻击（大于最小 小于最大）
      */
     public static int getAttachNum(UnitLevelMes levelMes) {
@@ -168,26 +92,5 @@ public class GameCoreHelper {
     public static BaseSquare getRegionByPosition(List<Region> regions, int row, int column, Integer mapColumn) {
         return regions.get((row - 1) * mapColumn - 1 + column);
     }
-
-
-    public static int getHpRecover(BaseSquare square) {
-        RegionEnum regionEnum = EnumUtil.valueOf(RegionEnum.class, square.getType());
-        switch (regionEnum) {
-            case TOWN:
-            case CASTLE:
-                return 20;
-            case STOCK:
-            case TEMPLE:
-            case SEA:
-            case SEA_HOUSE:
-                return 15;
-            case REMAINS2:
-                return 35;
-            default:
-                return 0;
-        }
-    }
-
-
 
 }

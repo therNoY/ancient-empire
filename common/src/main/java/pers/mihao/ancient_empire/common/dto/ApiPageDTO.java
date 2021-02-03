@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.dto;
 /**
  * 请求分页信息
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\12\1 0001 22:21
  */
 public class ApiPageDTO extends ApiRequestDTO{

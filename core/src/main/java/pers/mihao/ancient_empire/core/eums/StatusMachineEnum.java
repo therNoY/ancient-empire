@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.eums;
 /**
  * 游戏状态机
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\3 0003 15(44
  */
 public enum StatusMachineEnum {

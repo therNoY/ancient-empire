@@ -16,7 +16,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
  * 处理点击不能行动的单位
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\9\29 0029 22:36
  * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_UN_ACTIVE_UNIT}
  */

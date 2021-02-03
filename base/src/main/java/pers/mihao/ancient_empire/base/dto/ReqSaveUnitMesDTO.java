@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 保存单位信息
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\17 0017 18:55
  */
 public class ReqSaveUnitMesDTO implements Serializable {

@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 /**
  * 用于反射的get setDTO
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\13 0013 21:50
  */
 public class GetSetDTO {

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\14 0014 23:39
  */
 public class IPageHelper {

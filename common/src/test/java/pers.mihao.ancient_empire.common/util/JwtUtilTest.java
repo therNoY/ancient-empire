@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\9\17 0017 21:37
  */
 public class JwtUtilTest {

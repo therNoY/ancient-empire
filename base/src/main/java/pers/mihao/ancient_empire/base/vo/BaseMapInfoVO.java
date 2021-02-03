@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * 地图的基础信息
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\9\20 0020 11:18
  */
 @Document("userMap")

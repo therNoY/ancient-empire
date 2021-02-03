@@ -32,7 +32,7 @@ import pers.mihao.ancient_empire.core.manger.command.GameCommand;
  * 管理用户游戏连接的
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\9\14 0014 23:24
  */
 @Manger

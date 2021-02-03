@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * 保存模板信息请求DTO
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\6 0006 22:44
  */
 public class ReqSaveUserTemplateDTO extends UserTemplate {

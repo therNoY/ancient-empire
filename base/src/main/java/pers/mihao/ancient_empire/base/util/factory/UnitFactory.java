@@ -11,7 +11,7 @@ import pers.mihao.ancient_empire.common.util.StringUtil;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\23 0023 21:37
  */
 public class UnitFactory {

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 攻击结果
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\7 0007 19:07
  */
 public class AttachResultDTO implements Serializable {

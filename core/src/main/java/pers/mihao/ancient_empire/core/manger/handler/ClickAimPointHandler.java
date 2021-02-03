@@ -16,7 +16,7 @@ import java.util.Set;
  * 点击目标的移动区域 移动单位
  * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_AIM_POINT}
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\4 0004 17:32
  */
 public class ClickAimPointHandler extends CommonHandler{

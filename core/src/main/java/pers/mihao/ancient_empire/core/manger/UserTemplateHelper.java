@@ -13,7 +13,7 @@ import pers.mihao.ancient_empire.common.util.IntegerUtil;
  * 用户模板的同用方法
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\7 0007 15:27
  */
 public class UserTemplateHelper {

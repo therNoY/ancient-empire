@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 查询分页的基础结果集合
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\9\20 0020 10:33
  */
 public class PageModel<T> {

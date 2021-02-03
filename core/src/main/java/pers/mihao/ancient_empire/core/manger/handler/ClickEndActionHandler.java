@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 /**
  * 单位结束处理类
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\18 0018 13:34
  */
 public class ClickEndActionHandler extends CommonHandler{

@@ -8,7 +8,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 /**
  * 单位修复事件
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\24 0024 15:52
  */
 public class ClickRepairActionHandler extends CommonHandler{

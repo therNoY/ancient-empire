@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 /**
  * Controller 需要验证bean注解
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\17 0017 19:06
  */
 @Target({ElementType.TYPE, ElementType.FIELD}) // 只能注解到

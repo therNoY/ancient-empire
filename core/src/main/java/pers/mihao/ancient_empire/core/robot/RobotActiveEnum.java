@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.robot;
 /**
  * 机器人行动枚举
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\11\8 0008 16:55
  */
 public enum RobotActiveEnum {

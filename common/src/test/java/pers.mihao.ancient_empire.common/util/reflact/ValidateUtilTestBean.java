@@ -4,7 +4,7 @@ import pers.mihao.ancient_empire.common.annotation.ValidatedBean;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\1\17 0017 19:49
  */
 @ValidatedBean(notNull = {"name","id"})

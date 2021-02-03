@@ -6,7 +6,7 @@ import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\11\8 0008 13:20
  */
 public class BuyUnitDTO {

@@ -25,7 +25,7 @@ import java.util.List;
  * 点击攻击/召唤/治疗的选择指针框 此时确定单位的行动
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\7 0007 14:52
  */
 public class ClickChoosePointHandler extends CommonHandler {

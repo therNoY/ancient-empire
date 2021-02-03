@@ -9,7 +9,7 @@ import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 /**
  * 验证字符串是在枚举中
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2019\8\26 0001 22:21
  */
 public class InEnumValidator implements ConstraintValidator<InEnum, Object> {

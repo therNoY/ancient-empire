@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\22 0022 23:32
  */
 public class ClickMoveActionHandler extends CommonHandler{

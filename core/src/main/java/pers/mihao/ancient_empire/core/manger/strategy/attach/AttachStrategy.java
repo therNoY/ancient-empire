@@ -17,7 +17,7 @@ import pers.mihao.ancient_empire.core.manger.strategy.AbstractStrategy;
  * 攻击的策略
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\6 0006 19:36
  */
 public class AttachStrategy extends AbstractStrategy<AttachStrategy> {

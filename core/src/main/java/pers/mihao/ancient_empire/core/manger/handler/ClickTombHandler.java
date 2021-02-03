@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 /**
  * 处理点击坟墓事件
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\22 0022 23:58
  */
 public class ClickTombHandler extends CommonHandler{

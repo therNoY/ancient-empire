@@ -4,7 +4,7 @@ package pers.mihao.ancient_empire.core.constans;
  * 非通用信息的key
  *
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2020\10\2 0002 22:01
  */
 public class ExtMes {
