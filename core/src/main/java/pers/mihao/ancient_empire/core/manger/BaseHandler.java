@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.core.manger;
 
 import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -73,6 +74,8 @@ public abstract class BaseHandler implements Handler {
         return getSiteLength(site.getRow(), site.getColumn(), site2.getRow(), site2.getColumn());
     }
 
+
+
     /**
      * 根据颜色判断是否是同一个阵营的
      *
@@ -99,6 +102,36 @@ public abstract class BaseHandler implements Handler {
             }
         }
         return -1;
+    }
+
+    // 判断上面有没有 敌方单位
+    public boolean isHaveEnemy(UserRecord userRecord, int row, int column) {
+        Integer camp = userRecord.getArmyList().get(userRecord.getCurrArmyIndex()).getCamp();
+        for (Army a : userRecord.getArmyList()) {
+            if (!a.getCamp().equals(camp)) {
+                for (Unit u : a.getUnits()) {
+                    if (!u.isDead() && u.getRow() == row && u.getColumn() == column) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // 判断上面有没有 敌方单位
+    public boolean isHaveFriend(UserRecord userRecord, int row, int column) {
+        Integer camp = userRecord.getArmyList().get(userRecord.getCurrArmyIndex()).getCamp();
+        for (Army a : userRecord.getArmyList()) {
+            if (a.getCamp().equals(camp)) {
+                for (Unit u : a.getUnits()) {
+                    if (!u.isDead() && u.getRow() == row && u.getColumn() == column) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

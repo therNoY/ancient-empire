@@ -1,8 +1,14 @@
 package pers.mihao.ancient_empire.core.robot.handler;
 
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
+import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 import pers.mihao.ancient_empire.core.robot.ActionIntention;
 import pers.mihao.ancient_empire.core.robot.RobotActiveEnum;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 处理占领类行动
@@ -14,11 +20,23 @@ public class OccupiedRobotHandler extends AbstractRobotHandler{
 
     @Override
     public void handler(ActionIntention intention) {
-        moveToAimPointAndAction(intention.getSite());
+        moveToAimPointAndAction(intention, intention.getSite());
     }
 
     @Override
-    protected GameEventEnum getActionType() {
-        return GameEventEnum.CLICK_OCCUPIED_ACTION;
+    protected ActionEnum getActionType() {
+        return ActionEnum.OCCUPIED;
+    }
+
+    @Override
+    protected List<Site> getCanActionArea(Site site) {
+        List<Site> area = new ArrayList<>();
+        area.add(site);
+        return area;
+    }
+
+    @Override
+    protected void doClickActionEvent(ActionIntention intention) {
+        handleRobotEvent(GameEventEnum.CLICK_OCCUPIED_ACTION);
     }
 }

@@ -1,8 +1,14 @@
 package pers.mihao.ancient_empire.core.robot.handler;
 
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
+import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 import pers.mihao.ancient_empire.core.robot.ActionIntention;
 import pers.mihao.ancient_empire.core.robot.RobotActiveEnum;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 处理防御类行动
@@ -13,11 +19,24 @@ import pers.mihao.ancient_empire.core.robot.RobotActiveEnum;
 public class DefensiveRobotHandler extends AbstractRobotHandler{
 
     @Override
-    protected GameEventEnum getActionType() {
+    protected ActionEnum getActionType() {
         return null;
     }
 
     @Override
     public void handler(ActionIntention intention) {
     }
+
+    @Override
+    protected List<Site> getCanActionArea(Site site) {
+        List<Site> area = new ArrayList<>();
+        area.add(site);
+        return area;
+    }
+
+    @Override
+    protected void doClickActionEvent(ActionIntention intention) {
+
+    }
+
 }

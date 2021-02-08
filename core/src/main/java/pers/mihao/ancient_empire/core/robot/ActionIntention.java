@@ -45,6 +45,7 @@ public class ActionIntention {
     public ActionIntention(RobotActiveEnum resultEnum, RegionInfo aimRegion) {
         this.resultEnum = resultEnum;
         this.aimRegion = aimRegion;
+        this.site = new Site(aimRegion.getRow(), aimRegion.getColumn());
     }
 
     public Site getSite() {

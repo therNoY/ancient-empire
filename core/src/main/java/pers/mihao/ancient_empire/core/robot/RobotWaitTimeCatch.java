@@ -22,7 +22,7 @@ public class RobotWaitTimeCatch {
 
 
     public long getLockTimeByEvent(GameEventEnum eventEnum) {
-        return 3000L;
+        return 1000L;
     }
 
 }

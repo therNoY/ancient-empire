@@ -32,7 +32,7 @@ public class CollectionUtil {
      */
     public static <T> T getRandom(List<T> collection) {
         if (collection != null && collection.size() > 0) {
-            return collection.get(IntegerUtil.getRandomIn(collection.size()) - 1);
+            return collection.get(IntegerUtil.getRandomIn(collection.size() - 1));
         }
         return null;
     }

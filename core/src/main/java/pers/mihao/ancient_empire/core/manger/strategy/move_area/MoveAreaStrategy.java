@@ -180,20 +180,7 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         }
     }
 
-    // 判断上面有没有 敌方单位
-    public boolean isHaveEnemy(UserRecord userRecord, int row, int column) {
-        Integer camp = userRecord.getArmyList().get(userRecord.getCurrArmyIndex()).getCamp();
-        for (Army a : userRecord.getArmyList()) {
-            if (!a.getCamp().equals(camp)) {
-                for (Unit u : a.getUnits()) {
-                    if (!u.isDead() && u.getRow() == row && u.getColumn() == column) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+
 
     // 获取上面的地形的消耗
     public int getRegionDeplete(GameMap gameMap, int row, int column) {

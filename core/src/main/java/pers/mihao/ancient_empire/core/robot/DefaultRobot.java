@@ -83,6 +83,7 @@ public class DefaultRobot extends AbstractRobot {
             default:
                 score += 0;
         }
+        score = score / (getSiteLength(currUnit(), action.getSite()) + 1);
         log.info("行动 {} 评分{}", action.getResultEnum(), score);
         return score;
     }
@@ -143,10 +144,11 @@ public class DefaultRobot extends AbstractRobot {
             List<UnitInfo> buyUnitList = canBuyUnitMes.stream()
                 .filter(mes -> mes.getUnitMes().getAttackType().equals(needUnitType.attachType))
                 .collect(Collectors.toList());
-
-            return CollectionUtil.getRandom(buyUnitList);
+            if (buyUnitList.size() > 0) {
+                return CollectionUtil.getRandom(buyUnitList);
+            }
         }
-        return null;
+        return CollectionUtil.getRandom(canBuyUnitMes);
     }
 
     @Override

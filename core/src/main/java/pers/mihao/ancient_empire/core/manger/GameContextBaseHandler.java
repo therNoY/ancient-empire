@@ -45,6 +45,8 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
         Region region = getRegionBySite(row, column);
         RegionMes regionMes = regionMesService.getRegionByType(region.getType());
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
+        regionInfo.setRow(row);
+        regionInfo.setColumn(column);
         regionInfo.setColor(region.getColor());
         return regionInfo;
     }
@@ -64,6 +66,63 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
             unit = getUnitFromArmyBySite(army, site);
             if (unit != null) {
                 return new Pair<>(i, unit);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从整个地图根据获取敌方单位
+     *
+     * @param site
+     * @return 军队index 和单位
+     */
+    protected Pair<Integer, Unit> getEnemyUnitFromMapBySite(Site site) {
+        Army army;
+        Unit unit;
+        for (int i = 0; i < record().getArmyList().size(); i++) {
+            army = record().getArmyList().get(i);
+            if (!army.getCamp().equals(currArmy().getCamp())) {
+                unit = getUnitFromArmyBySite(army, site);
+                if (unit != null) {
+                    return new Pair<>(i, unit);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从整个地图根据获取敌方单位
+     *
+     * @param site
+     * @return 军队index 和单位
+     */
+    protected Tomb getTombMapBySite(Site site) {
+       for (Tomb tomb : record().getTombList()) {
+           if (AppUtil.siteEquals(tomb, site)) {
+               return tomb;
+           }
+       }
+       return null;
+    }
+
+    /**
+     * 从整个地图根据获取友方单位
+     *
+     * @param site
+     * @return 军队index 和单位
+     */
+    protected Pair<Integer, Unit> getFriendUnitFromMapBySite(Site site) {
+        Army army;
+        Unit unit;
+        for (int i = 0; i < record().getArmyList().size(); i++) {
+            army = record().getArmyList().get(i);
+            if (army.getCamp().equals(currArmy().getCamp())) {
+                unit = getUnitFromArmyBySite(army, site);
+                if (unit != null) {
+                    return new Pair<>(i, unit);
+                }
             }
         }
         return null;

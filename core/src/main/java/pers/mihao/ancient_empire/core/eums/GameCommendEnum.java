@@ -30,6 +30,11 @@ public enum GameCommendEnum implements BaseEnum {
     SHOW_ACTION,
 
     /**
+     * 不展示行动
+     */
+    DIS_SHOW_ACTION,
+
+    /**
      * 展示攻击点
      */
     SHOW_ATTACH_POINT,

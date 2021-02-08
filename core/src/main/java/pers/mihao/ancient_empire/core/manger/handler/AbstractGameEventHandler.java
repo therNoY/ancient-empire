@@ -265,8 +265,8 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             extData.put(ExtMes.UNIT_STATUS, obj);
             setExtMes(extData);
             setOrder(orderIndex ++);
-            addGameCommand(this);
             handlerLevelUp(this);
+            addGameCommand(this);
             return stream;
         }
 

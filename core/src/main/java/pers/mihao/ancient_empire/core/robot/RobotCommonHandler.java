@@ -22,8 +22,12 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
+import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
@@ -43,9 +47,11 @@ public abstract class RobotCommonHandler extends CommonHandler {
     private List<RegionInfo> threatenedRegion;
 
     protected static GameCoreManger gameCoreManger;
+    protected static GameSessionManger gameSessionManger;
 
     static {
         gameCoreManger = ApplicationContextHolder.getBean(GameCoreManger.class);
+        gameSessionManger = ApplicationContextHolder.getBean(GameSessionManger.class);
     }
 
     /**
@@ -250,7 +256,8 @@ public abstract class RobotCommonHandler extends CommonHandler {
      * @return
      */
     protected List<RegionInfo> getAllCanOccupyVillage() {
-        return getAllSiteByType(RegionEnum.STOCK);
+        return getAllSiteByType(RegionEnum.STOCK).stream()
+                .filter(regionInfo -> !colorIsCamp(regionInfo.getColor())).collect(Collectors.toList());
     }
 
     /**
@@ -258,7 +265,8 @@ public abstract class RobotCommonHandler extends CommonHandler {
      * @return
      */
     protected List<RegionInfo> getAllCanOccupyCastle() {
-        return getAllSiteByType(RegionEnum.CASTLE);
+        return getAllSiteByType(RegionEnum.CASTLE).stream()
+                .filter(regionInfo -> !colorIsCamp(regionInfo.getColor())).collect(Collectors.toList());
     }
 
     private List<RegionInfo> getAllSiteByType(RegionEnum regionEnum){
@@ -403,6 +411,20 @@ public abstract class RobotCommonHandler extends CommonHandler {
     }
 
     /**
+     * 生成机器人处理事件
+     * @param eventEnum
+     * @param initiateSite
+     */
+    protected void handleRobotEvent(GameEventEnum eventEnum, Site initiateSite, Site aimSite){
+        GameEvent event = new GameEvent();
+        event.setGameId(gameContext.getGameId());
+        event.setEvent(eventEnum);
+        event.setInitiateSite(initiateSite);
+        event.setAimSite(aimSite);
+        handleRobotEvent(event);
+    }
+
+    /**
      * 处理机器人事件
      */
     protected void handleRobotEvent(GameEventEnum gameEventEnum, Integer unitId) {
@@ -425,8 +447,25 @@ public abstract class RobotCommonHandler extends CommonHandler {
         gameCoreManger.handelTask(event);
         long wait = RobotWaitTimeCatch.getInstance().getLockTimeByEvent(event.getEvent());
         log.info("发送命令：{}完成 准备lock:{}ms之后重新运行", event, wait);
-        LockSupport.parkNanos(wait);
+        try {
+            synchronized (gameCoreManger) {
+                gameCoreManger.wait(wait);
+            }
+        } catch (InterruptedException e) {
+            log.error("", e);
+        }
         log.info("休眠完成 准备重新执行任务");
+    }
+
+    protected void sendGameCommand(GameCommand command){
+        gameSessionManger.sendMessage(command, gameContext.getGameId());
+    }
+
+    protected void sendGameCommand(GameCommendEnum gameCommendEnum){
+        GameCommand gameCommand = new GameCommand();
+        gameCommand.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
+        gameCommand.setGameCommendEnum(gameCommendEnum);
+        gameSessionManger.sendMessage(gameCommand, gameContext.getGameId());
     }
 
 

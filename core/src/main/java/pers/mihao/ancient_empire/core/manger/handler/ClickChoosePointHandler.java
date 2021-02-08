@@ -225,7 +225,7 @@ public class ClickChoosePointHandler extends CommonHandler {
             AttachResult antiAttackResult = getOnceAttachResult(beAttachUnit, attachUnit);
             resultDto.setAntiAttack(true);
             // 3.2.处理攻击后的经验和升级
-            handlerAttachExp(antiAttackResult, gameContext.getAntiKillExp(), gameContext.getAntiAttackExp(), attachUnit, beAttachUnit);
+            handlerAttachExp(antiAttackResult, gameContext.getAntiAttackExp(), gameContext.getAntiKillExp(), attachUnit, beAttachUnit);
             resultDto.setAntiAttackResult(antiAttackResult);
         } else {
             resultDto.setAntiAttack(false);
@@ -281,7 +281,7 @@ public class ClickChoosePointHandler extends CommonHandler {
      * @param attachUnit
      * @param beAttachUnit
      */
-    private void handlerAttachExp(AttachResult attachResult, int killExp, int attachExp, UnitInfo attachUnit, UnitInfo beAttachUnit) {
+    private void handlerAttachExp(AttachResult attachResult, int attachExp, int killExp, UnitInfo attachUnit, UnitInfo beAttachUnit) {
         if (attachResult.getLastLife() <= 0) {
             // 被攻击者已死
             attachResult.setDead(true);

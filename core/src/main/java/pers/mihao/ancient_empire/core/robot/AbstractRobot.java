@@ -1,27 +1,22 @@
 package pers.mihao.ancient_empire.core.robot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.Region;
-import pers.mihao.ancient_empire.base.bo.RegionInfo;
-import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
 import pers.mihao.ancient_empire.core.dto.robot.BuyUnitDTO;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.robot.handler.AbstractRobotHandler;
 
 /**
@@ -92,6 +87,8 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
 
             activeUnits(canMoveUnit.lessThanHalf);
 
+            handleRobotEvent(GameEventEnum.ROUND_END);
+
             log.info("================机器人行动结束===============");
         } catch (Exception e) {
             log.error("机器人行动出错：", e);
@@ -131,16 +128,16 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
                         unitInfo.getUnitMes().getPopulation() <= record.getMaxPop() - army.getPop()))
                 .collect(Collectors.toList());
 
-        if (canBuyUnitMes.size() > 0) {
+        if (canBuyUnitMes.size() == 0) {
             log.info("最便宜的都买不起 直接结束");
-            return buyUnitDTO;
+            return null;
         }
 
         // 2.判断是否还有自己的castle
         List<CastleRegion> castleList = getCastleRegions(record);
         if (castleList.size() == 0) {
             log.info("没有自己的城堡直接结束");
-            return buyUnitDTO;
+            return null;
         }
 
         // 3.选择召唤城堡
@@ -161,6 +158,11 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         NeedUnitType needUnitType = getNeedAbility();
         buyUnit = getMastNeedUnit(canBuyUnitMes, needUnitType);
         buyUnitDTO.setUnitInfo(buyUnit);
+        if (buyUnit == null) {
+            return null;
+        }
+        buyUnit.setRow(selectCastle.getSite().getRow());
+        buyUnit.setColumn(selectCastle.getSite().getColumn());
         handleRobotEvent(GameEventEnum.CLICK_BUY_ACTION, buyUnit.getUnitMes().getId());
         return buyUnitDTO;
     }
@@ -170,8 +172,12 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
      *
      * @param unit
      */
-    private void doActive(Unit unit) {
+    private void doActive(UnitInfo unit) {
+        log.info("机器人发送点击命令事件:{}", unit);
         handleRobotEvent(GameEventEnum.CLICK_ACTIVE_UNIT, unit);
+        if (unit.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())) {
+            handleRobotEvent(GameEventEnum.CLICK_MOVE_ACTION);
+        }
         ActionIntention intention = getUnitActionIntention(unit);
         log.info("{} 的行动意向是：{}", unit, intention);
         actionUnit(intention);
@@ -298,6 +304,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
             try {
                 robotHandler = (AbstractRobotHandler) clazz.newInstance();
                 robotHandler.setGameContext(gameContext);
+                robotHandler.setRobot(this);
                 robotHandler.setThreatenedRegion(getThreatenedRegion());
             } catch (Exception e) {
                 log.error("", e);
@@ -374,4 +381,16 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
      */
     protected abstract NeedUnitType getNeedAbility();
 
+    /**
+     * 从不在攻击目标的单位中选择单位 默认血量最少 可以实现其他策略
+     * @param otherCanAttachUnit
+     * @return
+     */
+    public Unit getOtherCanAttachUnit(List<Unit> otherCanAttachUnit) {
+        return otherCanAttachUnit.stream().sorted(Comparator.comparingInt(Unit::getLife)).findFirst().get();
+    }
+
+    public Tomb getOtherCanSummonTomb(List<Tomb> otherCanSummonTomb) {
+        return otherCanSummonTomb.get(0);
+    }
 }
