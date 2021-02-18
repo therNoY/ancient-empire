@@ -8,6 +8,7 @@ import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.IntegerUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 
 /**
  * 用户模板的同用方法
@@ -176,5 +177,14 @@ public class UserTemplateHelper {
      */
     public int getRecoverByAbility(AbilityEnum ability) {
         return 10;
+    }
+
+    /**
+     * 获取等级提升的图片
+     * @return
+     */
+    public String getLevelUpImg() {
+        return StringUtil.isNotBlack(userTemplate.getLevelupAnimation())
+                ? userTemplate.getLevelupAnimation() : defaultTemp.getLevelupAnimation();
     }
 }

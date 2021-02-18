@@ -85,6 +85,10 @@ public class ExtMes {
      * 更新单位的装填信息
      */
     public static final String UNIT_STATUS = "unit_status";
+    /**
+     * 保障等级info提升的key
+     */
+    public static final String LEVEL_UP_INFO = "level_up_info";
 
     /**
      * 更新单位的装填信息

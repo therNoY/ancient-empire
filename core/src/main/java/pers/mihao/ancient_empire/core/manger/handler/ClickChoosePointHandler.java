@@ -345,6 +345,7 @@ public class ClickChoosePointHandler extends CommonHandler {
         // 设置剩余生命
         int lastLeft = beAttachUnitLeft - harm;
         attachResult.setLastLife(lastLeft);
+        beAttachUnit.setLife(lastLeft);
         return attachResult;
     }
 

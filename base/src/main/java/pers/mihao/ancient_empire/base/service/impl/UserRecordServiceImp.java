@@ -152,6 +152,9 @@ public class UserRecordServiceImp implements UserRecordService {
                     if (index > 6) {
                         index = 0;
                     }
+                    if (unit.getTypeId().equals(9)) {
+                        unit.setExperience(90);
+                    }
                 }
             }
         }

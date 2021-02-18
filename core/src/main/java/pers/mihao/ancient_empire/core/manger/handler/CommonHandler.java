@@ -124,7 +124,10 @@ public class CommonHandler extends AbstractGameEventHandler {
                 if (!isPromotion) {
                     unitStatus.setLevel(unit.getLevel() + 1);
                     unitStatus.setExperience(unitStatus.getExperience() - levelExp);
-                    commandStream().toGameCommand().addOrderCommand(GameCommendEnum.SHOW_LEVEL_UP, unit);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put(ExtMes.LEVEL_UP_INFO, gameContext.getLevelUpImg());
+                    jsonObject.put(ExtMes.SITE, unit);
+                    commandStream().toGameCommand().addOrderCommand(GameCommendEnum.SHOW_LEVEL_UP, jsonObject);
                 }
             }
         }
