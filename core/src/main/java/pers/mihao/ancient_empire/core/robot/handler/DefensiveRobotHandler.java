@@ -23,9 +23,6 @@ public class DefensiveRobotHandler extends AbstractRobotHandler{
         return null;
     }
 
-    @Override
-    public void handler(ActionIntention intention) {
-    }
 
     @Override
     protected List<Site> getCanActionArea(Site site) {

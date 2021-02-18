@@ -19,11 +19,6 @@ import java.util.List;
 public class HealRobotHandler extends AbstractRobotHandler{
 
     @Override
-    public void handler(ActionIntention intention) {
-        moveToAimPointAndAction(intention, intention.getSite());
-    }
-
-    @Override
     protected ActionEnum getActionType() {
         return ActionEnum.HEAL;
     }

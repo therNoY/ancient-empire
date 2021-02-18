@@ -18,10 +18,6 @@ import java.util.List;
  */
 public class OccupiedRobotHandler extends AbstractRobotHandler{
 
-    @Override
-    public void handler(ActionIntention intention) {
-        moveToAimPointAndAction(intention, intention.getSite());
-    }
 
     @Override
     protected ActionEnum getActionType() {

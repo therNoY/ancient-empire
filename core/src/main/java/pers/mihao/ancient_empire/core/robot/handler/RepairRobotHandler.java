@@ -22,12 +22,6 @@ public class RepairRobotHandler extends AbstractRobotHandler{
         return ActionEnum.REPAIR;
     }
 
-
-    @Override
-    public void handler(ActionIntention intention) {
-        moveToAimPointAndAction(intention, intention.getSite());
-    }
-
     @Override
     protected List<Site> getCanActionArea(Site site) {
         List<Site> area = new ArrayList<>();

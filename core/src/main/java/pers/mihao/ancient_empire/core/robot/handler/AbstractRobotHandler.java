@@ -114,6 +114,9 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
      *
      * @param intention
      */
-    public abstract void handler(ActionIntention intention);
+    public void handler(ActionIntention intention) {
+        // 1. 移动到目标点
+        moveToAimPointAndAction(intention, intention.getAimUnit());
+    }
 
 }

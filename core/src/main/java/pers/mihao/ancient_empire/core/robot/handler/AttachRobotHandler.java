@@ -66,9 +66,4 @@ public class AttachRobotHandler extends AbstractRobotHandler {
 
     }
 
-    @Override
-    public void handler(ActionIntention intention) {
-        // 1. 移动到目标点
-        moveToAimPointAndAction(intention, intention.getAimUnit());
-    }
 }

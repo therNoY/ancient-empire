@@ -24,10 +24,6 @@ public class EndRobotHandler extends AbstractRobotHandler{
         return ActionEnum.END;
     }
 
-    @Override
-    public void handler(ActionIntention intention) {
-        moveToAimPointAndAction(intention, intention.getSite());
-    }
 
     @Override
     protected List<Site> getCanActionArea(Site site) {

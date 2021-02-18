@@ -25,11 +25,6 @@ import java.util.List;
 public class SummonRobotHandler extends AbstractRobotHandler {
 
     @Override
-    public void handler(ActionIntention intention) {
-        moveToAimPointAndAction(intention, intention.getSite());
-    }
-
-    @Override
     protected ActionEnum getActionType() {
         return ActionEnum.SUMMON;
     }
