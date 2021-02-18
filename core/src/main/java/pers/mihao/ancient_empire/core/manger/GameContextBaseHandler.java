@@ -9,6 +9,7 @@ import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
@@ -532,14 +533,53 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
     }
 
     /**
+     * 获取 两点的最小消耗
+     * @param startSite
+     * @param aimSite
+     * @return
+     */
+    @KnowledgePoint("使用弗洛伊德算法计算'无向有权图'两点的最短路径")
+    protected int getMinUnitMoveDeplete(Site startSite, Site aimSite) {
+        GameMap gameMap = record().getGameMap();
+
+        int graphSize = gameMap.getRegions().size(), startIndex = getRegionIndexBySite(startSite), endIndex = getRegionIndexBySite(aimSite);
+        UnitInfo unitInfo = currUnit();
+        // 保存路径
+        int[][] dpD = new int[graphSize][graphSize];
+        // 保存位置
+        int[][] dpP = new int[graphSize][graphSize];
+        // 迭代中间数组
+        int[][] dpTempD, dpTempP;
+
+        // 1.TODO 初始化 dpD 根据是否可达初始化 dpP直接到达
+
+        // 2.三层循环
+        for (int i = 0; i < graphSize; i++) {
+
+            dpTempD = new int[graphSize][graphSize];
+            dpTempP = new int[graphSize][graphSize];
+            // TODO 初始化临时数组
+
+            for (int j = 0; j < graphSize; j++) {
+                for (int k = 0; k < graphSize; k++) {
+
+
+
+                }
+            }
+            dpD = dpTempD;
+            dpP = dpTempP;
+        }
+
+        return dpD[startIndex][endIndex];
+    }
+
+    /**
      * 打印上下文信息
      * @return 上下文信息字符串
      */
     public String printlnContext(){
         return gameContext.toString();
     }
-
-
-
 
 }

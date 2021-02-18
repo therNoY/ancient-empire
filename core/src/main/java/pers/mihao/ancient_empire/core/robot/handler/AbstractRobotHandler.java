@@ -43,8 +43,8 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
 
     /**
      * 移动到目标点
-     *
-     * @param site
+     * @param intention 行动意向
+     * @param site 目标点
      */
     protected void moveToAimPointAndAction(ActionIntention intention, Site site) {
         // 1. 选择离目标最近的点移动
@@ -52,17 +52,19 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
                 .filter(s-> !isHaveFriend(record(), s.getRow(), s.getColumn())).collect(Collectors.toList());
         // 去掉右方所在位置
         List<Site> area = getCanActionArea(site);
+
         List<Site> canMoveArea = moveArea.stream().filter(area::contains).collect(Collectors.toList());
         if (canMoveArea.size() > 0) {
             moveArea = canMoveArea;
         }
         // 2 获取将要移动的目标点
         Site aimSite = moveArea.stream().min((s1, s2) -> {
-            if (getSiteLength(s1, site) > getSiteLength(s2, site)) {
+            if (getMinUnitMoveDeplete(s1, site) > getMinUnitMoveDeplete(s2, site)) {
                 return 1;
             }
             return -1;
         }).get();
+
         assert moveArea.contains(aimSite);
         // 2.1 展示移动路线
         log.info("展示移动路线 目标点：{}", site);
