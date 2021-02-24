@@ -507,7 +507,7 @@ public class CommonHandler extends AbstractGameEventHandler {
     }
 
     private RegionInfo changeCurrRegion(Region region) {
-        RegionMes regionMes = regionMesService.getRegionByType(region.getType());
+        RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(region.getType());
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
         regionInfo.setColor(region.getColor());
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_REGION, ExtMes.REGION_INFO, regionInfo);

@@ -85,7 +85,7 @@ public class ActionIntention {
         return "ActionIntention{" +
             "resultEnum=" + resultEnum +
             ", site=" + site +
-            ", aimUnit=" + aimUnit.simpleInfoShow() +
+            ", aimUnit=" + aimUnit +
             ", aimRegion=" + aimRegion +
             '}';
     }

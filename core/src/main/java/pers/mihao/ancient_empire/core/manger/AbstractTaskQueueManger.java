@@ -12,20 +12,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class AbstractTaskQueueManger<T> implements TaskQueueManger<T> {
 
-    private AtomicInteger threadIndex = new AtomicInteger(0);
+    private static AtomicInteger threadIndex = new AtomicInteger(0);
     private String threadName = "handleTask-";
 
     /**
      * 事件处理线程池
      */
     protected ExecutorService taskPool = new ThreadPoolExecutor(
-        1,
+        Runtime.getRuntime().availableProcessors(),
         Runtime.getRuntime().availableProcessors(),
         0, TimeUnit.MINUTES,
         new LinkedBlockingQueue<>(10),
         runnable -> {
             Thread thread = new Thread(runnable);
-            thread.setName(threadName + threadIndex);
+            thread.setName(threadName + threadIndex.getAndIncrement());
             return thread;
         });
 

@@ -18,7 +18,7 @@ public class ForestCloseMovePathStrategy extends MovePathStrategy {
      * @return
      */
     @Override
-    public int getRegionDeplete(GameMap gameMap, int index) {
+    protected int getRegionDeplete(GameMap gameMap, int index) {
         List<Region> regionList = gameMap.getRegions();
         if (regionList.get(index).getType().equals(RegionEnum.FOREST.type()) || regionList.get(index).getType().equals(RegionEnum.GROVE.type())) {
             return 1;

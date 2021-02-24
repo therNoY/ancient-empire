@@ -58,7 +58,7 @@ public class RegionMesController {
 
     @GetMapping("/regionInfo")
     public RespJson getRegionInfo(@RequestParam  String type) {
-        RegionMes regionMes = regionMesService.getRegionByType(type);
+        RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(type);
         return RespUtil.successResJson(regionMes);
     }
 }

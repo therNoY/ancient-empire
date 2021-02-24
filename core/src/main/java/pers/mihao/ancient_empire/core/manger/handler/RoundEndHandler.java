@@ -8,7 +8,6 @@ import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.RegionInfo;
 import pers.mihao.ancient_empire.base.bo.Tomb;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
@@ -83,7 +82,7 @@ public class RoundEndHandler extends CommonHandler {
         int addMoney = 0;
         for (BaseSquare square : regions) {
             if (currArmy().getColor().equals(square.getColor())) {
-                addMoney += regionMesService.getRegionByType(square.getType()).getTax();
+                addMoney += regionMesService.getRegionByTypeFromLocalCatch(square.getType()).getTax();
             }
         }
         armyStatusInfoDTO.setMoney(currArmy().getMoney() + addMoney);

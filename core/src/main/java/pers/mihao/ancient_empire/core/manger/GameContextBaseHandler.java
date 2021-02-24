@@ -7,17 +7,15 @@ import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
-import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
-import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
-import pers.mihao.ancient_empire.core.robot.RobotManger;
+import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
 
 import java.util.List;
 
@@ -45,7 +43,7 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
      */
     protected RegionInfo getRegionInfoBySite(int row, int column) {
         Region region = getRegionBySite(row, column);
-        RegionMes regionMes = regionMesService.getRegionByType(region.getType());
+        RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(region.getType());
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
         regionInfo.setRow(row);
         regionInfo.setColumn(column);
@@ -541,82 +539,6 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
             }
         }
         return sites;
-    }
-
-    /**
-     * 获取 两点的最小消耗
-     * @param startSite
-     * @param aimSite
-     * @return
-     */
-    @KnowledgePoint("使用迪杰斯特拉算法计算'无向有权图'两点的最短路径")
-    protected int getMinUnitMoveDeplete(Site startSite, Site aimSite) {
-        GameMap gameMap = record().getGameMap();
-
-        int graphSize = gameMap.getRegions().size();
-        int startIndex = getRegionIndexBySite(startSite), endIndex = getRegionIndexBySite(aimSite);
-        // 保存路径
-        boolean[] isVisit = new boolean[graphSize];
-        int[] visitPath = new int[graphSize];
-        int[] lastVisitIndex = new int[graphSize];
-        // 1.初始化
-        for (int i = 0; i < graphSize; i++) {
-            visitPath[i] = Integer.MAX_VALUE;
-            lastVisitIndex[i] = -1;
-        }
-        visitPath[startIndex] = 0;
-
-        int lastAddIndex = startIndex, column = gameMap.getColumn(), deplete;
-        while (isVisit[endIndex]) {
-            // 2. update 更新新加入的节点 相连的点 更新最短路径
-            if (lastAddIndex >= column) {
-                updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex - column);
-                // 更新上面的节点
-            }
-            if (lastAddIndex % column > 0) {
-                // 更新右边的点
-                updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex - 1);
-            }
-            if (lastAddIndex % column != 1) {
-                // 更新左边的点
-                updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex + 1);
-            }
-            if (graphSize - lastAddIndex > column) {
-                // 更新下面边的点
-                updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex + column);
-            }
-
-            // 3. scan 从未访问过的节点找到最小的路径
-            int minPath = Integer.MAX_VALUE;
-            for (int i = 0; i < graphSize; i++) {
-                if (!isVisit[i]) {
-                    if (visitPath[i] < minPath) {
-                        minPath = visitPath[i];
-                        lastAddIndex = i;
-                    }
-                }
-            }
-
-            // 4. 将找到的点作为新的点加入
-            isVisit[lastAddIndex] = true;
-        }
-
-        return visitPath[endIndex];
-    }
-
-    private void updateIndexValue(int[] visitPath, int[] lastVisitIndex, int lastAddIndex, int compareIndex) {
-        int deplete;
-        deplete = getDepleteByIndex(compareIndex);
-        // 更新上面的节点
-        if (visitPath[lastAddIndex] + deplete < visitPath[compareIndex]) {
-            visitPath[compareIndex] = visitPath[lastAddIndex] + deplete;
-            lastVisitIndex[compareIndex] = lastAddIndex;
-        }
-    }
-
-    public int getDepleteByIndex(int index) {
-        return MoveAreaStrategy.getInstance()
-            .getRegionDepleteByUnitInfo(currUnit(), gameMap(), getSiteByRegionIndex(index));
     }
 
     /**

@@ -1,9 +1,7 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
@@ -111,7 +109,7 @@ public class UserRecordServiceImp implements UserRecordService {
         userRecord.setCurrentRound(1);
         userRecord.setCurrPoint(new Site(1, 1));
         Region region = userRecord.getGameMap().getRegions().get(0);
-        RegionMes regionMes = regionMesService.getRegionByType(region.getType());
+        RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(region.getType());
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
         regionInfo.setColor(region.getColor());
         userRecord.setCurrRegion(regionInfo);

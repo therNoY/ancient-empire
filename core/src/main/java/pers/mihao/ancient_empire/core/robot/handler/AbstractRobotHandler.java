@@ -5,11 +5,13 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.core.dto.MovePathDTO;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
 import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 import pers.mihao.ancient_empire.core.robot.ActionIntention;
 import pers.mihao.ancient_empire.core.robot.RobotCommonHandler;
@@ -54,7 +56,7 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
         List<Site> area = getCanActionArea(site);
 
         List<Site> canMoveArea = moveArea.stream().filter(area::contains).collect(Collectors.toList());
-        Site aimSite;
+        Site aimSite = null;
         // 2 获取将要移动的目标点
         if (canMoveArea.size() > 0) {
             log.info("可以直接移动到可以行动的目标点");
@@ -63,16 +65,18 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
                     return 1;
                 }
                 return -1;
-            }).get();
+                }).get();
         }else {
-            aimSite = moveArea.stream().min((s1, s2) -> {
-                if (getMinUnitMoveDeplete(s1, site) > getMinUnitMoveDeplete(s2, site)) {
-                    return 1;
+            int minDeplete = Integer.MAX_VALUE;
+            MovePathDTO movePathDTO;
+            for (Site s : moveArea) {
+                movePathDTO = MovePathStrategy.getInstance().getUnitMovePath(s, site, record(), currUnit());
+                if (movePathDTO.getDeplete() < minDeplete) {
+                    minDeplete = movePathDTO.getDeplete();
+                    aimSite = s;
                 }
-                return -1;
-            }).get();
+            }
         }
-
 
         assert moveArea.contains(aimSite);
         // 2.1 展示移动路线
@@ -128,7 +132,7 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
      */
     public void handler(ActionIntention intention) {
         // 1. 移动到目标点
-        moveToAimPointAndAction(intention, intention.getAimUnit());
+        moveToAimPointAndAction(intention, intention.getSite());
     }
 
 }

@@ -35,7 +35,7 @@ public class RobotManger {
         new SynchronousQueue<>(),
         runnable -> {
             Thread thread = new Thread(runnable);
-            thread.setName(threadName + threadIndex);
+            thread.setName(threadName + threadIndex.getAndIncrement());
             return thread;
         });
 

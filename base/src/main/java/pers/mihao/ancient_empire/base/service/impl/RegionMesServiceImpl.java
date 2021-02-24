@@ -4,7 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDAO, RegionMes> i
 
     @Autowired
     RegionMesDAO regionMesDao;
+
+    private Map<String, RegionMes> regionMesMap = new HashMap<>(16);
 
     @Override
     public IPage<RegionMes> getList(Page<RegionMes> page) {
@@ -53,6 +59,21 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDAO, RegionMes> i
         QueryWrapper wrapper = new QueryWrapper<>().eq("enable", BaseConstant.YES);
         List<RegionMes> regionMesList = regionMesDao.selectList(wrapper);
         return regionMesList;
+    }
+
+    /**
+     * 获取region by type
+     * @param type
+     * @return
+     */
+    @Override
+    public RegionMes getRegionByTypeFromLocalCatch(String type) {
+        RegionMes regionMes = regionMesMap.get(type);
+        if (regionMes == null) {
+            regionMes = getRegionByType(type);
+            regionMesMap.put(type, regionMes);
+        }
+        return regionMes;
     }
 
     /**

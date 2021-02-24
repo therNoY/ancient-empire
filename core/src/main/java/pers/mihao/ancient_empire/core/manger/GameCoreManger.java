@@ -129,7 +129,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     @Override
     @KnowledgePoint("遍历枚举")
     public void run(String... args) {
-        setThreadName("EventHandel-");
+        setThreadName("GameEventHandel-");
 
         // 注册事件对应的处理器
         String packName = GameHandler.class.getPackage().getName();

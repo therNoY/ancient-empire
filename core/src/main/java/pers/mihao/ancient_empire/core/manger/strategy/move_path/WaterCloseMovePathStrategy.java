@@ -18,7 +18,7 @@ public class WaterCloseMovePathStrategy extends MovePathStrategy {
      * @return
      */
     @Override
-    public int getRegionDeplete(GameMap gameMap, int index) {
+    protected int getRegionDeplete(GameMap gameMap, int index) {
         List<Region> regionList = gameMap.getRegions();
         String type = regionList.get(index).getType();
         if (type.startsWith(RegionEnum.SEA.type()) || type.startsWith(RegionEnum.BANK.type())) {
