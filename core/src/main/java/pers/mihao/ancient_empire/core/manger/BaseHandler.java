@@ -105,6 +105,10 @@ public abstract class BaseHandler implements Handler {
     }
 
     // 判断上面有没有 敌方单位
+    public boolean isHaveEnemy(UserRecord userRecord, Site site) {
+        return isHaveEnemy(userRecord, site.getRow(), site.getColumn());
+    }
+
     public boolean isHaveEnemy(UserRecord userRecord, int row, int column) {
         Integer camp = userRecord.getArmyList().get(userRecord.getCurrArmyIndex()).getCamp();
         for (Army a : userRecord.getArmyList()) {
@@ -132,6 +136,29 @@ public abstract class BaseHandler implements Handler {
             }
         }
         return false;
+    }
+
+    /**
+     * 基础方法 根据位置获取地形
+     *
+     * @param site
+     * @return
+     */
+    protected int getRegionIndexBySite(Site site, GameMap gameMap) {
+        return (site.getRow() - 1) * gameMap.getColumn() - 1 + site.getColumn();
+    }
+
+    /**
+     * 通过地形的index获取地形位置
+     *
+     * @param index
+     * @return
+     */
+    protected Site getSiteByRegionIndex(Integer index,GameMap gameMap) {
+        int gameColumn = gameMap.getColumn();
+        int row = (index + 1) / gameColumn + 1;
+        int column = (index + 1) % gameColumn;
+        return new Site(row, column == 0 ? gameColumn : column);
     }
 
 }

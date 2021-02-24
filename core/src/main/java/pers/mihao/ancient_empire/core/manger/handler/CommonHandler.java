@@ -495,8 +495,9 @@ public class CommonHandler extends AbstractGameEventHandler {
      * 展示移动路线
      */
     protected List<PathPosition> showMoveLine(Site aimSite) {
-        List<PathPosition> path = MovePathStrategy.getInstance().getMovePath(record().getCurrUnit(),
-                aimSite, gameContext.getWillMoveArea());
+        MovePathDTO movePathDTO = MovePathStrategy.getInstance().getUnitMovePath(record().getCurrUnit(),
+                aimSite, record(), currUnit());
+        List<PathPosition> path = movePathDTO.getPositionList();
         gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_LINE);
         gameContext.setReadyMoveLine(path);
         gameContext.setStartMoveSite(getCurrentUnitSite());

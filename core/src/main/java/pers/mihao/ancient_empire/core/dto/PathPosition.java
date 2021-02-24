@@ -3,6 +3,9 @@ package pers.mihao.ancient_empire.core.dto;
 import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Site;
 
+/**
+ * 记录单位行动的路径
+ */
 public class PathPosition extends Site{
 
 
