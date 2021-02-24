@@ -9,6 +9,7 @@ import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.dto.LifeChangeDTO;
 import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
@@ -51,15 +52,18 @@ public class StartStrategy extends AbstractStrategy<StartStrategy> {
         needRestoreLife = levelMes.getMaxLife() - lastLife;
         LifeChangeDTO lifeChangeDTO = null;
         if (needRestoreLife > 0) {
-            if ((regionRestore = regionInfo.getRestore()) > 0 && colorIsCamp(record, regionInfo.getColor())) {
-                log.info("根据建筑物回血 需要回血：{} 地形可以回血：{}", needRestoreLife, regionRestore);
-                lifeChangeDTO = new LifeChangeDTO();
-                lifeChangeDTO.setRow(unit.getRow());
-                lifeChangeDTO.setColumn(unit.getColumn());
-                if (needRestoreLife < regionRestore) {
-                    lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, needRestoreLife));
-                } else {
-                    lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, regionRestore));
+            if ((regionRestore = regionInfo.getRestore()) > 0) {
+                if (colorIsCamp(record, regionInfo.getColor())
+                    || (!RegionEnum.TOWN.type().equals(regionInfo.getType()) && !RegionEnum.CASTLE.type().equals(regionInfo.getType()))){
+                    log.info("根据建筑物回血 需要回血：{} 地形可以回血：{}", needRestoreLife, regionRestore);
+                    lifeChangeDTO = new LifeChangeDTO();
+                    lifeChangeDTO.setRow(unit.getRow());
+                    lifeChangeDTO.setColumn(unit.getColumn());
+                    if (needRestoreLife < regionRestore) {
+                        lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, needRestoreLife));
+                    } else {
+                        lifeChangeDTO.setAttach(AppUtil.getArrayByInt(10, regionRestore));
+                    }
                 }
             } else {
                 List<Ability> abilities = abilityService.getUnitAbilityList(unit.getTypeId());
