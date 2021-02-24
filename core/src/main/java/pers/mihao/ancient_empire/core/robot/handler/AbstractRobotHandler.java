@@ -54,16 +54,25 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
         List<Site> area = getCanActionArea(site);
 
         List<Site> canMoveArea = moveArea.stream().filter(area::contains).collect(Collectors.toList());
-        if (canMoveArea.size() > 0) {
-            moveArea = canMoveArea;
-        }
+        Site aimSite;
         // 2 获取将要移动的目标点
-        Site aimSite = moveArea.stream().min((s1, s2) -> {
-            if (getMinUnitMoveDeplete(s1, site) > getMinUnitMoveDeplete(s2, site)) {
-                return 1;
-            }
-            return -1;
-        }).get();
+        if (canMoveArea.size() > 0) {
+            log.info("可以直接移动到可以行动的目标点");
+            aimSite = canMoveArea.stream().min((s1, s2) -> {
+                if (getSiteLength(s1, site) < getSiteLength(s2, site)) {
+                    return 1;
+                }
+                return -1;
+            }).get();
+        }else {
+            aimSite = moveArea.stream().min((s1, s2) -> {
+                if (getMinUnitMoveDeplete(s1, site) > getMinUnitMoveDeplete(s2, site)) {
+                    return 1;
+                }
+                return -1;
+            }).get();
+        }
+
 
         assert moveArea.contains(aimSite);
         // 2.1 展示移动路线
@@ -78,6 +87,7 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
     /**
      * 获取行动可以作用到的区域 不同的事件不同
      * @param site
+     * @return 返回目标点
      */
     protected abstract List<Site> getCanActionArea(Site site);
 

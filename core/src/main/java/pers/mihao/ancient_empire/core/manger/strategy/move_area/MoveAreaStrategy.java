@@ -180,6 +180,21 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         }
     }
 
+    /**
+     * 获取单位在地图上的某一点需要消耗的移动力
+     * @param unitInfo 信息
+     * @param map 地图
+     * @param end 目标点
+     * @return
+     */
+    public int getRegionDepleteByUnitInfo(UnitInfo unitInfo, GameMap map, Site end) {
+        int minDeplete = Integer.MAX_VALUE, temDep;
+        for (MoveAreaStrategy strategy : getAbilityStrategy(unitInfo.getAbilities())) {
+            temDep = strategy.getRegionDeplete(map, end.getRow(), end.getColumn());
+            minDeplete = Math.min(minDeplete, temDep);
+        }
+        return minDeplete;
+    }
 
 
     // 获取上面的地形的消耗
