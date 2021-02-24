@@ -93,11 +93,6 @@ public class MovePathStrategy extends AbstractStrategy {
         }
         turningPoint.add(new PathPosition(path.get(path.size() - 1)));
 
-        // 6. 将路径长度放进去
-        for (int i = 0; i < turningPoint.size() - 1; i++) {
-            PathPosition p = turningPoint.get(i);
-            p.setLength(getPathPositionLength(p, turningPoint.get(i + 1)));
-        }
         return turningPoint;
     }
 
@@ -325,19 +320,11 @@ public class MovePathStrategy extends AbstractStrategy {
     private List<PathPosition> toPathPosition(List<Site> path) {
         List<PathPosition> pathPositions = new ArrayList<>();
         // 将路径长度放进去
-        for (int i = 0; i < path.size() - 1; i++) {
+        for (int i = 0; i < path.size(); i++) {
             PathPosition p = new PathPosition(path.get(i));
-            p.setLength(getSiteLength(path.get(i), path.get(i + 1)));
             pathPositions.add(p);
         }
-        pathPositions.add(new PathPosition(path.get(path.size() - 1)));
         return pathPositions;
-    }
-
-
-
-    private int getPathPositionLength(PathPosition p1, PathPosition p2) {
-        return Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p1.getColumn() - p2.getColumn());
     }
 
 }

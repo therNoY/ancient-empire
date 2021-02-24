@@ -51,7 +51,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     /* 初始化注册是事件处理器 */
     private Map<GameEventEnum, Class<Handler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
 
-    /* 游戏上下文 创建房间 */
+    /* 创建游戏上下文 房间 */
     private Map<String, GameContext> contextMap = new ConcurrentHashMap<>(16);
 
     // 注册哨兵线程池

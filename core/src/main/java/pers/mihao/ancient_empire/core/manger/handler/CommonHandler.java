@@ -26,7 +26,6 @@ import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.UserTemplateHelper;
-import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.end.EndStrategy;
@@ -50,7 +49,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param gameCommand
      */
     @Override
-    protected final void handlerLevelUp(GameCommand gameCommand) {
+    public final void onUnitLevelUp(GameCommand gameCommand) {
         if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
             List<UnitStatusInfoDTO> unitStatusList = (List<UnitStatusInfoDTO>) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
             for (UnitStatusInfoDTO unitStatus : unitStatusList) {
@@ -62,6 +61,7 @@ public class CommonHandler extends AbstractGameEventHandler {
         }
 
     }
+
 
     private void handlerLevelUp(UnitStatusInfoDTO unitStatus) {
         if (!isInvalidCommand(unitStatus)) {
@@ -134,8 +134,7 @@ public class CommonHandler extends AbstractGameEventHandler {
     }
 
     @Override
-    protected final void addCommand(Command command) {
-        GameCommand gameCommand = (GameCommand) command;
+    public final boolean onGameCommandAdd(GameCommand gameCommand) {
         JSONObject extMes = gameCommand.getExtMes();
         switch (gameCommand.getGameCommendEnum()) {
             case ADD_TOMB:
@@ -194,6 +193,7 @@ public class CommonHandler extends AbstractGameEventHandler {
             default:
                 break;
         }
+        return true;
     }
 
     private void updateUnitInfo(UnitStatusInfoDTO unitStatus) {
@@ -217,7 +217,7 @@ public class CommonHandler extends AbstractGameEventHandler {
                 );
     }
 
-    protected void updateUnitInfo(Unit unit, UnitStatusInfoDTO unitStatusInfoDTO) {
+    private void updateUnitInfo(Unit unit, UnitStatusInfoDTO unitStatusInfoDTO) {
         BeanUtil.copyValueByGetSet(unitStatusInfoDTO, unit);
         if (StringUtil.isNotBlack(unitStatusInfoDTO.getStatus())
                 && !StateEnum.NORMAL.type().equals(unitStatusInfoDTO.getStatus())) {
@@ -278,7 +278,7 @@ public class CommonHandler extends AbstractGameEventHandler {
     /**
      * 改变当前单位
      *
-     * @param site
+     * @param unitInfo
      */
     protected void changeCurrUnit(UnitInfo unitInfo) {
         // 设置当前单位

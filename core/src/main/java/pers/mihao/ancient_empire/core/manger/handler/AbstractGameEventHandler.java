@@ -1,7 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +16,7 @@ import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameContextBaseHandler;
-import pers.mihao.ancient_empire.core.manger.Handler;
+import pers.mihao.ancient_empire.core.manger.GameMangerListener;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.Event;
@@ -29,7 +28,8 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
  * @Author mh32736
  * @Date 2020/9/16 18:57
  */
-public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler {
+public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler,
+    GameMangerListener {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     // 命令集合
@@ -104,7 +104,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         if (commandList == null) {
             commandList = new ArrayList<>();
         }
-        addCommand(command);
+        onGameCommandAdd(command);
         commandList.add(command);
         return this;
     }
@@ -265,7 +265,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             extData.put(ExtMes.UNIT_STATUS, obj);
             setExtMes(extData);
             setOrder(orderIndex ++);
-            handlerLevelUp(this);
+            onUnitLevelUp(this);
             addGameCommand(this);
             return stream;
         }
@@ -349,18 +349,5 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
 
     }
-
-    /**
-     * 处理单位升级
-     * @param gameCommand
-     */
-    protected abstract void handlerLevelUp(GameCommand gameCommand);
-
-
-    /**
-     * 添加命令
-     * @param command
-     */
-    protected abstract void addCommand(Command command);
 
 }

@@ -82,7 +82,11 @@ public class GameCoreEndpointServer {
                         closeSession(session);
                     }
                 }else if (ROOM.equals(type)){
-                    // TODO room连接
+                    boolean success = gameCoreManger.joinGame(recordId);
+                    if (!success) {
+                        log.error("加入失败：{}", recordId);
+                        closeSession(session);
+                    }
                 }else {
                     closeSession(session);
                 }

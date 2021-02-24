@@ -31,7 +31,6 @@ public class GameContext extends UserTemplateHelper {
      * 类型枚举
      */
     private GameTypeEnum gameTypeEnum;
-
     /**
      * 游戏的存档
      */
@@ -265,7 +264,4 @@ public class GameContext extends UserTemplateHelper {
     public void setBeAttachUnit(Unit beAttachUnit) {
         this.beAttachUnit = beAttachUnit;
     }
-
-
-
 }
