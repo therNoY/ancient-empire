@@ -62,10 +62,16 @@ public class RegionMes implements Serializable {
      */
     private Integer createUserId;
 
+
     /**
      * 是否启用 0 不启用 1 启用
      */
     private Integer enable;
+
+    /**
+     * 是否净化
+     */
+    private Integer purify;
 
     public Integer getId() {
         return id;
@@ -136,6 +142,14 @@ public class RegionMes implements Serializable {
 
     public void setEnable(Integer enable) {
         this.enable = enable;
+    }
+
+    public Integer getPurify() {
+        return purify;
+    }
+
+    public void setPurify(Integer purify) {
+        this.purify = purify;
     }
 
     @Override
