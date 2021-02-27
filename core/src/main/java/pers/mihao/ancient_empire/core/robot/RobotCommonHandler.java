@@ -45,6 +45,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
     private Logger log = LoggerFactory.getLogger(RobotCommonHandler.class);
 
     private List<RegionInfo> threatenedRegion;
+    private ArmyUnitSituation armyUnitSituation;
 
     protected static GameCoreManger gameCoreManger;
     protected static GameSessionManger gameSessionManger;
@@ -69,7 +70,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
             for (Unit unit : army.getUnits()) {
                 if (army.getCamp() == camp) {
                     // 统计己方能力数量
-                    List<Ability> abilityList = abilityService.getUnitAbilityListByType(unit.getType());
+                    List<Ability> abilityList = abilityService.getUnitAbilityList(unit.getTypeId());
                     for (Ability ability : abilityList) {
                         AbilityEnum abilityEnum = EnumUtil.valueOf(AbilityEnum.class, ability.getType());
                         switch (abilityEnum) {
@@ -84,6 +85,9 @@ public abstract class RobotCommonHandler extends CommonHandler {
                                 break;
                             case SHOOTER:
                                 armyUnitSituation.shooterNum++;
+                                break;
+                            case REPAIR:
+                                armyUnitSituation.repairerNum++;
                                 break;
                             default:
                                 break;
@@ -103,7 +107,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
                     UnitLevelMes levelMes = unitMesService.getUnitInfo(unit.getTypeId(), unit.getLevel()).getLevelMes();
                     armyUnitSituation.enemyPhyDefSum = levelMes.getPhysicalDefense();
                     armyUnitSituation.enemyMagDefSum = levelMes.getMagicDefense();
-                    List<Ability> abilityList = abilityService.getUnitAbilityListByType(unit.getType());
+                    List<Ability> abilityList = abilityService.getUnitAbilityList(unit.getTypeId());
                     if (abilityList.contains(AbilityEnum.FLY.ability())) {
                         armyUnitSituation.airEnemyNum++;
                     } else if (abilityList.contains(AbilityEnum.SHOOTER.ability())) {
@@ -157,6 +161,9 @@ public abstract class RobotCommonHandler extends CommonHandler {
      */
     protected static class NeedUnitType {
 
+        /**
+         * 是否需要某种能力
+         */
         boolean isNeedAbility;
         List<AbilityEnum> abilityEnumList;
         String attachType;
@@ -307,6 +314,11 @@ public abstract class RobotCommonHandler extends CommonHandler {
      * 军队的单位状况
      */
     static class ArmyUnitSituation {
+
+        /**
+         * 可以修改的数量
+         */
+        int repairerNum = 0;
 
         /**
          * 可以占领的单位状况

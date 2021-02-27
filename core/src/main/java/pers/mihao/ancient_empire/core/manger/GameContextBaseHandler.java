@@ -542,6 +542,22 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
     }
 
     /**
+     * 获取单位数量
+     * @return
+     */
+    protected int getUnitCount(){
+        int sum = 0;
+        for (Army army : record().getArmyList()) {
+            for (Unit unit : army.getUnits()) {
+                if (!Boolean.TRUE.equals(unit.getDead())) {
+                    sum ++;
+                }
+            }
+        }
+        return sum;
+    }
+
+    /**
      * 打印上下文信息
      * @return 上下文信息字符串
      */

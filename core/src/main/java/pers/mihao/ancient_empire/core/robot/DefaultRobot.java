@@ -107,49 +107,73 @@ public class DefaultRobot extends AbstractRobot {
             .findFirst().get();
     }
 
+    /**
+     * 机器人 选择购买单位
+     * 策略：看自己军队的数量
+     * @param canBuyUnitMes
+     * @param needUnitType
+     * @return
+     */
     @Override
     protected UnitInfo getMastNeedUnit(List<UnitInfo> canBuyUnitMes, NeedUnitType needUnitType) {
-        Army army = currArmy();
-        // 准备希望要召唤的单位
-        if (!AppUtil.hasLoad(army)) {
-            log.info("缺少领主 看是否可以购买");
-            Optional<UnitInfo> loadUnit = canBuyUnitMes.stream()
-                .filter(unitInfo -> unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability()))
-                .findAny();
-            if (loadUnit.isPresent()) {
-                log.info("可以购买领主：{}", loadUnit);
-                return loadUnit.get();
-            }
-        }
-
-        // 获取现在需要的能力
-        if (needUnitType.isNeedAbility) {
-            log.info("购买单位需要的能力 {}", needUnitType.abilityEnumList);
-            List<UnitInfo> buyUnitList = null;
-            java.util.stream.Stream<UnitInfo> stream;
-            for (AbilityEnum abilityEnum : needUnitType.abilityEnumList) {
-                stream = canBuyUnitMes.stream()
-                    .filter(mes -> mes.getAbilities().contains(abilityEnum.ability()));
-                if (stream.count() > 0) {
-                    buyUnitList = stream.collect(Collectors.toList());
-                    break;
+        // 军队的平均单位数
+        int sumUnitNum = getUnitCount() / record().getArmyList().size();
+        if (currArmy().getUnits().size() > sumUnitNum / 2 && currArmy().getUnits().size() > record().getMaxPop() / 5) {
+            // 此时应该判断当前是可以考虑买贵一点的
+            Army army = currArmy();
+            // 准备希望要召唤的单位
+            if (!AppUtil.hasLoad(army)) {
+                log.info("缺少领主 看是否可以购买");
+                Optional<UnitInfo> loadUnit = canBuyUnitMes.stream()
+                    .filter(unitInfo -> unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability()))
+                    .findAny();
+                if (loadUnit.isPresent()) {
+                    log.info("可以购买领主：{}", loadUnit);
+                    return loadUnit.get();
                 }
             }
-
-            if (CollectionUtil.isNotEmpty(buyUnitList)) {
-                return CollectionUtil.getRandom(buyUnitList);
+            int averagePrice, countPrice = 0;
+            for (UnitInfo unitInfo : canBuyUnitMes) {
+                countPrice += unitInfo.getUnitMes().getPrice();
             }
+            averagePrice = countPrice / canBuyUnitMes.size();
+            UnitInfo choose = CollectionUtil.getRandom(canBuyUnitMes.stream()
+                .filter(unitInfo -> unitInfo.getUnitMes().getPrice() > averagePrice).collect(Collectors.toList()));
+
+            return choose;
         } else {
-            log.info("购买单位需要的攻击类型 {}： 1 物理 2 魔法", needUnitType.attachType);
-            List<UnitInfo> buyUnitList = canBuyUnitMes.stream()
-                .filter(mes -> mes.getUnitMes().getAttackType().equals(needUnitType.attachType))
-                .collect(Collectors.toList());
-            if (buyUnitList.size() > 0) {
-                return CollectionUtil.getRandom(buyUnitList);
+            // 单位数量还不多需要购买基础单位
+            // 获取现在需要的能力
+            if (needUnitType.isNeedAbility) {
+                log.info("购买单位需要的能力 {}", needUnitType.abilityEnumList);
+                List<UnitInfo> buyUnitList = null;
+                java.util.stream.Stream<UnitInfo> stream;
+                for (AbilityEnum abilityEnum : needUnitType.abilityEnumList) {
+                    stream = canBuyUnitMes.stream()
+                        .filter(mes -> mes.getAbilities().contains(abilityEnum.ability()));
+                    if (stream.count() > 0) {
+                        buyUnitList = stream.collect(Collectors.toList());
+                        break;
+                    }
+                }
+
+                if (CollectionUtil.isNotEmpty(buyUnitList)) {
+                    return CollectionUtil.getRandom(buyUnitList);
+                }
+            } else {
+                log.info("购买单位需要的攻击类型 {}： 1 物理 2 魔法", needUnitType.attachType);
+                List<UnitInfo> buyUnitList = canBuyUnitMes.stream()
+                    .filter(mes -> mes.getUnitMes().getAttackType().equals(needUnitType.attachType))
+                    .collect(Collectors.toList());
+                if (buyUnitList.size() > 0) {
+                    return CollectionUtil.getRandom(buyUnitList);
+                }
             }
         }
         return CollectionUtil.getRandom(canBuyUnitMes);
     }
+
+
 
     @Override
     protected Long getCastleScore(CastleRegion castle) {
@@ -177,6 +201,7 @@ public class DefaultRobot extends AbstractRobot {
     protected NeedUnitType getNeedAbility() {
         // 首先要有3个具有占领能力的单位
         ArmyUnitSituation situation = getArmyUnitSituation();
+        getAllCanOccupyVillage().size();
         NeedUnitType needUnitType = new NeedUnitType();
         List<AbilityEnum> needAbility = new ArrayList<>();
         if (situation.villageGetNum < 3) {
@@ -193,6 +218,7 @@ public class DefaultRobot extends AbstractRobot {
         if (needAbility.size() > 0) {
             needUnitType.isNeedAbility = true;
             needUnitType.abilityEnumList = needAbility;
+            return needUnitType;
         }
         return new NeedUnitType(false, situation.averagePhyDef > situation.averageMagDef ? PHYSICAL : MAGIC);
     }
