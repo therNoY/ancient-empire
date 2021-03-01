@@ -19,8 +19,10 @@ import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
+import pers.mihao.ancient_empire.core.dto.MovePathDTO;
 import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
 import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
 
 /**
  * 具体选择行动的策略实现类
@@ -46,45 +48,50 @@ public class DefaultRobot extends AbstractRobot {
     protected int getActionScore(ActionIntention action) {
         int score = 0;
         UnitInfo target = action.getAimUnit();
+        MovePathDTO movePathDTO = MovePathStrategy.getInstance().getUnitMovePath(currUnit(), action.getSite(), record(), currUnit());
+        int moveDeplete = movePathDTO.getDeplete();
+        if (moveDeplete == Integer.MAX_VALUE) {
+            return score;
+        }
         switch (action.getResultEnum()) {
             case OCCUPIED:
                 RegionInfo tile = action.getAimRegion();
                 if (tile.getType().equals(RegionEnum.CASTLE.type())) {
-                    score += 20000;
+                    score += 5000;
                 }
                 if (tile.getType().equals(RegionEnum.TOWN.type())) {
-                    score += 10000;
+                    score += 3500;
                 }
                 break;
             case REPAIR:
-                score += 5000;
+                score += 2000;
                 break;
             case SUMMON:
-                score += 4000;
+                score += 3000;
                 break;
             case HEAL:
                 score += 10 * (target.getLevelMes().getMaxAttack() * target.getLife() / 100
                     + target.getLevelMes().getSpeed() * 5);
                 break;
             case ATTACH:
-                score += target.getUnitMes().getPrice() / 20 + getAttackScore(target);
+                score += target.getUnitMes().getPrice() + getAttackScore(target);
                 break;
             case DEFENSIVE:
                 if (isThreatened(action.getSite())) {
                     BaseSquare baseSquare = getRegionBySite(action.getSite());
                     if (baseSquare.getType().equals(RegionEnum.CASTLE.type())) {
-                        score += 20000;
+                        score += 5000;
                     }
                     if (baseSquare.getType().equals(RegionEnum.TOWN.type())) {
-                        score -= 10000;
+                        score -= 3500;
                     }
                 }
                 break;
             default:
                 score += 0;
         }
-        score = score / (getSiteLength(currUnit(), action.getSite()) + 1);
-        log.info("行动 {} 评分{}", action.getResultEnum(), score);
+        score = score / ((moveDeplete + 1) * 2);
+        log.info("行动 {} to {}: 评分{}", action.getResultEnum(), action.getSite(), score);
         return score;
     }
 
@@ -109,7 +116,7 @@ public class DefaultRobot extends AbstractRobot {
 
     /**
      * 机器人 选择购买单位
-     * 策略：看自己军队的数量
+     * 策略：看自己军队的数量 是否足够多
      * @param canBuyUnitMes
      * @param needUnitType
      * @return
@@ -151,14 +158,10 @@ public class DefaultRobot extends AbstractRobot {
                 for (AbilityEnum abilityEnum : needUnitType.abilityEnumList) {
                     stream = canBuyUnitMes.stream()
                         .filter(mes -> mes.getAbilities().contains(abilityEnum.ability()));
-                    if (stream.count() > 0) {
-                        buyUnitList = stream.collect(Collectors.toList());
-                        break;
+                    buyUnitList = stream.collect(Collectors.toList());
+                    if (CollectionUtil.isNotEmpty(buyUnitList)) {
+                        return CollectionUtil.getRandom(buyUnitList);
                     }
-                }
-
-                if (CollectionUtil.isNotEmpty(buyUnitList)) {
-                    return CollectionUtil.getRandom(buyUnitList);
                 }
             } else {
                 log.info("购买单位需要的攻击类型 {}： 1 物理 2 魔法", needUnitType.attachType);
@@ -201,7 +204,6 @@ public class DefaultRobot extends AbstractRobot {
     protected NeedUnitType getNeedAbility() {
         // 首先要有3个具有占领能力的单位
         ArmyUnitSituation situation = getArmyUnitSituation();
-        getAllCanOccupyVillage().size();
         NeedUnitType needUnitType = new NeedUnitType();
         List<AbilityEnum> needAbility = new ArrayList<>();
         if (situation.villageGetNum < 3) {
@@ -234,20 +236,20 @@ public class DefaultRobot extends AbstractRobot {
         int lastLeft = beAttach.getLife();
         int left = currUnit().getLife();
         if (beAttach.getType().equals(UnitEnum.LORD.type())) {
-            score += (left - lastLeft) / 10 * beAttach.getUnitMes().getPrice() * beAttach.getLevel();
+            score += (beAttach.getLevelMes().getMaxLife() * 6) / lastLeft * beAttach.getUnitMes().getPrice() * (beAttach.getLevel() + 1);
         } else {
-            score += (left - lastLeft) / 20 * beAttach.getUnitMes().getPrice() * beAttach.getLevel();
+            score += (beAttach.getLevelMes().getMaxLife() * 3) / lastLeft * beAttach.getUnitMes().getPrice() * (beAttach.getLevel() + 1);
         }
         if (beAttach.getStatus() == null || StateEnum.NORMAL.type().equals(beAttach.getStatus())) {
             if (beAttach.getAbilities().contains(AbilityEnum.POISONING.ability()) && beAttach.getAbilities()
                 .contains(AbilityEnum.BLINDER.ability())) {
-                score += beAttach.getUnitMes().getPrice() / 4;
+                score += beAttach.getUnitMes().getPrice();
             }
         } else {
             if (beAttach.getStatus().equals(StateEnum.EXCITED.type())) {
                 if (beAttach.getAbilities().contains(AbilityEnum.POISONING.ability()) && beAttach.getAbilities()
                     .contains(AbilityEnum.BLINDER.ability())) {
-                    score += beAttach.getUnitMes().getPrice() / 2;
+                    score += beAttach.getUnitMes().getPrice();
                 }
             }
 

@@ -109,6 +109,30 @@ public abstract class BaseHandler implements Handler {
         return isHaveEnemy(userRecord, site.getRow(), site.getColumn());
     }
 
+    // 判断上面有没有 敌方单位
+    public boolean isHaveUnit(UserRecord userRecord, Site site) {
+        for (Army a : userRecord.getArmyList()) {
+            for (Unit u : a.getUnits()) {
+                if (!u.isDead() && AppUtil.siteEquals(u, site)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // 判断上面有没有 敌方单位
+    public boolean isHaveUnit(UserRecord userRecord, int row, int column) {
+        for (Army a : userRecord.getArmyList()) {
+            for (Unit u : a.getUnits()) {
+                if (!u.isDead() && u.getRow() == row && u.getColumn() == column) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean isHaveEnemy(UserRecord userRecord, int row, int column) {
         Integer camp = userRecord.getArmyList().get(userRecord.getCurrArmyIndex()).getCamp();
         for (Army a : userRecord.getArmyList()) {

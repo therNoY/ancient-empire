@@ -44,4 +44,9 @@ public class RegionInfo extends RegionMes {
     public void setColumn(Integer column) {
         this.column = column;
     }
+
+    public Site getSite(){
+        return new Site(row, column);
+    }
+
 }

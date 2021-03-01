@@ -40,6 +40,7 @@ public class MovePathStrategy extends AbstractStrategy<MovePathStrategy> {
         int startIndex = getRegionIndexBySite(startSite, gameMap), endIndex = getRegionIndexBySite(aimSite, gameMap);
         // 保存路径
         boolean[] isVisit = new boolean[graphSize];
+
         int[] visitPath = new int[graphSize];
         int[] lastVisitIndex = new int[graphSize];
         // 1.初始化
@@ -51,8 +52,15 @@ public class MovePathStrategy extends AbstractStrategy<MovePathStrategy> {
         isVisit[startIndex] = true;
 
         int lastAddIndex = startIndex, column = gameMap.getColumn();
+        // 记录循环的次数 如果超过了说明
+//        int evenLoopTimer = 0;
 
         while (!isVisit[endIndex]) {
+//            evenLoopTimer ++;
+//            if (evenLoopTimer > graphSize) {
+//                log.info("循环次数有问题, 需要排查问题");
+//                break;
+//            }
             // 2. update 更新新加入的节点 相连的点 更新最短路径
             if (lastAddIndex >= column) {
                 updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex - column, unitInfo, record, endIndex);
@@ -81,10 +89,20 @@ public class MovePathStrategy extends AbstractStrategy<MovePathStrategy> {
                     }
                 }
             }
-
+            if (minPath == Integer.MAX_VALUE) {
+                // 不可达的
+                movePathDTO = new MovePathDTO();
+                movePathDTO.setDeplete(Integer.MAX_VALUE);
+                return movePathDTO;
+            }
             // 4. 将找到的点作为新的点加入
             isVisit[lastAddIndex] = true;
         }
+
+//        if (evenLoopTimer > graphSize) {
+//            log.info("重新计算");
+//            getUnitMovePath(startSite, aimSite, record, unitInfo);
+//        }
 
         movePathDTO = new MovePathDTO();
         movePathDTO.setDeplete(visitPath[endIndex]);

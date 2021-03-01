@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.dto.MovePathDTO;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
@@ -14,6 +15,7 @@ import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
 import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 import pers.mihao.ancient_empire.core.robot.ActionIntention;
+import pers.mihao.ancient_empire.core.robot.RobotActiveEnum;
 import pers.mihao.ancient_empire.core.robot.RobotCommonHandler;
 
 /**
@@ -78,6 +80,14 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
             }
         }
 
+        if (aimSite == null) {
+            // 直接结束
+            handleRobotEvent(GameEventEnum.CLICK_POINT, intention.getSite());
+            intention.setResultEnum(RobotActiveEnum.END);
+            robotClickAction(intention);
+            return;
+        }
+
         assert moveArea.contains(aimSite);
         // 2.1 展示移动路线
         log.info("展示移动路线 目标点：{}", site);
@@ -85,7 +95,11 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
 
         // 2.2 移动
         log.info("准备移动单位{} 到目标点：{}", currUnit().getUnitMes(), site);
-        robotMoveAndAction(intention);
+        // 3.1.点击目标区域
+        handleRobotEvent(GameEventEnum.CLICK_AIM_POINT);
+
+        // 3.2.点行动按钮
+        robotClickAction(intention);
     }
 
     /**
@@ -94,24 +108,6 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
      * @return 返回目标点
      */
     protected abstract List<Site> getCanActionArea(Site site);
-
-    protected void robotMoveAndAction(ActionIntention intention) {
-        // 1.点击目标区域
-        handleRobotEvent(GameEventEnum.CLICK_AIM_POINT);
-
-        // 2.点行动按钮
-        sendGameCommand(GameCommendEnum.DIS_SHOW_ACTION);
-        if (gameContext.getActions().contains(getActionType().type())) {
-            doClickActionEvent(intention);
-            if (!gameContext.getSubStatusMachine().equals(SubStatusMachineEnum.INIT)) {
-                log.info("进行二次移动 此时选择 最不危险的区域");
-                // TODO
-                handleRobotEvent(GameEventEnum.CLICK_END_ACTION);
-            }
-        }else {
-            handleRobotEvent(GameEventEnum.CLICK_END_ACTION);
-        }
-    }
 
     /**
      * 点击行动事件
@@ -131,8 +127,29 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
      * @param intention
      */
     public void handler(ActionIntention intention) {
-        // 1. 移动到目标点
-        moveToAimPointAndAction(intention, intention.getSite());
+        if (AppUtil.siteEquals(intention.getSite(), currUnit())) {
+            // 不用移动直接点行动
+            handleRobotEvent(GameEventEnum.CLICK_POINT, intention.getSite());
+            robotClickAction(intention);
+        }else {
+            // 1. 移动到目标点
+            moveToAimPointAndAction(intention, intention.getSite());
+        }
+    }
+
+    private void robotClickAction(ActionIntention intention) {
+        // 2.点行动按钮
+        sendGameCommand(GameCommendEnum.DIS_SHOW_ACTION);
+        if (gameContext.getActions().contains(getActionType().type())) {
+            doClickActionEvent(intention);
+            if (!gameContext.getSubStatusMachine().equals(SubStatusMachineEnum.INIT)) {
+                log.info("进行二次移动 此时选择 最不危险的区域");
+                // TODO
+                handleRobotEvent(GameEventEnum.CLICK_END_ACTION);
+            }
+        } else {
+            handleRobotEvent(GameEventEnum.CLICK_END_ACTION);
+        }
     }
 
 }

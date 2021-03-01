@@ -21,6 +21,7 @@ import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
+import pers.mihao.ancient_empire.core.robot.RobotManger;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
@@ -38,6 +39,8 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     UserRecordService userRecordService;
     @Autowired
     UserTemplateService userTemplateService;
+    @Autowired
+    RobotManger robotManger;
 
     /* 线程池的计数器 */
     private AtomicInteger threadIndex = new AtomicInteger(0);
@@ -174,7 +177,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 try {
                     log.info("开始检测上下文：{} 如果没有完成 就会撤销", userRecord.getUuid());
                     cyclicBarrier.await(60, TimeUnit.SECONDS);
-                    doStartGame(gameContext);
+                    onGameStart(gameContext);
                 } catch (InterruptedException e) {
                     log.error("", e);
                 } catch (BrokenBarrierException e) {
@@ -194,13 +197,13 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      *
      * @param userRecord
      */
-    private void doStartGame(GameContext gameContext) {
+    private void onGameStart(GameContext gameContext) {
         log.info("玩家全部加入可以开始游戏:{}", gameContext.getGameId());
         gameContext.setStartTime(new Date());
 
         if (gameContext.getUserRecord().getCurrPlayer() == null) {
-            // TODO
-            log.info("开局是robot........");
+            log.info("开局是robot");
+            robotManger.startRobot(gameContext);
         }
     }
 

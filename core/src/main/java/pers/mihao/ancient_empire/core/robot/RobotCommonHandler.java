@@ -45,7 +45,6 @@ public abstract class RobotCommonHandler extends CommonHandler {
     private Logger log = LoggerFactory.getLogger(RobotCommonHandler.class);
 
     private List<RegionInfo> threatenedRegion;
-    private ArmyUnitSituation armyUnitSituation;
 
     protected static GameCoreManger gameCoreManger;
     protected static GameSessionManger gameSessionManger;
@@ -255,7 +254,9 @@ public abstract class RobotCommonHandler extends CommonHandler {
      * @return
      */
     protected List<RegionInfo> getAllCanRepairRegion() {
-        return getAllSiteByType(RegionEnum.RUINS);
+        return getAllSiteByType(RegionEnum.RUINS).stream()
+                .filter(regionInfo -> !isHaveUnit(record(), regionInfo.getRow(), regionInfo.getColumn()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -263,8 +264,9 @@ public abstract class RobotCommonHandler extends CommonHandler {
      * @return
      */
     protected List<RegionInfo> getAllCanOccupyVillage() {
-        return getAllSiteByType(RegionEnum.STOCK).stream()
-                .filter(regionInfo -> !colorIsCamp(regionInfo.getColor())).collect(Collectors.toList());
+        return getAllSiteByType(RegionEnum.TOWN).stream()
+                .filter(regionInfo -> !colorIsCamp(regionInfo.getColor()) && !isHaveUnit(record(), regionInfo.getRow(), regionInfo.getColumn()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -273,7 +275,8 @@ public abstract class RobotCommonHandler extends CommonHandler {
      */
     protected List<RegionInfo> getAllCanOccupyCastle() {
         return getAllSiteByType(RegionEnum.CASTLE).stream()
-                .filter(regionInfo -> !colorIsCamp(regionInfo.getColor())).collect(Collectors.toList());
+                .filter(regionInfo -> !colorIsCamp(regionInfo.getColor()) && !isHaveUnit(record(), regionInfo.getRow(), regionInfo.getColumn()))
+                .collect(Collectors.toList());
     }
 
     private List<RegionInfo> getAllSiteByType(RegionEnum regionEnum){
@@ -460,9 +463,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
         long wait = RobotWaitTimeCatch.getInstance().getLockTimeByEvent(event.getEvent());
         log.info("发送命令：{}完成 准备lock:{}ms之后重新运行", event, wait);
         try {
-            synchronized (gameCoreManger) {
-                gameCoreManger.wait(wait);
-            }
+            Thread.sleep(wait);
         } catch (InterruptedException e) {
             log.error("", e);
         }
