@@ -1,9 +1,13 @@
 package pers.mihao.ancient_empire.base.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
+
+import java.util.List;
 
 /**
  * 用户存档接口
@@ -39,4 +43,11 @@ public interface UserRecordService extends MapService{
      * @param record
      */
     void saveRecord(UserRecord record);
+
+    /**
+     * 根据条件进行分页查询用户信息
+     * @param apiConditionDTO
+     * @return
+     */
+    List<UserRecord> listUserRecordWithPage(ApiConditionDTO apiConditionDTO);
 }

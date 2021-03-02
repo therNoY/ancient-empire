@@ -4,7 +4,6 @@ package pers.mihao.ancient_empire.common.jdbc;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
-import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.executor.statement.BaseStatementHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -28,7 +27,6 @@ import pers.mihao.ancient_empire.common.util.ReflectUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -56,7 +54,7 @@ public class PageInterceptor implements Interceptor {
             BaseStatementHandler delegate = (BaseStatementHandler) ReflectUtil.getValueByFieldName(statementHandler, "delegate");
             MappedStatement mappedStatement = (MappedStatement) ReflectUtil.getValueByFieldName(delegate, "mappedStatement");
 
-            if (delegate != null && mappedStatement != null && mappedStatement.getId().endsWith("WithPage") ) {
+            if (mappedStatement != null && mappedStatement.getId().endsWith("WithPage")) {
                 // 以withPage结尾的自动分页
                 // 1.查询总和
                 Long count = null;

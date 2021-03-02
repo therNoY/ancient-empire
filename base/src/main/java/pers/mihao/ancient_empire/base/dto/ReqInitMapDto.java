@@ -4,8 +4,9 @@ import java.util.List;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
-public class ReqInitMapDto {
+public class ReqInitMapDto extends ApiRequestDTO {
     @DecimalMin(value = "5", message = "最小人口大于5")
     private Integer maxPop;
     @DecimalMin(value = "500", message = "初始金额要大于500")

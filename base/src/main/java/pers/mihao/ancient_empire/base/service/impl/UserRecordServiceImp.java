@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
@@ -28,6 +32,7 @@ import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
@@ -108,6 +113,7 @@ public class UserRecordServiceImp implements UserRecordService {
         userRecord.setUuid(uuid);
         userRecord.setCurrentRound(1);
         userRecord.setCurrPoint(new Site(1, 1));
+        userRecord.setCreateUserId(reqInitMapDto.getUserId());
         Region region = userRecord.getGameMap().getRegions().get(0);
         RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(region.getType());
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
@@ -244,5 +250,18 @@ public class UserRecordServiceImp implements UserRecordService {
     @Override
     public void saveRecord(UserRecord record) {
         userRecordRepository.save(record);
+    }
+
+    @Override
+    public List<UserRecord> listUserRecordWithPage(ApiConditionDTO apiConditionDTO) {
+        Criteria criteria = Criteria.where("createUserId").is(apiConditionDTO.getUserId());
+        if (StringUtil.isNotBlack(apiConditionDTO.getCondition())) {
+            criteria.and("recordName").is(apiConditionDTO.getCondition());
+        }
+        Query query = new Query(criteria);
+        query.fields().include("recordName");
+        query.fields().include("uuid");
+        List<UserRecord> records = mongoTemplate.find(query, UserRecord.class);
+        return records;
     }
 }

@@ -60,7 +60,7 @@ public class AttachRobotHandler extends AbstractRobotHandler {
             }
             if (chooseUnit != null) {
                 handleRobotEvent(GameEventEnum.CLICK_UN_ACTIVE_UNIT, chooseUnit);
-                handleRobotEvent(GameEventEnum.CLICK_CHOOSE_POINT, null, chooseUnit);
+                handleRobotEvent(GameEventEnum.CLICK_CHOOSE_POINT, chooseUnit, chooseUnit);
             }
         }
 
