@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.mihao.ancient_empire.base.dao.GameRoomDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.GameRoom">
+        <id column="room_id" property="roomId" />
+        <result column="map_id" property="mapId" />
+        <result column="room_name" property="roomName" />
+        <result column="player_count" property="playerCount" />
+        <result column="join_count" property="joinCount" />
+        <result column="room_owner" property="roomOwner" />
+        <result column="creater" property="creater" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        room_id, map_id, room_name, player_count, join_count, room_owner, creater, create_time
+    </sql>
+
+
+    <select id="getCanJoinGameRoomWithPage" resultType="pers.mihao.ancient_empire.base.entity.GameRoom">
+        select * from game_room
+         <where>
+             <if test="condition!=null and condition != ''">
+                 room_name like concat('%', #{condition}, '%') or room_id = #{condition}
+             </if>
+         </where>
+         order by player_count/join_count desc, create_time desc
+    </select>
+
+</mapper>

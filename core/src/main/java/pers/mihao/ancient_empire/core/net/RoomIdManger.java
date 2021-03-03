@@ -7,4 +7,17 @@ package pers.mihao.ancient_empire.core.net;
  */
 public class RoomIdManger {
 
+    /**
+     * TODO
+     * @return
+     */
+    public static String borrowRoomId(){
+        return "";
+    }
+
+
+    public static void returnRoomId(String roomId) {
+
+    }
+
 }

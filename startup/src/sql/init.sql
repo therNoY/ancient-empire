@@ -1,6 +1,6 @@
 CREATE TABLE game_room  (
-  `room_id` varchar NOT NULL COMMENT '房间号',
-  `map_id` varchar NULL COMMENT '选择的地图',
+  `room_id` varchar(4) NOT NULL COMMENT '房间号',
+  `map_id` varchar(64) NULL COMMENT '选择的地图',
   `room_name` varchar(255) NULL COMMENT '房间名字',
   `player_count` tinyint NULL COMMENT '玩家数',
   `join_count` tinyint(255) NULL COMMENT '加入玩家数',
