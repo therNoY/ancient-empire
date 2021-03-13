@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import org.springframework.data.annotation.Id;
 
 /**
  * <p>
@@ -17,6 +19,7 @@ public class UserJoinRoom implements Serializable {
     /**
      * 用户Id
      */
+    @TableId
     private Integer userId;
 
     /**

@@ -15,11 +15,6 @@ import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 public class GameCommand extends AbstractCommand{
 
     /**
-     * 发送消息类型枚举
-     */
-    private SendTypeEnum sendTypeEnum;
-
-    /**
      * 游戏命令类型枚举
      */
     private GameCommendEnum gameCommendEnum;
@@ -48,16 +43,6 @@ public class GameCommand extends AbstractCommand{
      * 非通用信息
      */
     private JSONObject extMes;
-
-
-
-    public SendTypeEnum getSendTypeEnum() {
-        return sendTypeEnum;
-    }
-
-    public void setSendTypeEnum(SendTypeEnum sendTypeEnum) {
-        this.sendTypeEnum = sendTypeEnum;
-    }
 
     public GameCommendEnum getGameCommendEnum() {
         return gameCommendEnum;
@@ -110,7 +95,6 @@ public class GameCommand extends AbstractCommand{
     @Override
     public String toString() {
         return "GameCommand{" +
-                "sendTypeEnum=" + sendTypeEnum +
                 ", gameCommendEnum=" + gameCommendEnum +
                 ", aimSite=" + aimSite +
                 ", aimUnit=" + aimUnit +

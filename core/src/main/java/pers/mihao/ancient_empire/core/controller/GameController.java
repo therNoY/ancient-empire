@@ -32,7 +32,7 @@ import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
-import pers.mihao.ancient_empire.core.manger.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
 import java.util.ArrayList;
@@ -139,7 +139,7 @@ public class GameController {
                 gameSessionManger.sendMessage(command, gameId);
                 break;
             case SEND_TO_SYSTEM:
-            case SEND_TO_USER:
+            case SEND_TO_GAME_USER:
                 break;
         }
         return RespUtil.successResJson();

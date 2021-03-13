@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -18,6 +20,7 @@ public class GameRoom implements Serializable {
     /**
      * 房间号
      */
+    @TableId(value = "room_id", type = IdType.INPUT)
     private String roomId;
 
     /**

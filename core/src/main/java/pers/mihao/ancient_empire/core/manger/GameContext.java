@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.manger;
 
+import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -20,7 +21,7 @@ import java.util.concurrent.CyclicBarrier;
  */
 public class GameContext extends UserTemplateHelper {
 
-    private static ThreadLocal<String> userId = new ThreadLocal<>();
+    private static ThreadLocal<User> user = new ThreadLocal<>();
 
     /**
      * 唯一的GameId与创建的用户存档Id一样
@@ -142,20 +143,16 @@ public class GameContext extends UserTemplateHelper {
         this.willAttachArea = willAttachArea;
     }
 
-    public static String getUserId(){
-        return userId.get();
+    public static User getUser(){
+        return user.get();
     }
 
-    public static void setUserId(String id){
-        userId.set(id);
+    public static void setUser(User id){
+        user.set(id);
     }
 
     public static void clear(){
-        userId.remove();
-    }
-
-    public static void setUserId(ThreadLocal<String> userId) {
-        GameContext.userId = userId;
+        user.remove();
     }
 
     public String getGameId() {

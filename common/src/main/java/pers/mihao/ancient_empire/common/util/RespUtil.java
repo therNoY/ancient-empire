@@ -45,7 +45,7 @@ public class RespUtil {
      */
     public static RespJson successPageResJson (IPage page) {
         Map map = new HashMap();
-        map.put("pageCount", page.getTotal());
+        map.put("page_count", page.getTotal());
         map.put("data", page.getRecords());
         return new RespJson(0,"ok",map);
     }

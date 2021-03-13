@@ -128,7 +128,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     /**
      * 流式
      */
-    protected class Stream implements Command{
+    protected class Stream{
         /**
          * 是否同步
          * @return
@@ -140,19 +140,9 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
          */
         boolean order = false;
 
-        public FlowGameCommand toAllCommand(){
-            FlowGameCommand command = new FlowGameCommand();
-            command.setSendTypeEnum(SendTypeEnum.SEND_TO_SYSTEM);
-            if (order) {
-                command.setOrder(orderIndex ++);
-            }
-            command.setAsync(isAsync);
-            return command;
-        }
-
         public FlowGameCommand toUserCommand(){
             FlowGameCommand command = new FlowGameCommand();
-            command.setSendTypeEnum(SendTypeEnum.SEND_TO_USER);
+            command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME_USER);
             if (order) {
                 command.setOrder(orderIndex ++);
             }
@@ -168,16 +158,6 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             }
             command.setAsync(isAsync);
             return command;
-        }
-
-        @Override
-        public Integer getOrder() {
-            return null;
-        }
-
-        @Override
-        public Boolean isAsync() {
-            return isAsync;
         }
     }
 

@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.core.manger.command;
 
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
+
 /**
  * 后端发出的命令
  * @Author mh32736
@@ -18,5 +20,8 @@ public interface Command {
      * @return
      */
     Boolean isAsync();
+
+
+    SendTypeEnum getSendTypeEnum();
 
 }

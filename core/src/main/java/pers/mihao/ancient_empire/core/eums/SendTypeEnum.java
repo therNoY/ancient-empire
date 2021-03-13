@@ -9,8 +9,12 @@ package pers.mihao.ancient_empire.core.eums;
 public enum SendTypeEnum {
     /* 发送给整局游戏的人 */
     SEND_TO_GAME,
-    /* 发送给用户 */
-    SEND_TO_USER,
+    /* 发送给游戏中的用户 */
+    SEND_TO_GAME_USER,
     /* 发送给在线的人 */
-    SEND_TO_SYSTEM
+    SEND_TO_SYSTEM,
+    /**
+     * 发送给房间
+     */
+    SEND_TO_ROOM
 }

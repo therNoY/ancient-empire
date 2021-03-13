@@ -1,11 +1,18 @@
 package pers.mihao.ancient_empire.core.manger.command;
 
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
+
 /**
  * 基础命令实现类
  * @Author mh32736
  * @Date 2020/9/10 17:43
  */
 public abstract class AbstractCommand implements Command {
+
+    /**
+     * 发送消息类型枚举
+     */
+    private SendTypeEnum sendTypeEnum;
 
     private Integer order;
 
@@ -27,5 +34,14 @@ public abstract class AbstractCommand implements Command {
 
     public void setAsync(Boolean async) {
         isAsync = async;
+    }
+
+    @Override
+    public SendTypeEnum getSendTypeEnum() {
+        return sendTypeEnum;
+    }
+
+    public void setSendTypeEnum(SendTypeEnum sendTypeEnum) {
+        this.sendTypeEnum = sendTypeEnum;
     }
 }

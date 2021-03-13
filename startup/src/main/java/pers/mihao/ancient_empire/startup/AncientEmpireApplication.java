@@ -21,7 +21,7 @@ public class AncientEmpireApplication {
     }
 
     /**
-     * mybatis 分页插件
+     * mybatisplus 分页插件
      */
     @Bean
     public PaginationInterceptor paginationInterceptor() {

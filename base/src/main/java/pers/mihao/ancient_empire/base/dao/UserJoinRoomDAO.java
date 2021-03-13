@@ -1,7 +1,8 @@
 package pers.mihao.ancient_empire.base.dao;
 
-import pers.mihao.ancient_empire.base.entity.UserJoinRoom;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
+import pers.mihao.ancient_empire.base.entity.UserJoinRoom;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author mihao
  * @since 2021-03-02
  */
-public interface UserJoinRoomDao extends BaseMapper<UserJoinRoom> {
+@Mapper
+public interface UserJoinRoomDAO extends BaseMapper<UserJoinRoom> {
 
 }

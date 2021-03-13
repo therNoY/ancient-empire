@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.service.imp;
+package pers.mihao.ancient_empire.base.service.impl;
 
 import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.dao.UnitTransferDao;

@@ -21,6 +21,7 @@ import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
+import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
 import pers.mihao.ancient_empire.core.robot.RobotManger;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
@@ -75,7 +76,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      */
     @Override
     public void handelTask(GameEvent event) {
-        GameContext.setUserId(event.getUserId());
+        GameContext.setUser(event.getUser());
         GameContext gameContext = contextMap.get(event.getGameId());
         // 备份内存数据
         GameContext cloneContext = BeanUtil.deptClone(gameContext);
@@ -155,7 +156,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     /**
      * 异步注册 游戏上下文
      *
-     * @param recordId
+     * @param userRecord
      */
     public void registerGameContext(UserRecord userRecord, GameTypeEnum gameTypeEnum, int playCount) {
         if (!contextMap.containsKey(userRecord.getUuid())) {
@@ -178,9 +179,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                     log.info("开始检测上下文：{} 如果没有完成 就会撤销", userRecord.getUuid());
                     cyclicBarrier.await(60, TimeUnit.SECONDS);
                     onGameStart(gameContext);
-                } catch (InterruptedException e) {
-                    log.error("", e);
-                } catch (BrokenBarrierException e) {
+                } catch (InterruptedException | BrokenBarrierException e) {
                     log.error("", e);
                 } catch (TimeoutException e) {
                     log.error("", e);
@@ -230,11 +229,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 // 等待其他玩家加入
                 cyclicBarrier.await(20, TimeUnit.SECONDS);
                 return true;
-            } catch (InterruptedException e) {
-                log.error("", e);
-            } catch (BrokenBarrierException e) {
-                log.error("", e);
-            } catch (TimeoutException e) {
+            } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
                 log.error("", e);
             }
         }

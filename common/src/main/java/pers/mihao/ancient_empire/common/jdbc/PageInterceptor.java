@@ -47,6 +47,7 @@ public class PageInterceptor implements Interceptor {
      * @return
      * @throws Throwable
      */
+    @Override
     public Object intercept(Invocation invoke) throws Throwable {
         Object target = invoke.getTarget();
         if (invoke.getTarget() instanceof RoutingStatementHandler) {
