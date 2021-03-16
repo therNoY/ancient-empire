@@ -53,6 +53,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public GameRoom addRoomAndJoinRoomOwner(ReqAddRoomDTO reqAddRoomDTO) {
         GameRoom gameRoom = new GameRoom();
         gameRoom.setCreater(reqAddRoomDTO.getUserId());
@@ -63,18 +64,19 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         gameRoom.setMapId(reqAddRoomDTO.getMapId());
         save(gameRoom);
 
-        UserJoinRoom userJoinRoom = new UserJoinRoom();
-        userJoinRoom.setUserId(reqAddRoomDTO.getUserId());
-        userJoinRoom.setRoomId(gameRoom.getRoomId());
-        userJoinRoomService.save(userJoinRoom);
+        ReqRoomIdDTO reqRoomIdDTO = new ReqRoomIdDTO();
+        reqRoomIdDTO.setRoomId(gameRoom.getRoomId());
+        reqRoomIdDTO.setUserId(reqAddRoomDTO.getUserId());
+        playerJoinRoom(reqRoomIdDTO);
 
         return gameRoom;
     }
 
-    @Transactional
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean playerJoinRoom(ReqRoomIdDTO reqRoomIdDTO) {
         log.info("玩家：{} 加入房间：{}", reqRoomIdDTO.getUserId(), reqRoomIdDTO.getRoomId());
+        gameRoomDao.lockRoomById(reqRoomIdDTO.getRoomId());
         UserJoinRoom userJoinRoom = userJoinRoomService.getById(reqRoomIdDTO.getUserId());
         if (userJoinRoom != null) {
             log.info("玩家：{} 加入其他的房间现在退出");
@@ -87,7 +89,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         userJoinRoom.setUserId(reqRoomIdDTO.getUserId());
         userJoinRoomService.save(userJoinRoom);
         applicationContext.publishEvent(new PlayerJoinRoomEvent(reqRoomIdDTO));
-        return false;
+        return true;
     }
 
     @Override

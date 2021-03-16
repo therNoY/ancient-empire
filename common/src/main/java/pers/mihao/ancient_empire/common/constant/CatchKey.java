@@ -22,6 +22,8 @@ public class CatchKey {
     // 遭遇战地图
     public static final String USER_MAP = "userMap";
 
+    public static final String USER_CREATE_MAP = "userCreateMap";
+
     // 遭遇战地图
     public static final String ENCOUNTER_MAP = "encounterMap";
 

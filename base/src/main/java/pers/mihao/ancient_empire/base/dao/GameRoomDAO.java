@@ -24,4 +24,11 @@ public interface GameRoomDAO extends BaseMapper<GameRoom> {
      * @return
      */
     List<GameRoom> getCanJoinGameRoomWithPage(ApiConditionDTO conditionDTO);
+
+    /**
+     * 锁住房间号
+     * @param roomId
+     * @return
+     */
+    GameRoom lockRoomById(String roomId);
 }

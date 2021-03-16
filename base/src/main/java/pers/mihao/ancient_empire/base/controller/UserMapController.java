@@ -32,6 +32,7 @@ import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.config.AppConfig;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.IntegerUtil;
@@ -59,8 +60,6 @@ public class UserMapController {
     @Autowired
     UserSettingService userSettingService;
 
-    List<BaseMapInfoVO> localMap = null;
-
     /**
      * 获取编辑地图时需要获取的初始数据
      *
@@ -76,7 +75,7 @@ public class UserMapController {
         // 2.获取可用地形信息
         List<RegionMes> regionMes = regionMesService.getEnableRegionByTempId(id);
         // 3.获取用户拥有的地图
-        List<UserMap> userAllMaps = userMapService.getUserAllMapByUserId(AuthUtil.getUserId());
+        List<UserMap> userAllMaps = userMapService.getUserCreateMap(AuthUtil.getUserId());
         List<UserMap> userMaps = userAllMaps.stream()
                 .filter(userMap -> userMap.isUnSave() == false)
                 .collect(Collectors.toList());
@@ -165,15 +164,14 @@ public class UserMapController {
     @GetMapping("/api/userMap/list")
     public RespJson getUserMap(ApiRequestDTO apiRequestDTO) {
         // 获取用户拥有的地图
-//        List<UserMap> userAllMaps = userMapService.getUserAllMapByUserId(apiRequestDTO.getUserId());
-        List<UserMap> userAllMaps = new ArrayList<>();
-        for (int i = 0; i < IntegerUtil.getRandomIn(10,20); i++) {
-            UserMap userMap = new UserMapVo();
-            userMap.setMapName("测试地图" + i);
-            userMap.setUuid(UUID.randomUUID().toString());
-            userAllMaps.add(userMap);
-        }
+        List<BaseMapInfoVO> userAllMaps = userMapService.getUserAllMapByUserId(apiRequestDTO.getUserId());
         return RespUtil.successResJson(userAllMaps);
+    }
+
+    @GetMapping("/api/userMap/download/list")
+    public RespJson getUserDownloadMapList(ApiConditionDTO apiConditionDTO) {
+        List<UserMap> mapList = userMapService.getUserDownloadMapList(apiConditionDTO);
+        return RespUtil.successResJson(mapList);
     }
 
     /**
@@ -232,21 +230,14 @@ public class UserMapController {
      */
     @GetMapping("/encounterMap")
     public RespJson getEncounterMap() {
-        if (localMap != null) {
-            List<BaseMapInfoVO> encounterMaps = new ArrayList<>();
-            BaseMapInfoVO baseMapInfoVO = localMap.get(0);
-            BaseMapInfoVO copy;
-            for (int i = 0; i < IntegerUtil.getRandomIn(5, 20); i++) {
-                copy = BeanUtil.deptClone(baseMapInfoVO);
-                copy.setMapId(UUID.randomUUID().toString());
-                copy.setMapName(baseMapInfoVO.getMapName() + i);
-                encounterMaps.add(copy);
-            }
-            return RespUtil.successResJson(encounterMaps);
-        }
         List<BaseMapInfoVO> encounterMaps = userMapService.getEncounterMaps();
-        this.localMap = encounterMaps;
         return RespUtil.successResJson(encounterMaps);
+    }
+
+    @GetMapping("/api/worldMap/list")
+    public RespJson getWorldMapList(ApiConditionDTO apiConditionDTO) {
+        List<UserMap> mapList = userMapService.getWorldMapList(apiConditionDTO);
+        return RespUtil.successResJson(mapList);
     }
 
     /**

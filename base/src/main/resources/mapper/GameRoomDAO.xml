@@ -16,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        room_id, map_id, room_name, player_count, join_count, room_owner, creater, create_time
+        room_id, map_id, room_name, player_count, join_count, room_owner, creater, create_time, game_type, ob_enable
     </sql>
 
 
@@ -28,6 +28,10 @@
              </if>
          </where>
          order by player_count/join_count desc, create_time desc
+    </select>
+
+    <select id="lockRoomById" resultType="pers.mihao.ancient_empire.base.entity.GameRoom">
+        select * from game_room where room_id = #{roomId} for update;
     </select>
 
 </mapper>

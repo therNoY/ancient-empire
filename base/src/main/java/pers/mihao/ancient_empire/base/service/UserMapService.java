@@ -8,13 +8,23 @@ import pers.mihao.ancient_empire.base.vo.UserMapVo;
 
 import java.util.List;
 import java.util.Map;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 public interface UserMapService extends MapService{
+
     /**
-     * 获取用户的所有地图信息
+     * 获取用户创建的地图
+     * @param userId
      * @return
      */
-    List<UserMap> getUserAllMapByUserId(Integer id);
+    List<UserMap> getUserCreateMap(Integer userId);
+
+    /**
+     * 获取用户创建的地图
+     * @param id
+     * @return
+     */
+    List<BaseMapInfoVO> getUserAllMapByUserId(Integer id);
 
     /**
      * 保存用户的草稿地图
@@ -28,8 +38,6 @@ public interface UserMapService extends MapService{
      * @return
      */
     Map<Integer, String> getSimpleDrawing(ReqSimpleDrawing reqSimpleDrawing);
-
-    String getType(String type);
 
     /**
      * 草稿地图保存成设计地图
@@ -47,6 +55,10 @@ public interface UserMapService extends MapService{
      */
     void updateUserMapById(UserMap userMap);
 
+    /**
+     * 获取系统遭遇战地图
+     * @return
+     */
     List<BaseMapInfoVO> getEncounterMaps();
 
     List<String> getInitArmy(String uuid);
@@ -65,4 +77,18 @@ public interface UserMapService extends MapService{
      * @return
      */
     UserMap getUserDraftEditMap(Integer userId);
+
+    /**
+     * 获取用户下载地图
+     * @param apiConditionDTO
+     * @return
+     */
+    List<UserMap> getUserDownloadMapList(ApiConditionDTO apiConditionDTO);
+
+    /**
+     * 获取可以下载的世界地图
+     * @param apiConditionDTO
+     * @return
+     */
+    List<UserMap> getWorldMapList(ApiConditionDTO apiConditionDTO);
 }

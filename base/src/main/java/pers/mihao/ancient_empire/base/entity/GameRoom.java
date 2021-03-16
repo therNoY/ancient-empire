@@ -49,6 +49,17 @@ public class GameRoom implements Serializable {
     private Integer roomOwner;
 
     /**
+     * { key: "1", value: "公开" },
+     * { key: "2", value: "私有" },
+     */
+    private Integer gameType;
+
+    /**
+     * 是否可以观战
+     */
+    private Integer obEnable;
+
+    /**
      * 创建玩家
      */
     private Integer creater;
@@ -113,6 +124,23 @@ public class GameRoom implements Serializable {
 
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
+    }
+
+
+    public Integer getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(Integer gameType) {
+        this.gameType = gameType;
+    }
+
+    public Integer getObEnable() {
+        return obEnable;
+    }
+
+    public void setObEnable(Integer obEnable) {
+        this.obEnable = obEnable;
     }
 
     @Override

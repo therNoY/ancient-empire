@@ -12,11 +12,19 @@ public class ReqAddRoomDTO extends ApiRequestDTO {
     /**
      * 房间名字
      */
-    public String roomName;
+    private String roomName;
+
+
+    /**
+     * { key: "1", value: "公开" },
+     * { key: "2", value: "私有" },
+     */
+    private String gameType;
+
     /**
      * 选择的地图id
      */
-    public String mapId;
+    private String mapId;
 
 
     public String getRoomName() {
@@ -33,5 +41,13 @@ public class ReqAddRoomDTO extends ApiRequestDTO {
 
     public void setMapId(String mapId) {
         this.mapId = mapId;
+    }
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
     }
 }

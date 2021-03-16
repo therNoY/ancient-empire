@@ -10,9 +10,31 @@ CREATE TABLE game_room  (
   PRIMARY KEY (`room_id`)
 );
 
+alter table add
+
 
 CREATE TABLE `user_join_room`  (
   `user_id` int(11) NOT NULL COMMENT '用户Id',
   `room_id` varchar(4) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT '房间号',
   PRIMARY KEY (`user_id`) USING BTREE
 );
+
+
+delimiter $$
+drop procedure IF EXISTS executUpdateSql $$
+create procedure executUpdateSql()
+begin
+	IF not exists(SELECT * FROM information_schema.columns WHERE table_schema = DATABASE()  AND table_name = 'game_room' AND column_name = 'game_type')
+	THEN
+	  alter table game_room add game_type tinyint(64);
+	END IF;
+
+	IF not exists(SELECT * FROM information_schema.columns WHERE table_schema = DATABASE()  AND table_name = 'game_room' AND column_name = 'ob_enable')
+	THEN
+	  alter table game_room add ob_enable tinyint(64);
+	END IF;
+
+end $$
+call executUpdateSql() $$
+drop procedure IF EXISTS executUpdateSql $$
+delimiter ;

@@ -24,6 +24,7 @@ import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.jdbc.mongo.MongoUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -51,16 +52,34 @@ public class UserMapServiceImp implements UserMapService {
     UserMapRepository userMapRepository;
 
     /**
-     * 从mongo 中获取用户地图
+     * 从mongo 中获取用户创建的地图
      *
      * @return
      */
     @Override
-    public List<UserMap> getUserAllMapByUserId(Integer id) {
-        return userMapRepository.findByCreateUserId(id).stream()
+    public List<UserMap> getUserCreateMap(Integer userId) {
+        return userMapRepository.findByCreateUserId(userId).stream()
                 .filter(userMap -> Boolean.FALSE.equals(userMap.isUnSave()))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 从mongo 中获取用户创建的地图
+     *
+     * @return
+     */
+    @Override
+    @Cacheable(CatchKey.USER_CREATE_MAP)
+    public List<BaseMapInfoVO> getUserAllMapByUserId(Integer id) {
+        Criteria criteria = new Criteria()
+            .and("createUserId").is(id)
+            .and("unSave").is(Boolean.FALSE);
+        List<BaseMapInfoVO> encounterMaps = MongoUtil.findByCriteria(criteria, BaseMapInfoVO.class);
+        return encounterMaps;
+    }
+
+
+
 
 
     /**
@@ -160,15 +179,6 @@ public class UserMapServiceImp implements UserMapService {
                     .forEach(integer -> aroundBankName.append(integer));
             simpleDrawings.put(entry.getValue(), aroundBankName.toString());
             regionList.get(entry.getValue()).setType(aroundBankName.toString());
-        }
-    }
-
-    @Override
-    public String getType(String type) {
-        if (isLand(type)) {
-            return LAND;
-        } else {
-            return SEA;
         }
     }
 
@@ -296,6 +306,18 @@ public class UserMapServiceImp implements UserMapService {
     @Override
     public UserMap getUserDraftEditMap(Integer userId) {
         return userMapRepository.getFirstByCreateUserIdAndUnSave(userId, true);
+    }
+
+    @Override
+    public List<UserMap> getUserDownloadMapList(ApiConditionDTO apiConditionDTO) {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public List<UserMap> getWorldMapList(ApiConditionDTO apiConditionDTO) {
+        // TODO
+        return null;
     }
 
     /**

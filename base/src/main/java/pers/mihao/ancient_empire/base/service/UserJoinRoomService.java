@@ -13,4 +13,5 @@ import pers.mihao.ancient_empire.base.entity.UserJoinRoom;
  */
 public interface UserJoinRoomService extends IService<UserJoinRoom> {
 
+
 }
