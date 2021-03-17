@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -216,7 +215,7 @@ public class UserRecordServiceImp implements UserRecordService {
         }
         UserRecord userRecord = getRecordById(saveRecordDto.getUuid());
         userRecord.setRecordName(saveRecordDto.getName());
-        userRecord.setCreateTime(DateUtil.getNow());
+        userRecord.setCreateTime(DateUtil.getDataTime());
         userRecord.setUnSave(false);
         userRecordRepository.save(userRecord);
         return true;
@@ -236,7 +235,7 @@ public class UserRecordServiceImp implements UserRecordService {
         // 2.添加
         UserRecord userRecord = getRecordById(uuid);
         userRecord.setRecordName(tempMap);
-        userRecord.setCreateTime(DateUtil.getNow());
+        userRecord.setCreateTime(DateUtil.getDataTime());
         userRecord.setUnSave(true);
         userRecordRepository.save(userRecord);
         return false;

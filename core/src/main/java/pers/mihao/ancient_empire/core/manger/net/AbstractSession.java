@@ -1,9 +1,14 @@
 package pers.mihao.ancient_empire.core.manger.net;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import javax.websocket.Session;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.core.manger.command.Command;
 
 /**
  * @Author mh32736
@@ -75,5 +80,11 @@ public abstract class AbstractSession implements Serializable {
 
     public void setLevelDate(Date levelDate) {
         this.levelDate = levelDate;
+    }
+
+    public void sendCommand(Command command) throws IOException {
+        SerializeConfig config = new SerializeConfig();
+        config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+        session.getBasicRemote().sendText(JSONObject.toJSONString(command, config));
     }
 }

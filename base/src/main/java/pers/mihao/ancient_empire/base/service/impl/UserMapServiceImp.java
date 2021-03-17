@@ -17,7 +17,6 @@ import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
-import pers.mihao.ancient_empire.base.enums.CollectionEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.mongo.dao.UserMapRepository;
 import pers.mihao.ancient_empire.base.service.UserMapService;
@@ -94,7 +93,7 @@ public class UserMapServiceImp implements UserMapService {
         UserMap map = userMapRepository.getFirstByCreateUserIdAndUnSave(userId, true);
         if (map != null) {
             userMap.setUuid(map.getUuid());
-            userMap.setCreateTime(DateUtil.getNow());
+            userMap.setCreateTime(DateUtil.getDataTime());
             userMap.setMapName("temp");
             userMap.setUnSave(true);
             updateUserMapById(userMap);
@@ -192,7 +191,7 @@ public class UserMapServiceImp implements UserMapService {
         userMap.setUuid(StringUtil.getUUID());
         userMap.setUnSave(false);
         userMap.setCreateUserId(AuthUtil.getUserId());
-        userMap.setCreateTime(DateUtil.getNow());
+        userMap.setCreateTime(DateUtil.getDataTime());
         userMapRepository.save(userMap);
     }
 
