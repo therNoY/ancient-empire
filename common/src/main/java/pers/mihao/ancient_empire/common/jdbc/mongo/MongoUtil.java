@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import pers.mihao.ancient_empire.common.annotation.Util;
 import pers.mihao.ancient_empire.common.jdbc.PageModel;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -27,21 +28,18 @@ import java.util.regex.Pattern;
  * @author mihao
  * @date 2020\9\20 0020 10:24
  */
-@Util
 public class MongoUtil {
 
     private static MongoUtil instance;
 
     private static MongodbConverter converter;
 
-    @PostConstruct
-    public void init() {
-        instance = this;
-        instance.mongoTemplate = this.mongoTemplate;
+    static  {
         converter = new MongodbConverter();
+        instance = new MongoUtil();
+        instance.mongoTemplate = ApplicationContextHolder.getBean(MongoTemplate.class);
     }
 
-    @Autowired
     private MongoTemplate mongoTemplate;
 
     /**

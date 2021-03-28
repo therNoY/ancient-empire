@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.core.manger.event;
 
-import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 
@@ -12,15 +11,7 @@ import pers.mihao.ancient_empire.core.eums.GameEventEnum;
  */
 public class GameEvent extends AbstractEvent {
 
-    /**
-     * 游戏ID
-     */
-    private String gameId;
 
-    /**
-     * 登录人ID
-     */
-    private User user;
 
     /**
      * 发起行动的位置
@@ -71,22 +62,6 @@ public class GameEvent extends AbstractEvent {
         this.aimSite = aimSite;
     }
 
-    public String getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public Integer getRegionIndex() {
         return regionIndex;
     }
@@ -106,8 +81,6 @@ public class GameEvent extends AbstractEvent {
     @Override
     public String toString() {
         return "GameEvent{" +
-                "gameId='" + gameId + '\'' +
-                ", userId='" + user + '\'' +
                 ", initiateSite=" + initiateSite +
                 ", aimSite=" + aimSite +
                 ", regionIndex=" + regionIndex +

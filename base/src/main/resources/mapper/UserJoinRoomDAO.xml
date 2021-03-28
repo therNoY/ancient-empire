@@ -5,12 +5,12 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UserJoinRoom">
         <id column="user_id" property="userId" />
-        <result column="room_id" property="roomId" />
+        <result column="room_id" property="id" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        user_id, room_id
+        user_id, room_id, join_army, join_time
     </sql>
 
 </mapper>

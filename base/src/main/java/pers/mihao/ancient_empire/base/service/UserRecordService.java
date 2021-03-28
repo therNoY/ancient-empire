@@ -1,7 +1,6 @@
 package pers.mihao.ancient_empire.base.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
+import pers.mihao.ancient_empire.base.dto.InitMapDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -15,10 +14,10 @@ import java.util.List;
 public interface UserRecordService extends MapService{
     /**
      * 根据地图生成一个存档
-     * @param reqInitMapDto
+     * @param initMapDTO
      * @return
      */
-    UserRecord initMapRecord(ReqInitMapDto reqInitMapDto, UserMap userMap);
+    UserRecord initMapRecord(InitMapDTO initMapDTO, UserMap userMap);
 
 
     /**

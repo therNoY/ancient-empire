@@ -12,7 +12,7 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
+import pers.mihao.ancient_empire.base.dto.InitMapDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -64,25 +64,25 @@ public class GameController {
      * 用于单机遭遇战，联机遭遇战
      * 通过用户设置的地图初始环境设置初始
      *
-     * @param reqInitMapDto
+     * @param initMapDTO
      * @param result
      * @return
      */
     @PostMapping("/api/record/init")
-    public RespJson initMapRecord(@RequestBody @Validated ReqInitMapDto reqInitMapDto, BindingResult result) {
+    public RespJson initMapRecord(@RequestBody @Validated InitMapDTO initMapDTO, BindingResult result) {
         // 1.获取用户地图
-        UserMap userMap = userMapService.getEncounterMapById(reqInitMapDto.getMapId());
+        UserMap userMap = userMapService.getEncounterMapById(initMapDTO.getMapId());
         if (userMap == null) {
-            log.error("错误的地图信息{}", reqInitMapDto);
+            log.error("错误的地图信息{}", initMapDTO);
             return RespUtil.error();
         }
 
         // TODO 检测是否达到最大游戏数量
 
         // 2.生成文档注册上下文
-        UserRecord userRecord = userRecordService.initMapRecord(reqInitMapDto, userMap);
+        UserRecord userRecord = userRecordService.initMapRecord(initMapDTO, userMap);
         log.info("生成新的存档：{}， 注册游戏上下文", userRecord.getUuid());
-        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, reqInitMapDto.getGameType()), 1);
+        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initMapDTO.getGameType()), 1);
 
         // 3.返回前端保存
         GameVO userMapVo = new GameVO();

@@ -17,9 +17,14 @@ public enum NetConnectTypeEnum implements BaseEnum {
      */
     NET_GAME,
     /**
-     * 房间
+     * 创建房间
      */
-    ROOM,
+    CREATE_ROOM,
+
+    /**
+     *
+     */
+    JOIN_ROOM,
     /**
      * 好友
      */

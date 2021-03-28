@@ -418,7 +418,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
      */
     protected void handleRobotEvent(GameEventEnum eventEnum, Site initiateSite){
         GameEvent event = new GameEvent();
-        event.setGameId(gameContext.getGameId());
+        event.setId(gameContext.getGameId());
         event.setEvent(eventEnum);
         event.setInitiateSite(initiateSite);
         handleRobotEvent(event);
@@ -431,7 +431,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
      */
     protected void handleRobotEvent(GameEventEnum eventEnum, Site initiateSite, Site aimSite){
         GameEvent event = new GameEvent();
-        event.setGameId(gameContext.getGameId());
+        event.setId(gameContext.getGameId());
         event.setEvent(eventEnum);
         event.setInitiateSite(initiateSite);
         event.setAimSite(aimSite);
@@ -444,7 +444,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
     protected void handleRobotEvent(GameEventEnum gameEventEnum, Integer unitId) {
         GameEvent gameEvent = new GameEvent();
         gameEvent.setEvent(gameEventEnum);
-        gameEvent.setGameId(gameContext.getGameId());
+        gameEvent.setId(gameContext.getGameId());
         gameEvent.setUnitId(unitId);
         handleRobotEvent(gameEvent);
     }
@@ -453,7 +453,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
     protected void handleRobotEvent(GameEventEnum gameEventEnum){
         GameEvent gameEvent = new GameEvent();
         gameEvent.setEvent(gameEventEnum);
-        gameEvent.setGameId(gameContext.getGameId());
+        gameEvent.setId(gameContext.getGameId());
         handleRobotEvent(gameEvent);
     }
 

@@ -6,15 +6,29 @@ import javax.validation.constraints.NotEmpty;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
-public class ReqInitMapDto extends ApiRequestDTO {
-    @DecimalMin(value = "5", message = "最小人口大于5")
+/**
+ * 初始化进队
+ * @version 1.0
+ * @author mihao
+ * @date 2020\9\20 0020 22:10
+ */
+public class InitMapDTO extends ApiRequestDTO {
+    /**
+     * 最大人口
+     */
     private Integer maxPop;
-    @DecimalMin(value = "500", message = "初始金额要大于500")
+    /**
+     * 初始金额
+     */
     private Integer money;
-    @NotEmpty(message = "地图Id 不能为空")
+    /**
+     * 使用地图
+     */
     private String mapId;
-    @NotEmpty(message = "队伍不能为空")
-    private List<ReqArmy> armyList;
+    /**
+     * 军地配置
+     */
+    private List<ArmyConfig> armyList;
 
     /* 游戏的类型 遭遇战单机 多人游戏 故事模式 */
     private String gameType;
@@ -43,11 +57,11 @@ public class ReqInitMapDto extends ApiRequestDTO {
         this.mapId = mapId;
     }
 
-    public List<ReqArmy> getArmyList() {
+    public List<ArmyConfig> getArmyList() {
         return armyList;
     }
 
-    public void setArmyList(List<ReqArmy> armyList) {
+    public void setArmyList(List<ArmyConfig> armyList) {
         this.armyList = armyList;
     }
 
@@ -60,15 +74,4 @@ public class ReqInitMapDto extends ApiRequestDTO {
     }
 
 
-    public static class ReqArmy extends Army{
-        private String type;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-    }
 }

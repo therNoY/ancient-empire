@@ -19,9 +19,11 @@ import org.springframework.context.event.EventListener;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
-import pers.mihao.ancient_empire.base.event.RoomEvent;
+import pers.mihao.ancient_empire.base.event.AppRoomEvent;
+import pers.mihao.ancient_empire.base.service.GameRoomService;
 import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.common.util.DateUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
@@ -59,6 +61,10 @@ public class GameSessionManger {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    private GameRoomService gameRoomService;
+
 
     /**
      * Session 加入队列
@@ -160,28 +166,38 @@ public class GameSessionManger {
 
 
     @EventListener
-    public void onGetRoomEvent(RoomEvent roomEvent) {
-        log.info("收到了房间类型的事件" + roomEvent.toString());
-        User player = userService.getUserById(roomEvent.getPlayer());
+    public void onGetRoomEvent(AppRoomEvent appRoomEvent) {
+        log.info("收到了APP房间类型的事件" + appRoomEvent.toString());
+        User player = userService.getUserById(appRoomEvent.getPlayer());
         RoomCommand roomCommand = new RoomCommand();
-        roomCommand.setUserId(String.valueOf(roomEvent.getPlayer()));
-        switch (roomEvent.getEventType()) {
-            case RoomEvent.PLAYER_JOIN:
-                roomCommand.setRoomCommend(RoomCommendEnum.PLAYER_JOIN);
+        roomCommand.setUserId(String.valueOf(appRoomEvent.getPlayer()));
+        roomCommand.setJoinArmy(appRoomEvent.getJoinArmy());
+        roomCommand.setLevelArmy(appRoomEvent.getLevelArmy());
+        switch (appRoomEvent.getEventType()) {
+            case AppRoomEvent.PLAYER_JOIN:
+                roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
                 roomCommand.setMessage("玩家【" + player.getName() + "】: 加入房间！");
-            case RoomEvent.PLAYER_LEVEL:
-                roomCommand.setRoomCommend(RoomCommendEnum.PLAYER_JOIN);
+                break;
+            case AppRoomEvent.PLAYER_LEVEL:
+                roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
                 roomCommand.setMessage("玩家【" + player.getName() + "】: 离开房间！");
                 break;
-            case RoomEvent.PUBLIC_MESSAGE:
+            case AppRoomEvent.PUBLIC_MESSAGE:
                 roomCommand.setRoomCommend(RoomCommendEnum.SEND_MESSAGE);
                 roomCommand.setMessage("玩家【" + player.getName() + "】: " + roomCommand.getMessage());
+                break;
+            case AppRoomEvent.CHANG_ARMY:
+                roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
                 break;
             default:
                 break;
         }
-        roomCommand.setMessage(roomCommand.getMessage() + "  " + DateUtil.getDataTime());
-        sendMessage2Room(roomCommand, roomEvent.getRoomId());
+        if (StringUtil.isNotBlack(roomCommand.getMessage())) {
+            roomCommand.setMessage(roomCommand.getMessage() + "  " + DateUtil.getDataTime());
+        }
+        roomCommand.setUserName(player.getName());
+        roomCommand.setUserId(player.getId().toString());
+        sendMessage2Room(roomCommand, appRoomEvent.getRoomId());
     }
 
 
@@ -322,21 +338,38 @@ public class GameSessionManger {
         }
     }
 
-    public void addNewRoomSession(Session session, String id, User connectUser) {
+    public AbstractSession addNewRoomSession(Session session, String id, User connectUser) {
         List<RoomSession> roomSessions = roomSessionMap.get(id);
+        RoomSession roomSession = new RoomSession(id, connectUser, session);
         if (roomSessions == null) {
             roomSessions = new ArrayList<>();
-            roomSessions.add(new RoomSession(id, connectUser, session));
+            roomSessions.add(roomSession);
             roomSessionMap.put(id, roomSessions);
         } else {
             synchronized (roomSessions) {
-                roomSessions.add(new RoomSession(id, connectUser, session));
+                roomSessions.add(roomSession);
             }
         }
+        return roomSession;
     }
 
-    public void removeRoomSession(String id) {
-        roomSessionMap.remove(id);
+    public void userLevelRoom(String id, Session session) {
+
+        List<RoomSession> list = roomSessionMap.get(id);
+        RoomSession roomSession = null;
+        for (int i = 0; i < list.size(); i++) {
+            roomSession = list.get(i);
+            if (roomSession.getSessionId().equals(session.getId())) {
+                list.remove(i);
+                gameRoomService.userLevelRoom(roomSession.getUser().getId());
+                break;
+            }
+        }
+        if (list.size() == 0) {
+            roomSessionMap.remove(id);
+        } else {
+            // todo
+        }
     }
 
     /**

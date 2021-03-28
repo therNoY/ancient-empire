@@ -24,6 +24,7 @@ public class GameSession extends AbstractSession {
         this.recordId = recordId;
         this.user = user;
         this.session = session;
+        this.sessionId = session.getId();
         this.createDate = createDate;
     }
 

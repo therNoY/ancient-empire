@@ -55,8 +55,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     PasswordEncoder passwordEncoder;
     @Autowired
     UserRoleRelationDao userRoleRelationDao;
-    @Autowired
-    RedisUtil redisUtil;
 
     @Override
     @Cacheable(CatchKey.USER_INFO)
@@ -83,7 +81,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         if (loginUser != null && passwordEncoder.matches(loginDto.getPassword(), loginUser.getPassword())) {
             token = JwtTokenUtil.generateToken(loginUser.getId().toString());
             log.info("给用户：{}生成token", loginDto);
-            return new RespAuthDao(loginUser.getName(), loginDto.getPassword(), token);
+            RespAuthDao respAuthDao = new RespAuthDao(loginUser.getName(), loginDto.getPassword(), token);
+            respAuthDao.setUserId(loginUser.getId());
+            return respAuthDao;
         }
         return null;
     }
@@ -156,7 +156,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
             return null;
         } else {
             // 清除缓存
-            redisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO) + userDao.selectById(user.getId()).getName());
+            RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO) + userDao.selectById(user.getId()).getName());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userDao.updateByReqUserDto(user.getUserName(), user.getPassword(), user.getId());
             return JwtTokenUtil.generateToken(user.getUserName());

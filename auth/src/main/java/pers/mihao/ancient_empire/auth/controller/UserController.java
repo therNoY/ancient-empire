@@ -29,6 +29,8 @@ import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
+import javax.websocket.server.PathParam;
+
 /**
  * <p>
  * 用户表 前端控制器
@@ -46,8 +48,6 @@ public class UserController {
     UserService userService;
     @Autowired
     EmailService emailService;
-    @Autowired
-    RedisUtil redisUtil;
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -106,7 +106,7 @@ public class UserController {
         // 2.发送邮件
         emailService.sendRegisterEmail(registerDto, uuid);
         // 3.放到缓存中 key email+_REGISTER 时间60s
-        redisUtil.set(uuid, registerDto, 600L);
+        RedisUtil.set(uuid, registerDto, 600L);
         return RespUtil.successResJson();
     }
 
@@ -116,7 +116,7 @@ public class UserController {
     @GetMapping("/register")
     public ModelAndView registerCallback(@RequestParam String token) {
         RegisterDto registerDto = null;
-        if ((registerDto = redisUtil.getObject(token, RegisterDto.class)) != null) {
+        if ((registerDto = RedisUtil.getObject(token, RegisterDto.class)) != null) {
             userService.save(registerDto);
             return new ModelAndView("registerSuccess");
         }else {
@@ -156,5 +156,10 @@ public class UserController {
             return RespUtil.error(40003);
         }
         return RespUtil.successResJson(token);
+    }
+
+    @GetMapping("/api/user/name")
+    public RespJson getUserNameById(@PathParam("id") Integer userId) {
+        return RespUtil.successResJson(userService.getUserById(userId).getName());
     }
 }

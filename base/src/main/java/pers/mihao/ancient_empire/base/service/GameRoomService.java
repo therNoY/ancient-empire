@@ -1,11 +1,15 @@
 package pers.mihao.ancient_empire.base.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import pers.mihao.ancient_empire.base.dto.ArmyConfig;
 import pers.mihao.ancient_empire.base.dto.ReqAddRoomDTO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import pers.mihao.ancient_empire.base.dto.ReqRoomIdDTO;
+import pers.mihao.ancient_empire.base.dto.RoomArmyChangeDTO;
 import pers.mihao.ancient_empire.base.entity.GameRoom;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -36,12 +40,26 @@ public interface GameRoomService extends IService<GameRoom> {
      * @param reqRoomIdDTO
      * @return
      */
-    boolean playerJoinRoom(ReqRoomIdDTO reqRoomIdDTO);
+    String playerJoinRoom(ReqRoomIdDTO reqRoomIdDTO);
+
 
     /**
      * 玩家离开房间
-     * @param reqRoomIdDTO
+     * @param id
+     */
+    void userLevelRoom(Integer id);
+
+    /**
+     * 玩家在房间内改变控制军队
+     * @param armyChangeDTO
      * @return
      */
-    boolean playerLevelRoom(ReqRoomIdDTO reqRoomIdDTO);
+    String changeCtlArmy(RoomArmyChangeDTO armyChangeDTO);
+
+    /**
+     * 获取当前的军队配置
+     * @param id
+     * @return
+     */
+    List<ArmyConfig> getCurrentArmyConfigByRoomId(String id);
 }

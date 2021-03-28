@@ -5,11 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.util.Pair;
-import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.dto.EndUnitDTO;
 import pers.mihao.ancient_empire.core.manger.BaseHandler;
@@ -33,7 +32,7 @@ public abstract class AbstractStrategy<T> extends BaseHandler {
         String handlerName, classPathName;
         for (AbilityEnum abilityEnum : AbilityEnum.values()) {
             handlerName = StringUtil.underscoreToHump(abilityEnum.toString(), true);
-            classPathName = packName + BaseConstant.POINT + handlerName + className;
+            classPathName = packName + CommonConstant.POINT + handlerName + className;
             try {
                 Class clazz = this.getClass().getClassLoader().loadClass(classPathName);
                 abilityStrategy.put(abilityEnum.type(), (AbstractStrategy) clazz.newInstance());

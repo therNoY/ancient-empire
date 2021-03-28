@@ -1,9 +1,7 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.List;
@@ -25,7 +23,7 @@ import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
@@ -146,13 +144,13 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     public List<UnitMes> getUnitListByCreateUser(Integer userId) {
         QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
         wrapper.eq("create_user_id", userId);
-        wrapper.eq("enable", BaseConstant.YES);
+        wrapper.eq("enable", CommonConstant.YES);
         return unitMesDao.selectList(wrapper);
     }
 
     @Override
     public List<UnitMes> getDefaultUnitList() {
-        return getUnitListByCreateUser(BaseConstant.ADMIN_ID);
+        return getUnitListByCreateUser(CommonConstant.ADMIN_ID);
     }
 
     @Override

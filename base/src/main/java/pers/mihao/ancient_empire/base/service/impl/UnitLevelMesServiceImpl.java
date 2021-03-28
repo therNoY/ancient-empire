@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.base.dao.UnitLevelMesDAO;
 import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
     public Map<String, UnitLevelMes> getAllUnitLevelInfoByTempId(Integer userId) {
         List<UnitLevelMes> levelMesList = unitLevelMesDao.getAllUnitLevelInfoByTempId(userId);
         Map<String, UnitLevelMes> levelMesMap = levelMesList.stream()
-                .collect(Collectors.toMap(l -> l.getUnitId() + BaseConstant.COMMA + l.getLevel(), Function.identity()));
+                .collect(Collectors.toMap(l -> l.getUnitId() + CommonConstant.COMMA + l.getLevel(), Function.identity()));
         return levelMesMap;
     }
 

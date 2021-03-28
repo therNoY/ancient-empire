@@ -17,7 +17,7 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.dao.RegionMesDAO;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 
 /**
@@ -60,7 +60,7 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDAO, RegionMes> i
     @Cacheable(CatchKey.ENABLE_REGION)
     public List<RegionMes> getEnableRegionByTempId(Integer id) {
         // 获取全部地形
-        QueryWrapper wrapper = new QueryWrapper<>().eq("enable", BaseConstant.YES);
+        QueryWrapper wrapper = new QueryWrapper<>().eq("enable", CommonConstant.YES);
         List<RegionMes> regionMesList = regionMesDao.selectList(wrapper);
         return regionMesList;
     }

@@ -34,6 +34,11 @@ begin
 	  alter table game_room add ob_enable tinyint(64);
 	END IF;
 
+	IF not exists(SELECT * FROM information_schema.columns WHERE table_schema = DATABASE()  AND table_name = 'game_room' AND column_name = 'map_config')
+	THEN
+	  alter table game_room add map_config varchar(1024);
+	END IF;
+
 end $$
 call executUpdateSql() $$
 drop procedure IF EXISTS executUpdateSql $$

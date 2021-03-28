@@ -13,7 +13,7 @@ import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
@@ -77,7 +77,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     @Override
     public void handelTask(GameEvent event) {
         GameContext.setUser(event.getUser());
-        GameContext gameContext = contextMap.get(event.getGameId());
+        GameContext gameContext = contextMap.get(event.getId());
         // 备份内存数据
         GameContext cloneContext = BeanUtil.deptClone(gameContext);
         GameCoreHelper.setContext(gameContext);
@@ -88,12 +88,12 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 gameHandler.setGameContext(gameContext);
                 List<GameCommand> commands = gameHandler.handler(event);
                 // 处理任务返回 处理任务结果
-                handleCommand(commands, event.getGameId());
+                handleCommand(commands, event.getId());
             }
         } catch (Exception e) {
             log.error("执行任务出错: {}, 回退", event, e);
             gameContext = null;
-            contextMap.put(event.getGameId(), cloneContext);
+            contextMap.put(event.getId(), cloneContext);
         } finally {
             GameContext.clear();
             GameCoreHelper.removeContext();
@@ -141,7 +141,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         String handlerName, classPathName;
         for (GameEventEnum gameEventEnum : GameEventEnum.values()) {
             handlerName = StringUtil.underscoreToHump(gameEventEnum.toString(), true);
-            classPathName = packName + BaseConstant.POINT + handlerName + className;
+            classPathName = packName + CommonConstant.POINT + handlerName + className;
             try {
                 Class clazz = this.getClass().getClassLoader().loadClass(classPathName);
                 log.info("{} 事件处理注册成功", handlerName);

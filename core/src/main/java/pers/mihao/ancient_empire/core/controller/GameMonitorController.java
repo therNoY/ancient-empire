@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -42,18 +42,18 @@ public class GameMonitorController {
 
         CommonHandler commonHandler = new CommonHandler();
         commonHandler.setGameContext(gameContext);
-        if (BaseConstant.YES.equals(monitorDTO.getCurrArmy())) {
+        if (CommonConstant.YES.equals(monitorDTO.getCurrArmy())) {
             Army army = BeanUtil.deptClone(commonHandler.currArmy());
             if (StringUtil.isNotBlack(monitorDTO.getCurrUnitType())) {
                 army.setUnits(army.getUnits().stream().filter(unit -> unit.getType().equals(monitorDTO.getCurrUnitType()))
                         .collect(Collectors.toList()));
             }
             return RespUtil.successResJson(army);
-        } else if (BaseConstant.YES.equals(monitorDTO.getCurrUnit())) {
+        } else if (CommonConstant.YES.equals(monitorDTO.getCurrUnit())) {
             return RespUtil.successResJson(commonHandler.currUnit());
-        } else if (BaseConstant.YES.equals(monitorDTO.getAll())) {
+        } else if (CommonConstant.YES.equals(monitorDTO.getAll())) {
             return RespUtil.successResJson(gameContext);
-        } else if (BaseConstant.YES.equals(monitorDTO.getNoMap())) {
+        } else if (CommonConstant.YES.equals(monitorDTO.getNoMap())) {
             UserRecord record = BeanUtil.deptClone(gameContext.getUserRecord());
             record.setGameMap(null);
             if (StringUtil.isNotBlack(monitorDTO.getCurrArmyIndex())) {

@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 
 public class StringUtil {
     private static Logger logger = LoggerFactory.getLogger(StringUtil.class);
@@ -42,7 +42,7 @@ public class StringUtil {
 
 
     public static String concat(Serializable s1, Serializable s2) {
-        return concat(s1, s2, BaseConstant.COMMA);
+        return concat(s1, s2, CommonConstant.COMMA);
     }
 
     public static String concat(Serializable s1, Serializable s2, CharSequence split) {

@@ -23,6 +23,11 @@ public interface UserService extends IService<User> {
 
     List<Permission> getPermissionList(Integer id);
 
+    /**
+     * 用户登录
+     * @param loginDto
+     * @return
+     */
     RespAuthDao login(LoginDto loginDto);
 
     String adminLogin(LoginDto loginDto);

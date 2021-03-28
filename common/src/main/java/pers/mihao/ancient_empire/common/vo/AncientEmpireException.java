@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.common.vo;
 
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 
 /**
  * 自定义错误类型
@@ -20,7 +20,7 @@ public class AncientEmpireException extends RuntimeException{
     }
 
     public AncientEmpireException() {
-        this.mes = BaseConstant.DEFAULT_ERROR;
+        this.mes = CommonConstant.DEFAULT_ERROR;
     }
 
     public Integer getCode() {

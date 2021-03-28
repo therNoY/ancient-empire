@@ -19,6 +19,7 @@ public class RoomSession extends AbstractSession {
         this.roomId = roomId;
         this.user = user;
         this.session = session;
+        this.sessionId = session.getId();
         this.createDate = new Date();
     }
 

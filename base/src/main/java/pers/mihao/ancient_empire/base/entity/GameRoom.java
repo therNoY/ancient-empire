@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -60,6 +61,11 @@ public class GameRoom implements Serializable {
     private Integer obEnable;
 
     /**
+     * 地图配置
+     */
+    private String mapConfig;
+
+    /**
      * 创建玩家
      */
     private Integer creater;
@@ -68,6 +74,12 @@ public class GameRoom implements Serializable {
      * 创建时间
      */
     private LocalDateTime createTime;
+
+    @TableField(exist = false)
+    private String creatTimeShow;
+
+    @TableField(exist = false)
+    private String ready;
 
     public String getRoomId() {
         return roomId;
@@ -141,6 +153,31 @@ public class GameRoom implements Serializable {
 
     public void setObEnable(Integer obEnable) {
         this.obEnable = obEnable;
+    }
+
+    public String getMapConfig() {
+        return mapConfig;
+    }
+
+    public void setMapConfig(String mapConfig) {
+        this.mapConfig = mapConfig;
+    }
+
+
+    public String getCreatTimeShow() {
+        return creatTimeShow;
+    }
+
+    public void setCreatTimeShow(String creatTimeShow) {
+        this.creatTimeShow = creatTimeShow;
+    }
+
+    public String getReady() {
+        return ready;
+    }
+
+    public void setReady(String ready) {
+        this.ready = ready;
     }
 
     @Override

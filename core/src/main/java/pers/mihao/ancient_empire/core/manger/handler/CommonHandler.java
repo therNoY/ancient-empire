@@ -17,7 +17,7 @@ import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
@@ -235,7 +235,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @return
      */
     protected ShowAnimDTO getShowAnim(Site site, String animStrings) {
-        String[] anims = animStrings.split(BaseConstant.COMMA);
+        String[] anims = animStrings.split(CommonConstant.COMMA);
         List<String> animList = Arrays.stream(anims)
                 .collect(Collectors.toList());
         // 这里强行改成偶数个图片

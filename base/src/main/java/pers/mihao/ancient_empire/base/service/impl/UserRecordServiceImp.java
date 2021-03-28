@@ -16,7 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.dto.ReqInitMapDto;
+import pers.mihao.ancient_empire.base.dto.ArmyConfig;
+import pers.mihao.ancient_empire.base.dto.InitMapDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
@@ -52,8 +53,6 @@ public class UserRecordServiceImp implements UserRecordService {
     @Autowired
     RegionMesService regionMesService;
     @Autowired
-    RedisUtil redisUtil;
-    @Autowired
     MongoTemplate mongoTemplate;
 
     private static String tempMap = "临时地图";
@@ -61,28 +60,28 @@ public class UserRecordServiceImp implements UserRecordService {
     /**
      * 根据地图开始游戏 生成存档
      *
-     * @param reqInitMapDto
+     * @param initMapDTO
      * @return
      */
     @Transactional
     @Override
-    public UserRecord initMapRecord(ReqInitMapDto reqInitMapDto, UserMap userMap) {
+    public UserRecord initMapRecord(InitMapDTO initMapDTO, UserMap userMap) {
         UserRecord userRecord = new UserRecord();
-        userRecord.setMaxPop(reqInitMapDto.getMaxPop());
+        userRecord.setMaxPop(initMapDTO.getMaxPop());
         // 1.获取地图
         // 1.设置初始化地图
         GameMap map = new GameMap(userMap.getRow(), userMap.getColumn(), userMap.getRegions());
         userRecord.setGameMap(map);
         // 2.设置初始化军队 完善军队信息
-        List<ReqInitMapDto.ReqArmy> reqArmies = reqInitMapDto.getArmyList();
+        List<ArmyConfig> reqArmies = initMapDTO.getArmyList();
         List<Army> armyList = new ArrayList<>();
         for (int i = 0; i < reqArmies.size(); i++) {
-            ReqInitMapDto.ReqArmy reqArmy = reqArmies.get(i);
-            if (reqArmy.getType().equals(ArmyEnum.NO.type())) {
+            ArmyConfig armyConfig = reqArmies.get(i);
+            if (armyConfig.getType().equals(ArmyEnum.NO.type())) {
                 continue;
             }
             Army army = new Army();
-            BeanUtils.copyProperties(reqArmy, army);
+            BeanUtils.copyProperties(armyConfig, army);
             army.setId(i);
             List<Unit> units = new ArrayList<>();
             String color = army.getColor();
@@ -98,8 +97,8 @@ public class UserRecordServiceImp implements UserRecordService {
                     });
             army.setUnits(units);
             army.setPop(pop.get());
-            army.setMoney(reqInitMapDto.getMoney());
-            if (reqArmy.getType().equals(ArmyEnum.USER.type())) {
+            army.setMoney(initMapDTO.getMoney());
+            if (armyConfig.getType().equals(ArmyEnum.USER.type())) {
                 army.setPlayer(AuthUtil.getLoginUser().getUsername());
             }
             if (army.getOrder() == 1) {
@@ -112,7 +111,7 @@ public class UserRecordServiceImp implements UserRecordService {
         userRecord.setUuid(uuid);
         userRecord.setCurrentRound(1);
         userRecord.setCurrPoint(new Site(1, 1));
-        userRecord.setCreateUserId(reqInitMapDto.getUserId());
+        userRecord.setCreateUserId(initMapDTO.getUserId());
         Region region = userRecord.getGameMap().getRegions().get(0);
         RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(region.getType());
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
@@ -188,12 +187,12 @@ public class UserRecordServiceImp implements UserRecordService {
     @Override
     public UserRecord getRecordById(String uuid) {
         UserRecord userRecord = null;
-        if ((userRecord = redisUtil.getObject(CatchKey.getKey(CatchKey.USER_RECORD) + uuid, UserRecord.class)) == null) {
+        if ((userRecord = RedisUtil.getObject(CatchKey.getKey(CatchKey.USER_RECORD) + uuid, UserRecord.class)) == null) {
             log.info("从mongo获取 {} 的信息", uuid);
             Optional<UserRecord> optional = userRecordRepository.findById(uuid);
             if (optional.isPresent()) {
                 userRecord = optional.get();
-                redisUtil.set(CatchKey.getKey(CatchKey.USER_RECORD) + uuid, userRecord, 5 * 60L);
+                RedisUtil.set(CatchKey.getKey(CatchKey.USER_RECORD) + uuid, userRecord, 5 * 60L);
             }
         }
         return userRecord;

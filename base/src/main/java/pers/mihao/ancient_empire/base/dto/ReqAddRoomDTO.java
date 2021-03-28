@@ -24,7 +24,12 @@ public class ReqAddRoomDTO extends ApiRequestDTO {
     /**
      * 选择的地图id
      */
-    private String mapId;
+    private InitMapDTO initMap;
+
+    /**
+     * 玩家数量
+     */
+    private int playerCount;
 
 
     public String getRoomName() {
@@ -35,12 +40,12 @@ public class ReqAddRoomDTO extends ApiRequestDTO {
         this.roomName = roomName;
     }
 
-    public String getMapId() {
-        return mapId;
+    public InitMapDTO getInitMap() {
+        return initMap;
     }
 
-    public void setMapId(String mapId) {
-        this.mapId = mapId;
+    public void setInitMap(InitMapDTO initMap) {
+        this.initMap = initMap;
     }
 
     public String getGameType() {
@@ -49,5 +54,13 @@ public class ReqAddRoomDTO extends ApiRequestDTO {
 
     public void setGameType(String gameType) {
         this.gameType = gameType;
+    }
+
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
+    public void setPlayerCount(int playerCount) {
+        this.playerCount = playerCount;
     }
 }

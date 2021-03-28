@@ -4,7 +4,7 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.GameRoom">
-        <id column="room_id" property="roomId" />
+        <id column="room_id" property="id" />
         <result column="map_id" property="mapId" />
         <result column="room_name" property="roomName" />
         <result column="player_count" property="playerCount" />
@@ -16,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        room_id, map_id, room_name, player_count, join_count, room_owner, creater, create_time, game_type, ob_enable
+        room_id, map_id, room_name, player_count, join_count, room_owner, creater, create_time, game_type, ob_enable, map_config
     </sql>
 
 
@@ -31,7 +31,7 @@
     </select>
 
     <select id="lockRoomById" resultType="pers.mihao.ancient_empire.base.entity.GameRoom">
-        select * from game_room where room_id = #{roomId} for update;
+        select * from game_room where room_id = #{id} for update;
     </select>
 
 </mapper>

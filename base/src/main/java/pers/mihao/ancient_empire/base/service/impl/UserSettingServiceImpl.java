@@ -29,8 +29,6 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     RegionMesDAO regionMesDao;
     @Autowired
     UserSettingDAO userSettingDao;
-    @Autowired
-    RedisUtil redisUtil;
 
     @Override
     @Cacheable(CatchKey.USER_SETTING)
@@ -41,7 +39,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     @Override
     public void updateByUserId(UserSetting userSetting) {
         // 删除缓存
-        redisUtil.delKey(CatchKey.getKey(CatchKey.USER_SETTING) + AuthUtil.getUserId());
+        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_SETTING) + AuthUtil.getUserId());
         QueryWrapper<UserSetting> wrapper = new QueryWrapper();
         wrapper.eq("user_id", userSetting.getUserId());
         userSettingDao.update(userSetting, wrapper);

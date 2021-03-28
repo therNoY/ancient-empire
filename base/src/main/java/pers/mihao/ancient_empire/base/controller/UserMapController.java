@@ -23,10 +23,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.base.dto.ArmyConfig;
+import pers.mihao.ancient_empire.base.dto.MapShowWithConfigDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespUserMapDTO;
 import pers.mihao.ancient_empire.base.entity.*;
+import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
@@ -34,10 +38,7 @@ import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
-import pers.mihao.ancient_empire.common.util.BeanUtil;
-import pers.mihao.ancient_empire.common.util.IntegerUtil;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.common.util.*;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 import javax.websocket.server.PathParam;
@@ -183,6 +184,34 @@ public class UserMapController {
     public RespJson getUserMap(@PathVariable("id") String id) {
         // 3.获取用户拥有的地图
         UserMapVo map = userMapService.getUserMapByUUID(id);
+        return RespUtil.successResJson(map);
+    }
+
+    /**
+     * 获取用户地图列表
+     *
+     * @return
+     */
+    @PostMapping("/api/userMap/withConfig")
+    public RespJson getUserMapWithConfig(@RequestBody MapShowWithConfigDTO config) {
+        // 3.获取用户拥有的地图
+        UserMapVo map = userMapService.getUserMapByUUID(config.getMapId());
+        if (CollectionUtil.isNotEmpty(config.getArmyConfigList())) {
+            List<BaseUnit> baseUnits = new ArrayList<>();
+            for (BaseUnit baseUnit : map.getUnits()) {
+                boolean isRemove = false;
+                for (ArmyConfig armyConfig : config.getArmyConfigList()) {
+                    if (armyConfig.getColor().equals(baseUnit.getColor()) && armyConfig.getType().equals(ArmyEnum.NO.type())) {
+                        isRemove = true;
+                        break;
+                    }
+                }
+                if (!isRemove) {
+                    baseUnits.add(baseUnit);
+                }
+            }
+            map.setUnits(baseUnits);
+        }
         return RespUtil.successResJson(map);
     }
 

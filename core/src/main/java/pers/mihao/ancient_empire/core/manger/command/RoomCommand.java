@@ -16,7 +16,22 @@ public class RoomCommand extends AbstractCommand{
 
     private String userId;
 
+    private String userName;
+    /**
+     * 需要发送的消息
+     */
     private String message;
+
+
+    /**
+     * 加入的军队
+     */
+    private String joinArmy;
+
+    /**
+     * 离开的军队
+     */
+    private String levelArmy;
 
     public RoomCommand() {
         setSendTypeEnum(SendTypeEnum.SEND_TO_ROOM);
@@ -44,5 +59,29 @@ public class RoomCommand extends AbstractCommand{
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getJoinArmy() {
+        return joinArmy;
+    }
+
+    public void setJoinArmy(String joinArmy) {
+        this.joinArmy = joinArmy;
+    }
+
+    public String getLevelArmy() {
+        return levelArmy;
+    }
+
+    public void setLevelArmy(String levelArmy) {
+        this.levelArmy = levelArmy;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

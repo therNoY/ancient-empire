@@ -4,7 +4,7 @@ package pers.mihao.ancient_empire.common.constant;
  * @Author mh32736
  * @Date 2020/9/9 10:18
  */
-public class BaseConstant {
+public class CommonConstant {
 
     /**
      * 平台统一YES

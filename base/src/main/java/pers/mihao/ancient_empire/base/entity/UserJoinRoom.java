@@ -2,6 +2,8 @@ package pers.mihao.ancient_empire.base.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 
 /**
@@ -27,6 +29,17 @@ public class UserJoinRoom implements Serializable {
      */
     private String roomId;
 
+    /**
+     * 加入的军队 为空表示观战
+     */
+    private String joinArmy;
+
+    /**
+     * 加入时间
+     */
+    private LocalDateTime joinTime;
+
+
     public Integer getUserId() {
         return userId;
     }
@@ -40,6 +53,22 @@ public class UserJoinRoom implements Serializable {
 
     public void setRoomId(String roomId) {
         this.roomId = roomId;
+    }
+
+    public String getJoinArmy() {
+        return joinArmy;
+    }
+
+    public void setJoinArmy(String joinArmy) {
+        this.joinArmy = joinArmy;
+    }
+
+    public LocalDateTime getJoinTime() {
+        return joinTime;
+    }
+
+    public void setJoinTime(LocalDateTime joinTime) {
+        this.joinTime = joinTime;
     }
 
     @Override

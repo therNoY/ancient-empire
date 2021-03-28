@@ -2,26 +2,21 @@ package pers.mihao.ancient_empire.core.robot;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.common.constant.BaseConstant;
-import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
 import pers.mihao.ancient_empire.core.dto.robot.BuyUnitDTO;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
-import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
-import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
 import pers.mihao.ancient_empire.core.robot.handler.AbstractRobotHandler;
 
 /**
@@ -61,7 +56,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         String handlerName, classPathName;
         for (RobotActiveEnum gameEventEnum : RobotActiveEnum.values()) {
             handlerName = StringUtil.underscoreToHump(gameEventEnum.toString(), true);
-            classPathName = packName + BaseConstant.POINT + handlerName + className;
+            classPathName = packName + CommonConstant.POINT + handlerName + className;
             try {
                 Class clazz = AbstractRobotHandler.class.getClassLoader().loadClass(classPathName);
                 robotHandlerMap.put(gameEventEnum, clazz);
