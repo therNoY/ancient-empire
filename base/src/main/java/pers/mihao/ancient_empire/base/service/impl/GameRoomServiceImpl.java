@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.ZoneOffset;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
@@ -91,19 +93,17 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
     @Transactional(rollbackFor = Exception.class)
     public String playerJoinRoom(ReqRoomIdDTO reqRoomIdDTO) {
         log.info("玩家：{} 加入房间：{}", reqRoomIdDTO.getUserId(), reqRoomIdDTO.getRoomId());
-        gameRoomDao.lockRoomById(reqRoomIdDTO.getRoomId());
+        GameRoom gameRoom = gameRoomDao.lockRoomById(reqRoomIdDTO.getRoomId());
         UserJoinRoom userJoinRoom = userJoinRoomService.getById(reqRoomIdDTO.getUserId());
         if (userJoinRoom != null) {
             log.info("玩家：{} 加入其他的房间现在退出", reqRoomIdDTO.getUserId());
             userJoinRoomService.removeById(reqRoomIdDTO.getUserId());
-            applicationContext.publishEvent(new AppRoomEvent(AppRoomEvent.PLAYER_LEVEL, reqRoomIdDTO.getRoomId(), reqRoomIdDTO.getUserId()));
+            applicationContext.publishEvent(new AppRoomEvent(AppRoomEvent.CHANG_CTL, reqRoomIdDTO.getRoomId(), reqRoomIdDTO.getUserId()));
         }
 
-        GameRoom gameRoom = getById(reqRoomIdDTO.getRoomId());
         gameRoom.setJoinCount(gameRoom.getJoinCount() + 1);
-        InitMapDTO initMapDTO = JSON.parseObject(gameRoom.getMapConfig(), InitMapDTO.class);
-        gameRoomDao.updateById(gameRoom);
 
+        InitMapDTO initMapDTO = JSON.parseObject(gameRoom.getMapConfig(), InitMapDTO.class);
         // 获取已经加入的
         List<String> joinArmyList = userJoinRoomService.getUserByRoomId(gameRoom.getRoomId())
                 .stream().map(UserJoinRoom::getJoinArmy).collect(Collectors.toList());
@@ -120,6 +120,18 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         }
         userJoinRoom.setJoinTime(LocalDateTime.now());
         userJoinRoomService.save(userJoinRoom);
+
+        if (gameRoom.getRoomOwner() == null) {
+            gameRoom.setRoomOwner(reqRoomIdDTO.getUserId());
+            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_ROOM_OWNER, gameRoom.getRoomId());
+            appRoomEvent.setSysMessage("新的房主 :" + userService.getById(reqRoomIdDTO.getUserId()).getName());
+            appRoomEvent.setPlayer(reqRoomIdDTO.getUserId());
+            applicationContext.publishEvent(appRoomEvent);
+            updateById(gameRoom);
+        } else {
+            updateById(gameRoom);
+        }
+
         return userJoinRoom.getJoinArmy();
     }
 
@@ -130,11 +142,10 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         UserJoinRoom userJoinRoom = userJoinRoomService.getById(id);
 
         if (userJoinRoom != null) {
-            gameRoomDao.lockRoomById(userJoinRoom.getRoomId());
+            GameRoom gameRoom = gameRoomDao.lockRoomById(userJoinRoom.getRoomId());
             userJoinRoomService.removeById(id);
-            GameRoom gameRoom = getById(userJoinRoom.getRoomId());
             gameRoom.setJoinCount(gameRoom.getJoinCount() - 1);
-            if (gameRoom.getRoomOwner().equals(id)) {
+            if (id.equals(gameRoom.getRoomOwner())) {
                 log.info("更换房主");
                 List<Integer> userIdList = userJoinRoomService.getUserByRoomId(gameRoom.getRoomId())
                         .stream().map(UserJoinRoom::getUserId).collect(Collectors.toList());
@@ -146,11 +157,24 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
                     gameRoomDao.updateById(gameRoom);
                     log.info("新的房主：{}", gameRoom.getRoomOwner());
                     String message = "房主离开, 新的房主：" + userService.getById(gameRoom.getRoomOwner()).getName();
-                    AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.PUBLIC_MESSAGE, gameRoom.getRoomId(), message);
+                    AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_ROOM_OWNER, gameRoom.getRoomId());
                     appRoomEvent.setLevelArmy(userJoinRoom.getJoinArmy());
+                    appRoomEvent.setPlayer(gameRoom.getRoomOwner());
+                    appRoomEvent.setSysMessage(message);
                     applicationContext.publishEvent(appRoomEvent);
                 }
+            } else {
+                if (gameRoom.getJoinCount() == 0) {
+                    removeById(gameRoom.getRoomId());
+                } else  {
+                    gameRoomDao.updateById(gameRoom);
+                }
             }
+            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_CTL, gameRoom.getRoomId());
+            appRoomEvent.setLevelArmy(userJoinRoom.getJoinArmy());
+            appRoomEvent.setPlayer(id);
+            appRoomEvent.setSysMessage("玩家: " + userService.getById(id).getName() + "离开");
+            applicationContext.publishEvent(appRoomEvent);
         }
     }
 
@@ -160,7 +184,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         UserJoinRoom userJoinRoom = userJoinRoomService.getById(armyChangeDTO.getUserId());
         assert userJoinRoom != null;
         String oldArmy = userJoinRoom.getJoinArmy();
-        gameRoomDao.lockRoomById(userJoinRoom.getRoomId());
+        GameRoom gameRoom = gameRoomDao.lockRoomById(userJoinRoom.getRoomId());
         List<String> hasArmy = userJoinRoomService.getUserByRoomId(userJoinRoom.getRoomId())
                 .stream().map(UserJoinRoom::getJoinArmy).collect(Collectors.toList());
         if (hasArmy.contains(armyChangeDTO.getNewArmy())) {
@@ -168,10 +192,19 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         }
         userJoinRoom.setJoinArmy(armyChangeDTO.getNewArmy());
         userJoinRoomService.saveOrUpdate(userJoinRoom);
+        if (gameRoom.getRoomOwner() == null) {
+            gameRoom.setRoomOwner(armyChangeDTO.getUserId());
+            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_ROOM_OWNER, gameRoom.getRoomId());
+            appRoomEvent.setSysMessage("新的房主" + userService.getById(armyChangeDTO.getUserId()).getName());
+            appRoomEvent.setPlayer(armyChangeDTO.getUserId());
+            applicationContext.publishEvent(appRoomEvent);
+            updateById(gameRoom);
+        }
         return oldArmy;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<ArmyConfig> getCurrentArmyConfigByRoomId(String id) {
         List<UserJoinRoom> userJoinRooms = userJoinRoomService.getUserByRoomId(id);
         InitMapDTO initMapDTO = JSON.parseObject(gameRoomDao.selectById(id).getMapConfig(), InitMapDTO.class);
@@ -179,7 +212,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
 
         for (ArmyConfig armyConfig : list) {
             for (UserJoinRoom userJoinRoom : userJoinRooms) {
-                if (userJoinRoom.getJoinArmy().equals(armyConfig.getColor())) {
+                if (armyConfig.getColor().equals(userJoinRoom.getJoinArmy())) {
                     armyConfig.setPlayerName(userService.getUserById(userJoinRoom.getUserId()).getName());
                     armyConfig.setPlayer(userJoinRoom.getUserId().toString());
                     break;
@@ -187,5 +220,37 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
             }
         }
         return list;
+    }
+
+    @Override
+    public void levelCtlArmy(RoomArmyLevelDTO levelDTO) {
+        gameRoomDao.lockRoomById(levelDTO.getRoomId());
+        UserJoinRoom userJoinRoom = userJoinRoomService.getById(levelDTO.getPlayerId());
+        userJoinRoom.setJoinArmy(null);
+        userJoinRoomService.updateById(userJoinRoom);
+
+        GameRoom gameRoom = getById(levelDTO.getRoomId());
+
+        if (levelDTO.getPlayerId().equals(gameRoom.getRoomOwner())) {
+            log.info("改变房主");
+            List<UserJoinRoom> userJoinRooms = userJoinRoomService.getUserByRoomId(gameRoom.getRoomId());
+            List<UserJoinRoom> ctlArmyList = userJoinRooms.stream()
+                    .filter(u -> StringUtil.isNotBlack(u.getJoinArmy()))
+                    .sorted(Comparator.comparingLong(u -> u.getJoinTime().toEpochSecond(ZoneOffset.UTC)))
+                    .collect(Collectors.toList());
+            if (ctlArmyList.size() > 0) {
+                UserJoinRoom newRoomOwner = ctlArmyList.get(0);
+                gameRoom.setRoomOwner(newRoomOwner.getUserId());
+                AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_ROOM_OWNER, gameRoom.getRoomId());
+                appRoomEvent.setSysMessage("房主退出,新的房主" + userService.getById(newRoomOwner.getUserId()).getName());
+                appRoomEvent.setPlayer(newRoomOwner.getUserId());
+                applicationContext.publishEvent(appRoomEvent);
+            } else {
+                gameRoom.setRoomOwner(null);
+            }
+        }
+        updateById(gameRoom);
+
+
     }
 }

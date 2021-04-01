@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.event;
 
+import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.core.eums.RoomEventEnum;
 
 /**
@@ -20,6 +21,14 @@ public class RoomEvent extends AbstractEvent{
      * 消息
      */
     private String message;
+
+    public RoomEvent() {
+    }
+
+    public RoomEvent(String id, RoomEventEnum eventType, User user) {
+    }
+
+
 
     public RoomEventEnum getEventType() {
         return eventType;

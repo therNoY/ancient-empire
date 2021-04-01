@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -32,6 +34,8 @@ public class UserJoinRoom implements Serializable {
     /**
      * 加入的军队 为空表示观战
      */
+
+    @TableField(strategy = FieldStrategy.IGNORED)
     private String joinArmy;
 
     /**

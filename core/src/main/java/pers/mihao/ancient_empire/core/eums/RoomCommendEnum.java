@@ -16,4 +16,9 @@ public enum RoomCommendEnum {
      * 军队变化
      */
     ARMY_CHANGE,
+
+    /**
+     * 改变房主
+     */
+    CHANG_ROOM_OWNER,
 }

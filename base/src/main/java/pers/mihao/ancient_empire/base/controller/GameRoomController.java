@@ -86,7 +86,7 @@ public class GameRoomController {
     public RespJson playerJoinRoom(@RequestBody ReqRoomIdDTO reqRoomIdDTO) {
         String color = gameRoomService.playerJoinRoom(reqRoomIdDTO);
         if (StringUtil.isNotBlack(color)) {
-            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.PLAYER_JOIN, reqRoomIdDTO.getRoomId(), reqRoomIdDTO.getUserId());
+            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_CTL, reqRoomIdDTO.getRoomId(), reqRoomIdDTO.getUserId());
             appRoomEvent.setJoinArmy(color);
             applicationContext.publishEvent(appRoomEvent);
             return RespUtil.successResJson();
@@ -108,7 +108,7 @@ public class GameRoomController {
 
 
     /**
-     * 玩家离开
+     * 玩家改变军队
      *
      * @param reqRoomIdDTO
      * @return
@@ -119,10 +119,34 @@ public class GameRoomController {
         try {
             levelArmy = gameRoomService.changeCtlArmy(roomArmyChangeDTO);
             String roomId = userJoinRoomService.getById(roomArmyChangeDTO.getUserId()).getRoomId();
-            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_ARMY, roomId);
+            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_CTL, roomId);
             appRoomEvent.setLevelArmy(levelArmy);
             appRoomEvent.setJoinArmy(roomArmyChangeDTO.getNewArmy());
             appRoomEvent.setPlayer(roomArmyChangeDTO.getUserId());
+            applicationContext.publishEvent(appRoomEvent);
+            return RespUtil.successResJson();
+        } catch (Exception e) {
+            log.error("", e);
+            return RespUtil.error();
+        }
+    }
+
+
+    /**
+     * 玩家改变军队
+     *
+     * @param reqRoomIdDTO
+     * @return
+     */
+    @RequestMapping("/api/room/levelCtlArmy")
+    public RespJson levelCtlArmy(@RequestBody RoomArmyLevelDTO levelDTO) {
+        try {
+            String roomId = userJoinRoomService.getById(levelDTO.getUserId()).getRoomId();
+            levelDTO.setRoomId(roomId);
+            gameRoomService.levelCtlArmy(levelDTO);
+            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_CTL, roomId);
+            appRoomEvent.setLevelArmy(levelDTO.getColor());
+            appRoomEvent.setPlayer(levelDTO.getPlayerId());
             applicationContext.publishEvent(appRoomEvent);
             return RespUtil.successResJson();
         } catch (Exception e) {

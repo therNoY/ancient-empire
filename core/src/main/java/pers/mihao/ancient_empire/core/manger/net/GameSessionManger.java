@@ -73,19 +73,21 @@ public class GameSessionManger {
      * @param recordId
      * @param user
      */
-    public void addNewGameSession(Session session, String recordId, User user) {
+    public AbstractSession addNewGameSession(Session session, String recordId, User user) {
         List<GameSession> list = gameSessionMap.get(recordId);
         if (list == null) {
             list = new ArrayList<>();
             gameSessionMap.put(recordId, list);
         }
+        GameSession gameSession = null;
         synchronized (list) {
-            GameSession gameSession = new GameSession(recordId, user, session, new Date());
+            gameSession = new GameSession(recordId, user, session, new Date());
             gameSession.setSessionId(session.getId());
             list.add(gameSession);
             playerCount.incrementAndGet();
             log.info("将玩家：{} 加入到游戏：{}中, sessionId:{}, 此局游戏目前{}人", user.getName(), recordId, session.getId(), list.size());
         }
+        return gameSession;
     }
 
     /**
@@ -174,23 +176,23 @@ public class GameSessionManger {
         roomCommand.setJoinArmy(appRoomEvent.getJoinArmy());
         roomCommand.setLevelArmy(appRoomEvent.getLevelArmy());
         switch (appRoomEvent.getEventType()) {
-            case AppRoomEvent.PLAYER_JOIN:
+            case AppRoomEvent.CHANG_CTL:
                 roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
-                roomCommand.setMessage("玩家【" + player.getName() + "】: 加入房间！");
-                break;
-            case AppRoomEvent.PLAYER_LEVEL:
-                roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
-                roomCommand.setMessage("玩家【" + player.getName() + "】: 离开房间！");
                 break;
             case AppRoomEvent.PUBLIC_MESSAGE:
                 roomCommand.setRoomCommend(RoomCommendEnum.SEND_MESSAGE);
                 roomCommand.setMessage("玩家【" + player.getName() + "】: " + roomCommand.getMessage());
                 break;
-            case AppRoomEvent.CHANG_ARMY:
-                roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
-                break;
+            case AppRoomEvent.CHANG_ROOM_OWNER:
+                roomCommand.setRoomCommend(RoomCommendEnum.CHANG_ROOM_OWNER);
+                roomCommand.setUserId(appRoomEvent.getPlayer().toString());
             default:
                 break;
+        }
+        if (StringUtil.isNotBlack(appRoomEvent.getSysMessage())) {
+            roomCommand.setMessage("【系统消息】：" + appRoomEvent.getSysMessage());
+        } else if (StringUtil.isNotBlack(appRoomEvent.getMessage())) {
+            roomCommand.setMessage(appRoomEvent.getMessage());
         }
         if (StringUtil.isNotBlack(roomCommand.getMessage())) {
             roomCommand.setMessage(roomCommand.getMessage() + "  " + DateUtil.getDataTime());

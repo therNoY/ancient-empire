@@ -1,11 +1,8 @@
 package pers.mihao.ancient_empire.base.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import pers.mihao.ancient_empire.base.dto.ArmyConfig;
-import pers.mihao.ancient_empire.base.dto.ReqAddRoomDTO;
+import pers.mihao.ancient_empire.base.dto.*;
 import com.baomidou.mybatisplus.extension.service.IService;
-import pers.mihao.ancient_empire.base.dto.ReqRoomIdDTO;
-import pers.mihao.ancient_empire.base.dto.RoomArmyChangeDTO;
 import pers.mihao.ancient_empire.base.entity.GameRoom;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
@@ -36,9 +33,9 @@ public interface GameRoomService extends IService<GameRoom> {
     GameRoom addRoomAndJoinRoomOwner(ReqAddRoomDTO reqAddRoomDTO);
 
     /**
-     * 玩家加入房间
+     * 玩家加入房间 返回可以控制的军队
      * @param reqRoomIdDTO
-     * @return
+     * @return 控制的军队颜色
      */
     String playerJoinRoom(ReqRoomIdDTO reqRoomIdDTO);
 
@@ -62,4 +59,11 @@ public interface GameRoomService extends IService<GameRoom> {
      * @return
      */
     List<ArmyConfig> getCurrentArmyConfigByRoomId(String id);
+
+    /**
+     * 离开单位控制
+     * @param levelDTO
+     * @return
+     */
+    void levelCtlArmy(RoomArmyLevelDTO levelDTO);
 }

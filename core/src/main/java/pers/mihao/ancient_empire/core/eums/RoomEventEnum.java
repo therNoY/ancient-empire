@@ -13,10 +13,6 @@ public enum RoomEventEnum  implements BaseEnum {
      */
     JOIN_ROOM,
     /**
-     * 改变房间
-     */
-    CHANGE_ROOM,
-    /**
      * 发送消息
      */
     SEND_MESSAGE,

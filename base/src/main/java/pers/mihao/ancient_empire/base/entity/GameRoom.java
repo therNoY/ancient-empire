@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -47,6 +48,7 @@ public class GameRoom implements Serializable {
     /**
      * 房主
      */
+    @TableField(strategy = FieldStrategy.IGNORED)
     private Integer roomOwner;
 
     /**

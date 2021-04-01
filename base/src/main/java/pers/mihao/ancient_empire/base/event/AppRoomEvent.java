@@ -8,13 +8,11 @@ import org.springframework.context.ApplicationEvent;
  */
 public class AppRoomEvent extends ApplicationEvent {
 
-    public static final String PLAYER_JOIN = "playerJoin";
-
-    public static final String PLAYER_LEVEL = "playerLevel";
-
     public static final String PUBLIC_MESSAGE = "publicMessage";
 
-    public static final String CHANG_ARMY = "changeArmy";
+    public static final String CHANG_CTL = "changeCtl";
+
+    public static final String CHANG_ROOM_OWNER = "changRoomOwner";
 
     private String eventType;
 
@@ -23,6 +21,8 @@ public class AppRoomEvent extends ApplicationEvent {
     private Integer player;
 
     private String message;
+
+    private String sysMessage;
 
     /**
      * 加入的军队
@@ -100,6 +100,14 @@ public class AppRoomEvent extends ApplicationEvent {
 
     public void setLevelArmy(String levelArmy) {
         this.levelArmy = levelArmy;
+    }
+
+    public String getSysMessage() {
+        return sysMessage;
+    }
+
+    public void setSysMessage(String sysMessage) {
+        this.sysMessage = sysMessage;
     }
 
     @Override
