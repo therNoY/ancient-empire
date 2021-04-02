@@ -55,7 +55,7 @@ public class UserRecordServiceImp implements UserRecordService {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    private static String tempMap = "临时地图";
+    private static final String TEMP_MAP = "临时地图";
 
     /**
      * 根据地图开始游戏 生成存档
@@ -172,6 +172,7 @@ public class UserRecordServiceImp implements UserRecordService {
         }
 
         userRecord.setTemplateId(userMap.getTemplateId());
+        userRecord.setUserMapId(userMap.getUuid());
         // 4.保存记录
         userRecordRepository.save(userRecord);
         return userRecord;
@@ -233,7 +234,7 @@ public class UserRecordServiceImp implements UserRecordService {
         userRecordRepository.deleteByUnSaveAndCreateUserId(true, AuthUtil.getUserId());
         // 2.添加
         UserRecord userRecord = getRecordById(uuid);
-        userRecord.setRecordName(tempMap);
+        userRecord.setRecordName(TEMP_MAP);
         userRecord.setCreateTime(DateUtil.getDataTime());
         userRecord.setUnSave(true);
         userRecordRepository.save(userRecord);

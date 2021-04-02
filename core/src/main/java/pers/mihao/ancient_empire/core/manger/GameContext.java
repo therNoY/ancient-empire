@@ -13,14 +13,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
+import pers.mihao.ancient_empire.core.listener.GameRunListener;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
+import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
 
 /**
  * 一局游戏的上下文，一局游戏一个context
  * @Author mh32736
  * @Date 2020/9/9 20:53
  */
-public class GameContext extends UserTemplateHelper {
+public class GameContext extends UserTemplateHelper implements GameRunListener {
 
+    /**
+     * 当前回合的玩家
+     */
     private static ThreadLocal<User> user = new ThreadLocal<>();
 
     /**
@@ -106,6 +112,11 @@ public class GameContext extends UserTemplateHelper {
      * 开始游戏时间
      */
     private Date startTime;
+
+    /**
+     * 游戏运行监听
+     */
+    private List<GameRunListener> gameRunListeners;
 
     public GameContext() {
     }
@@ -260,5 +271,61 @@ public class GameContext extends UserTemplateHelper {
 
     public void setBeAttachUnit(Unit beAttachUnit) {
         this.beAttachUnit = beAttachUnit;
+    }
+
+    public List<GameRunListener> getGameRunListeners() {
+        return gameRunListeners;
+    }
+
+    public void setGameRunListeners(List<GameRunListener> gameRunListeners) {
+        this.gameRunListeners = gameRunListeners;
+    }
+
+    @Override
+    public void onGameStart() {
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.onGameStart();
+            }
+        }
+
+    }
+
+    @Override
+    public void onUnitDead() {
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.onUnitDead();
+            }
+        }
+    }
+
+    @Override
+    public void onUnitDone() {
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.onUnitDone();
+            }
+        }
+    }
+
+    @Override
+    public boolean onGameCommandAdd(GameCommand command) {
+        boolean res = true;
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                res = res && listener.onGameCommandAdd(command);
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public void onUnitLevelUp(GameCommand command, Stream stream) {
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.onUnitLevelUp(command, stream);
+            }
+        }
     }
 }

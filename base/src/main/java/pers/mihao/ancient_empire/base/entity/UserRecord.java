@@ -9,12 +9,17 @@ import pers.mihao.ancient_empire.base.bo.*;
 
 /**
  * 这个DTO 属于用户存档 即是进行中的
+ * @author mh
  */
 @Document
 public class UserRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     private String uuid;
+    /**
+     * 取得地图Id
+     */
+    private String userMapId;
     // 模板ID
     private Integer templateId;
     // 人口上限
@@ -197,6 +202,14 @@ public class UserRecord implements Serializable {
 
     public void setCurrRegion(RegionInfo currRegion) {
         this.currRegion = currRegion;
+    }
+
+    public String getUserMapId() {
+        return userMapId;
+    }
+
+    public void setUserMapId(String userMapId) {
+        this.userMapId = userMapId;
     }
 
     @Override

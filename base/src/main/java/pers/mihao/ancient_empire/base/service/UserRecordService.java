@@ -15,6 +15,7 @@ public interface UserRecordService extends MapService{
     /**
      * 根据地图生成一个存档
      * @param initMapDTO
+     * @param userMap
      * @return
      */
     UserRecord initMapRecord(InitMapDTO initMapDTO, UserMap userMap);

@@ -13,6 +13,8 @@ import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
+import pers.mihao.ancient_empire.core.manger.event.Event;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
@@ -555,6 +557,11 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
             }
         }
         return sum;
+    }
+
+    @Override
+    public List<GameCommand> handler(Event event) {
+        return null;
     }
 
     /**

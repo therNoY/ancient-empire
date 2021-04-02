@@ -8,8 +8,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
+import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
@@ -17,6 +19,10 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
+import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
+import pers.mihao.ancient_empire.core.listener.GameContextHelperListener;
+import pers.mihao.ancient_empire.core.listener.ChapterUtil;
+import pers.mihao.ancient_empire.core.listener.GameRunListener;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
@@ -37,6 +43,8 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     @Autowired
     GameSessionManger gameSessionManger;
     @Autowired
+    UserMapService userMapService;
+    @Autowired
     UserRecordService userRecordService;
     @Autowired
     UserTemplateService userTemplateService;
@@ -55,10 +63,14 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     /* 初始化注册是事件处理器 */
     private Map<GameEventEnum, Class<Handler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
 
-    /* 创建游戏上下文 房间 */
+    /**
+     * 游戏上下文 Map
+     */
     private Map<String, GameContext> contextMap = new ConcurrentHashMap<>(16);
 
-    // 注册哨兵线程池
+    /**
+     * 注册哨兵线程池
+     */
     private Executor sentinelPool = new ThreadPoolExecutor(
             0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
             new SynchronousQueue(),
@@ -107,6 +119,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      * @param gameId
      */
     public void handleCommand(List<GameCommand> commands, String gameId) {
+
         if (commands != null && commands.size() > 0) {
 
             // 过滤掉需要顺序执行的 其他的直接发送
@@ -158,7 +171,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      *
      * @param userRecord
      */
-    public void registerGameContext(UserRecord userRecord, GameTypeEnum gameTypeEnum, int playCount) {
+    public void registerGameContext(UserRecord userRecord, GameTypeEnum gameType, int playCount) {
         if (!contextMap.containsKey(userRecord.getUuid())) {
             sentinelPool.execute(() -> {
                 // 设置初始信息
@@ -166,7 +179,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 contextMap.put(userRecord.getUuid(), gameContext);
 
                 gameContext.setGameId(userRecord.getUuid());
-                gameContext.setGameTypeEnum(gameTypeEnum);
+                gameContext.setGameTypeEnum(gameType);
                 gameContext.setUserRecord(userRecord);
                 gameContext.setUserTemplate(userTemplateService.getById(userRecord.getTemplateId()));
                 gameContext.setPlayerCount(playCount);
@@ -174,6 +187,21 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
                 CyclicBarrier cyclicBarrier = new CyclicBarrier(playCount + 1);
                 gameContext.setStartGame(cyclicBarrier);
+                UserMap userMap = userMapService.getUserMapByUUID(userRecord.getUuid());
+
+                // 设置监听服务
+                List<GameRunListener> listeners = new ArrayList<>();
+                GameContextHelperListener coreListener = new GameContextHelperListener();
+                coreListener.setGameContext(gameContext);
+                listeners.add(coreListener);
+                if (gameType.equals(GameTypeEnum.STORY)) {
+                    AbstractGameRunListener gameRunListener = ChapterUtil.getChapterClass(userMap.getMapName());
+                    if (gameRunListener != null) {
+                        gameRunListener.setGameContext(gameContext);
+                        listeners.add(gameRunListener);
+                    }
+                }
+                gameContext.setGameRunListeners(listeners);
 
                 try {
                     log.info("开始检测上下文：{} 如果没有完成 就会撤销", userRecord.getUuid());
@@ -199,6 +227,8 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     private void onGameStart(GameContext gameContext) {
         log.info("玩家全部加入可以开始游戏:{}", gameContext.getGameId());
         gameContext.setStartTime(new Date());
+
+        gameContext.onGameStart();
 
         if (gameContext.getUserRecord().getCurrPlayer() == null) {
             log.info("开局是robot");

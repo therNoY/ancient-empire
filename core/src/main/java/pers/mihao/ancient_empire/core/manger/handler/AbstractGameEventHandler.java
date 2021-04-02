@@ -16,8 +16,6 @@ import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameContextBaseHandler;
-import pers.mihao.ancient_empire.core.manger.GameMangerListener;
-import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.Event;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
@@ -28,8 +26,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
  * @Author mh32736
  * @Date 2020/9/16 18:57
  */
-public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler,
-    GameMangerListener {
+public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler{
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     // 命令集合
@@ -104,7 +101,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         if (commandList == null) {
             commandList = new ArrayList<>();
         }
-        onGameCommandAdd(command);
+        gameContext.onGameCommandAdd(command);
         commandList.add(command);
         return this;
     }
@@ -128,7 +125,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     /**
      * 流式
      */
-    protected class Stream{
+    public class Stream{
         /**
          * 是否同步
          * @return
@@ -164,7 +161,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     /**
      * 帮助构建流式
      */
-    protected class FlowGameCommand extends GameCommand{
+    public class FlowGameCommand extends GameCommand{
 
         public Stream addCommand(GameCommendEnum gameCommendEnum){
             setGameCommendEnum(gameCommendEnum);
@@ -245,7 +242,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             extData.put(ExtMes.UNIT_STATUS, obj);
             setExtMes(extData);
             setOrder(orderIndex ++);
-            onUnitLevelUp(this);
+            gameContext.onUnitLevelUp(this, stream);
             addGameCommand(this);
             return stream;
         }
@@ -329,5 +326,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
 
     }
+
+
 
 }
