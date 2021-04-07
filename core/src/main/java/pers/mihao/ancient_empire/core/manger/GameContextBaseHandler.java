@@ -53,6 +53,17 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
         return regionInfo;
     }
 
+    protected Army getUnitArmy(Site site) {
+        for (Army a : record().getArmyList()) {
+            for (Unit u : a.getUnits()) {
+                if (!u.isDead() && AppUtil.siteEquals(u, site)) {
+                    return a;
+                }
+            }
+        }
+        return null;
+    }
+
 
     /**
      * 从整个地图根据位置获取单位

@@ -66,4 +66,8 @@ public class Site implements Serializable {
     public void setColumn(Integer column) {
         this.column = column;
     }
+
+    public Site getSite(){
+        return new Site(row, column);
+    }
 }

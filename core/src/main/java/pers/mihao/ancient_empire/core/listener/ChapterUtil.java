@@ -36,4 +36,9 @@ public class ChapterUtil {
         return listener;
     }
 
+    public static String getMessage(String key) {
+        String message = map.get(key);
+        return message;
+    }
+
 }

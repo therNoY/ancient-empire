@@ -155,15 +155,19 @@ public class GameSessionManger {
         }
     }
 
-    private void setMessagePrefix(GameCommand command) {
-        if (command.getGameCommendEnum().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
-            String oldMes = command.getExtMes().getString(ExtMes.MESSAGE);
-            if (AuthUtil.getLoginUser() != null) {
-                command.getExtMes().put(ExtMes.MESSAGE, "【" + AuthUtil.getLoginUser().getUsername() + "】" + oldMes);
-            }else {
-                command.getExtMes().put(ExtMes.MESSAGE, "【系统消息】" + oldMes);
+    private void setMessagePrefix(Command command) {
+        if (command instanceof GameCommand) {
+            GameCommand gameCommand = (GameCommand) command;
+            if (gameCommand.getGameCommendEnum().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
+                String oldMes = gameCommand.getExtMes().getString(ExtMes.MESSAGE);
+                if (AuthUtil.getLoginUser() != null) {
+                    gameCommand.getExtMes().put(ExtMes.MESSAGE, "【" + AuthUtil.getLoginUser().getUsername() + "】" + oldMes);
+                }else {
+                    gameCommand.getExtMes().put(ExtMes.MESSAGE, "【系统消息】" + oldMes);
+                }
             }
         }
+
     }
 
 
@@ -213,7 +217,7 @@ public class GameSessionManger {
     public void sendOrderMessage2Game(List<? extends Command> commandList, String gameId) {
         List<GameSession> gameSessions = gameSessionMap.get(gameId);
         for (Command command : commandList) {
-            setMessagePrefix((GameCommand) command);
+            setMessagePrefix(command);
         }
         if (gameSessions != null && commandList.size() > 0) {
             GameSession gameSession = null;
@@ -270,8 +274,7 @@ public class GameSessionManger {
      * @throws IOException
      */
     private void sendMessage2User(Command command, String gameId) {
-        GameCommand gameCommand = (GameCommand) command;
-        setMessagePrefix(gameCommand);
+        setMessagePrefix(command);
         List<GameSession> gameSessions = gameSessionMap.get(gameId);
         if (gameSessions != null) {
             GameSession gameSession = null;
@@ -298,8 +301,7 @@ public class GameSessionManger {
      * @throws IOException
      */
     public void sendMessage2Game(Command command, String gameId) {
-        GameCommand gameCommand = (GameCommand) command;
-        setMessagePrefix(gameCommand);
+        setMessagePrefix(command);
         List<GameSession> gameSessions = gameSessionMap.get(gameId);
         if (gameSessions != null) {
             GameSession gameSession = null;

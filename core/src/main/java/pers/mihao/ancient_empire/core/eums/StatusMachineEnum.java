@@ -9,6 +9,12 @@ package pers.mihao.ancient_empire.core.eums;
 public enum StatusMachineEnum {
 
     /**
+     * 对话框阶段 不处理click
+     */
+    DIALOG,
+
+
+    /**
      * 初始状态 只有单位被选择 地形被选择
      */
     INIT,

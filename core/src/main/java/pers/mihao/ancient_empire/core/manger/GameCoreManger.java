@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
@@ -19,6 +20,7 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
+import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
 import pers.mihao.ancient_empire.core.listener.GameContextHelperListener;
 import pers.mihao.ancient_empire.core.listener.ChapterUtil;
@@ -61,7 +63,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     private static final int JOIN_TIME = 20;
 
     /* 初始化注册是事件处理器 */
-    private Map<GameEventEnum, Class<Handler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
+    private Map<GameEventEnum, Class<GameHandler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
 
     /**
      * 游戏上下文 Map
@@ -88,8 +90,20 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      */
     @Override
     public void handelTask(GameEvent event) {
-        GameContext.setUser(event.getUser());
+        User user = event.getUser();
+        if (!user.getId().equals(GameContext.getUser().getId())) {
+            // 不是当前回合用户触发的事件不处理
+            return;
+        }
+
         GameContext gameContext = contextMap.get(event.getId());
+
+        if (gameContext.getStatusMachine().equals(StatusMachineEnum.DIALOG)) {
+            // 准备阶段 事件改成处理点击屏幕事件 直接返回
+            gameContext.onClickTip();
+            return;
+        }
+
         // 备份内存数据
         GameContext cloneContext = BeanUtil.deptClone(gameContext);
         GameCoreHelper.setContext(gameContext);
@@ -179,7 +193,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 contextMap.put(userRecord.getUuid(), gameContext);
 
                 gameContext.setGameId(userRecord.getUuid());
-                gameContext.setGameTypeEnum(gameType);
+                gameContext.setGameType(gameType);
                 gameContext.setUserRecord(userRecord);
                 gameContext.setUserTemplate(userTemplateService.getById(userRecord.getTemplateId()));
                 gameContext.setPlayerCount(playCount);
@@ -227,7 +241,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     private void onGameStart(GameContext gameContext) {
         log.info("玩家全部加入可以开始游戏:{}", gameContext.getGameId());
         gameContext.setStartTime(new Date());
-
+        gameContext.getHandler().setGameContext(gameContext);
         gameContext.onGameStart();
 
         if (gameContext.getUserRecord().getCurrPlayer() == null) {

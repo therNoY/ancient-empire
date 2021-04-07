@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.manger.command;
 /**
  * 状态变化command
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\3\23 0023 21:40
  */
 public class StatusCommand extends AbstractCommand{

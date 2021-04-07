@@ -327,6 +327,10 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     }
 
+    public void sendCommandNow(){
+        gameCoreManger.handleCommand(commandList, gameContext.getGameId());
+        commandList = new ArrayList<>();
+    }
 
 
 }

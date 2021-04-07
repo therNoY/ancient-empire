@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.manger.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -50,7 +52,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param animStrings
      * @return
      */
-    protected ShowAnimDTO getShowAnim(Site site, String animStrings) {
+    public ShowAnimDTO getShowAnim(Site site, String animStrings) {
         String[] anims = animStrings.split(CommonConstant.COMMA);
         List<String> animList = Arrays.stream(anims)
                 .collect(Collectors.toList());
@@ -64,12 +66,72 @@ public class CommonHandler extends AbstractGameEventHandler {
         return showAnimDTO;
     }
 
+    public void addNewUnit(Integer unitId, Site site, Integer armyIndex) {
+        JSONObject addUnit = new JSONObject();
+        Unit unit = UnitFactory.createUnit(unitId, site);
+        addUnit.put(ExtMes.UNIT, unit);
+        addUnit.put(ExtMes.ARMY_INDEX, armyIndex);
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.ADD_UNIT, addUnit);
+    }
+
+    protected void addNewUnit(Integer unitId, Site site) {
+        addNewUnit(unitId, site, record().getCurrArmyIndex());
+    }
+
+    /**
+     * 展示攻击单位动画
+     *
+     * @param attach
+     * @param row
+     * @param column
+     */
+    public void showAttachAnim(Integer[] attach, Site attSite, Site beAtt, ArmyUnitIndexDTO attIndex, ArmyUnitIndexDTO beAttIndex) {
+
+        // 1. 展示血量变化,
+        List<LifeChangeDTO> leftChangeDTOS = new ArrayList<>();
+        leftChangeDTOS.add(new LifeChangeDTO(attach, beAtt));
+
+        // 2. 展示攻击动画
+        ShowAnimDTO showAnimDTO = getShowAnim(beAtt, gameContext.getUserTemplate().getAttachAnimation());
+        JSONObject showAnim = new JSONObject();
+        showAnim.put(ExtMes.ANIM, showAnimDTO);
+        showAnim.put(ExtMes.ARMY_UNIT_INDEX, beAttIndex);
+
+        // 判断是否突袭
+        if (AppUtil.isReach(attSite, beAtt)) {
+            FloatSite floatSite = null;
+            double length = 0.3;
+            if (attSite.getRow() < beAtt.getRow()) {
+                floatSite = new FloatSite(attSite.getRow() + length, (double)attSite.getColumn());
+            }else if (attSite.getRow() > beAtt.getRow()) {
+                floatSite = new FloatSite(attSite.getRow() - length, (double)attSite.getColumn());
+            }else if (attSite.getColumn() < beAtt.getColumn()) {
+                floatSite = new FloatSite((double)attSite.getRow(), attSite.getColumn()  + length);
+            }else if (attSite.getColumn() > beAtt.getColumn()) {
+                floatSite = new FloatSite((double)attSite.getRow(), attSite.getColumn()  - length);
+            }
+
+            JSONObject rushUnit = new JSONObject();
+            rushUnit.put(ExtMes.SITE, floatSite);
+            rushUnit.put(ExtMes.ARMY_UNIT_INDEX, attIndex);
+
+            commandStream()
+                .toGameCommand().addOrderCommand(GameCommendEnum.RUSH_UNIT, rushUnit);
+        }
+
+        commandStream()
+            .toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, leftChangeDTOS)
+            .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_ATTACH_ANIM, showAnim);
+
+    }
+
+
     /**
      * 改变当前点
      *
      * @param site
      */
-    protected void changeCurrPoint(Site site) {
+    public void changeCurrPoint(Site site) {
         // 设置当前点
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_POINT, site);
         record().setCurrPoint(site);
@@ -81,7 +143,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @param site
      */
-    protected Pair<Integer, UnitInfo> changeCurrUnit(Site site) {
+    public Pair<Integer, UnitInfo> changeCurrUnit(Site site) {
         // 设置当前单位
         Pair<Integer, UnitInfo> unitInfoPair = getUnitInfoFromMapBySite(site);
         if (currUnit() == null) {
@@ -96,7 +158,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @param unitInfo
      */
-    protected void changeCurrUnit(UnitInfo unitInfo) {
+    public void changeCurrUnit(UnitInfo unitInfo) {
         // 设置当前单位
         record().setCurrUnit(unitInfo);
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_UNIT, ExtMes.UNIT_INFO, unitInfo);
@@ -116,7 +178,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @param site
      */
-    protected Pair<Integer, UnitInfo> getUnitInfoFromMapBySite(Site site) {
+    public Pair<Integer, UnitInfo> getUnitInfoFromMapBySite(Site site) {
         // 设置当前单位
         Pair<Integer, Unit> unitMes = getUnitFromMapBySite(site);
         if (unitMes == null) {
@@ -136,7 +198,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @param site
      */
-    protected RegionInfo changeCurrRegion(Site site) {
+    public RegionInfo changeCurrRegion(Site site) {
         // 设置当前地形
         Region region = getRegionBySite(site);
         return changeCurrRegion(region);
@@ -148,7 +210,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param unit             死亡单位
      * @param armyUnitIndexDTO 单位的index
      */
-    protected void sendUnitDeadCommend(UnitInfo unit, ArmyUnitIndexDTO armyUnitIndexDTO) {
+    public void sendUnitDeadCommend(UnitInfo unit, ArmyUnitIndexDTO armyUnitIndexDTO) {
         // 获取展示单位死亡的动画
         ShowAnimDTO showAnimDTO = getShowAnim(unit, gameContext.getUserTemplate().getDeadAnimation());
         JSONObject showAnim = new JSONObject();
@@ -179,7 +241,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @param regionIndex
      */
-    protected RegionInfo changeCurrRegion(Integer regionIndex) {
+    public RegionInfo changeCurrRegion(Integer regionIndex) {
         // 设置当前地形
         Region region = gameMap().getRegions().get(regionIndex);
         return changeCurrRegion(region);
@@ -190,7 +252,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @param armyUnitIndexDTO
      */
-    protected void endCurrentUnit(ArmyUnitIndexDTO armyUnitIndexDTO) {
+    public void endCurrentUnit(ArmyUnitIndexDTO armyUnitIndexDTO) {
         // 处理二次移动
         List<Site> secondMoveArea = MoveAreaStrategy.getInstance().getSecondMoveArea(record(), currUnit(), gameContext.getReadyMoveLine());
 
@@ -210,7 +272,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param regionIndex
      * @param region
      */
-    protected Stream changeRegion(int regionIndex, Region region) {
+    public Stream changeRegion(int regionIndex, Region region) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(ExtMes.REGION_INDEX, regionIndex);
         jsonObject.put(ExtMes.REGION, region);
@@ -223,7 +285,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @param armyUnitIndexDTO
      */
-    protected void sendEndUnitCommend(UnitInfo unitInfo, ArmyUnitIndexDTO armyUnitIndexDTO) {
+    public void sendEndUnitCommend(UnitInfo unitInfo, ArmyUnitIndexDTO armyUnitIndexDTO) {
         // 触发单位结束移动事件
         EndUnitDTO endUnitDTO = EndStrategy.getInstance().getEndUnitResult(this);
         // 处理生命值改变
@@ -301,7 +363,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      *
      * @param moveArea
      */
-    protected void showMoveArea(List<Site> moveArea) {
+    public void showMoveArea(List<Site> moveArea) {
         gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_AREA);
         gameContext.setWillMoveArea(moveArea);
         commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, moveArea);
@@ -310,7 +372,7 @@ public class CommonHandler extends AbstractGameEventHandler {
     /**
      * 展示移动路线
      */
-    protected List<PathPosition> showMoveLine(Site aimSite) {
+    public List<PathPosition> showMoveLine(Site aimSite) {
         MovePathDTO movePathDTO = MovePathStrategy.getInstance().getUnitMovePath(record().getCurrUnit(),
                 aimSite, record(), currUnit());
         List<PathPosition> path = movePathDTO.getPositionList();
@@ -322,7 +384,7 @@ public class CommonHandler extends AbstractGameEventHandler {
         return path;
     }
 
-    private RegionInfo changeCurrRegion(Region region) {
+    public RegionInfo changeCurrRegion(Region region) {
         RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(region.getType());
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
         regionInfo.setColor(region.getColor());

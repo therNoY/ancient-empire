@@ -178,16 +178,11 @@ public class ClickChoosePointHandler extends CommonHandler {
         if (derivativeId == null) {
             derivativeId = gameContext.getDefaultTemplate().getDerivativeId();
         }
-        JSONObject addUnit = new JSONObject();
-        Unit unit = UnitFactory.createUnit(derivativeId, gameEvent.getAimSite());
-        addUnit.put(ExtMes.UNIT, unit);
-        addUnit.put(ExtMes.ARMY_INDEX, record().getCurrArmyIndex());
-
         commandStream()
                 .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA)
                 .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_SUMMON_ANIM, showAnim)
-                .toGameCommand().addOrderCommand(GameCommendEnum.REMOVE_TOMB, gameEvent.getAimSite())
-                .toGameCommand().addOrderCommand(GameCommendEnum.ADD_UNIT, addUnit);
+                .toGameCommand().addOrderCommand(GameCommendEnum.REMOVE_TOMB, gameEvent.getAimSite());
+        addNewUnit(derivativeId, gameEvent.getAimSite());
 
         // 处理状态
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(currUnitArmyIndex());
@@ -350,51 +345,5 @@ public class ClickChoosePointHandler extends CommonHandler {
     }
 
 
-    /**
-     * 展示攻击单位动画
-     *
-     * @param attach
-     * @param row
-     * @param column
-     */
-    private void showAttachAnim(Integer[] attach, Site attSite, Site beAtt, ArmyUnitIndexDTO attIndex, ArmyUnitIndexDTO beAttIndex) {
-
-        // 1. 展示血量变化,
-        List<LifeChangeDTO> leftChangeDTOS = new ArrayList<>();
-        leftChangeDTOS.add(new LifeChangeDTO(attach, beAtt));
-
-        // 2. 展示攻击动画
-        ShowAnimDTO showAnimDTO = getShowAnim(beAtt, gameContext.getUserTemplate().getAttachAnimation());
-        JSONObject showAnim = new JSONObject();
-        showAnim.put(ExtMes.ANIM, showAnimDTO);
-        showAnim.put(ExtMes.ARMY_UNIT_INDEX, beAttIndex);
-
-        // 判断是否突袭
-        if (AppUtil.isReach(attSite, beAtt)) {
-            FloatSite floatSite = null;
-            double length = 0.3;
-            if (attSite.getRow() < beAtt.getRow()) {
-                floatSite = new FloatSite(attSite.getRow() + length, (double)attSite.getColumn());
-            }else if (attSite.getRow() > beAtt.getRow()) {
-                floatSite = new FloatSite(attSite.getRow() - length, (double)attSite.getColumn());
-            }else if (attSite.getColumn() < beAtt.getColumn()) {
-                floatSite = new FloatSite((double)attSite.getRow(), attSite.getColumn()  + length);
-            }else if (attSite.getColumn() > beAtt.getColumn()) {
-                floatSite = new FloatSite((double)attSite.getRow(), attSite.getColumn()  - length);
-            }
-
-            JSONObject rushUnit = new JSONObject();
-            rushUnit.put(ExtMes.SITE, floatSite);
-            rushUnit.put(ExtMes.ARMY_UNIT_INDEX, attIndex);
-
-            commandStream()
-                    .toGameCommand().addOrderCommand(GameCommendEnum.RUSH_UNIT, rushUnit);
-        }
-
-        commandStream()
-                .toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, leftChangeDTOS)
-                .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_ATTACH_ANIM, showAnim);
-
-    }
 
 }

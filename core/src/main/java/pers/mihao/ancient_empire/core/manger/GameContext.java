@@ -1,8 +1,10 @@
 package pers.mihao.ancient_empire.core.manger;
 
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
@@ -16,6 +18,7 @@ import java.util.concurrent.CyclicBarrier;
 import pers.mihao.ancient_empire.core.listener.GameRunListener;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
+import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 
 /**
  * 一局游戏的上下文，一局游戏一个context
@@ -29,6 +32,8 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
      */
     private static ThreadLocal<User> user = new ThreadLocal<>();
 
+    private CommonHandler handler = new CommonHandler();
+
     /**
      * 唯一的GameId与创建的用户存档Id一样
      */
@@ -37,7 +42,7 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
     /**
      * 类型枚举
      */
-    private GameTypeEnum gameTypeEnum;
+    private GameTypeEnum gameType;
     /**
      * 游戏的存档
      */
@@ -182,12 +187,12 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
         this.bgColor = bgColor;
     }
 
-    public GameTypeEnum getGameTypeEnum() {
-        return gameTypeEnum;
+    public GameTypeEnum getGameType() {
+        return gameType;
     }
 
-    public void setGameTypeEnum(GameTypeEnum gameTypeEnum) {
-        this.gameTypeEnum = gameTypeEnum;
+    public void setGameType(GameTypeEnum gameType) {
+        this.gameType = gameType;
     }
 
     public Site getBeSummonTomb() {
@@ -281,6 +286,7 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
         this.gameRunListeners = gameRunListeners;
     }
 
+
     @Override
     public void onGameStart() {
         if (gameRunListeners != null) {
@@ -292,19 +298,28 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
     }
 
     @Override
-    public void onUnitDead() {
+    public void onClickTip() {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
-                listener.onUnitDead();
+                listener.onClickTip();
             }
         }
     }
 
     @Override
-    public void onUnitDone() {
+    public void onUnitDead(UnitInfo unitInfo) {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
-                listener.onUnitDone();
+                listener.onUnitDead(unitInfo);
+            }
+        }
+    }
+
+    @Override
+    public void onUnitDone(UnitInfo unitInfo) {
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.onUnitDone(unitInfo);
             }
         }
     }
@@ -321,11 +336,24 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
     }
 
     @Override
+    public void onRoundStart(Army army) {
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.onRoundStart(army);
+            }
+        }
+    }
+
+    @Override
     public void onUnitLevelUp(GameCommand command, Stream stream) {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
                 listener.onUnitLevelUp(command, stream);
             }
         }
+    }
+
+    public CommonHandler getHandler(){
+        return handler;
     }
 }

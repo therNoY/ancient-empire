@@ -41,12 +41,12 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     }
 
     @Override
-    public void onUnitDead() {
+    public void onUnitDead(UnitInfo unitInfo) {
 
     }
 
     @Override
-    public void onUnitDone() {
+    public void onUnitDone(UnitInfo unitInfo) {
 
     }
 

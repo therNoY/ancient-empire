@@ -24,6 +24,7 @@ public abstract class BaseHandler implements Handler {
 
     protected static RegionMesService regionMesService;
     protected static UnitMesService unitMesService;
+    protected static GameCoreManger gameCoreManger;
     protected static UnitLevelMesService unitLevelMesService;
     protected static UnitTransferService unitTransferService;
     protected static UserRecordService userRecordService;
@@ -38,6 +39,7 @@ public abstract class BaseHandler implements Handler {
         unitTransferService = ApplicationContextHolder.getBean(UnitTransferService.class);
         userRecordService = ApplicationContextHolder.getBean(UserRecordService.class);
         robotManger = ApplicationContextHolder.getBean(RobotManger.class);
+        gameCoreManger = ApplicationContextHolder.getBean(GameCoreManger.class);
     }
 
 
