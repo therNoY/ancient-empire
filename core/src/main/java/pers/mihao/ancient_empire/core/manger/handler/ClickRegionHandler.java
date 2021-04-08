@@ -25,7 +25,7 @@ public class ClickRegionHandler extends CommonHandler {
 
         if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON, StatusMachineEnum.WILL_ATTACH_REGION)) {
             // 如果此时状态是准备攻击 现在的应该回到之前的攻击选择状态
-            commandStream().toGameCommand().showAction(gameContext.getActions());
+            showAction(gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
             return;
         }

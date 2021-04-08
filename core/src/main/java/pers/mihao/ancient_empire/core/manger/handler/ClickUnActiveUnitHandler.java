@@ -44,7 +44,7 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
                 }
             } else {
                 // 点击其他区域的单位就返回
-                commandStream().toGameCommand().showAction(gameContext.getActions());
+                showAction(gameContext.getActions());
                 gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
             }
         }else if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
@@ -60,7 +60,7 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
         }else if (stateIn(StatusMachineEnum.WILL_SUMMON)) {
             // 点击其他区域的单位就返回
-            commandStream().toGameCommand().showAction(gameContext.getActions());
+            showAction(gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         }else {
             changeCurrPoint(gameEvent.getInitiateSite());

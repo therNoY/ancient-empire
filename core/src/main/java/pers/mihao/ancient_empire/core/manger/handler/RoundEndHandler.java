@@ -67,7 +67,7 @@ public class RoundEndHandler extends CommonHandler {
             }
         }
         if (unitStatusInfoDTOS.size() > 0) {
-            commandAsyncStream().toGameCommand().changeUnitStatus(unitStatusInfoDTOS);
+            changeUnitStatus(unitStatusInfoDTOS);
         }
 
         // 2. 开启新的回合
@@ -188,7 +188,7 @@ public class RoundEndHandler extends CommonHandler {
         }
 
         if (unitStatusChanges.size() > 0) {
-            commandStream().toGameCommand().changeUnitStatus(unitStatusChanges);
+            changeUnitStatus(unitStatusChanges);
         }
     }
 

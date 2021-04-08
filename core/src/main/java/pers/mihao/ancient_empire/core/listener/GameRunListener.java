@@ -52,6 +52,6 @@ public interface GameRunListener {
      * @param command
      * @param stream
      */
-    void onUnitLevelUp(GameCommand command, Stream stream);
+    void onUnitStatusChange(GameCommand command, Stream stream);
 
 }

@@ -82,7 +82,7 @@ public class ClickChoosePointHandler extends CommonHandler {
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(currUnitArmyIndex());
         unitStatusInfoDTO.setExperience(currUnit().getExperience() + gameContext.getDestroyerExp());
         unitStatusInfoDTO.setUpdateCurr(true);
-        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
+        changeUnitStatus(unitStatusInfoDTO);
         Region region = new Region();
         region.setType(RegionEnum.RUINS.type());
         int regionIndex = getRegionIndexBySite(gameEvent.getAimSite());
@@ -140,7 +140,7 @@ public class ClickChoosePointHandler extends CommonHandler {
                 showAttachAnim(attachResultDTO.getAntiAttackResult().getAttach(), beAttachUnit, currUnit(), beAttachArmyUnitIndexDTO, attachArmyUnitIndexDTO);
             }
 
-            commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
+            changeUnitStatus(unitStatusInfoDTO);
 
         }
         if (attachResultDTO.getAntiAttack() && attachResultDTO.getAntiAttackResult().getDead()) {
@@ -157,7 +157,7 @@ public class ClickChoosePointHandler extends CommonHandler {
             }
             unitStatusInfoDTO.setExperience(attachResultDTO.getAttachResult().getEndExperience());
             unitStatusInfoDTO.setUpdateCurr(true);
-            commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
+            changeUnitStatus(unitStatusInfoDTO);
             // 结束
             endCurrentUnit(attachArmyUnitIndexDTO);
         }
@@ -182,13 +182,14 @@ public class ClickChoosePointHandler extends CommonHandler {
                 .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA)
                 .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_SUMMON_ANIM, showAnim)
                 .toGameCommand().addOrderCommand(GameCommendEnum.REMOVE_TOMB, gameEvent.getAimSite());
+
         addNewUnit(derivativeId, gameEvent.getAimSite());
 
         // 处理状态
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(currUnitArmyIndex());
         unitStatusInfoDTO.setExperience(currUnit().getExperience() + gameContext.getSummonExp());
         unitStatusInfoDTO.setUpdateCurr(true);
-        commandStream().toGameCommand().changeUnitStatus(unitStatusInfoDTO);
+        changeUnitStatus(unitStatusInfoDTO);
         endCurrentUnit(currUnitArmyIndex());
     }
 

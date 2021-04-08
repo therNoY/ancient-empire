@@ -345,10 +345,10 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
     }
 
     @Override
-    public void onUnitLevelUp(GameCommand command, Stream stream) {
+    public void onUnitStatusChange(GameCommand command, Stream stream) {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
-                listener.onUnitLevelUp(command, stream);
+                listener.onUnitStatusChange(command, stream);
             }
         }
     }

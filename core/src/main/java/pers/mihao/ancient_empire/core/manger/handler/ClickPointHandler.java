@@ -28,8 +28,8 @@ public class ClickPointHandler extends CommonHandler{
             gameContext.setReadyMoveLine(null);
             gameContext.setReadyMoveSite(currSite());
             commandStream()
-                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
-                    .toGameCommand().showAction(gameContext.getActions());
+                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
+            showAction(gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         }else if (stateIn(StatusMachineEnum.SECOND_MOVE)) {
             ArmyUnitIndexDTO indexDTO = currUnitArmyIndex();

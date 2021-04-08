@@ -22,7 +22,6 @@ import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.manger.UserTemplateHelper;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
-import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
 
 /**
  * 上下文处理监听 每一个上下文都会有一个这个类
@@ -37,23 +36,31 @@ public class GameContextHelperListener extends AbstractGameRunListener {
 
     @Override
     public void onGameStart() {
-
+        log.info("{}开始", gameContext.getGameId());
     }
 
     @Override
     public void onUnitDead(UnitInfo unitInfo) {
-
+        log.info("{}单位死亡", unitInfo);
     }
 
     @Override
     public void onUnitDone(UnitInfo unitInfo) {
+        log.info("{}单位结束", unitInfo);
+    }
 
+    @Override
+    public void onRoundStart(Army army) {
+        log.info("回合开始：{}", army);
     }
 
     @Override
     public boolean onGameCommandAdd(GameCommand gameCommand) {
         JSONObject extMes = gameCommand.getExtMes();
         switch (gameCommand.getGameCommendEnum()) {
+            case CHANGE_CURR_POINT:
+                record().setCurrPoint(gameCommand.getAimSite());
+                break;
             case ADD_TOMB:
                 Unit unitInfo = (Unit) gameCommand.getAimSite();
                 Tomb newTomb = new Tomb(unitInfo, unitInfo.getTypeId());
@@ -150,7 +157,7 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     }
 
     @Override
-    public void onUnitLevelUp(GameCommand gameCommand, Stream stream) {
+    public void onUnitStatusChange(GameCommand gameCommand, Stream stream) {
         if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
             List unitStatusList = (List) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
             UnitStatusInfoDTO unitStatus;
@@ -213,8 +220,8 @@ public class GameContextHelperListener extends AbstractGameRunListener {
                                 Unit newUnit = new Unit();
                                 BeanUtil.copyValueByGetSet(unit, newUnit);
                                 newUnit.setTypeId(unitTransfer.getTransferUnitId());
-                                stream.toGameCommand().removeUnit(unitStatus)
-                                    .toGameCommand().addUnit(newUnit, unitStatus.getArmyIndex());
+                                removeUnit(unitStatus);
+                                addNewUnit(newUnit, unitStatus.getArmyIndex());
                             }
 
                         }

@@ -21,12 +21,12 @@ import pers.mihao.ancient_empire.core.manger.event.Event;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
 /**
- * 游戏事件处理类 对于每个处理都是一个线程池中的线程执行
- * 执行命令过程中产生command集合 返回给前端
+ * 游戏事件处理类 对于每个处理都是一个线程池中的线程执行 执行命令过程中产生command集合 返回给前端
+ *
  * @Author mh32736
  * @Date 2020/9/16 18:57
  */
-public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler{
+public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     // 命令集合
@@ -47,9 +47,10 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     /**
      * 获得一个同步发送消息流
+     *
      * @return
      */
-    protected Stream commandStream(){
+    protected Stream commandStream() {
         if (stream == null) {
             stream = new Stream();
         }
@@ -58,21 +59,10 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     /**
      * 获得一个异步发送流
+     *
      * @return
      */
-    protected Stream commandAsyncStream(){
-        if (stream == null) {
-            stream = new Stream();
-            stream.isAsync = true;
-        }
-        return stream;
-    }
-
-    /**
-     * 获得一个异步发送流
-     * @return
-     */
-    protected Stream commandOrderStream(){
+    protected Stream commandAsyncStream() {
         if (stream == null) {
             stream = new Stream();
             stream.isAsync = true;
@@ -82,9 +72,23 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     /**
      * 获得一个异步发送流
+     *
      * @return
      */
-    protected Stream commandAsyncOrderStream(){
+    protected Stream commandOrderStream() {
+        if (stream == null) {
+            stream = new Stream();
+            stream.isAsync = true;
+        }
+        return stream;
+    }
+
+    /**
+     * 获得一个异步发送流
+     *
+     * @return
+     */
+    protected Stream commandAsyncOrderStream() {
         if (stream == null) {
             stream = new Stream();
             stream.isAsync = true;
@@ -95,6 +99,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     /**
      * 返回的命令
+     *
      * @param command
      */
     protected AbstractGameEventHandler addGameCommand(GameCommand command) {
@@ -108,6 +113,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     /**
      * 子类据需要实现的处理事件
+     *
      * @param gameEvent
      */
     public abstract void handlerGameEvent(GameEvent gameEvent);
@@ -117,7 +123,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         this.gameContext = gameContext;
     }
 
-    public GameContext getGameContext(){
+    public GameContext getGameContext() {
         return gameContext;
     }
 
@@ -125,9 +131,11 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     /**
      * 流式
      */
-    public class Stream{
+    public class Stream {
+
         /**
          * 是否同步
+         *
          * @return
          */
         boolean isAsync = false;
@@ -137,21 +145,21 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
          */
         boolean order = false;
 
-        public FlowGameCommand toUserCommand(){
+        public FlowGameCommand toUserCommand() {
             FlowGameCommand command = new FlowGameCommand();
             command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME_USER);
             if (order) {
-                command.setOrder(orderIndex ++);
+                command.setOrder(orderIndex++);
             }
             command.setAsync(isAsync);
             return command;
         }
 
-        public FlowGameCommand toGameCommand(){
+        public FlowGameCommand toGameCommand() {
             FlowGameCommand command = new FlowGameCommand();
             command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
             if (order) {
-                command.setOrder(orderIndex ++);
+                command.setOrder(orderIndex++);
             }
             command.setAsync(isAsync);
             return command;
@@ -161,37 +169,37 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     /**
      * 帮助构建流式
      */
-    public class FlowGameCommand extends GameCommand{
+    public class FlowGameCommand extends GameCommand {
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum){
+        public Stream addCommand(GameCommendEnum gameCommendEnum) {
             setGameCommendEnum(gameCommendEnum);
             addGameCommand(this);
             return stream;
         }
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite){
-            setGameCommendEnum(gameCommendEnum);
-            setAimSite(aimSite);
-            addGameCommand(this);
-            return stream;
-        }
-
-        public Stream addOrderCommand(GameCommendEnum gameCommendEnum){
-            setGameCommendEnum(gameCommendEnum);
-            addGameCommand(this);
-            setOrder(orderIndex ++);
-            return stream;
-        }
-
-        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, Site aimSite){
+        public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite) {
             setGameCommendEnum(gameCommendEnum);
             setAimSite(aimSite);
             addGameCommand(this);
-            setOrder(orderIndex ++);
             return stream;
         }
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite, JSONObject extData){
+        public Stream addOrderCommand(GameCommendEnum gameCommendEnum) {
+            setGameCommendEnum(gameCommendEnum);
+            addGameCommand(this);
+            setOrder(orderIndex++);
+            return stream;
+        }
+
+        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, Site aimSite) {
+            setGameCommendEnum(gameCommendEnum);
+            setAimSite(aimSite);
+            addGameCommand(this);
+            setOrder(orderIndex++);
+            return stream;
+        }
+
+        public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite, JSONObject extData) {
             setGameCommendEnum(gameCommendEnum);
             setAimSite(aimSite);
             setExtMes(extData);
@@ -199,7 +207,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             return stream;
         }
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite, Integer unitIndex){
+        public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite, Integer unitIndex) {
             setGameCommendEnum(gameCommendEnum);
             setAimSite(aimSite);
             setUnitIndex(unitIndex);
@@ -207,7 +215,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             return stream;
         }
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum, String key, Object value){
+        public Stream addCommand(GameCommendEnum gameCommendEnum, String key, Object value) {
             setGameCommendEnum(gameCommendEnum);
             JSONObject extData = new JSONObject(2);
             extData.put(key, value);
@@ -216,84 +224,32 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             return stream;
         }
 
-        public Stream showAction(Set<String> action){
-            setGameCommendEnum(GameCommendEnum.SHOW_ACTION);
-            JSONObject extData = new JSONObject(2);
-            extData.put(ExtMes.ACTIONS, action);
-            extData.put(ExtMes.SITE, currSite());
-            setExtMes(extData);
-            addGameCommand(this);
-            return stream;
-        }
-
-        public Stream changeUnitStatus(List<UnitStatusInfoDTO> unitStatusInfoDTOS){
-            changeUnitStatusInfo(unitStatusInfoDTOS);
-            return stream;
-        }
-
-        public Stream changeUnitStatus(UnitStatusInfoDTO unitStatusInfoDTO){
-            changeUnitStatusInfo(unitStatusInfoDTO);
-            return stream;
-        }
-
-        private Stream changeUnitStatusInfo(Object obj){
-            setGameCommendEnum(GameCommendEnum.CHANGE_UNIT_STATUS);
-            JSONObject extData = new JSONObject(2);
-            extData.put(ExtMes.UNIT_STATUS, obj);
-            setExtMes(extData);
-            setOrder(orderIndex ++);
-            gameContext.onUnitLevelUp(this, stream);
-            addGameCommand(this);
-            return stream;
-        }
-
-        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, String key, Object value){
+        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, String key, Object value) {
             setGameCommendEnum(gameCommendEnum);
             JSONObject extData = new JSONObject(2);
             extData.put(key, value);
             setExtMes(extData);
-            setOrder(orderIndex ++);
+            setOrder(orderIndex++);
             addGameCommand(this);
             return stream;
         }
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum, JSONObject extData){
+        public Stream addCommand(GameCommendEnum gameCommendEnum, JSONObject extData) {
             setGameCommendEnum(gameCommendEnum);
             setExtMes(extData);
             addGameCommand(this);
             return stream;
         }
 
-        public Stream removeUnit(ArmyUnitIndexDTO armyUnitIndexDTO){
-            setGameCommendEnum(GameCommendEnum.REMOVE_UNIT);
-            JSONObject addUnit = new JSONObject();
-            addUnit.put(ExtMes.ARMY_UNIT_INDEX, armyUnitIndexDTO);
-            setExtMes(addUnit);
-            setOrder(orderIndex ++);
-            addGameCommand(this);
-            return stream;
-        }
-
-        public Stream addUnit(Unit unit, Integer armyIndex){
-            setGameCommendEnum(GameCommendEnum.ADD_UNIT);
-            JSONObject addUnit = new JSONObject();
-            addUnit.put(ExtMes.UNIT, unit);
-            addUnit.put(ExtMes.ARMY_INDEX, armyIndex);
-            setExtMes(addUnit);
-            setOrder(orderIndex ++);
-            addGameCommand(this);
-            return stream;
-        }
-
-        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, JSONObject extData){
+        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, JSONObject extData) {
             setGameCommendEnum(gameCommendEnum);
             setExtMes(extData);
-            setOrder(orderIndex ++);
+            setOrder(orderIndex++);
             addGameCommand(this);
             return stream;
         }
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum, JSONObject extData, Integer unitIndex){
+        public Stream addCommand(GameCommendEnum gameCommendEnum, JSONObject extData, Integer unitIndex) {
             setGameCommendEnum(gameCommendEnum);
             setExtMes(extData);
             setUnitIndex(unitIndex);
@@ -301,23 +257,23 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             return stream;
         }
 
-        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, JSONObject extData, Integer unitIndex){
+        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, JSONObject extData, Integer unitIndex) {
             setGameCommendEnum(gameCommendEnum);
             setExtMes(extData);
             setUnitIndex(unitIndex);
-            setOrder(orderIndex ++);
+            setOrder(orderIndex++);
             addGameCommand(this);
             return stream;
         }
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum, Unit aimUnit){
+        public Stream addCommand(GameCommendEnum gameCommendEnum, Unit aimUnit) {
             setGameCommendEnum(gameCommendEnum);
             setAimUnit(aimUnit);
             addGameCommand(this);
             return stream;
         }
 
-        public Stream addCommand(GameCommendEnum gameCommendEnum, Region square){
+        public Stream addCommand(GameCommendEnum gameCommendEnum, Region square) {
             setGameCommendEnum(gameCommendEnum);
             setAimRegion(square);
             addGameCommand(this);
@@ -327,7 +283,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
     }
 
-    public void sendCommandNow(){
+    public void sendCommandNow() {
         gameCoreManger.handleCommand(commandList, gameContext.getGameId());
         commandList = new ArrayList<>();
     }

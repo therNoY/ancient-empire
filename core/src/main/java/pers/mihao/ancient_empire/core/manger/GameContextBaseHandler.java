@@ -570,6 +570,35 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
         return sum;
     }
 
+    /**
+     * 获取当前单位的index
+     *
+     * @return
+     */
+    public ArmyUnitIndexDTO currUnitArmyIndex() {
+        return new ArmyUnitIndexDTO(record().getCurrArmyIndex(), getCurrUnitIndex());
+    }
+
+    /**
+     * 获取unitInfo 通过位置获取
+     *
+     * @param site
+     */
+    public Pair<Integer, UnitInfo> getUnitInfoFromMapBySite(Site site) {
+        // 设置当前单位
+        Pair<Integer, Unit> unitMes = getUnitFromMapBySite(site);
+        if (unitMes == null) {
+            // 破化者供给房子
+            return null;
+        }
+        Integer id = unitMes.getValue().getTypeId();
+        UnitInfo unitInfo = unitMesService.getUnitInfo(id, unitMes.getValue().getLevel());
+
+        BeanUtil.copyValueFromParent(unitMes.getValue(), unitInfo);
+        unitInfo.setRegionInfo(getRegionInfoBySite(unitInfo.getRow(), unitInfo.getColumn()));
+        return new Pair<>(unitMes.getKey(), unitInfo);
+    }
+
     @Override
     public List<GameCommand> handler(Event event) {
         return null;

@@ -21,6 +21,7 @@ import java.util.Set;
 
 /**
  * 点击可以移动的单位处理
+ *
  * @Author mh32736
  * @Date 2020/9/17 9:52
  * @see {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.CLICK_ACTIVE_UNIT}
@@ -31,6 +32,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
 
     /**
      * 点击可以移动的单位
+     *
      * @param gameEvent
      */
     @Override
@@ -39,23 +41,25 @@ public class ClickActiveUnitHandler extends CommonHandler {
         if (stateIn(StatusMachineEnum.SECOND_MOVE, StatusMachineEnum.MAST_MOVE)) {
             // 如果状态是二次移动 或者 必须移动状态 直接返回
             return;
-        }else if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON, StatusMachineEnum.WILL_ATTACH_REGION)) {
+        } else if (stateIn(StatusMachineEnum.WILL_ATTACH, StatusMachineEnum.WILL_SUMMON,
+            StatusMachineEnum.WILL_ATTACH_REGION)) {
             // 点击其他区域的单位就返回
-            commandStream().toGameCommand().showAction(gameContext.getActions());
+            showAction(gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
-        }else if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
+        } else if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
             // 如果当前子状态是 必须移动 那么就返回 并设置必须移动
             commandStream()
-                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+                .toGameCommand()
+                .addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
             showMoveArea(gameContext.getWillMoveArea());
             gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
             return;
-        }else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
+        } else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
             // 点击其他区域的单位就返回
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
-            commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
-        }else {
-
+            commandStream().toGameCommand()
+                .addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+        } else {
 
             Pair<Integer, UnitInfo> unitMes = changeCurrUnit(gameEvent.getInitiateSite());
             UnitInfo unitInfo = unitMes.getValue();
@@ -66,16 +70,16 @@ public class ClickActiveUnitHandler extends CommonHandler {
             changeCurrUnit(unitInfo);
             // 判断展示移动区域还是展示行动
             if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())
-                    && RegionEnum.CASTLE.type().equals(getRegionBySite(unitInfo).getType())) {
+                && RegionEnum.CASTLE.type().equals(getRegionBySite(unitInfo).getType())) {
                 Set<String> actions = ActionStrategy.getInstance()
-                        .getActionList(getCurrUnitAttachArea(), record(), gameEvent.getInitiateSite());
+                    .getActionList(getCurrUnitAttachArea(), record(), gameEvent.getInitiateSite());
                 actions.add(ActionEnum.BUY.type());
                 actions.add(ActionEnum.MOVE.type());
                 gameContext.setActions(actions);
                 gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
                 gameContext.setStartMoveSite(gameEvent.getInitiateSite());
-                commandStream().toGameCommand().showAction(actions)
-                        .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
+                showAction(actions);
+                commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
             } else {
                 List<Site> moveArea = MoveAreaStrategy.getInstance().getMoveArea(record(), unitInfo);
                 showMoveArea(moveArea);

@@ -252,7 +252,7 @@ public class UserRecordServiceImp implements UserRecordService {
     }
 
     @Override
-    public List<UserRecord> listUserRecordWithPage(ApiConditionDTO apiConditionDTO) {
+    public List<UserRecord> listUserRecord(ApiConditionDTO apiConditionDTO) {
         Criteria criteria = Criteria.where("createUserId").is(apiConditionDTO.getUserId());
         if (StringUtil.isNotBlack(apiConditionDTO.getCondition())) {
             criteria.and("recordName").is(apiConditionDTO.getCondition());

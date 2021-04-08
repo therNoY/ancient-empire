@@ -82,7 +82,7 @@ public class UserRecordController {
 
     @PostMapping("/api/userRecord/list")
     public RespJson listUserRecordWithPage(ApiConditionDTO apiConditionDTO) {
-        List<UserRecord> list = userRecordService.listUserRecordWithPage(apiConditionDTO);
+        List<UserRecord> list = userRecordService.listUserRecord(apiConditionDTO);
         return RespUtil.successResJson(list);
     }
 }

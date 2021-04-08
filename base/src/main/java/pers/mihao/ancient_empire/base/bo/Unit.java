@@ -179,13 +179,8 @@ public class Unit extends Site implements Serializable {
         return "Unit{" +
                 "typeId=" + typeId +
                 ", lifeNum=" + Arrays.toString(lifeNum) +
-                ", dead=" + dead +
-                ", level=" + level +
                 ", done=" + done +
                 ", status='" + status + '\'' +
-                ", statusPresenceNum=" + statusPresenceNum +
-                ", experience=" + experience +
-                ", promotion=" + promotion +
                 ", row=" + row +
                 ", column=" + column +
                 '}';

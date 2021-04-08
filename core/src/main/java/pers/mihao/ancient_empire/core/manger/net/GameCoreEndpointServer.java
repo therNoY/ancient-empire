@@ -107,6 +107,7 @@ public class GameCoreEndpointServer {
             this.netConnectType = EnumUtil.valueOf(NetConnectTypeEnum.class, type);
             AbstractSession joinSession = null;
             switch (netConnectType) {
+                case CHAPTER_GAME:
                 case STAND_GAME:
                 case NET_GAME:
                     if (!gameCoreManger.joinGame(id)) {

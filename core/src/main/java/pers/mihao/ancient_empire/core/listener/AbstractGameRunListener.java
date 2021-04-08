@@ -15,13 +15,14 @@ import pers.mihao.ancient_empire.core.manger.GameContextBaseHandler;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.command.ShowDialogCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
+import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
 
 /**
  * @Author mh32736
  * @Date 2021/4/1 9:16
  */
-public abstract class AbstractGameRunListener extends GameContextBaseHandler implements GameRunListener {
+public abstract class AbstractGameRunListener extends CommonHandler implements GameRunListener {
 
     private static GameSessionManger sessionManger;
 
@@ -79,7 +80,7 @@ public abstract class AbstractGameRunListener extends GameContextBaseHandler imp
     }
 
     @Override
-    public void onUnitLevelUp(GameCommand command, Stream stream) {
+    public void onUnitStatusChange(GameCommand command, Stream stream) {
 
     }
 

@@ -37,7 +37,7 @@ public class ClickBuyActionHandler extends CommonHandler {
         }
         // 更新
         Unit newUnit = UnitFactory.createUnit(gameEvent.getUnitId(), currSite());
-        commandStream().toGameCommand().addUnit(newUnit, record().getCurrArmyIndex());
+        addNewUnit(newUnit, record().getCurrArmyIndex());
 
         // 更新军队信息
         ArmyStatusInfoDTO armyStatusInfoDTO = new ArmyStatusInfoDTO();

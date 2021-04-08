@@ -9,7 +9,11 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
  */
 public enum NetConnectTypeEnum implements BaseEnum {
     /**
-     * 单机游戏
+     * 战役模式
+     */
+    CHAPTER_GAME,
+    /**
+     * 遭遇战游戏
      */
     STAND_GAME,
     /**

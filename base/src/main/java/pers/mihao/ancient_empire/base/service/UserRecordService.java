@@ -49,5 +49,5 @@ public interface UserRecordService extends MapService{
      * @param apiConditionDTO
      * @return
      */
-    List<UserRecord> listUserRecordWithPage(ApiConditionDTO apiConditionDTO);
+    List<UserRecord> listUserRecord(ApiConditionDTO apiConditionDTO);
 }
