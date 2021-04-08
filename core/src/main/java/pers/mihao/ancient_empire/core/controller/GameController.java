@@ -13,6 +13,7 @@ import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.dto.InitMapDTO;
+import pers.mihao.ancient_empire.base.dto.InitUserRecordDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -68,8 +69,8 @@ public class GameController {
      * @param result
      * @return
      */
-    @PostMapping("/api/record/init")
-    public RespJson initMapRecord(@RequestBody @Validated InitMapDTO initMapDTO, BindingResult result) {
+    @PostMapping("/api/map/init")
+    public RespJson registerUserMap(@RequestBody @Validated InitMapDTO initMapDTO, BindingResult result) {
         // 1.获取用户地图
         UserMap userMap = userMapService.getEncounterMapById(initMapDTO.getMapId());
         if (userMap == null) {
@@ -85,6 +86,16 @@ public class GameController {
         gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initMapDTO.getGameType()), 1);
 
         // 3.返回前端保存
+        GameVO userMapVo = new GameVO();
+        BeanUtils.copyProperties(userRecord, userMapVo);
+        return RespUtil.successResJson(userMapVo);
+    }
+
+    @PostMapping("/api/record/init")
+    public RespJson registerUserRecord(@RequestBody InitUserRecordDTO initUserRecordDTO){
+        UserRecord userRecord = userRecordService.getRecordById(initUserRecordDTO.getRecordId());
+        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initUserRecordDTO.getGameType()), 1);
+        // 返回前端保存
         GameVO userMapVo = new GameVO();
         BeanUtils.copyProperties(userRecord, userMapVo);
         return RespUtil.successResJson(userMapVo);
@@ -115,7 +126,9 @@ public class GameController {
         List<UnitInfo> respUnitMes = unitInfoList.stream()
                 .filter(unitMes -> !aliveLoaderId.contains(unitMes.getId()))
                 .map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 0))
-                .collect(Collectors.toList());
+                 .collect(Collectors.toList());
+        respUnitMes = context.filterUnit(respUnitMes);
+
         return RespUtil.successResJson(respUnitMes);
     }
 
@@ -140,6 +153,7 @@ public class GameController {
                 break;
             case SEND_TO_SYSTEM:
             case SEND_TO_GAME_USER:
+            default:
                 break;
         }
         return RespUtil.successResJson();

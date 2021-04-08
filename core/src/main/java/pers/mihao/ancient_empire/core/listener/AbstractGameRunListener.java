@@ -84,6 +84,11 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     }
 
+    @Override
+    public List<UnitInfo> filterUnit(List<UnitInfo> respUnitMes) {
+        return respUnitMes;
+    }
+
     public void addDialog(DialogEnum type, String message) {
         ShowDialogCommand showDialogCommand = new ShowDialogCommand();
         showDialogCommand.setDialogType(type);
@@ -115,6 +120,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     protected void gameWin() {
         onGameWin();
+        // TODO
     }
 
     protected void onGameWin() {

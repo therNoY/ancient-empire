@@ -54,6 +54,8 @@ public class GameContextHelperListener extends AbstractGameRunListener {
         log.info("回合开始：{}", army);
     }
 
+
+
     @Override
     public boolean onGameCommandAdd(GameCommand gameCommand) {
         JSONObject extMes = gameCommand.getExtMes();

@@ -80,6 +80,11 @@ public class UserRecordController {
         return RespUtil.error(41000);
     }
 
+    /**
+     * 查询用户保存的record
+     * @param apiConditionDTO
+     * @return
+     */
     @PostMapping("/api/userRecord/list")
     public RespJson listUserRecordWithPage(ApiConditionDTO apiConditionDTO) {
         List<UserRecord> list = userRecordService.listUserRecord(apiConditionDTO);

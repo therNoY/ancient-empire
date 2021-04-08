@@ -353,6 +353,16 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
         }
     }
 
+    @Override
+    public List<UnitInfo> filterUnit(List<UnitInfo> respUnitMes) {
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                respUnitMes = listener.filterUnit(respUnitMes);
+            }
+        }
+        return respUnitMes;
+    }
+
     public CommonHandler getHandler(){
         return handler;
     }

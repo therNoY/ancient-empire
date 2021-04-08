@@ -1,5 +1,9 @@
 package pers.mihao.ancient_empire.common.vo;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class RespJson {
     private Integer resCode;
     private String resMes;

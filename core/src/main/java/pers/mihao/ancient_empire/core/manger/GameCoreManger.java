@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.manger;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -246,6 +247,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
         if (gameContext.getUserRecord().getCurrPlayer() == null) {
             log.info("开局是robot");
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
             robotManger.startRobot(gameContext);
         }
     }

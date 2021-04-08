@@ -12,7 +12,7 @@ public class Chapter1Listener extends AbstractChapterListener {
 
     public Chapter1Listener() {
         super.triggerSites = new Site[]{new Site(10, 10)};
-        super.maxStage = 2;
+        super.maxStage = 1;
     }
 
     @Override

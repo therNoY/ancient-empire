@@ -10,6 +10,8 @@ public enum DialogEnum {
 
     FRIEND_UNIT,
 
+    FRIEND_ELF,
+
     LOADER_BLUE,
 
     LOADER_RED,

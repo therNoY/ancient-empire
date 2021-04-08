@@ -18,7 +18,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
 
     static final Logger log = LoggerFactory.getLogger(AbstractChapterListener.class);
 
-    int stage = 0;
+    int stage = 1;
 
     int maxStage;
 
@@ -59,7 +59,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
 
     @Override
     public final void onUnitDone(UnitInfo unitInfo) {
-        if ((getUnitArmy(unitInfo).getCamp()) == FRIEND_CAMP) {
+        if ((getUnitArmy(unitInfo).getCamp()) == FRIEND_CAMP && triggerSites != null && triggerSites.length > 0) {
             Site triggerSite = triggerSites[stage];
             if (unitInfo.getRow() < triggerSite.getRow() && unitInfo.getColumn() < triggerSite.getColumn()) {
                 try {
