@@ -12,7 +12,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.common.dto.RegisterDto;
+import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 
 @Service
 public class EmailService {
@@ -32,7 +32,7 @@ public class EmailService {
      * 发送注册邮件
      * @param registerDto
      */
-    public void sendRegisterEmail(RegisterDto registerDto, String token) {
+    public void sendRegisterEmail(RegisterDTO registerDto, String token) {
         String url = registerUrl + token;
         String temp = EmailHelper.getRegisterTemp(url);
         String title = "注册确认";

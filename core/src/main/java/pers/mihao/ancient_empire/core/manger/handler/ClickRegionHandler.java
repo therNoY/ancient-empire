@@ -36,7 +36,8 @@ public class ClickRegionHandler extends CommonHandler {
         if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
             // 如果当前子状态是 必须移动 那么就返回 并设置必须移动
             commandStream()
-                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex())
+                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
             showMoveArea(gameContext.getWillMoveArea());
             gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
             return;
@@ -47,7 +48,9 @@ public class ClickRegionHandler extends CommonHandler {
             commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
         } else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
-            commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+            commandStream()
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex())
+                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
         } else if (currRegion.getType().equals(RegionEnum.CASTLE.type()) && record().getCurrColor().equals(currRegion.getColor())) {
             commandStream().toUserCommand().addCommand(GameCommendEnum.SHOW_BUY_UNIT);
         }

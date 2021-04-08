@@ -22,6 +22,11 @@ public class RoomCommand extends AbstractCommand{
      */
     private String message;
 
+    /**
+     * 开始游戏
+     */
+    private String recordId;
+
 
     /**
      * 加入的军队
@@ -32,6 +37,14 @@ public class RoomCommand extends AbstractCommand{
      * 离开的军队
      */
     private String levelArmy;
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
+    }
 
     public RoomCommand() {
         setSendTypeEnum(SendTypeEnum.SEND_TO_ROOM);

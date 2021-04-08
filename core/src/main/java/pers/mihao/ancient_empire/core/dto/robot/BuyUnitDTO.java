@@ -1,8 +1,6 @@
 package pers.mihao.ancient_empire.core.dto.robot;
 
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.entity.UnitMes;
-import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
 
 /**
  * @version 1.0

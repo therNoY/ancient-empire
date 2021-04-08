@@ -15,17 +15,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import pers.mihao.ancient_empire.auth.dto.CheckPwdDto;
-import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
+import pers.mihao.ancient_empire.auth.dto.ChangePwdDTO;
 import pers.mihao.ancient_empire.auth.dto.ReqUserDto;
 import pers.mihao.ancient_empire.auth.dto.RespAuthDao;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
-import pers.mihao.ancient_empire.common.dto.RegisterDto;
+import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.email.EmailService;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
@@ -88,7 +88,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/register")
-    public RespJson userRegister(@RequestBody @Validated RegisterDto registerDto, BindingResult result) {
+    public RespJson userRegister(@RequestBody @Validated RegisterDTO registerDto, BindingResult result) {
        // 先验证邮箱是否存在 再验证用户是否存在
         User userByEmail = userService.getUserByEmail(registerDto.getEmail());
         if (userByEmail != null) {
@@ -115,8 +115,8 @@ public class UserController {
      */
     @GetMapping("/register")
     public ModelAndView registerCallback(@RequestParam String token) {
-        RegisterDto registerDto = null;
-        if ((registerDto = RedisUtil.getObject(token, RegisterDto.class)) != null) {
+        RegisterDTO registerDto = null;
+        if ((registerDto = RedisUtil.getObject(token, RegisterDTO.class)) != null) {
             userService.save(registerDto);
             return new ModelAndView("registerSuccess");
         }else {
@@ -126,19 +126,21 @@ public class UserController {
 
 
     /**
-     * 验证密码
+     * 修改用户密码
      * @param pwdDto
      * @param result
      * @return
      */
-    @PostMapping("/api/user/checkPwd")
-    public RespJson checkPwd(@RequestBody @Validated CheckPwdDto pwdDto, BindingResult result) {
+    @PostMapping("/api/user/changePwd")
+    public RespJson changePwd(@RequestBody @Validated ChangePwdDTO pwdDto, BindingResult result) {
         // 根据Token 获取用户信息
-        MyUserDetails userDetails = AuthUtil.getLoginUser();
+        User user = userService.getById(pwdDto.getUserId());
         // 验证密码是否正确
-        if (passwordEncoder.matches(pwdDto.getPassword(), userDetails.getPassword())) {
-            // 返回用户Id
-            return RespUtil.successResJson(userDetails.getUserId());
+        if (passwordEncoder.matches(pwdDto.getOldPassword(), user.getPassword())) {
+            RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO)  + user.getName());
+            user.setPassword(passwordEncoder.encode(pwdDto.getNewPassword()));
+            userService.updateById(user);
+            return RespUtil.successResJson(JwtTokenUtil.generateToken(user.getId().toString()));
         }
         return RespUtil.error(40014);
     }

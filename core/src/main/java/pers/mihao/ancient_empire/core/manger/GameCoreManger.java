@@ -21,6 +21,7 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
+import pers.mihao.ancient_empire.core.eums.RoomCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
 import pers.mihao.ancient_empire.core.listener.GameContextHelperListener;
@@ -28,6 +29,7 @@ import pers.mihao.ancient_empire.core.listener.ChapterUtil;
 import pers.mihao.ancient_empire.core.listener.GameRunListener;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
+import pers.mihao.ancient_empire.core.manger.command.RoomCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
 import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
@@ -92,12 +94,14 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     @Override
     public void handelTask(GameEvent event) {
         User user = event.getUser();
-        if (!user.getId().equals(GameContext.getUser().getId())) {
+        GameContext.setUser(user);
+        GameContext gameContext = contextMap.get(event.getId());
+        String player = gameContext.getHandler().currArmy().getPlayer();
+        if (StringUtil.isNotBlack(player) && !player.equals(user.getId().toString())) {
             // 不是当前回合用户触发的事件不处理
             return;
         }
 
-        GameContext gameContext = contextMap.get(event.getId());
 
         if (gameContext.getStatusMachine().equals(StatusMachineEnum.DIALOG)) {
             // 准备阶段 事件改成处理点击屏幕事件 直接返回
@@ -187,6 +191,9 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      * @param userRecord
      */
     public void registerGameContext(UserRecord userRecord, GameTypeEnum gameType, int playCount) {
+
+        // TODO 检测是否达到最大游戏数量
+
         if (!contextMap.containsKey(userRecord.getUuid())) {
             sentinelPool.execute(() -> {
                 // 设置初始信息
@@ -202,7 +209,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
                 CyclicBarrier cyclicBarrier = new CyclicBarrier(playCount + 1);
                 gameContext.setStartGame(cyclicBarrier);
-                UserMap userMap = userMapService.getUserMapByUUID(userRecord.getUuid());
+                UserMap userMap = userMapService.getUserMapByUUID(userRecord.getUserMapId());
 
                 // 设置监听服务
                 List<GameRunListener> listeners = new ArrayList<>();
@@ -245,11 +252,6 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         gameContext.getHandler().setGameContext(gameContext);
         gameContext.onGameStart();
 
-        if (gameContext.getUserRecord().getCurrPlayer() == null) {
-            log.info("开局是robot");
-            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
-            robotManger.startRobot(gameContext);
-        }
     }
 
     /**

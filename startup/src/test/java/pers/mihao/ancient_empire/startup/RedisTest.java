@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
-import pers.mihao.ancient_empire.common.dto.RegisterDto;
+import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 
 @RunWith(SpringRunner.class)
@@ -27,7 +27,7 @@ public class RedisTest {
     @Test
     public void name() {
        Object object = RedisUtil.get("f09fbc8d-93d2-4344-b8a6-f3769a644e31");
-        RegisterDto registerDto = JSON.parseObject(object.toString(), RegisterDto.class);
+        RegisterDTO registerDto = JSON.parseObject(object.toString(), RegisterDTO.class);
        System.out.println(object.toString());
     }
 

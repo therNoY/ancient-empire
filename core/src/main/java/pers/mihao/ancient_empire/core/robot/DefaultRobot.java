@@ -20,7 +20,7 @@ import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.core.dto.MovePathDTO;
-import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
+import pers.mihao.ancient_empire.core.dto.robot.CastleRegion;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
 

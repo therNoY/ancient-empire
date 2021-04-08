@@ -21,4 +21,9 @@ public enum RoomCommendEnum {
      * 改变房主
      */
     CHANG_ROOM_OWNER,
+
+    /**
+     * 开始游戏
+     */
+    START_GAME,
 }

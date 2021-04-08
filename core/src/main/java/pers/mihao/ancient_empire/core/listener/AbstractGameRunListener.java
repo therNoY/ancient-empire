@@ -46,7 +46,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     @Override
     public void setGameContext(GameContext gameContext) {
-
+        this.gameContext = gameContext;
     }
 
     @Override

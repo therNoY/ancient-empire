@@ -17,5 +17,5 @@ public enum GameTypeEnum implements BaseEnum {
     /**
      * 联机模式
      */
-    NET,
+    ROOM,
 }

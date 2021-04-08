@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.dto;
 
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import pers.mihao.ancient_empire.base.bo.Army;
@@ -32,6 +33,11 @@ public class InitMapDTO extends ApiRequestDTO {
 
     /* 游戏的类型 遭遇战单机 多人游戏 故事模式 */
     private String gameType;
+
+    /**
+     * 玩家映射
+     */
+    private Map<String, String> player;
 
     public Integer getMaxPop() {
         return maxPop;
@@ -73,5 +79,11 @@ public class InitMapDTO extends ApiRequestDTO {
         this.gameType = gameType;
     }
 
+    public Map<String, String> getPlayer() {
+        return player;
+    }
 
+    public void setPlayer(Map<String, String> player) {
+        this.player = player;
+    }
 }

@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.core.dto.ai;
+package pers.mihao.ancient_empire.core.dto.robot;
 
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Site;

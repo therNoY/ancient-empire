@@ -50,14 +50,17 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
         }else if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
             // 如果当前子状态是 必须移动 那么就返回 并设置必须移动
             commandStream()
-                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex())
+                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
             showMoveArea(gameContext.getWillMoveArea());
             gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
             return;
         }else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
             // 点击其他区域的单位就返回
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
-            commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+            commandStream()
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex())
+                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
         }else if (stateIn(StatusMachineEnum.WILL_SUMMON)) {
             // 点击其他区域的单位就返回
             showAction(gameContext.getActions());
@@ -75,7 +78,9 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
                     gameContext.getStatusMachine().equals(StatusMachineEnum.SHOW_MOVE_LINE)) {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
             } else if (gameContext.getStatusMachine().equals(StatusMachineEnum.MOVE_DONE)) {
-                commandStream().toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite());
+                commandStream()
+                        .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite())
+                        .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
             }
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
         }

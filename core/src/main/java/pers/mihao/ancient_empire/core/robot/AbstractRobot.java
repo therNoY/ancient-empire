@@ -12,7 +12,7 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.core.dto.ai.CastleRegion;
+import pers.mihao.ancient_empire.core.dto.robot.CastleRegion;
 import pers.mihao.ancient_empire.core.dto.robot.BuyUnitDTO;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;

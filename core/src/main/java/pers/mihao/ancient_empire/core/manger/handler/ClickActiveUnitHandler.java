@@ -49,16 +49,17 @@ public class ClickActiveUnitHandler extends CommonHandler {
         } else if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
             // 如果当前子状态是 必须移动 那么就返回 并设置必须移动
             commandStream()
-                .toGameCommand()
-                .addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex())
+                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
             showMoveArea(gameContext.getWillMoveArea());
             gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
             return;
         } else if (stateIn(StatusMachineEnum.MOVE_DONE)) {
             // 点击其他区域的单位就返回
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
-            commandStream().toGameCommand()
-                .addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex());
+            commandStream()
+                    .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex())
+                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
         } else {
 
             Pair<Integer, UnitInfo> unitMes = changeCurrUnit(gameEvent.getInitiateSite());

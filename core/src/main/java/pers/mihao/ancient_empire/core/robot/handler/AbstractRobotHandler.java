@@ -139,7 +139,7 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
 
     private void robotClickAction(ActionIntention intention) {
         // 2.点行动按钮
-        sendGameCommand(GameCommendEnum.DIS_SHOW_ACTION);
+        disShowAction();
         if (gameContext.getActions().contains(getActionType().type())) {
             doClickActionEvent(intention);
             if (!gameContext.getSubStatusMachine().equals(SubStatusMachineEnum.INIT)) {

@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.auth.dto.RespAuthDao;
 import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
-import pers.mihao.ancient_empire.common.dto.RegisterDto;
+import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 
 /**
  * <p>
@@ -38,7 +38,12 @@ public interface UserService extends IService<User> {
 
     User getUserByEmail(String email);
 
-    void save(RegisterDto registerDto);
+    void save(RegisterDTO registerDto);
 
+    /**
+     * 修改信息
+     * @param user
+     * @return
+     */
     String updateUserInfo(ReqUserDto user);
 }

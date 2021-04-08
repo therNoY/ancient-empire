@@ -99,7 +99,7 @@ public class UserRecordServiceImp implements UserRecordService {
             army.setPop(pop.get());
             army.setMoney(initMapDTO.getMoney());
             if (armyConfig.getType().equals(ArmyEnum.USER.type())) {
-                army.setPlayer(AuthUtil.getLoginUser().getUsername());
+                army.setPlayer(initMapDTO.getPlayer().getOrDefault(color, initMapDTO.getUserId().toString()));
             }
             if (army.getOrder() == 1) {
                 userRecord.setCurrPlayer(army.getPlayer());
@@ -117,49 +117,6 @@ public class UserRecordServiceImp implements UserRecordService {
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
         regionInfo.setColor(region.getColor());
         userRecord.setCurrRegion(regionInfo);
-        // TODO 测试
-        int random = IntegerUtil.getRandomIn(10);
-        int index = 0;
-        if (userMap.getMapName().startsWith("测试地图")) {
-            List<Tomb> tombList = new ArrayList<>();
-            Tomb tomb1 = new Tomb(9, 7, 1);
-            tombList.add(tomb1);
-            userRecord.setTombList(tombList);
-            for (Army army : armyList) {
-                for (Unit unit : army.getUnits()) {
-                    if (index++ < random) {
-                        switch (random) {
-                            case 1:
-                                unit.setStatus(StateEnum.POISON.type());
-                                unit.setStatusPresenceNum(2);
-                                break;
-                            case 2:
-                                unit.setStatus(StateEnum.BLIND.type());
-                                unit.setStatusPresenceNum(2);
-                                break;
-                            case 3:
-                                unit.setStatus(StateEnum.WEAK.type());
-                                unit.setStatusPresenceNum(2);
-                                break;
-                            case 4:
-                                unit.setStatus(StateEnum.EXCITED.type());
-                                unit.setStatusPresenceNum(2);
-                                break;
-                        }
-                        unit.setLevel(IntegerUtil.getRandomIn(3));
-                        unit.setLife(IntegerUtil.getRandomIn(100));
-                        random = IntegerUtil.getRandomIn(5);
-                        index = 0;
-                    }
-                    if (index > 6) {
-                        index = 0;
-                    }
-                    if (unit.getTypeId().equals(9)) {
-                        unit.setExperience(90);
-                    }
-                }
-            }
-        }
         // 设置当前军队信息
         for (int i = 0; i < armyList.size(); i++) {
             Army army = armyList.get(i);

@@ -22,4 +22,5 @@ public interface UserJoinRoomService extends IService<UserJoinRoom> {
      * @return
      */
     List<UserJoinRoom> getUserByRoomId(String roomId);
+
 }

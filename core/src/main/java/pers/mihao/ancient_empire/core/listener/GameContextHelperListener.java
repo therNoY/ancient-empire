@@ -3,6 +3,9 @@ package pers.mihao.ancient_empire.core.listener;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Army;
@@ -37,6 +40,16 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     @Override
     public void onGameStart() {
         log.info("{}开始", gameContext.getGameId());
+
+        if (gameContext.getHandler().record().getCurrArmyIndex() == null) {
+            gameContext.getHandler().record().setCurrArmyIndex(1);
+        }
+
+        if (StringUtil.isBlack(gameContext.getUserRecord().getCurrPlayer())) {
+            log.info("开局是robot");
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
+            robotManger.startRobot(gameContext);
+        }
     }
 
     @Override

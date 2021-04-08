@@ -23,10 +23,9 @@ import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
-import pers.mihao.ancient_empire.common.dto.RegisterDto;
+import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 
@@ -127,7 +126,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     }
 
     @Override
-    public void save(RegisterDto registerDto) {
+    public void save(RegisterDTO registerDto) {
         User user = new User();
         user.setName(registerDto.getUserName());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
@@ -151,16 +150,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
      */
     @Override
     public String updateUserInfo(ReqUserDto user) {
-        // 1.防止用户伪造 通过Token 获取当前登录对象 当前用户只能更改当前用户
-        if (user.getId() - AuthUtil.getUserId() != 0) {
-            return null;
-        } else {
-            // 清除缓存
-            RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO) + userDao.selectById(user.getId()).getName());
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userDao.updateByReqUserDto(user.getUserName(), user.getPassword(), user.getId());
-            return JwtTokenUtil.generateToken(user.getUserName());
-        }
+        // 清除缓存
+        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO) + userDao.selectById(user.getUserId()).getName());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userDao.updateByReqUserDto(user.getUserName(), user.getPassword(), user.getUserId());
+        return JwtTokenUtil.generateToken(user.getUserName());
     }
 
 }

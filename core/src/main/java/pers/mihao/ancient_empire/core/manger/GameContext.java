@@ -28,9 +28,9 @@ import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 public class GameContext extends UserTemplateHelper implements GameRunListener {
 
     /**
-     * 当前回合的玩家
+     * 当前处理命令玩家
      */
-    private static ThreadLocal<User> user = new ThreadLocal<>();
+    private static ThreadLocal<User> currHandleUser = new ThreadLocal<>();
 
     private CommonHandler handler = new CommonHandler();
 
@@ -160,15 +160,15 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
     }
 
     public static User getUser(){
-        return user.get();
+        return currHandleUser.get();
     }
 
-    public static void setUser(User id){
-        user.set(id);
+    public static void setUser(User u){
+        currHandleUser.set(u);
     }
 
     public static void clear(){
-        user.remove();
+        currHandleUser.remove();
     }
 
     public String getGameId() {

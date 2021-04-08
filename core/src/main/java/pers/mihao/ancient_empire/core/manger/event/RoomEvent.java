@@ -26,6 +26,9 @@ public class RoomEvent extends AbstractEvent{
     }
 
     public RoomEvent(String id, RoomEventEnum eventType, User user) {
+        setId(id);
+        this.eventType = eventType;
+        setUser(user);
     }
 
 

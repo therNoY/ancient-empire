@@ -26,6 +26,7 @@ import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.UserTemplateHelper;
@@ -233,7 +234,9 @@ public class CommonHandler extends AbstractGameEventHandler {
         List<Site> secondMoveArea = MoveAreaStrategy.getInstance().getSecondMoveArea(record(), currUnit(), gameContext.getReadyMoveLine());
 
         if (secondMoveArea != null && secondMoveArea.size() > 0) {
-            commandStream().toGameCommand().addOrderCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, secondMoveArea);
+            commandStream()
+                    .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, secondMoveArea)
+                    .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
             gameContext.setSubStatusMachine(SubStatusMachineEnum.SECOND_MOVE);
             gameContext.setStatusMachine(StatusMachineEnum.SECOND_MOVE);
         } else {
@@ -253,7 +256,9 @@ public class CommonHandler extends AbstractGameEventHandler {
         jsonObject.put(ExtMes.REGION_INDEX, regionIndex);
         jsonObject.put(ExtMes.REGION, region);
         record().getGameMap().getRegions().set(regionIndex, region);
-        return commandStream().toGameCommand().addOrderCommand(GameCommendEnum.CHANG_REGION, jsonObject);
+        return commandStream().toGameCommand()
+                .addOrderCommand(GameCommendEnum.CHANG_REGION, jsonObject)
+                .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
     }
 
     /**
@@ -347,7 +352,8 @@ public class CommonHandler extends AbstractGameEventHandler {
         JSONObject extData = new JSONObject(2);
         extData.put(ExtMes.UNIT_STATUS, obj);
         commandStream()
-            .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_UNIT_STATUS, extData);
+                .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_UNIT_STATUS, extData)
+                .toGameCommand().addOrderCommand(GameCommendEnum.DIS_SHOW_ACTION);
     }
 
     public void showAction(Set<String> action){
@@ -367,7 +373,8 @@ public class CommonHandler extends AbstractGameEventHandler {
     public void showMoveArea(List<Site> moveArea) {
         gameContext.setStatusMachine(StatusMachineEnum.SHOW_MOVE_AREA);
         gameContext.setWillMoveArea(moveArea);
-        commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, moveArea);
+        commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_MOVE_AREA, ExtMes.MOVE_AREA, moveArea)
+                .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
     }
 
     /**
@@ -402,6 +409,10 @@ public class CommonHandler extends AbstractGameEventHandler {
         regionInfo.setColor(region.getColor());
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_REGION, ExtMes.REGION_INFO, regionInfo);
         return regionInfo;
+    }
+
+    public void disShowAction(){
+        commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
     }
 
 
