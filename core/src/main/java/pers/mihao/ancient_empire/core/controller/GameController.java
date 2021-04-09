@@ -13,11 +13,13 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.dto.ArmyConfig;
 import pers.mihao.ancient_empire.base.dto.InitMapDTO;
 import pers.mihao.ancient_empire.base.dto.InitUserRecordDTO;
 import pers.mihao.ancient_empire.base.dto.ReqRoomIdDTO;
 import pers.mihao.ancient_empire.base.entity.*;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.util.AppUtil;
@@ -43,8 +45,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @version 1.0
  * @author mihao
+ * @version 1.0
  * @date 2020\9\20 0020 22:10
  */
 @RestController
@@ -68,8 +70,7 @@ public class GameController {
     UserJoinRoomService userJoinRoomService;
 
     /**
-     * 用于单机遭遇战，联机遭遇战
-     * 通过用户设置的地图初始环境设置初始
+     * 用于单机遭遇战，联机遭遇战 通过用户设置的地图初始环境设置初始
      *
      * @param initMapDTO
      * @param result
@@ -89,7 +90,8 @@ public class GameController {
         // 2.生成文档注册上下文
         UserRecord userRecord = userRecordService.initMapRecord(initMapDTO, userMap);
         log.info("生成新的存档：{}， 注册游戏上下文", userRecord.getUuid());
-        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initMapDTO.getGameType()), playerCount);
+        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initMapDTO.getGameType()),
+            playerCount);
 
         // 3.返回前端保存
         return RespUtil.successResJson(userRecord);
@@ -97,8 +99,7 @@ public class GameController {
 
 
     /**
-     * 用于单机遭遇战，联机遭遇战
-     * 通过用户设置的地图初始环境设置初始
+     * 多人游戏入口
      *
      * @param initMapDTO
      * @param result
@@ -112,18 +113,26 @@ public class GameController {
         initMapDTO.setGameType(GameTypeEnum.ROOM.type());
         List<UserJoinRoom> userJoinRooms = userJoinRoomService.getUserByRoomId(reqRoomIdDTO.getRoomId());
         int playerCount = (int) userJoinRooms.stream()
-                .filter(userJoinRoom -> StringUtil.isNotBlack(userJoinRoom.getJoinArmy())).count();
+            .filter(userJoinRoom -> StringUtil.isNotBlack(userJoinRoom.getJoinArmy())).count();
         initMapDTO.setPlayer(
-                userJoinRooms.stream().filter(userJoinRoom -> StringUtil.isNotBlack(userJoinRoom.getJoinArmy()))
-                        .collect(Collectors.toMap(UserJoinRoom::getJoinArmy, u -> u.getUserId().toString()))
+            userJoinRooms.stream().filter(userJoinRoom -> StringUtil.isNotBlack(userJoinRoom.getJoinArmy()))
+                .collect(Collectors.toMap(UserJoinRoom::getJoinArmy, u -> u.getUserId().toString()))
         );
+        // 设置没有参加的人为人机
+        for (ArmyConfig armyConfig : initMapDTO.getArmyList()) {
+            if (armyConfig.getType().equals(ArmyEnum.USER.type()) && !initMapDTO.getPlayer().containsKey(armyConfig.getColor())) {
+                armyConfig.setType(ArmyEnum.AI.type());
+            }
+        }
+
         // 1.获取用户地图
         UserMap userMap = userMapService.getEncounterMapById(initMapDTO.getMapId());
         // 2.生成文档注册上下文
         UserRecord userRecord = userRecordService.initMapRecord(initMapDTO, userMap);
 
         log.info("生成新的存档：{}， 注册游戏上下文", userRecord.getUuid());
-        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initMapDTO.getGameType()), playerCount);
+        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initMapDTO.getGameType()),
+            playerCount);
         RoomCommand roomCommend = new RoomCommand();
         roomCommend.setRoomCommend(RoomCommendEnum.START_GAME);
         roomCommend.setRecordId(userRecord.getUuid());
@@ -134,9 +143,10 @@ public class GameController {
     }
 
     @PostMapping("/api/record/init")
-    public RespJson registerUserRecord(@RequestBody InitUserRecordDTO initUserRecordDTO){
+    public RespJson registerUserRecord(@RequestBody InitUserRecordDTO initUserRecordDTO) {
         UserRecord userRecord = userRecordService.getRecordById(initUserRecordDTO.getRecordId());
-        gameCoreManger.registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initUserRecordDTO.getGameType()), 1);
+        gameCoreManger
+            .registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initUserRecordDTO.getGameType()), 1);
         // 返回前端保存
         return RespUtil.successResJson(userRecord);
     }
@@ -164,9 +174,9 @@ public class GameController {
             }
         }
         List<UnitInfo> respUnitMes = unitInfoList.stream()
-                .filter(unitMes -> !aliveLoaderId.contains(unitMes.getId()))
-                .map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 0))
-                 .collect(Collectors.toList());
+            .filter(unitMes -> !aliveLoaderId.contains(unitMes.getId()))
+            .map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 0))
+            .collect(Collectors.toList());
         respUnitMes = context.filterUnit(respUnitMes);
 
         return RespUtil.successResJson(respUnitMes);
@@ -175,6 +185,7 @@ public class GameController {
 
     /**
      * 发送消息
+     *
      * @param sendMessageDTO
      * @return
      */
