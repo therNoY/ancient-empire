@@ -92,7 +92,10 @@ public class BeanUtil {
                 fromMethod = entry.getValue();
                 Object res;
                 if ((toMethod = toMap.get(entry.getKey())) != null && (res = fromMethod.getGet().invoke(from))!= null) {
-                    toMethod.getSet().invoke(to, res);
+                    try {
+                        toMethod.getSet().invoke(to, res);
+                    } catch (IllegalArgumentException e) {
+                    }
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException e) {

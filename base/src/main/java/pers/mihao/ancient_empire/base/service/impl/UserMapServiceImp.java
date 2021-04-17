@@ -1,13 +1,22 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
+import static pers.mihao.ancient_empire.common.constant.CatchKey.USER_CREATE_MAP;
+import static pers.mihao.ancient_empire.common.constant.CatchKey.USER_MAP;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,27 +24,22 @@ import pers.mihao.ancient_empire.auth.enums.UserEnum;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.base.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.dao.UserMapDAO;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
-import pers.mihao.ancient_empire.base.mongo.dao.UserMapRepository;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.jdbc.mongo.MongoUtil;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @Service
-public class UserMapServiceImp implements UserMapService {
+public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implements UserMapService {
 
     private static final String SEA = "sea";
     private static final String LAND = "land";
@@ -46,9 +50,9 @@ public class UserMapServiceImp implements UserMapService {
     @Value("${army.max}")
     Integer maxArmy;
     @Autowired
-    MongoTemplate mongoTemplate;
+    UserMapDAO userMapDAO;
     @Autowired
-    UserMapRepository userMapRepository;
+    UserMapService userMapService;
 
     /**
      * 从mongo 中获取用户创建的地图
@@ -57,8 +61,8 @@ public class UserMapServiceImp implements UserMapService {
      */
     @Override
     public List<UserMap> getUserCreateMap(Integer userId) {
-        return userMapRepository.findByCreateUserId(userId).stream()
-                .filter(userMap -> Boolean.FALSE.equals(userMap.isUnSave()))
+        return userMapDAO.findByCreateUserId(userId).stream()
+                .filter(userMap -> BaseConstant.NO.equals(userMap.getUnSave()))
                 .collect(Collectors.toList());
     }
 
@@ -70,11 +74,17 @@ public class UserMapServiceImp implements UserMapService {
     @Override
     @Cacheable(CatchKey.USER_CREATE_MAP)
     public List<BaseMapInfoVO> getUserAllMapByUserId(Integer id) {
-        Criteria criteria = new Criteria()
-            .and("createUserId").is(id)
-            .and("unSave").is(Boolean.FALSE);
-        List<BaseMapInfoVO> encounterMaps = MongoUtil.findByCriteria(criteria, BaseMapInfoVO.class);
-        return encounterMaps;
+        QueryWrapper<UserMap> wrapper = new QueryWrapper<>();
+        wrapper.eq("create_user_id", id)
+            .eq("un_save", 0);
+        List<UserMap> encounterMaps = userMapDAO.selectList(wrapper);
+        return encounterMaps.stream().map(e->{
+            BaseMapInfoVO infoVO = new BaseMapInfoVO();
+            BeanUtil.copyValueByGetSet(e, infoVO);
+            infoVO.setMapId(e.getUuid());
+            infoVO.setCreateTime(DateUtil.formatDataTime(e.getCreateTime()));
+            return infoVO;
+        }).collect(Collectors.toList());
     }
 
 
@@ -90,12 +100,13 @@ public class UserMapServiceImp implements UserMapService {
     @Transactional
     public void saveUserTempMap(UserMap userMap, Integer userId) {
         // 1.删除临时的地图
-        UserMap map = userMapRepository.getFirstByCreateUserIdAndUnSave(userId, true);
+        UserMap map = userMapDAO.getFirstByCreateUserIdAndUnSave(userId);
         if (map != null) {
             userMap.setUuid(map.getUuid());
-            userMap.setCreateTime(DateUtil.getDataTime());
+            userMap.setCreateTime(LocalDateTime.now());
             userMap.setMapName("temp");
-            userMap.setUnSave(true);
+            userMap.setCreateUserId(map.getCreateUserId());
+            userMap.setUnSave(BaseConstant.YES);
             updateUserMapById(userMap);
         }
     }
@@ -189,25 +200,24 @@ public class UserMapServiceImp implements UserMapService {
     @Override
     public void saveMap(UserMap userMap) {
         userMap.setUuid(StringUtil.getUUID());
-        userMap.setUnSave(false);
         userMap.setCreateUserId(AuthUtil.getUserId());
-        userMap.setCreateTime(DateUtil.getDataTime());
-        userMapRepository.save(userMap);
+        userMap.setCreateTime(LocalDateTime.now());
+        removeUserMapCatch(userMap);
+        saveOrUpdate(userMap);
     }
 
     @Override
     public UserMap getUserMapByName(String mapName) {
-        UserMap userMap = userMapRepository.getFirstByCreateUserIdAndMapName(AuthUtil.getUserId(), mapName);
+        UserMap userMap = userMapDAO.getFirstByCreateUserIdAndMapName(AuthUtil.getUserId(), mapName);
         return userMap;
     }
 
-    /*
-     * 根据Id 删除地图
-     */
     @Override
+    @CacheEvict(USER_MAP)
     public void deleteMapById(String id) {
-        // 这里删除的时候要加上userId 防止其他用户删除uuid
-        userMapRepository.deleteByCreateUserIdAndUuid(AuthUtil.getUserId(), id);
+        UserMap userMap = userMapDAO.selectById(id);
+        removeUserMapCatch(userMap);
+        userMapDAO.deleteByCreateUserIdAndUuid(AuthUtil.getUserId(), id);
     }
 
     /**
@@ -222,8 +232,32 @@ public class UserMapServiceImp implements UserMapService {
         update.set("units", userMap.getUnits());
         update.set("regions", userMap.getRegions());
         update.set("mapName", userMap.getMapName());
-        mongoTemplate.updateFirst(new Query(Criteria.where("uuid").is(userMap.getUuid())), update, UserMap.class);
+        removeUserMapCatch(userMap);
+        saveOrUpdate(userMap);
     }
+
+    private void removeUserMapCatch(UserMap userMap){
+        userMapService.removeMapCatch(userMap.getUuid());
+        userMapService.removeUserMapCatch(userMap.getCreateUserId());
+        if (GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
+            userMapService.delEncounterMapsCatch();
+        }
+    }
+
+    @Override
+    @CacheEvict(USER_CREATE_MAP)
+    public void removeUserMapCatch(Integer createUserId) {
+
+    }
+
+    @Override
+    @CacheEvict(USER_MAP)
+    public void removeMapCatch(String uuid){
+    }
+
+    @Override
+    @CacheEvict(CatchKey.ENCOUNTER_MAP)
+    public void delEncounterMapsCatch(){}
 
     /**
      * 获取所有遭遇战 地图
@@ -233,18 +267,10 @@ public class UserMapServiceImp implements UserMapService {
     @Override
     @Cacheable(CatchKey.ENCOUNTER_MAP)
     public List<BaseMapInfoVO> getEncounterMaps() {
-        Criteria criteria = new Criteria()
-                .and("createUserId").is(UserEnum.ADMIN.getId())
-                .and("type").is(GameTypeEnum.ENCOUNTER.type());
-        List<BaseMapInfoVO> encounterMaps = MongoUtil.findByCriteria(criteria, BaseMapInfoVO.class);
+        List<BaseMapInfoVO> encounterMaps = userMapDAO.getEncounterMaps();
         return encounterMaps;
     }
 
-    /**
-     * 获取遭遇战地图 的所有初始化军队
-     *
-     * @return
-     */
     @Override
     public List<String> getInitArmy(String uuid) {
         UserMap userMap = getEncounterMapById(uuid);
@@ -271,16 +297,11 @@ public class UserMapServiceImp implements UserMapService {
         return colors;
     }
 
-    /**
-     * 获取遭遇战地图
-     *
-     * @param uuid
-     * @return
-     */
     @Override
     public UserMap getEncounterMapById(String uuid) {
-        UserMap userMap = userMapRepository.getFirstByUuid(uuid);
-        if (userMap.getCreateUserId() != UserEnum.ADMIN.getId() || !GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
+        UserMap userMap = userMapDAO.selectById(uuid);
+        if (userMap.getCreateUserId() != UserEnum.ADMIN.getId() || !GameTypeEnum.ENCOUNTER.type().equals(
+            userMap.getType())) {
             // 不是遭遇地图
             return null;
         }
@@ -295,16 +316,16 @@ public class UserMapServiceImp implements UserMapService {
      */
     @Cacheable(CatchKey.USER_MAP)
     @Override
-    public UserMapVo getUserMapByUUID(String uuid) {
+    public UserMapVo getUserMapById(String uuid) {
         UserMapVo userMapVo = new UserMapVo();
-        UserMap userMap = userMapRepository.getFirstByUuid(uuid);
+        UserMap userMap = userMapDAO.selectById(uuid);
         BeanUtils.copyProperties(userMap, userMapVo);
         return userMapVo;
     }
 
     @Override
     public UserMap getUserDraftEditMap(Integer userId) {
-        return userMapRepository.getFirstByCreateUserIdAndUnSave(userId, true);
+        return userMapDAO.getFirstByCreateUserIdAndUnSave(userId);
     }
 
     @Override

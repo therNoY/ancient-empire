@@ -21,6 +21,8 @@ public class RegionInfo extends RegionMes {
      */
     protected Integer column;
 
+    private Integer index;
+
     public String getColor() {
         return color;
     }
@@ -49,4 +51,11 @@ public class RegionInfo extends RegionMes {
         return new Site(row, column);
     }
 
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
+    }
 }

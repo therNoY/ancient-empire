@@ -35,12 +35,11 @@ public class RoundEndHandler extends CommonHandler {
 
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
-
-        // 1.保存回合信息
-        userRecordService.saveRecord(record());
-
-        // 2.开始新的回合
+        // 1.开始新的回合
         startNewRound(record());
+
+        // 2.保存回合信息
+        userRecordService.saveRecord(record());
 
         // 3.判断下局游戏是否是机器人
         if (currArmy().getPlayer() == null) {
@@ -74,9 +73,7 @@ public class RoundEndHandler extends CommonHandler {
         int newArmyIndex = setNewArmy(record);
         ArmyStatusInfoDTO armyStatusInfoDTO = new ArmyStatusInfoDTO();
         record.setCurrArmyIndex(newArmyIndex);
-        record.setCurrColor(currArmy().getColor());
         record.setCurrentRound(record.getCurrentRound() + 1);
-        record.setCurrCamp(currArmy().getCamp());
         // 3.改变当前军队的资金
         List<Region> regions = record.getGameMap().getRegions();
         int addMoney = 0;

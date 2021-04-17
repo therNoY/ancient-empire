@@ -35,7 +35,6 @@ public class AuthUtil {
         authId.set(userId);
     }
 
-
     @KnowledgePoint("对于threadLocal的使用如果是线程池使用（有回收的情况）就需要" +
             "每次使用完都清除掉，不然线程回收了，但是保存的对象没有回收，会造成内存泄漏")
     public static void clear(){

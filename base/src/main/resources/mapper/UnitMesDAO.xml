@@ -29,6 +29,8 @@
         population=#{population}, description=#{description}, create_user_id=#{createUserId}, tradeable=#{tradeable}, enable=#{enable}, promotion=#{promotion} WHERE id=#{id}
     </update>
 
+
+
     <select id="selectCanTradeUnit" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
         SELECT
             ul.*
@@ -49,6 +51,12 @@
     <select id="selectUnitMesWithPage" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
         select u.* from unit_mes u
         where u.create_user_id = #{userId}
+        <if test="condition != null and condition != ''">
+            and (u.name like CONCAT('%',#{condition},'%')
+            or u.description like CONCAT('%',#{condition},'%')
+            )
+        </if>
     </select>
+
 
 </mapper>

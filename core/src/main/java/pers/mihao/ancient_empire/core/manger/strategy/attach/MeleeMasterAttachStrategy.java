@@ -2,8 +2,6 @@ package pers.mihao.ancient_empire.core.manger.strategy.attach;
 
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
-import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.core.dto.AttributesPower;
 import pers.mihao.ancient_empire.core.manger.GameContext;

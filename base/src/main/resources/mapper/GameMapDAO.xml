@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.mihao.ancient_empire.base.dao.UserMapDAO">
+
+  <!-- 通用查询映射结果 -->
+  <resultMap id="BaseMapInfo" type="pers.mihao.ancient_empire.base.vo.BaseMapInfoVO">
+    <result column="uuid" property="mapId"/>
+    <result column="map_name" property="mapName"/>
+    <result column="map_row" property="row"/>
+    <result column="map_column" property="column"/>
+    <result column="create_user_id" property="createUserId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="type" property="type"/>
+  </resultMap>
+
+  <sql id="BaseMapInfo">
+        uuid, map_name, `map_row`, `map_column`,create_user_id,create_time,type
+    </sql>
+
+  <delete id="deleteByCreateUserIdAndUuid">
+      delete from user_map where create_user_id = #{param1} and uuid = #{param2}
+    </delete>
+
+  <select id="findByCreateUserId" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
+        SELECT * from user_map where create_user_id = #{id}
+    </select>
+
+
+  <select id="getFirstByCreateUserIdAndUnSave" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
+         SELECT * from user_map where create_user_id = #{userId} and un_save = '1'
+    </select>
+
+  <select id="getFirstByCreateUserIdAndMapName" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
+        SELECT * from user_map where create_user_id = #{param1} and map_name = #{param2}
+    </select>
+
+  <select id="getEncounterMaps" resultMap="BaseMapInfo">
+    select <include refid="BaseMapInfo"></include>
+    from user_map where create_user_id = 'admin' and type = 'encounter'
+  </select>
+
+</mapper>

@@ -1,21 +1,16 @@
 package pers.mihao.ancient_empire.base.vo;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import pers.mihao.ancient_empire.common.jdbc.mongo.annotation.QueryField;
-
 import java.io.Serializable;
 
 /**
  * 地图的基础信息
- * @version 1.0
+ *
  * @author mihao
+ * @version 1.0
  * @date 2020\9\20 0020 11:18
  */
-@Document("userMap")
 public class BaseMapInfoVO implements Serializable {
 
-    @Id
     private String mapId;
     // 地图的名字
     private String mapName;
@@ -28,7 +23,6 @@ public class BaseMapInfoVO implements Serializable {
     // 创建时间
     private String createTime;
     // 地图类型
-    @QueryField(query = false)
     private String type;
 
     public String getMapId() {

@@ -2,7 +2,9 @@ package pers.mihao.ancient_empire.common.vo;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 
+@KnowledgePoint("可以指定序列单个对象的规则")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class RespJson {
     private Integer resCode;

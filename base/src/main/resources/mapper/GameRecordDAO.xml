@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.mihao.ancient_empire.base.dao.UserRecordDAO">
+
+  <delete id="delOtherUnSave">
+    DELETE FROM user_record where create_user_id = #{userId} and un_save = '1' and uuid != #{uuid}
+    and type = 'encounter'
+  </delete>
+
+
+  <select id="getFirstByCreateUserIdAndRecordName"
+      resultType="pers.mihao.ancient_empire.base.entity.UserRecord">
+        select * from user_record where create_user_id = #{param1} and record_name = #{param2}
+    </select>
+
+    <select id="listUserRecordWithPage" resultType="pers.mihao.ancient_empire.base.entity.UserRecord">
+        select * from user_record
+        where create_user_id = #{userId}
+        <if test="condition != null and condition != '' ">
+            and record_name like  concat('%', #{condition}, '%')
+        </if>
+        order by un_save desc, create_time desc
+    </select>
+</mapper>

@@ -1,46 +1,60 @@
 package pers.mihao.ancient_empire.base.entity;
 
-import pers.mihao.ancient_empire.base.bo.BaseSquare;
-import pers.mihao.ancient_empire.base.bo.BaseUnit;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import pers.mihao.ancient_empire.base.bo.Region;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
+import pers.mihao.ancient_empire.base.bo.BaseUnit;
+import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 
 /**
  * 用户地图 信息
+ *
+ * @author mh
  */
-@Document
 public class UserMap implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
+    @TableId(value = "uuid", type = IdType.UUID)
     private String uuid;
     // 单位信息
+    @TableField(exist = false)
     private List<BaseUnit> units;
+    @JsonIgnore
+    private String unitsString;
+
     // 地形信息
+    @TableField(exist = false)
     private List<Region> regions;
+    @JsonIgnore
+    private String regionString;
+
     // 地图的名字
     private String mapName;
     // 列
+    @TableField(exist = false)
     private Integer row;
+    private Integer mapRow;
     // 行
+    @TableField(exist = false)
     private Integer column;
+    private Integer mapColumn;
     // 创建者Id
     private Integer createUserId;
     // 创建时间
-    private String createTime;
-    // 引用的人的Id
-    private List<Integer> referenceUserId;
+    private LocalDateTime createTime;
     // 地图类型
     private String type;
     // 是否保存 未保存的地图信息 最多只有一个
-    private boolean unSave;
+    private Integer unSave;
 
     // 模板ID
     private Integer templateId;
@@ -60,6 +74,7 @@ public class UserMap implements Serializable {
 
     public void setUnits(List<BaseUnit> units) {
         this.units = units;
+        this.unitsString = null;
     }
 
     public List<Region> getRegions() {
@@ -86,44 +101,36 @@ public class UserMap implements Serializable {
         this.createUserId = createUserId;
     }
 
-    public String getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
-    public List<Integer> getReferenceUserId() {
-        return referenceUserId;
-    }
-
-    public void setReferenceUserId(List<Integer> referenceUserId) {
-        this.referenceUserId = referenceUserId;
-    }
-
-    public boolean isUnSave() {
+    public Integer getUnSave() {
         return unSave;
     }
 
-    public void setUnSave(boolean unSave) {
+    public void setUnSave(Integer unSave) {
         this.unSave = unSave;
     }
 
     public Integer getRow() {
-        return row;
+        return mapRow;
     }
 
     public void setRow(Integer row) {
-        this.row = row;
+        this.mapRow = row;
     }
 
     public Integer getColumn() {
-        return column;
+        return mapColumn;
     }
 
     public void setColumn(Integer column) {
-        this.column = column;
+        this.mapColumn = column;
     }
 
     public String getType() {
@@ -140,6 +147,50 @@ public class UserMap implements Serializable {
 
     public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
+    }
+
+    public String getUnitsString() {
+        if (units != null) {
+            this.unitsString = JSONObject.toJSONString(units);
+        }
+        return unitsString;
+    }
+
+    public void setUnitsString(String unitsString) {
+        this.unitsString = unitsString;
+        if (StringUtil.isNotBlack(unitsString)) {
+            this.units = JSONArray.parseArray(unitsString, BaseUnit.class);
+        }
+    }
+
+    public String getRegionString() {
+        if (regions != null) {
+            this.regionString = JSONObject.toJSONString(regions);
+        }
+        return regionString;
+    }
+
+    public void setRegionString(String regionString) {
+        this.regionString = regionString;
+        if (StringUtil.isNotBlack(regionString)) {
+            this.regions = JSONArray.parseArray(regionString, Region.class);
+        }
+    }
+
+    public Integer getMapRow() {
+        return mapRow;
+    }
+
+    public void setMapRow(Integer mapRow) {
+        this.mapRow = mapRow;
+    }
+
+    public Integer getMapColumn() {
+        return mapColumn;
+    }
+
+    public void setMapColumn(Integer mapColumn) {
+        this.mapColumn = mapColumn;
     }
 }
 

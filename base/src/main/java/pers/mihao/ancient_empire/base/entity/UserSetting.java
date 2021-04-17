@@ -33,9 +33,14 @@ public class UserSetting implements Serializable {
     private Integer mapInitColumn;
 
     /**
-     * 初始化地图的RegionId
+     * 初始化地图的模板ID
      */
     private Integer mapInitTempId;
+
+    /**
+     * 初始化地图的类型
+     */
+    private String mapInitRegionType;
 
     /**
      * 是否开启优化绘图
@@ -94,6 +99,15 @@ public class UserSetting implements Serializable {
     public void setBgMusic(Integer bgMusic) {
         this.bgMusic = bgMusic;
     }
+
+    public String getMapInitRegionType() {
+        return mapInitRegionType;
+    }
+
+    public void setMapInitRegionType(String mapInitRegionType) {
+        this.mapInitRegionType = mapInitRegionType;
+    }
+
     public Integer getLanguage() {
         return language;
     }

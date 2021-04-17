@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement // 开启事务
 @SpringBootApplication(scanBasePackages = {"pers.mihao.ancient_empire.**"})
 @MapperScan("pers.mihao.ancient_empire.*.dao") // 开启mybatis mapper 扫描
-@EnableMongoRepositories(basePackages = {"pers.mihao.ancient_empire.base.mongo"})
 public class AncientEmpireApplication {
 
     public static void main(String[] args) {

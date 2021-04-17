@@ -10,4 +10,6 @@ public class BaseConstant {
      * 准备创建的房间
      */
     public static final String AE_ROOM = "aeRoom_";
+    public static final Integer YES = 1;
+    public static final Integer NO = 0;
 }

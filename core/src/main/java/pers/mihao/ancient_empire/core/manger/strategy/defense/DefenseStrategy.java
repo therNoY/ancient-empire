@@ -3,19 +3,10 @@ package pers.mihao.ancient_empire.core.manger.strategy.defense;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.entity.Ability;
-import pers.mihao.ancient_empire.base.entity.RegionMes;
-import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
-import pers.mihao.ancient_empire.base.entity.UserRecord;
-import pers.mihao.ancient_empire.base.enums.AbilityEnum;
-import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.core.dto.AttributesPower;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.strategy.AbstractStrategy;
-
-import java.util.List;
 
 /**
  * 根据不同的能力判断防御力加成

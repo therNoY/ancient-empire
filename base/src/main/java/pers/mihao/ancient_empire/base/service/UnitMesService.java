@@ -9,6 +9,7 @@ import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 /**
  * <p>
@@ -22,10 +23,10 @@ public interface UnitMesService extends IService<UnitMes> {
 
     /**
      * 获取我的单位信息的
-     * @param reqGetUnitMesDTO
+     * @param apiConditionDTO
      * @return
      */
-    IPage<UnitMes> selectUnitMesWithPage(ReqGetUnitMesDTO reqGetUnitMesDTO);
+    IPage<UnitMes> selectUnitMesWithPage(ApiConditionDTO apiConditionDTO);
 
     /**
      * 保存单位信息
@@ -63,7 +64,7 @@ public interface UnitMesService extends IService<UnitMes> {
      * @param userId
      * @return
      */
-    List<UnitMes> getUnitListByCreateUser(Integer userId);
+    List<UnitMes> getUserEnableUnitList(Integer userId);
 
     /**
      * 获取管理员启动的单位 即是默认单位

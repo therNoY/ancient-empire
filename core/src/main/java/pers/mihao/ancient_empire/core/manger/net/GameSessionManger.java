@@ -29,6 +29,7 @@ import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.RoomCommendEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.command.RoomCommand;
@@ -64,6 +65,8 @@ public class GameSessionManger {
 
     @Autowired
     private GameRoomService gameRoomService;
+    @Autowired
+    private GameCoreManger gameCoreManger;
 
 
     /**
@@ -119,6 +122,7 @@ public class GameSessionManger {
         if (sessionList.isEmpty()) {
             log.info("游戏：{}, 没有玩家 销毁", recordId);
             gameSessionMap.remove(recordId);
+            gameCoreManger.allUserLevel(recordId);
         }
 
     }
@@ -129,6 +133,7 @@ public class GameSessionManger {
      * @param gameSession
      */
     private void handlePlayerLevel(GameSession gameSession) {
+
     }
 
 

@@ -1,7 +1,10 @@
 package pers.mihao.ancient_empire.auth.controller;
 
 
+import com.sun.deploy.net.HttpResponse;
 import java.util.UUID;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +60,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/login")
-    public RespJson login(@RequestBody @Validated LoginDto loginDto, BindingResult result) {
+    public RespJson login(@RequestBody @Validated LoginDto loginDto, BindingResult result, HttpServletResponse response) {
         RespAuthDao respAuthDao = userService.login(loginDto);
         if (respAuthDao == null) {
             return RespUtil.error(40011);

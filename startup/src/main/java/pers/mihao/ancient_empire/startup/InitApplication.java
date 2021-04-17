@@ -16,7 +16,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import pers.mihao.ancient_empire.base.dao.UserTemplateDAO;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
+import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 
@@ -30,6 +32,8 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
 
     @Autowired
     UserRecordService userRecordService;
+    @Autowired
+    UserMapService userMapService;
     @Autowired
     RegionMesService regionMesService;
 
@@ -65,6 +69,10 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
 
     private void initAppCatch() {
         AbstractRobot.registerRobotActiveHandler();
+        List<BaseMapInfoVO> mapInfoVOS = userMapService.getEncounterMaps();
+        for (BaseMapInfoVO vo : mapInfoVOS) {
+            userMapService.getUserMapById(vo.getMapId());
+        }
     }
 
     /**

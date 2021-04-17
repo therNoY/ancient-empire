@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
 /**

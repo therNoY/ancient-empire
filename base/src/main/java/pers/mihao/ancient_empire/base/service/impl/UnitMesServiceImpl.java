@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.dao.UnitMesDAO;
-import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
@@ -25,6 +24,7 @@ import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 /**
@@ -54,9 +54,9 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      * @return
      */
     @Override
-    public IPage<UnitMes> selectUnitMesWithPage(ReqGetUnitMesDTO reqGetUnitMesDTO) {
-        List<UnitMes> unitMes = unitMesDao.selectUnitMesWithPage(reqGetUnitMesDTO);
-        return IPageHelper.toPage(unitMes, reqGetUnitMesDTO);
+    public IPage<UnitMes> selectUnitMesWithPage(ApiConditionDTO apiConditionDTO) {
+        List<UnitMes> unitMes = unitMesDao.selectUnitMesWithPage(apiConditionDTO);
+        return IPageHelper.toPage(unitMes, apiConditionDTO);
     }
 
     /**
@@ -141,7 +141,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     }
 
     @Override
-    public List<UnitMes> getUnitListByCreateUser(Integer userId) {
+    public List<UnitMes> getUserEnableUnitList(Integer userId) {
         QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
         wrapper.eq("create_user_id", userId);
         wrapper.eq("enable", CommonConstant.YES);
@@ -150,7 +150,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
 
     @Override
     public List<UnitMes> getDefaultUnitList() {
-        return getUnitListByCreateUser(CommonConstant.ADMIN_ID);
+        return getUserEnableUnitList(CommonConstant.ADMIN_ID);
     }
 
     @Override

@@ -109,7 +109,7 @@ public class UserTemplateController {
     @PostMapping("/api/userTemp/addAbleUnitList")
     public RespJson getAddAbleUnitList(@RequestBody TemplateIdDTO templateIdDTO) {
         // 获取当前用户创建的
-        List<UnitMes> units = unitMesService.getUnitListByCreateUser(AuthUtil.getUserId());
+        List<UnitMes> units = unitMesService.getUserEnableUnitList(AuthUtil.getUserId());
         List<UnitMes> defaultUnis = unitMesService.getDefaultUnitList();
         // 返回代添加的
         return RespUtil.successResJson(CollectionUtil.assignDistinct(UnitMes::getId, units, defaultUnis).stream().filter(unitMes -> {

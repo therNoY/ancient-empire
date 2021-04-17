@@ -2,9 +2,9 @@ package pers.mihao.ancient_empire.core.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -13,9 +13,10 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.dto.ArmyConfig;
 import pers.mihao.ancient_empire.base.dto.InitMapDTO;
-import pers.mihao.ancient_empire.base.dto.InitUserRecordDTO;
+import pers.mihao.ancient_empire.base.dto.ReqRecordContinueDTO;
 import pers.mihao.ancient_empire.base.dto.ReqRoomIdDTO;
 import pers.mihao.ancient_empire.base.entity.*;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
@@ -23,7 +24,6 @@ import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.base.vo.GameVO;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -97,6 +97,28 @@ public class GameController {
         return RespUtil.successResJson(userRecord);
     }
 
+    /**
+     * 用于单机遭遇战，联机遭遇战 通过用户设置的地图初始环境设置初始
+     *
+     * @param initMapDTO
+     * @param result
+     * @return
+     */
+    @PostMapping("/api/record/continue")
+    public RespJson registerUserMap(@RequestBody ReqRecordContinueDTO continueDTO) {
+        UserRecord record = userRecordService.getRecordById(continueDTO.getUuid());
+        UserRecord userRecord = userRecordService.getRecordById(continueDTO.getUuid());
+        userRecord.setUuid(StringUtil.getUUID());
+        userRecord.setUnSave(BaseConstant.YES);
+        userRecord.setCreateTime(LocalDateTime.now());
+        userRecord.setRecordName("系统保存");
+        userRecordService.saveRecord(userRecord);
+        userRecordService.delOtherUnSaveStandRecord(userRecord.getUuid(), continueDTO.getUserId());
+        gameCoreManger.registerGameContext(record, EnumUtil.valueOf(GameTypeEnum.class, record.getType()),1);
+        // 3.返回前端保存
+        return RespUtil.successResJson(record);
+    }
+
 
     /**
      * 多人游戏入口
@@ -139,15 +161,6 @@ public class GameController {
         roomCommend.setMessage("准备开始游戏...");
         gameSessionManger.sendMessage2Room(roomCommend, reqRoomIdDTO.getRoomId());
         // 3.返回前端保存
-        return RespUtil.successResJson(userRecord);
-    }
-
-    @PostMapping("/api/record/init")
-    public RespJson registerUserRecord(@RequestBody InitUserRecordDTO initUserRecordDTO) {
-        UserRecord userRecord = userRecordService.getRecordById(initUserRecordDTO.getRecordId());
-        gameCoreManger
-            .registerGameContext(userRecord, EnumUtil.valueOf(GameTypeEnum.class, initUserRecordDTO.getGameType()), 1);
-        // 返回前端保存
         return RespUtil.successResJson(userRecord);
     }
 

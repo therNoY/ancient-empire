@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.dao.RegionMesDAO;
@@ -33,9 +32,6 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDAO, RegionMes> i
 
     @Autowired
     RegionMesDAO regionMesDao;
-
-    @Autowired
-    MongoTemplate mongoTemplate;
 
     private Map<String, RegionMes> regionMesMap = new HashMap<>(16);
 

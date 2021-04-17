@@ -39,7 +39,28 @@ begin
 	  alter table game_room add map_config varchar(1024);
 	END IF;
 
+	IF not exists(SELECT * FROM information_schema.columns WHERE table_schema = DATABASE()  AND table_name = 'user_setting' AND column_name = 'map_init_region_type')
+	THEN
+	  alter table user_setting add map_init_region_type varchar(16);
+	END IF;
+
 end $$
 call executUpdateSql() $$
 drop procedure IF EXISTS executUpdateSql $$
 delimiter ;
+
+
+CREATE TABLE `game_map`  (
+  `uuid` varchar(12) NOT NULL,
+  `units_string` varchar(1024) NULL,
+  `region_string` varchar(4096) NULL,
+  `map_name` varchar(255) NULL,
+  `row` tinyint(12) NULL,
+  `column` tinyint(12) NULL,
+  `create_user_id` int(12) NULL,
+  `create_time` datetime NULL,
+  `type` varchar(12) NULL,
+  `un_save` tinyint(1) NULL,
+  `template_id` int(12) NULL,
+  PRIMARY KEY (`uuid`)
+);

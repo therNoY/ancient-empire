@@ -8,7 +8,6 @@ import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
@@ -16,8 +15,6 @@ import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.Event;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
-import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
-import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy;
 
 import java.util.List;
 
@@ -44,12 +41,14 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
      * @return
      */
     protected RegionInfo getRegionInfoBySite(int row, int column) {
-        Region region = getRegionBySite(row, column);
+        int index = (row - 1) * gameMap().getColumn() - 1 + column;
+        Region region = gameMap().getRegions().get(index);
         RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(region.getType());
         RegionInfo regionInfo = BeanUtil.copyValueFromParent(regionMes, RegionInfo.class);
         regionInfo.setRow(row);
         regionInfo.setColumn(column);
         regionInfo.setColor(region.getColor());
+        regionInfo.setIndex(index);
         return regionInfo;
     }
 

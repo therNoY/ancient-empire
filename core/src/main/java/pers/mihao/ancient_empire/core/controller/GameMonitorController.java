@@ -1,5 +1,8 @@
 package pers.mihao.ancient_empire.core.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +11,7 @@ import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.util.ReflectUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
@@ -19,6 +23,8 @@ import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import pers.mihao.ancient_empire.core.manger.net.GameSession;
+import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
 
 /**
  * 游戏监控的
@@ -32,6 +38,8 @@ public class GameMonitorController {
 
     @Autowired
     GameCoreManger gameCoreManger;
+    @Autowired
+    GameSessionManger gameSessionManger;
 
     @RequestMapping("/api/monitor")
     public RespJson getGameDetailById(@RequestBody MonitorDTO monitorDTO) {
@@ -63,8 +71,19 @@ public class GameMonitorController {
                 record.setArmyList(armyList);
             }
             return RespUtil.successResJson(record);
+        } else if (CommonConstant.YES.equals(monitorDTO.getSession())) {
+            return RespUtil.successResJson(getSessionMessage());
         }
         return null;
+    }
+
+    private JSONObject getSessionMessage(){
+        JSONObject jsonObject = new JSONObject();
+        Map gameSessionMap = (Map)ReflectUtil.getValueByFieldName(gameSessionManger, "gameSessionMap");
+        Map roomSessionMap = (Map)ReflectUtil.getValueByFieldName(gameSessionManger, "roomSessionMap");
+        jsonObject.put("gameSession", gameSessionMap);
+        jsonObject.put("roomSessionMap", roomSessionMap);
+        return jsonObject;
     }
 
 }

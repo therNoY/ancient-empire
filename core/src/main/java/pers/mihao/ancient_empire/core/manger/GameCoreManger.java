@@ -3,7 +3,6 @@ package pers.mihao.ancient_empire.core.manger;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -21,7 +20,6 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
-import pers.mihao.ancient_empire.core.eums.RoomCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
 import pers.mihao.ancient_empire.core.listener.GameContextHelperListener;
@@ -29,7 +27,6 @@ import pers.mihao.ancient_empire.core.listener.ChapterUtil;
 import pers.mihao.ancient_empire.core.listener.GameRunListener;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
-import pers.mihao.ancient_empire.core.manger.command.RoomCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
 import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
@@ -209,7 +206,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
                 CyclicBarrier cyclicBarrier = new CyclicBarrier(playCount + 1);
                 gameContext.setStartGame(cyclicBarrier);
-                UserMap userMap = userMapService.getUserMapByUUID(userRecord.getUserMapId());
+                UserMap userMap = userMapService.getUserMapById(userRecord.getMapId());
 
                 // 设置监听服务
                 List<GameRunListener> listeners = new ArrayList<>();
@@ -262,6 +259,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     private void doRevokeGameContext(UserRecord userRecord) {
         contextMap.remove(userRecord.getUuid());
         userRecordService.removeById(userRecord.getUuid());
+//        userRecordService.delOtherUnSave(userRecord.getUuid(), userRecord.getCreateUserId());
     }
 
     /**
@@ -282,6 +280,14 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             }
         }
         return false;
+    }
+
+    /**
+     * 处理所有的人离开
+     * @param recordId
+     */
+    public void allUserLevel(String recordId) {
+        contextMap.remove(recordId);
     }
 
     public GameContext getGameSessionById(String uuid) {

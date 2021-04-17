@@ -31,6 +31,11 @@ public class CommonConstant {
     public static final String POINT = ".";
 
     /**
+     * 冒号
+     */
+    public static final String COLON = ":";
+
+    /**
      * 逗号
      */
     public static final String COMMA = ",";

@@ -1,17 +1,17 @@
 package pers.mihao.ancient_empire.base.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import pers.mihao.ancient_empire.base.dto.InitMapDTO;
-import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
+import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDTO;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
-import java.util.List;
-
 /**
  * 用户存档接口
  */
-public interface UserRecordService extends MapService{
+public interface UserRecordService extends IService<UserRecord> {
     /**
      * 根据地图生成一个存档
      * @param initMapDTO
@@ -28,8 +28,18 @@ public interface UserRecordService extends MapService{
      */
     UserRecord getRecordById(String uuid);
 
-    boolean saveRecord(ReqSaveRecordDto saveRecordDto);
+    /**
+     * 保存record
+     * @param saveRecordDto
+     * @return
+     */
+    boolean saveRecord(ReqSaveRecordDTO saveRecordDto);
 
+    /**
+     * 保存临时地图
+     * @param uuid
+     * @return
+     */
     boolean saveTempRecord(String uuid);
 
     /**
@@ -49,5 +59,24 @@ public interface UserRecordService extends MapService{
      * @param apiConditionDTO
      * @return
      */
-    List<UserRecord> listUserRecord(ApiConditionDTO apiConditionDTO);
+    IPage<UserRecord> listUserRecordWithPage(ApiConditionDTO apiConditionDTO);
+
+    /**
+     * 移除缓存
+     * @param id
+     */
+    void removeCatch(String id);
+
+    /**
+     * 删除其他为保存的单机记录 一个用户只能保存一个单机
+     * @param uuid
+     */
+    void delOtherUnSaveStandRecord(String uuid, Integer userId);
+
+    /**
+     * 删除用户保存记录
+     * @param uuid
+     * @param userId
+     */
+    void delById(String uuid, Integer userId);
 }

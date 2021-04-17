@@ -1,7 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.strategy.action;
 
 import pers.mihao.ancient_empire.base.bo.Army;
-import pers.mihao.ancient_empire.base.bo.Position;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.entity.UserRecord;

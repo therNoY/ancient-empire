@@ -20,5 +20,9 @@ public interface UserSettingService extends IService<UserSetting> {
      */
     UserSetting getUserSettingById(Integer id);
 
+    /**
+     * 更新用户设置
+     * @param userSetting
+     */
     void updateByUserId(UserSetting userSetting);
 }

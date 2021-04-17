@@ -1,7 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,22 +14,16 @@ import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
-import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
-import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
-import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
-import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
-import pers.mihao.ancient_empire.core.manger.UserTemplateHelper;
-import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.end.EndStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
@@ -221,7 +214,9 @@ public class CommonHandler extends AbstractGameEventHandler {
     public RegionInfo changeCurrRegion(Integer regionIndex) {
         // 设置当前地形
         Region region = gameMap().getRegions().get(regionIndex);
-        return changeCurrRegion(region);
+        RegionInfo regionInfo = changeCurrRegion(region);
+        regionInfo.setIndex(regionIndex);
+        return regionInfo;
     }
 
     /**
@@ -400,7 +395,9 @@ public class CommonHandler extends AbstractGameEventHandler {
     public RegionInfo changeCurrRegion(Site site) {
         // 设置当前地形
         Region region = getRegionBySite(site);
-        return changeCurrRegion(region);
+        RegionInfo regionInfo = changeCurrRegion(region);
+        regionInfo.setIndex(getRegionIndexBySite(site));
+        return regionInfo;
     }
 
     public RegionInfo changeCurrRegion(Region region) {

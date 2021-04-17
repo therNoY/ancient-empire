@@ -1,14 +1,11 @@
 package pers.mihao.ancient_empire.core.manger.strategy.attach;
 
 import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
-import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.core.dto.AttributesPower;
 
 import pers.mihao.ancient_empire.core.manger.GameContext;
-import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 public class DestroyerAttachStrategy extends AttachStrategy {
 

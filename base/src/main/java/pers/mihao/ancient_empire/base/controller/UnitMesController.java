@@ -2,13 +2,16 @@ package pers.mihao.ancient_empire.base.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
@@ -16,13 +19,10 @@ import pers.mihao.ancient_empire.base.service.UnitAbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.util.Validate;
-import pers.mihao.ancient_empire.common.util.ValidateUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
-
-import java.util.List;
 
 /**
  * <p>
@@ -46,30 +46,33 @@ public class UnitMesController {
 
     /**
      * 获取 单位信息类表
+     *
      * @param pageSize
      * @param pageNow
      * @return
      */
     @PostMapping("/api/unitMes/list")
-    public RespJson getUnitMesListWithPage(@RequestBody ReqGetUnitMesDTO reqGetUnitMesDTO) {
-        IPage<UnitMes> unitMesIPage = unitMesService.selectUnitMesWithPage(reqGetUnitMesDTO);
+    public RespJson getUnitMesListWithPage(@RequestBody ApiConditionDTO apiConditionDTO) {
+        IPage<UnitMes> unitMesIPage = unitMesService.selectUnitMesWithPage(apiConditionDTO);
         return RespUtil.successPageResJson(unitMesIPage);
     }
 
     /**
      * 获取 单位信息类表
+     *
      * @param pageSize
      * @param pageNow
      * @return
      */
     @PostMapping("/api/unitMes/all")
-    public RespJson getUnitMesList(ApiRequestDTO apiRequestDTO) {
-        List<UnitMes> unitMesIPage = unitMesService.getUnitListByCreateUser(apiRequestDTO.getUserId());
+    public RespJson getUserEnableUnitList(ApiRequestDTO apiRequestDTO) {
+        List<UnitMes> unitMesIPage = unitMesService.getUserEnableUnitList(apiRequestDTO.getUserId());
         return RespUtil.successResJson(unitMesIPage);
     }
 
     /**
      * 保存单位信息
+     *
      * @param unitMes
      * @param result
      * @return
@@ -79,7 +82,8 @@ public class UnitMesController {
         // 1.更新基本信息
         unitMesService.updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
         // 2.更新能力信息
-        unitAbilityService.updateUnitAbility(reqSaveUnitMesDTO.getBaseInfo().getId(), reqSaveUnitMesDTO.getAbilityInfo());
+        unitAbilityService
+            .updateUnitAbility(reqSaveUnitMesDTO.getBaseInfo().getId(), reqSaveUnitMesDTO.getAbilityInfo());
         // 3.更新等级信息
         for (UnitLevelMes levelMes : reqSaveUnitMesDTO.getLevelInfoData()) {
             unitLevelMesService.saveUnitLevelMesList(levelMes);
@@ -89,6 +93,7 @@ public class UnitMesController {
 
     /**
      * 获取一个单位详细信息
+     *
      * @param idLevelInfo 单位和等级
      * @return
      */

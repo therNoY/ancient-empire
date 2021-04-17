@@ -2,15 +2,9 @@ package pers.mihao.ancient_empire.core.manger.strategy.defense;
 
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.entity.Ability;
-import pers.mihao.ancient_empire.base.entity.RegionMes;
-import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
-import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.core.dto.AttributesPower;
 import pers.mihao.ancient_empire.core.manger.GameContext;
-
-import java.util.List;
 
 public class RemoteDefenseStrategy extends DefenseStrategy {
 

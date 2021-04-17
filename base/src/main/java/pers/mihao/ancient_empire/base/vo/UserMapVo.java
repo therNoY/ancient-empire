@@ -1,9 +1,6 @@
 package pers.mihao.ancient_empire.base.vo;
 
-import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.entity.UserMap;
-
-import java.util.List;
 
 /**
  * @version 1.0

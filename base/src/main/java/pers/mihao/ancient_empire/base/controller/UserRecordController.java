@@ -1,28 +1,31 @@
 package pers.mihao.ancient_empire.base.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.apache.ibatis.annotations.Delete;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDto;
+import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.base.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDTO;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.dto.ApiPageDTO;
 import pers.mihao.ancient_empire.common.util.RespUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.RespJson;
-
-import java.util.List;
 
 @RestController
 public class UserRecordController {
@@ -53,6 +56,21 @@ public class UserRecordController {
         return RespUtil.successResJson(userRecord);
     }
 
+    /**
+     * record另存为
+     */
+    @PostMapping("/api/record/saveAs")
+    public RespJson recordSaveAs(@RequestBody ReqSaveRecordDTO reqSaveRecordDto) {
+        UserRecord userRecord = userRecordService.getRecordById(reqSaveRecordDto.getUuid());
+        userRecord.setRecordName(reqSaveRecordDto.getName());
+        userRecord.setCreateTime(LocalDateTime.now());
+        userRecord.setUnSave(BaseConstant.NO);
+        userRecord.setCreateUserId(reqSaveRecordDto.getUserId());
+        userRecord.setUuid(StringUtil.getUUID());
+        userRecordService.saveRecord(userRecord);
+        return RespUtil.successResJson(userRecord);
+    }
+
 
     /**
      * 用户 登陆过保存临时地图
@@ -71,7 +89,7 @@ public class UserRecordController {
      * 保存地图
      */
     @PostMapping("/api/record")
-    public RespJson saveRecord(@RequestBody @Validated ReqSaveRecordDto saveRecordDto, BindingResult result) {
+    public RespJson saveRecord(@RequestBody @Validated ReqSaveRecordDTO saveRecordDto, BindingResult result) {
         // 判断是否存在
         boolean isSave = userRecordService.saveRecord(saveRecordDto);
         if (isSave) {
@@ -85,9 +103,20 @@ public class UserRecordController {
      * @param apiConditionDTO
      * @return
      */
-    @PostMapping("/api/userRecord/list")
-    public RespJson listUserRecordWithPage(ApiConditionDTO apiConditionDTO) {
-        List<UserRecord> list = userRecordService.listUserRecord(apiConditionDTO);
-        return RespUtil.successResJson(list);
+    @PostMapping("/api/record/list")
+    public RespJson listUserRecordWithPage(@RequestBody ApiConditionDTO apiConditionDTO) {
+        IPage<UserRecord> iPage = userRecordService.listUserRecordWithPage(apiConditionDTO);
+        return RespUtil.successPageResJson(iPage);
+    }
+
+    /**
+     * 查询用户保存的record
+     * @param apiConditionDTO
+     * @return
+     */
+    @DeleteMapping("/api/record/{uuid}")
+    public RespJson listUserRecordWithPage(@PathVariable("uuid") String uuid) {
+        userRecordService.delById(uuid, AuthUtil.getUserId());
+        return RespUtil.successResJson();
     }
 }

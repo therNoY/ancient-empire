@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.dto.ArmyConfig;
 import pers.mihao.ancient_empire.base.dto.MapShowWithConfigDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.dto.RespUserMapDTO;
+import pers.mihao.ancient_empire.base.dto.UserMapDraftDTO;
 import pers.mihao.ancient_empire.base.entity.*;
 import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
@@ -42,7 +43,6 @@ import pers.mihao.ancient_empire.common.util.*;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
 import javax.websocket.server.PathParam;
-import sun.plugin.util.UIUtil;
 
 /**
  * 用户地图管理的Controller
@@ -61,6 +61,7 @@ public class UserMapController {
     @Autowired
     UserSettingService userSettingService;
 
+
     /**
      * 获取编辑地图时需要获取的初始数据
      *
@@ -78,8 +79,8 @@ public class UserMapController {
         // 3.获取用户拥有的地图
         List<UserMap> userAllMaps = userMapService.getUserCreateMap(AuthUtil.getUserId());
         List<UserMap> userMaps = userAllMaps.stream()
-                .filter(userMap -> userMap.isUnSave() == false)
-                .collect(Collectors.toList());
+            .filter(userMap -> BaseConstant.NO.equals(userMap.getUnSave()))
+            .collect(Collectors.toList());
         // 3.1 查看是否有未保存的地图
         UserMap unSaveMap = null;
         Optional<UserMap> optional = userAllMaps.stream().findFirst();
@@ -96,22 +97,33 @@ public class UserMapController {
      *
      * @return
      */
-    @GetMapping("/api/userMap/draft")
-    public RespJson getUserDraftEditMap(ApiRequestDTO requestDTO) {
-        UserMap userMap = userMapService.getUserDraftEditMap(requestDTO.getUserId());
-        UserSetting userSetting = userSettingService.getUserSettingById(requestDTO.getUserId());
+    @PostMapping("/api/userMap/draft")
+    public RespJson getUserDraftEditMap(@RequestBody UserMapDraftDTO requestDTO) {
+
         Integer templateId;
+        UserSetting userSetting = userSettingService.getUserSettingById(requestDTO.getUserId());
+        UserTemplate userTemplate;
+        UserMap userMap = userMapService.getUserDraftEditMap(requestDTO.getUserId());
+        if ((templateId = requestDTO.getTemplateId()) != null && userMap != null) {
+            // 使用新的模板 建立新的草稿地图
+            userMapService.deleteMapById(userMap.getUuid());
+            userMap = null;
+        }
+
         if (userMap != null) {
             templateId = userMap.getTemplateId();
+            userTemplate = userTemplateService.getById(templateId);
         } else {
-            // 获取用户默认模板 生成模板
-            templateId = userSetting.getMapInitTempId();
+            // 没有指定模板 使用默认模板
+            templateId = templateId == null ? userSetting.getMapInitTempId() : templateId;
+            userTemplate = userTemplateService.getById(templateId);
             userMap = new UserMap();
-            userMap.setCreateTime(LocalDateTime.now().toString());
+            userMap.setCreateTime(LocalDateTime.now());
             userMap.setCreateUserId(requestDTO.getUserId());
             userMap.setRow(userSetting.getMapInitRow());
             userMap.setColumn(userSetting.getMapInitColumn());
             userMap.setUuid(StringUtil.getUUID());
+            userMap.setUnSave(BaseConstant.YES);
             userMap.setTemplateId(templateId);
             List<Region> list = new ArrayList<>();
             Region region;
@@ -123,7 +135,7 @@ public class UserMapController {
             userMap.setRegions(list);
             userMapService.saveMap(userMap);
         }
-        UserTemplate userTemplate = userTemplateService.getById(templateId);
+
         // 1.获取可用单位信息
         List<UnitMes> unitMesList = unitMesService.getEnableUnitByTempId(templateId.toString());
         // 2.获取可用地形信息
@@ -169,6 +181,12 @@ public class UserMapController {
         return RespUtil.successResJson(userAllMaps);
     }
 
+    /**
+     * 获取用户下载地图
+     *
+     * @param apiConditionDTO
+     * @return
+     */
     @GetMapping("/api/userMap/download/list")
     public RespJson getUserDownloadMapList(ApiConditionDTO apiConditionDTO) {
         List<UserMap> mapList = userMapService.getUserDownloadMapList(apiConditionDTO);
@@ -183,7 +201,7 @@ public class UserMapController {
     @GetMapping("/api/userMap/{id}")
     public RespJson getUserMap(@PathVariable("id") String id) {
         // 3.获取用户拥有的地图
-        UserMapVo map = userMapService.getUserMapByUUID(id);
+        UserMapVo map = userMapService.getUserMapById(id);
         return RespUtil.successResJson(map);
     }
 
@@ -195,13 +213,14 @@ public class UserMapController {
     @PostMapping("/api/userMap/withConfig")
     public RespJson getUserMapWithConfig(@RequestBody MapShowWithConfigDTO config) {
         // 3.获取用户拥有的地图
-        UserMapVo map = userMapService.getUserMapByUUID(config.getMapId());
+        UserMapVo map = userMapService.getUserMapById(config.getMapId());
         if (CollectionUtil.isNotEmpty(config.getArmyConfigList())) {
             List<BaseUnit> baseUnits = new ArrayList<>();
             for (BaseUnit baseUnit : map.getUnits()) {
                 boolean isRemove = false;
                 for (ArmyConfig armyConfig : config.getArmyConfigList()) {
-                    if (armyConfig.getColor().equals(baseUnit.getColor()) && armyConfig.getType().equals(ArmyEnum.NO.type())) {
+                    if (armyConfig.getColor().equals(baseUnit.getColor()) && armyConfig.getType()
+                        .equals(ArmyEnum.NO.type())) {
                         isRemove = true;
                         break;
                     }
@@ -223,11 +242,11 @@ public class UserMapController {
     public RespJson saveUserMap(@RequestBody @Validated UserMap userMap, BindingResult result) {
         // 管理员创建地图默认是遭遇战地图
         if (AuthUtil.getUserId().equals(1)) {
+            // TODO 后面去掉
             userMap.setType(GameTypeEnum.ENCOUNTER.type());
-
         }
         if (StringUtil.isNotBlack(userMap.getUuid())) {
-            UserMap map = userMapService.getUserMapByUUID(userMap.getUuid());
+            UserMap map = userMapService.getUserMapById(userMap.getUuid());
             map.setRegions(userMap.getRegions());
             map.setUnits(userMap.getUnits());
             userMapService.updateUserMapById(map);
@@ -236,6 +255,7 @@ public class UserMapController {
             if (map != null) {
                 return RespUtil.error(42000);
             }
+            userMap.setUnSave(BaseConstant.NO);
             userMapService.saveMap(userMap);
         }
         return RespUtil.successResJson();
@@ -254,8 +274,7 @@ public class UserMapController {
     }
 
     /**
-     * 获取遭遇战地图
-     * 遭遇战地图定义 admin 创建 type 是 encounter
+     * 获取遭遇战地图 遭遇战地图定义 admin 创建 type 是 encounter
      */
     @GetMapping("/encounterMap")
     public RespJson getEncounterMap() {
@@ -270,8 +289,7 @@ public class UserMapController {
     }
 
     /**
-     * 获取遭遇战地图的 可选则的设定
-     * // 包括 初始金额,最大金额 初始人口,最大人口, 所有队伍
+     * 获取遭遇战地图的 可选则的设定 包括 初始金额,最大金额 初始人口,最大人口, 所有队伍
      */
     @GetMapping("/encounter/initSetting")
     public RespJson getEncounterInitSetting(@RequestParam String uuid) {

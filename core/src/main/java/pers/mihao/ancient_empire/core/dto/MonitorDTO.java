@@ -19,6 +19,8 @@ public class MonitorDTO {
 
     private String noMap;
 
+    private String session;
+
     private String all;
 
     public String getGameId() {
@@ -75,5 +77,13 @@ public class MonitorDTO {
 
     public void setAll(String all) {
         this.all = all;
+    }
+
+    public String getSession() {
+        return session;
+    }
+
+    public void setSession(String session) {
+        this.session = session;
     }
 }

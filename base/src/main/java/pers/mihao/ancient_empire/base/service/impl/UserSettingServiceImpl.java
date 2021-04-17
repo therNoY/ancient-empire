@@ -9,9 +9,11 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.dao.RegionMesDAO;
 import pers.mihao.ancient_empire.base.dao.UserSettingDAO;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.service.UserSettingService;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 
 
 /**
@@ -33,7 +35,11 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     @Override
     @Cacheable(CatchKey.USER_SETTING)
     public UserSetting getUserSettingById(Integer id) {
-        return userSettingDao.selectById(id);
+        UserSetting userSetting = userSettingDao.selectById(id);
+        if (StringUtil.isBlack(userSetting.getMapInitRegionType())) {
+            userSetting.setMapInitRegionType(RegionEnum.SEA.type());
+        }
+        return userSetting;
     }
 
     @Override
