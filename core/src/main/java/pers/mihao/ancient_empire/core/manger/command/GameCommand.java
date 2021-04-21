@@ -40,6 +40,11 @@ public class GameCommand extends AbstractCommand{
     private Integer unitIndex;
 
     /**
+     * 延迟
+     */
+    private Integer delay;
+
+    /**
      * 非通用信息
      */
     private JSONObject extMes;
@@ -82,6 +87,14 @@ public class GameCommand extends AbstractCommand{
 
     public void setUnitIndex(Integer unitIndex) {
         this.unitIndex = unitIndex;
+    }
+
+    public Integer getDelay() {
+        return delay;
+    }
+
+    public void setDelay(Integer delay) {
+        this.delay = delay;
     }
 
     public JSONObject getExtMes() {

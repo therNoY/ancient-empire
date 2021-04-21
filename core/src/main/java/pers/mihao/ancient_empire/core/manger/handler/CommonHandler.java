@@ -85,6 +85,8 @@ public class CommonHandler extends AbstractGameEventHandler {
         addUnit.put(ExtMes.UNIT, unit);
         addUnit.put(ExtMes.ARMY_INDEX, armyIndex);
         commandStream().toGameCommand().addOrderCommand(GameCommendEnum.ADD_UNIT, addUnit);
+        // 这里深度拷贝一个新的单位防止对象数据变化
+        addUnit.put(ExtMes.UNIT, BeanUtil.deptClone(unit));
     }
 
     /**
@@ -346,6 +348,7 @@ public class CommonHandler extends AbstractGameEventHandler {
             unitStatusInfoDTO.setDone(true);
             unitStatusInfoDTO.setUpdateCurr(true);
             changeUnitStatus(unitStatusInfoDTO);
+            // 回调单位结束
             gameContext.onUnitDone(unitInfo, this);
         }
         gameContext.setStatusMachine(StatusMachineEnum.INIT);

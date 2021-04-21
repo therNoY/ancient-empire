@@ -10,6 +10,7 @@ import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.enums.ColorEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
@@ -30,7 +31,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     private static GameSessionManger sessionManger;
 
-    protected static final int LOAD = 13;
+    protected static final int LOAD = 10;
 
     protected static final int FRIEND_CAMP = 1;
 
@@ -43,6 +44,9 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     protected static final String ENEMY_RED = ColorEnum.RED.type();
 
     protected static final String ENEMY_BLACK = ColorEnum.BLACK.type();
+
+    private boolean isEffective = true;
+
 
     private final Object lockObj = new Object();
 
@@ -103,7 +107,6 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     }
 
     protected void addDialogAndWait(DialogEnum type, String message) {
-        sendCommandNow();
         addDialog(type, ChapterUtil.getMessage(message));
         // 等待用户点击
         await();
@@ -120,7 +123,10 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
                 e.printStackTrace();
             }
         }
-
+        if (!isEffective) {
+            log.error("无效的上下文 抛出异常结束 释放线程");
+            throw new AncientEmpireException("无效的上下文");
+        }
     }
 
     protected void await(int time) {
@@ -135,13 +141,21 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     }
 
     protected void notifySelf() {
+        notifySelf(true);
+    }
+
+    public void notifySelf(boolean isEffective) {
         synchronized (lockObj) {
+            if (!isEffective) {
+                this.isEffective = false;
+            }
             lockObj.notifyAll();
         }
     }
 
     protected void gameOver() {
         addDialog(DialogEnum.GAME_OVER, ChapterUtil.getMessage("GAME_OVER"));
+
         onGameOver();
     }
 
@@ -183,25 +197,30 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     }
 
 
-    protected void addUnitAndMove(Integer armyIndex, Integer typeId, Site start, Site end) {
-        Unit unit = addNewUnit(typeId, start, armyIndex);
-        moveUnit(unit.getId(), start, end);
+    protected void addUnitAndMove(Integer armyIndex, Integer typeId, Site... sites) {
+        Unit unit = addNewUnit(typeId, sites[0], armyIndex);
+        moveUnit(unit.getId(), sites);
     }
 
-    protected void moveUnit(String uuid, Site start, Site end) {
+    protected void moveUnit(String uuid, Site... sites) {
         ArmyUnitIndexDTO armyUnitIndexDTO = getArmyUnitIndexByUnitId(uuid);
         List<PathPosition> pathPositions = new ArrayList<>();
-        pathPositions.add(new PathPosition(start));
-        pathPositions.add(new PathPosition(end));
+        for (int i = 0; i < sites.length; i++) {
+            pathPositions.add(new PathPosition(sites[i]));
+        }
+
         // 将路径长度放进去
         for (int i = 0; i < pathPositions.size() - 1; i++) {
             PathPosition p = pathPositions.get(i);
             p.setLength(getSiteLength(p, pathPositions.get(i + 1)));
         }
         moveUnit(armyUnitIndexDTO, pathPositions, new ArrayList<>());
+        commandList.get(commandList.size() - 1).setDelay(300);
+
+        // 手动更正位置
         Unit unit = getUnitByIndex(armyUnitIndexDTO);
-        unit.setRow(end.getRow());
-        unit.setColumn(end.getColumn());
+        unit.setRow(sites[sites.length - 1].getRow());
+        unit.setColumn(sites[sites.length - 1].getColumn());
     }
 
 }

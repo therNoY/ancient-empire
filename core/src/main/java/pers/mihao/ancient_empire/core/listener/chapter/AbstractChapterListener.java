@@ -152,11 +152,10 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
         }
     }
 
-    void changePoint(ArmyUnitIndexDTO attachIndex) {
+    void changeUnitPoint(ArmyUnitIndexDTO attachIndex) {
         Unit unit = getUnitByIndex(attachIndex);
         changeCurrPoint(unit);
         changeCurrUnit(unit);
-        sendCommandNow();
     }
 
 

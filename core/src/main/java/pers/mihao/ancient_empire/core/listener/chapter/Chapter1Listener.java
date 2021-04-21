@@ -1,12 +1,8 @@
 package pers.mihao.ancient_empire.core.listener.chapter;
 
-import java.util.ArrayList;
-import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
-import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
 import pers.mihao.ancient_empire.core.listener.chapter.enums.TriggerTypeEnum;
 
@@ -32,14 +28,17 @@ public class Chapter1Listener extends AbstractChapterListener {
         ArmyUnitIndexDTO attachIndex, beAttchIndex;
         attachIndex = new ArmyUnitIndexDTO(1, 0);
         beAttchIndex = new ArmyUnitIndexDTO(0, 3);
-        changePoint(beAttchIndex);
+        changeUnitPoint(beAttchIndex);
+        sendCommandNow();
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_1");
-        await(50);
-        changePoint(attachIndex);
+        await(500);
+        changeUnitPoint(attachIndex);
+        sendCommandNow();
         // 生成攻击事件
         showAttachAnim(AppUtil.getArrayByInt(-1, 100), attachIndex, beAttchIndex);
         sendUnitDeadCommend(getUnitInfoByIndex(beAttchIndex), beAttchIndex);
-        await(1200);
+        sendCommandNow();
+        await(1400);
         // 对话
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_2");
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_1_MESSAGE_3");
@@ -68,8 +67,13 @@ public class Chapter1Listener extends AbstractChapterListener {
      * 触发阶段一
      */
     public void triggerStage1() {
+        // 定时一段时间
+        await(500);
         addUnitAndMove(1, 2, new Site(2, 2), new Site(2, 3));
         addUnitAndMove(1, 1, new Site(11, 11), new Site(11, 10));
+        sendCommandNow();
+
+        await(1500);
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_5");
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_6");
     }

@@ -292,6 +292,13 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      * @param recordId
      */
     public void allUserLevel(String recordId) {
+        GameContext gameContext = contextMap.get(recordId);
+        for (GameRunListener listener : gameContext.getGameRunListeners()) {
+            if (listener instanceof AbstractGameRunListener) {
+                AbstractGameRunListener lockListener = (AbstractGameRunListener) listener;
+                lockListener.notifySelf(false);
+            }
+        }
         contextMap.remove(recordId);
     }
 

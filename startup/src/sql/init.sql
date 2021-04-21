@@ -10,7 +10,7 @@ CREATE TABLE game_room  (
   PRIMARY KEY (`room_id`)
 );
 
-alter table add
+
 
 
 CREATE TABLE `user_join_room`  (
@@ -50,17 +50,70 @@ drop procedure IF EXISTS executUpdateSql $$
 delimiter ;
 
 
-CREATE TABLE `game_map`  (
-  `uuid` varchar(12) NOT NULL,
-  `units_string` varchar(1024) NULL,
-  `region_string` varchar(4096) NULL,
-  `map_name` varchar(255) NULL,
-  `row` tinyint(12) NULL,
-  `column` tinyint(12) NULL,
-  `create_user_id` int(12) NULL,
-  `create_time` datetime NULL,
-  `type` varchar(12) NULL,
-  `un_save` tinyint(1) NULL,
-  `template_id` int(12) NULL,
-  PRIMARY KEY (`uuid`)
-);
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : 127.0.0.1
+ Source Server Type    : MySQL
+ Source Server Version : 50724
+ Source Host           : 127.0.0.1:3306
+ Source Schema         : ancient_empire
+
+ Target Server Type    : MySQL
+ Target Server Version : 50724
+ File Encoding         : 65001
+
+ Date: 21/04/2021 18:55:06
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for user_map
+-- ----------------------------
+DROP TABLE IF EXISTS `user_map`;
+CREATE TABLE `user_map`  (
+  `uuid` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `units_string` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `region_string` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `map_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `map_row` tinyint(12) NULL DEFAULT NULL,
+  `map_column` tinyint(12) NULL DEFAULT NULL,
+  `create_user_id` int(12) NULL DEFAULT NULL,
+  `create_time` datetime(0) NULL DEFAULT NULL,
+  `type` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `un_save` tinyint(1) NULL DEFAULT NULL,
+  `template_id` int(12) NULL DEFAULT NULL,
+  PRIMARY KEY (`uuid`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user_record
+-- ----------------------------
+DROP TABLE IF EXISTS `user_record`;
+CREATE TABLE `user_record`  (
+  `uuid` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `template_id` int(12) NULL DEFAULT NULL,
+  `map_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `max_pop` tinyint(12) NULL DEFAULT NULL,
+  `game_map_string` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `army_list_string` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `tomb_list_string` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `record_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `create_user_id` int(12) NULL DEFAULT NULL,
+  `create_time` datetime(0) NULL DEFAULT NULL,
+  `type` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `un_save` tinyint(1) NULL DEFAULT NULL,
+  `curr_army_index` tinyint(12) NULL DEFAULT NULL,
+  `curr_player` int(12) NULL DEFAULT NULL,
+  `current_round` tinyint(12) NULL DEFAULT NULL,
+  `curr_unit_uuid` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `curr_region_index` int(12) NULL DEFAULT NULL,
+  `curr_point_row` int(12) NULL DEFAULT NULL,
+  `curr_point_column` int(12) NULL DEFAULT NULL,
+  PRIMARY KEY (`uuid`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
