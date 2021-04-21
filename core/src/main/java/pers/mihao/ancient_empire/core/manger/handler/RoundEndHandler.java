@@ -8,6 +8,7 @@ import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.RegionInfo;
 import pers.mihao.ancient_empire.base.bo.Tomb;
 import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
@@ -45,6 +46,8 @@ public class RoundEndHandler extends CommonHandler {
         if (currArmy().getPlayer() == null) {
             robotManger.startRobot(gameContext);
         }
+
+        gameContext.onRoundEnd(currArmy());
     }
 
     /**
@@ -175,7 +178,9 @@ public class RoundEndHandler extends CommonHandler {
 
             if (isDead) {
                 // 单位死亡
-                sendUnitDeadCommend(getUnitInfoByUnit(unit), new ArmyUnitIndexDTO(record().getCurrArmyIndex(), i));
+                UnitInfo deadUnit = getUnitInfoByUnit(unit);
+                sendUnitDeadCommend(deadUnit, new ArmyUnitIndexDTO(record().getCurrArmyIndex(), i));
+                gameContext.onUnitDead(record().getCurrArmyIndex(), deadUnit, this);
             }
 
             // 根据是否设置index 判断单位状态是否有变化

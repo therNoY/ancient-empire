@@ -106,7 +106,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         if (commandList == null) {
             commandList = new ArrayList<>();
         }
-        gameContext.onGameCommandAdd(command);
+        gameContext.onGameCommandAdd(command, (CommonHandler) this);
         commandList.add(command);
         return this;
     }
@@ -287,6 +287,8 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         gameCoreManger.handleCommand(commandList, gameContext.getGameId());
         commandList = new ArrayList<>();
     }
+
+
 
 
 }

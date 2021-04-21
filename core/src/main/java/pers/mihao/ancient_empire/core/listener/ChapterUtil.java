@@ -6,6 +6,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.common.util.PropertiesUtil;
+import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 
 /**
  * @Author mh32736
@@ -25,11 +26,11 @@ public class ChapterUtil {
     }
 
 
-    public static AbstractGameRunListener getChapterClass(String mapName) {
+    public static AbstractChapterListener getChapterClass(String mapName) {
         String chapterClass = map.get(String.valueOf(mapName));
-        AbstractGameRunListener listener = null;
+        AbstractChapterListener listener = null;
         try {
-            listener = (AbstractGameRunListener) Class.forName(chapterClass).newInstance();
+            listener = (AbstractChapterListener) Class.forName(chapterClass).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
         }

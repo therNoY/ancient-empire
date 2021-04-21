@@ -206,6 +206,7 @@ public class GameCoreEndpointServer {
         switch (netConnectType) {
             case STAND_GAME:
             case NET_GAME:
+            case CHAPTER_GAME:
                 try {
                     // 校验参数
                     GameEvent gameEvent = warpEventMessage(message, GameEvent.class);
@@ -269,6 +270,7 @@ public class GameCoreEndpointServer {
         switch (netConnectType) {
             case STAND_GAME:
             case NET_GAME:
+            case CHAPTER_GAME:
                 gameSessionManger.removeGameSession(id, session);
                 break;
             case CREATE_ROOM:

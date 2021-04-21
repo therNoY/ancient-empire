@@ -579,6 +579,24 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
     }
 
     /**
+     * 获取当前单位的index
+     *
+     * @return
+     */
+    public ArmyUnitIndexDTO getArmyUnitIndexByUnitId(String uuid) {
+        for (int i = 0; i < record().getArmyList().size(); i++) {
+            Army army = record().getArmyList().get(i);
+            for (int j = 0; j < army.getUnits().size(); j++) {
+                Unit unit = army.getUnits().get(j);
+                if (unit.getId().equals(uuid)) {
+                    return new ArmyUnitIndexDTO(i, j);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * 获取unitInfo 通过位置获取
      *
      * @param site

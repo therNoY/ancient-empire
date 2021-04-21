@@ -3,7 +3,6 @@ package pers.mihao.ancient_empire.common.util.reflact;
 import java.util.UUID;
 import org.junit.Test;
 import pers.mihao.ancient_empire.common.annotation.NotGenerator;
-import pers.mihao.ancient_empire.common.jdbc.mongo.MongodbConverter;
 
 import java.util.List;
 

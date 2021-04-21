@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.websocket.Session;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 
 /**
@@ -82,9 +83,12 @@ public abstract class AbstractSession implements Serializable {
         this.levelDate = levelDate;
     }
 
+    @KnowledgePoint("session并发高会报错 The remote endpoint was in state [TEXT_FULL_WRITING]")
     public void sendCommand(Command command) throws IOException {
         SerializeConfig config = new SerializeConfig();
         config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-        session.getBasicRemote().sendText(JSONObject.toJSONString(command, config));
+        synchronized (session) {
+            session.getBasicRemote().sendText(JSONObject.toJSONString(command, config));
+        }
     }
 }

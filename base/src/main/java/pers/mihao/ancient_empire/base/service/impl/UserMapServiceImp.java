@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.enums.UserEnum;
@@ -227,12 +226,6 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
      */
     @Override
     public void updateUserMapById(UserMap userMap) {
-        Update update = new Update();
-        update.set("type", userMap.getType());
-        update.set("units", userMap.getUnits());
-        update.set("regions", userMap.getRegions());
-        update.set("mapName", userMap.getMapName());
-        removeUserMapCatch(userMap);
         saveOrUpdate(userMap);
     }
 
@@ -328,6 +321,14 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
         return userMapDAO.getFirstByCreateUserIdAndUnSave(userId);
     }
 
+
+    @Override
+    public List<UserMap> getStoreMapList() {
+        QueryWrapper<UserMap> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "store");
+        return userMapDAO.selectList(queryWrapper);
+    }
+
     @Override
     public List<UserMap> getUserDownloadMapList(ApiConditionDTO apiConditionDTO) {
         // TODO
@@ -339,6 +340,8 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
         // TODO
         return null;
     }
+
+
 
     /**
      * 找到index 周围的海洋

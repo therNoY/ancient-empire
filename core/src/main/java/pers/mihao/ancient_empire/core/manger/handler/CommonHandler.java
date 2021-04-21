@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,11 +20,13 @@ import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.end.EndStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
@@ -67,12 +70,14 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param site
      * @param armyIndex
      */
-    public void addNewUnit(Integer unitId, Site site, Integer armyIndex) {
-        addNewUnit(UnitFactory.createUnit(unitId, site), armyIndex);
+    public Unit addNewUnit(Integer unitId, Site site, Integer armyIndex) {
+        Unit unit = UnitFactory.createUnit(unitId, site);
+        addNewUnit(unit, armyIndex);
+        return unit;
     }
 
-    protected void addNewUnit(Integer unitId, Site site) {
-        addNewUnit(unitId, site, record().getCurrArmyIndex());
+    protected Unit addNewUnit(Integer unitId, Site site) {
+        return addNewUnit(unitId, site, record().getCurrArmyIndex());
     }
 
     protected void addNewUnit(Unit unit, Integer armyIndex){
@@ -99,8 +104,9 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param row
      * @param column
      */
-    public void showAttachAnim(Integer[] attach, Site attSite, Site beAtt, ArmyUnitIndexDTO attIndex, ArmyUnitIndexDTO beAttIndex) {
-
+    public void showAttachAnim(Integer[] attach, ArmyUnitIndexDTO attIndex, ArmyUnitIndexDTO beAttIndex) {
+        Site attSite = getUnitByIndex(attIndex);
+        Site beAtt = getUnitByIndex(beAttIndex);
         // 1. 展示血量变化,
         List<LifeChangeDTO> leftChangeDTOS = new ArrayList<>();
         leftChangeDTOS.add(new LifeChangeDTO(attach, beAtt));
@@ -148,6 +154,23 @@ public class CommonHandler extends AbstractGameEventHandler {
     public void changeCurrPoint(Site site) {
         // 设置当前点
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_POINT, site);
+    }
+
+    /**
+     * 移动单位
+     * @param armyUnitIndexDTO 军队和单位的index
+     * @param readyMoveLine 移动路线
+     * @param actions 移动结束展示action
+     */
+    public void moveUnit(ArmyUnitIndexDTO armyUnitIndexDTO, List<PathPosition> readyMoveLine, Collection<String> actions) {
+        JSONObject extMes = new JSONObject();
+        extMes.put(ExtMes.MOVE_LINE, readyMoveLine);
+        extMes.put(ExtMes.ARMY_INDEX, armyUnitIndexDTO.getArmyIndex());
+        extMes.put(ExtMes.ACTIONS, actions);
+        if (CollectionUtil.isNotEmpty(actions)) {
+            extMes.put(ExtMes.SITE, currSite());
+        }
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.MOVE_UNIT, extMes, armyUnitIndexDTO.getUnitIndex());
     }
 
 
@@ -202,7 +225,7 @@ public class CommonHandler extends AbstractGameEventHandler {
         if (isHasTomb) {
             commandStream().toGameCommand().addOrderCommand(GameCommendEnum.ADD_TOMB, unit);
         }
-        gameContext.onUnitDead(unit);
+
     }
 
 
@@ -274,8 +297,11 @@ public class CommonHandler extends AbstractGameEventHandler {
             changeUnitStatus(endUnitDTO.getUnitStatusInfoDTOS());
         }
         // 处理单位死亡
+        UnitInfo deadUnitInfo;
         for (UnitDeadDTO deadDTO : endUnitDTO.getUnitDeadDTOList()) {
-            sendUnitDeadCommend(getUnitInfoByIndex(deadDTO), deadDTO);
+            deadUnitInfo = getUnitInfoByIndex(deadDTO);
+            sendUnitDeadCommend(deadUnitInfo, deadDTO);
+            gameContext.onUnitDead(deadDTO.getArmyIndex(), deadUnitInfo, this);
         }
 
         // 修改单位的状态有顺序（结束回合）
@@ -305,6 +331,7 @@ public class CommonHandler extends AbstractGameEventHandler {
                         desLift = changeLifeByDestroyTomb - currUnit().getLife();
                         unitDead = true;
                         sendUnitDeadCommend(currUnit(), currUnitArmyIndex());
+                        gameContext.onUnitDead(currUnitArmyIndex().getArmyIndex(), currUnit(), this);
                     } else {
                         unitStatusInfoDTO.setLife(unitInfo.getLife() - changeLifeByDestroyTomb);
                     }
@@ -319,7 +346,7 @@ public class CommonHandler extends AbstractGameEventHandler {
             unitStatusInfoDTO.setDone(true);
             unitStatusInfoDTO.setUpdateCurr(true);
             changeUnitStatus(unitStatusInfoDTO);
-            gameContext.onUnitDone(unitInfo);
+            gameContext.onUnitDone(unitInfo, this);
         }
         gameContext.setStatusMachine(StatusMachineEnum.INIT);
     }
@@ -412,6 +439,10 @@ public class CommonHandler extends AbstractGameEventHandler {
         commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
     }
 
+
+    public List<GameCommand> getCommandList() {
+        return commandList;
+    }
 
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {}

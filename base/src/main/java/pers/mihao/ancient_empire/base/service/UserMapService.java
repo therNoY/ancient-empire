@@ -142,4 +142,10 @@ public interface UserMapService extends IService<UserMap> {
      * @param createUserId
      */
     void removeUserMapCatch(Integer createUserId);
+
+    /**
+     * 获取故事模式地图
+     * @return
+     */
+    List<UserMap> getStoreMapList();
 }

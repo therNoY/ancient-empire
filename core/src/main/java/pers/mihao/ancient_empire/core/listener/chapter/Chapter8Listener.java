@@ -12,9 +12,19 @@ public class Chapter8Listener extends AbstractChapterListener {
 
 
     @Override
+    protected void initConditions() {
+
+    }
+
+    @Override
+    protected void onChapterGameOver() {
+
+    }
+
+    @Override
     public void onChapterGameStart() {
         addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_8_OBJECTIVE");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_8_MESSAGE_1");
+        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_8_MESSAGE_1");
     }
 
 

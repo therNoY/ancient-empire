@@ -30,10 +30,17 @@ public interface GameRunListener {
     void onRoundStart(Army army);
 
     /**
+     * 回合结束 当前军队回合结束
+     * @param army
+     */
+    void onRoundEnd(Army army);
+
+    /**
      * 有单位死亡
+     * @param armyIndex
      * @param unitInfo
      */
-    void onUnitDead(UnitInfo unitInfo);
+    void onUnitDead(Integer armyIndex, UnitInfo unitInfo);
 
     /**
      * 单位结束移动

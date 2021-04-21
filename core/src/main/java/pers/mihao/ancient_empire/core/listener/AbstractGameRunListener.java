@@ -5,9 +5,13 @@ import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.enums.ColorEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
+import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
@@ -29,6 +33,8 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     protected static final int LOAD = 13;
 
     protected static final int FRIEND_CAMP = 1;
+
+    protected static final int ENEMY_CAMP = 2;
 
     protected static final String FRIEND_BLUE = ColorEnum.BLUE.type();
 
@@ -60,7 +66,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     }
 
     @Override
-    public void onUnitDead(UnitInfo unitInfo) {
+    public void onUnitDead(Integer armyIndex, UnitInfo unitInfo) {
 
     }
 
@@ -89,50 +95,76 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
         return respUnitMes;
     }
 
-    public void addDialog(DialogEnum type, String message) {
+    private void addDialog(DialogEnum type, String message) {
         ShowDialogCommand showDialogCommand = new ShowDialogCommand();
-        showDialogCommand.setDialogType(type);
+        showDialogCommand.setDialogType(type.type());
         showDialogCommand.setMessage(message);
         sessionManger.sendMessage2Game(showDialogCommand, gameContext.getGameId());
     }
 
-    public void addDialogAndWait(DialogEnum type, String message) {
-        gameContext.getHandler().sendCommandNow();
-        ChapterUtil.getMessage(message);
-        addDialog(type, message);
+    protected void addDialogAndWait(DialogEnum type, String message) {
+        sendCommandNow();
+        addDialog(type, ChapterUtil.getMessage(message));
+        // 等待用户点击
         await();
+        ShowDialogCommand showDialogCommand = new ShowDialogCommand();
+        showDialogCommand.setDialogType(DialogEnum.DIS_SHOW_DIALOG.type());
+        sessionManger.sendMessage2Game(showDialogCommand, gameContext.getGameId());
     }
 
-    protected void await() {
-        try {
-            lockObj.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    private void await() {
+        synchronized (lockObj) {
+            try {
+                lockObj.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
+    }
+
+    protected void await(int time) {
+        synchronized (lockObj) {
+            try {
+                lockObj.wait(time);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     protected void notifySelf() {
-        lockObj.notifyAll();
+        synchronized (lockObj) {
+            lockObj.notifyAll();
+        }
     }
 
     protected void gameOver() {
+        addDialog(DialogEnum.GAME_OVER, ChapterUtil.getMessage("GAME_OVER"));
+        onGameOver();
     }
+
+    protected void onGameOver(){}
 
     protected void gameWin() {
         onGameWin();
-        // TODO
+        addDialog(DialogEnum.GAME_WIN, ChapterUtil.getMessage("GAME_WIN"));
     }
 
-    protected void onGameWin() {
+    protected void onGameWin() {}
+
+    @Override
+    public void onRoundEnd(Army army) {
+
     }
-
-
 
     protected List<Site> getEnemyCastle() {
         List<Site> list = new ArrayList<>();
         for (int i = 0; i < gameMap().getRegions().size(); i++) {
             Region region = gameMap().getRegions().get(i);
-            if (region.getColor().equals(ENEMY_RED) || region.getColor().equals(ENEMY_BLACK)) {
+            if ((region.getColor().equals(ENEMY_RED) || region.getColor().equals(ENEMY_BLACK))
+                && region.getType().equals(RegionEnum.CASTLE.type())) {
                 list.add(getSiteByRegionIndex(i));
             }
         }
@@ -150,5 +182,26 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
         return list;
     }
 
+
+    protected void addUnitAndMove(Integer armyIndex, Integer typeId, Site start, Site end) {
+        Unit unit = addNewUnit(typeId, start, armyIndex);
+        moveUnit(unit.getId(), start, end);
+    }
+
+    protected void moveUnit(String uuid, Site start, Site end) {
+        ArmyUnitIndexDTO armyUnitIndexDTO = getArmyUnitIndexByUnitId(uuid);
+        List<PathPosition> pathPositions = new ArrayList<>();
+        pathPositions.add(new PathPosition(start));
+        pathPositions.add(new PathPosition(end));
+        // 将路径长度放进去
+        for (int i = 0; i < pathPositions.size() - 1; i++) {
+            PathPosition p = pathPositions.get(i);
+            p.setLength(getSiteLength(p, pathPositions.get(i + 1)));
+        }
+        moveUnit(armyUnitIndexDTO, pathPositions, new ArrayList<>());
+        Unit unit = getUnitByIndex(armyUnitIndexDTO);
+        unit.setRow(end.getRow());
+        unit.setColumn(end.getColumn());
+    }
 
 }

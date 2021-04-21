@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
@@ -25,6 +26,7 @@ import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
 import pers.mihao.ancient_empire.core.listener.GameContextHelperListener;
 import pers.mihao.ancient_empire.core.listener.ChapterUtil;
 import pers.mihao.ancient_empire.core.listener.GameRunListener;
+import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
@@ -93,7 +95,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         User user = event.getUser();
         GameContext.setUser(user);
         GameContext gameContext = contextMap.get(event.getId());
-        String player = gameContext.getHandler().currArmy().getPlayer();
+        String player = gameContext.getUserRecord().getArmyList().get(gameContext.getUserRecord().getCurrArmyIndex()).getPlayer();
         if (StringUtil.isNotBlack(player) && !player.equals(user.getId().toString())) {
             // 不是当前回合用户触发的事件不处理
             return;
@@ -214,9 +216,13 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 coreListener.setGameContext(gameContext);
                 listeners.add(coreListener);
                 if (gameType.equals(GameTypeEnum.STORY)) {
-                    AbstractGameRunListener gameRunListener = ChapterUtil.getChapterClass(userMap.getMapName());
+                    AbstractChapterListener gameRunListener = ChapterUtil.getChapterClass(userMap.getMapName());
                     if (gameRunListener != null) {
                         gameRunListener.setGameContext(gameContext);
+                        userRecord.setMaxPop(gameRunListener.getMaxPop());
+                        for (Army army : userRecord.getArmyList()) {
+                            army.setMoney(gameRunListener.getInitMoney());
+                        }
                         listeners.add(gameRunListener);
                     }
                 }
@@ -246,7 +252,6 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     private void onGameStart(GameContext gameContext) {
         log.info("玩家全部加入可以开始游戏:{}", gameContext.getGameId());
         gameContext.setStartTime(new Date());
-        gameContext.getHandler().setGameContext(gameContext);
         gameContext.onGameStart();
 
     }

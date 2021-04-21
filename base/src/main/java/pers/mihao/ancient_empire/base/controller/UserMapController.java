@@ -282,6 +282,11 @@ public class UserMapController {
         return RespUtil.successResJson(encounterMaps);
     }
 
+    /**
+     * 获取可以下子的地图
+     * @param apiConditionDTO
+     * @return
+     */
     @GetMapping("/api/worldMap/list")
     public RespJson getWorldMapList(ApiConditionDTO apiConditionDTO) {
         List<UserMap> mapList = userMapService.getWorldMapList(apiConditionDTO);
@@ -295,6 +300,12 @@ public class UserMapController {
     public RespJson getEncounterInitSetting(@RequestParam String uuid) {
         List<String> colors = userMapService.getInitArmy(uuid);
         return RespUtil.successResJson(colors);
+    }
+
+    @GetMapping("/map/store/list")
+    public RespJson getStoreMapList(){
+        List<UserMap> userMaps = userMapService.getStoreMapList();
+        return RespUtil.successResJson(userMaps);
     }
 
     /**

@@ -7,6 +7,7 @@ import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
+import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
 import pers.mihao.ancient_empire.core.listener.GameRunListener;
+import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
@@ -25,14 +27,12 @@ import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
  * @Author mh32736
  * @Date 2020/9/9 20:53
  */
-public class GameContext extends UserTemplateHelper implements GameRunListener {
+public class GameContext extends UserTemplateHelper {
 
     /**
      * 当前处理命令玩家
      */
     private static ThreadLocal<User> currHandleUser = new ThreadLocal<>();
-
-    private CommonHandler handler = new CommonHandler();
 
     /**
      * 唯一的GameId与创建的用户存档Id一样
@@ -287,7 +287,6 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
     }
 
 
-    @Override
     public void onGameStart() {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
@@ -297,7 +296,6 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
 
     }
 
-    @Override
     public void onClickTip() {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
@@ -306,26 +304,37 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
         }
     }
 
-    @Override
-    public void onUnitDead(UnitInfo unitInfo) {
+    public void onUnitDead(Integer armyIndex, UnitInfo unitInfo, CommonHandler handler) {
+        handler.sendCommandNow();
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
-                listener.onUnitDead(unitInfo);
+                listener.onUnitDead(armyIndex, unitInfo);
+                addCommonList(handler, listener);
             }
         }
     }
 
-    @Override
-    public void onUnitDone(UnitInfo unitInfo) {
+    private void addCommonList(CommonHandler handler, GameRunListener listener) {
+        if (listener instanceof AbstractChapterListener) {
+            AbstractChapterListener chapterListener = (AbstractChapterListener) listener;
+            List<GameCommand> commands = chapterListener.getCommandList();
+            if (CollectionUtil.isNotEmpty(commands)) {
+                handler.getCommandList().addAll(commands);
+                commands.clear();
+            }
+        }
+    }
+
+    public void onUnitDone(UnitInfo unitInfo, CommonHandler handler) {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
                 listener.onUnitDone(unitInfo);
+                addCommonList(handler, listener);
             }
         }
     }
 
-    @Override
-    public boolean onGameCommandAdd(GameCommand command) {
+    public boolean onGameCommandAdd(GameCommand command, CommonHandler handler) {
         boolean res = true;
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
@@ -335,7 +344,6 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
         return res;
     }
 
-    @Override
     public void onRoundStart(Army army) {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
@@ -344,7 +352,14 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
         }
     }
 
-    @Override
+    public void onRoundEnd(Army army) {
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.onRoundEnd(army);
+            }
+        }
+    }
+
     public void onUnitStatusChange(GameCommand command, Stream stream) {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
@@ -353,7 +368,6 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
         }
     }
 
-    @Override
     public List<UnitInfo> filterUnit(List<UnitInfo> respUnitMes) {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
@@ -363,7 +377,5 @@ public class GameContext extends UserTemplateHelper implements GameRunListener {
         return respUnitMes;
     }
 
-    public CommonHandler getHandler(){
-        return handler;
-    }
+
 }

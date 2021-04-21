@@ -1,8 +1,10 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import java.util.List;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
+import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
@@ -27,26 +29,22 @@ public class ClickAimPointHandler extends CommonHandler{
         if (subStateIn(SubStatusMachineEnum.SECOND_MOVE)) {
             // 二次移动直接结束单位的移动
             ArmyUnitIndexDTO armyUnitIndexDTO = currUnitArmyIndex();
-            JSONObject extMes = new JSONObject();
-            extMes.put(ExtMes.MOVE_LINE, gameContext.getReadyMoveLine());
-            extMes.put(ExtMes.ACTIONS, new ArrayList<>());
-            commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
-                    .toGameCommand().addOrderCommand(GameCommendEnum.MOVE_UNIT, extMes, armyUnitIndexDTO.getUnitIndex());
+
+            commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
+            moveUnit(armyUnitIndexDTO, gameContext.getReadyMoveLine(), new ArrayList<>());
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
             sendEndUnitCommend(currUnit(), armyUnitIndexDTO);
         }else {
             Set<String> actions = ActionStrategy.getInstance().getActionList(getCurrUnitAttachArea(), record(), record().getCurrPoint());
 
             // 不展示移动范围
-            JSONObject extMes = new JSONObject();
-            extMes.put(ExtMes.MOVE_LINE, gameContext.getReadyMoveLine());
-            extMes.put(ExtMes.ACTIONS, actions);
-            extMes.put(ExtMes.SITE, currSite());
-            commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA)
-                    .toGameCommand().addCommand(GameCommendEnum.MOVE_UNIT, extMes, getCurrUnitIndex());
+            commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
+            moveUnit(currUnitArmyIndex(), gameContext.getReadyMoveLine(), actions);
             gameContext.setStartMoveSite(currUnit());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
             gameContext.setActions(actions);
         }
     }
+
+
 }

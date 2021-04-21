@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.common.util.reflact;
 
-import pers.mihao.ancient_empire.common.jdbc.mongo.annotation.QueryField;
 
 /**
  * @version 1.0
@@ -9,12 +8,10 @@ import pers.mihao.ancient_empire.common.jdbc.mongo.annotation.QueryField;
  */
 public class BaseMapInfoTestVO {
 
-    @QueryField("mapId")
     private String uuid;
     // 地图的名字
     private String mapName;
     // 列
-    @QueryField(query = false)
     private Integer row;
     // 行
     private Integer column;
@@ -49,7 +46,6 @@ public class BaseMapInfoTestVO {
         this.row = row;
     }
 
-    @QueryField(query = false)
     public Integer getColumn() {
         return column;
     }

@@ -12,6 +12,16 @@ public class Chapter7Listener extends AbstractChapterListener {
 
 
     @Override
+    protected void initConditions() {
+
+    }
+
+    @Override
+    protected void onChapterGameOver() {
+
+    }
+
+    @Override
     public void onChapterGameStart() {
         addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_7_OBJECTIVE_1");
         addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_7_OBJECTIVE_2");

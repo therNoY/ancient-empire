@@ -4,7 +4,7 @@
 
   <delete id="delOtherUnSave">
     DELETE FROM user_record where create_user_id = #{userId} and un_save = '1' and uuid != #{uuid}
-    and type = 'encounter'
+    and (type = 'encounter' or type = 'story')
   </delete>
 
 

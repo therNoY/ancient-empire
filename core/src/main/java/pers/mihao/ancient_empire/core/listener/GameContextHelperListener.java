@@ -41,8 +41,8 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     public void onGameStart() {
         log.info("{}开始", gameContext.getGameId());
 
-        if (gameContext.getHandler().record().getCurrArmyIndex() == null) {
-            gameContext.getHandler().record().setCurrArmyIndex(1);
+        if (record().getCurrArmyIndex() == null) {
+            record().setCurrArmyIndex(1);
         }
 
         if (StringUtil.isBlack(gameContext.getUserRecord().getCurrPlayer())) {
@@ -53,7 +53,7 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     }
 
     @Override
-    public void onUnitDead(UnitInfo unitInfo) {
+    public void onUnitDead(Integer armyIndex, UnitInfo unitInfo) {
         log.info("{}单位死亡", unitInfo);
     }
 

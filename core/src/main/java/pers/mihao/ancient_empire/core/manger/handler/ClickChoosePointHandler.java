@@ -104,6 +104,8 @@ public class ClickChoosePointHandler extends CommonHandler {
      * @param gameEvent
      */
     private void handlerAttachUnit(GameEvent gameEvent) {
+        // 返回单位死亡的回调 不影响其他操作
+        List<Pair<ArmyUnitIndexDTO, UnitInfo>> deadUnits = new ArrayList<>();
 
         // 获取攻击单位和被攻击单位的信息
         ArmyUnitIndexDTO attachArmyUnitIndexDTO = currUnitArmyIndex();
@@ -120,12 +122,13 @@ public class ClickChoosePointHandler extends CommonHandler {
         commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA);
 
         // 展示攻击动画
-        showAttachAnim(attachResultDTO.getAttachResult().getAttach(), currUnit(), beAttachUnit, attachArmyUnitIndexDTO, beAttachArmyUnitIndexDTO);
+        showAttachAnim(attachResultDTO.getAttachResult().getAttach(), attachArmyUnitIndexDTO, beAttachArmyUnitIndexDTO);
 
         // 判断攻击是否死亡
         if (attachResultDTO.getAttachResult().getDead()) {
             // 发送单位死亡命令
             sendUnitDeadCommend(beAttachUnit, beAttachArmyUnitIndexDTO);
+            deadUnits.add(new Pair<>(beAttachArmyUnitIndexDTO, beAttachUnit));
         } else {
             // 没有死亡
             // 更新被攻击单位的状态 血量/经验/状态
@@ -137,7 +140,7 @@ public class ClickChoosePointHandler extends CommonHandler {
             if (attachResultDTO.getAntiAttack()) {
                 unitStatusInfoDTO.setExperience(attachResultDTO.getAntiAttackResult().getEndExperience());
                 // 展示反击动画
-                showAttachAnim(attachResultDTO.getAntiAttackResult().getAttach(), beAttachUnit, currUnit(), beAttachArmyUnitIndexDTO, attachArmyUnitIndexDTO);
+                showAttachAnim(attachResultDTO.getAntiAttackResult().getAttach(), beAttachArmyUnitIndexDTO, attachArmyUnitIndexDTO);
             }
 
             changeUnitStatus(unitStatusInfoDTO);
@@ -146,6 +149,7 @@ public class ClickChoosePointHandler extends CommonHandler {
         if (attachResultDTO.getAntiAttack() && attachResultDTO.getAntiAttackResult().getDead()) {
             // 发送单位死亡命令
             sendUnitDeadCommend(currUnit(), currUnitArmyIndex());
+            deadUnits.add(new Pair<>(currUnitArmyIndex(), currUnit()));
             gameContext.setSubStatusMachine(SubStatusMachineEnum.INIT);
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
         }else {
@@ -160,6 +164,10 @@ public class ClickChoosePointHandler extends CommonHandler {
             changeUnitStatus(unitStatusInfoDTO);
             // 结束
             endCurrentUnit(attachArmyUnitIndexDTO);
+        }
+
+        for (Pair<ArmyUnitIndexDTO, UnitInfo> pair : deadUnits) {
+            gameContext.onUnitDead(pair.getKey().getArmyIndex(), pair.getValue(), this);
         }
     }
 

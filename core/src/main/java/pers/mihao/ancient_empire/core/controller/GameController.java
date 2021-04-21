@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.core.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import java.awt.Color;
 import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import pers.mihao.ancient_empire.base.dto.ReqRoomIdDTO;
 import pers.mihao.ancient_empire.base.entity.*;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.ArmyEnum;
+import pers.mihao.ancient_empire.base.enums.ColorEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.util.AppUtil;
@@ -70,7 +72,7 @@ public class GameController {
     UserJoinRoomService userJoinRoomService;
 
     /**
-     * 用于单机遭遇战，联机遭遇战 通过用户设置的地图初始环境设置初始
+     * 用于单机遭遇战
      *
      * @param initMapDTO
      * @param result
@@ -81,12 +83,17 @@ public class GameController {
         int playerCount = 1;
         initMapDTO.setPlayer(new HashMap<>(16));
         // 1.获取用户地图
-        UserMap userMap = userMapService.getEncounterMapById(initMapDTO.getMapId());
+        UserMap userMap = userMapService.getUserMapById(initMapDTO.getMapId());
         if (userMap == null) {
             log.error("错误的地图信息{}", initMapDTO);
             return RespUtil.error();
         }
-
+        if (GameTypeEnum.STORY.type().equals(initMapDTO.getGameType())) {
+            List<String> colorList =  userMap.getUnits().stream().map(u->u.getColor()).collect(Collectors.toList());
+            initMapDTO.setArmyList(getDefaultArmyConfig().stream()
+                .filter(armyConfig -> colorList.contains(armyConfig.getColor()))
+                .collect(Collectors.toList()));
+        }
         // 2.生成文档注册上下文
         UserRecord userRecord = userRecordService.initMapRecord(initMapDTO, userMap);
         log.info("生成新的存档：{}， 注册游戏上下文", userRecord.getUuid());
@@ -95,6 +102,38 @@ public class GameController {
 
         // 3.返回前端保存
         return RespUtil.successResJson(userRecord);
+    }
+
+    private List<ArmyConfig> getDefaultArmyConfig() {
+        List<ArmyConfig> armyList = new ArrayList<>();
+        ArmyConfig armyConfig = new ArmyConfig();
+        armyConfig.setType(ArmyEnum.USER.type());
+        armyConfig.setColor(ColorEnum.BLUE.type());
+        armyConfig.setCamp(1);
+        armyConfig.setOrder(1);
+        armyList.add(armyConfig);
+
+        ArmyConfig armyConfig2 = new ArmyConfig();
+        armyConfig2.setType(ArmyEnum.AI.type());
+        armyConfig2.setColor(ColorEnum.RED.type());
+        armyConfig2.setCamp(2);
+        armyConfig2.setOrder(2);
+        armyList.add(armyConfig2);
+
+        ArmyConfig armyConfig3 = new ArmyConfig();
+        armyConfig3.setType(ArmyEnum.USER.type());
+        armyConfig3.setColor(ColorEnum.GREEN.type());
+        armyConfig3.setCamp(1);
+        armyConfig3.setOrder(3);
+        armyList.add(armyConfig3);
+
+        ArmyConfig armyConfig4 = new ArmyConfig();
+        armyConfig4.setType(ArmyEnum.AI.type());
+        armyConfig4.setColor(ColorEnum.BLACK.type());
+        armyConfig4.setCamp(2);
+        armyConfig4.setOrder(4);
+        armyList.add(armyConfig4);
+        return armyList;
     }
 
     /**

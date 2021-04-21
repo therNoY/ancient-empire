@@ -1,7 +1,14 @@
 package pers.mihao.ancient_empire.core.listener.chapter;
 
+import java.util.ArrayList;
+import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
+import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
+import pers.mihao.ancient_empire.core.listener.chapter.enums.TriggerTypeEnum;
 
 /**
  * 第一章监听处理类
@@ -10,23 +17,35 @@ import pers.mihao.ancient_empire.core.eums.DialogEnum;
  */
 public class Chapter1Listener extends AbstractChapterListener {
 
-    public Chapter1Listener() {
-        super.triggerSites = new Site[]{new Site(10, 10)};
-        super.maxStage = 1;
+
+    @Override
+    protected void initConditions() {
+//        TriggerCondition condition = new TriggerCondition(TriggerTypeEnum.ALL_DEAD);
+//        TriggerCondition condition = new TriggerCondition(TriggerTypeEnum.ANY_DONE);
+        TriggerCondition condition = new TriggerCondition(TriggerTypeEnum.ANY_DEAD);
+        triggerConditions = new TriggerCondition[]{condition};
     }
 
     @Override
     public void onChapterGameStart() {
-        addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_1_OBJECTIVE");
-        gameContext.getHandler().addNewUnit(1, null, 2);
-        gameContext.getHandler().addNewUnit(1, null, 1);
-        gameContext.getHandler().addNewUnit(1, null, 2);
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_1");
+        // 守城单位被攻击
+        ArmyUnitIndexDTO attachIndex, beAttchIndex;
+        attachIndex = new ArmyUnitIndexDTO(1, 0);
+        beAttchIndex = new ArmyUnitIndexDTO(0, 3);
+        changePoint(beAttchIndex);
+        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_1");
+        await(50);
+        changePoint(attachIndex);
+        // 生成攻击事件
+        showAttachAnim(AppUtil.getArrayByInt(-1, 100), attachIndex, beAttchIndex);
+        sendUnitDeadCommend(getUnitInfoByIndex(beAttchIndex), beAttchIndex);
+        await(1200);
+        // 对话
+        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_2");
+        addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_1_MESSAGE_3");
+        addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_1_MESSAGE_4");
 
-        gameContext.getHandler().showAttachAnim(null, null, null, null, null);
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_2");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_3");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_4");
+        addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_1_OBJECTIVE");
     }
 
 
@@ -34,21 +53,26 @@ public class Chapter1Listener extends AbstractChapterListener {
 
     @Override
     public void onChapterGameWin() {
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_7");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_8");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_9");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_10");
+        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_7");
+        addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_1_MESSAGE_8");
+        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_9");
+        addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_1_MESSAGE_10");
     }
 
+    @Override
+    protected void onChapterGameOver() {
+
+    }
 
     /**
      * 触发阶段一
      */
-    private void triggerStage1() {
-        gameContext.getHandler().addNewUnit(1, null, 2);
-        gameContext.getHandler().addNewUnit(1, null, 2);
-        gameContext.getHandler().addNewUnit(1, null, 2);
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_5");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT, "CAMPAIGN_AEII_STAGE_1_MESSAGE_6");
+    public void triggerStage1() {
+        addUnitAndMove(1, 2, new Site(2, 2), new Site(2, 3));
+        addUnitAndMove(1, 1, new Site(11, 11), new Site(11, 10));
+        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_5");
+        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_6");
     }
+
+
 }

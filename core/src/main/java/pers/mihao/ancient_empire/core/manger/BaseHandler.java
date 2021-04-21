@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.manger;
 
+import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.base.bo.Site;
@@ -23,6 +24,7 @@ import pers.mihao.ancient_empire.core.robot.RobotManger;
 public abstract class BaseHandler implements Handler {
 
     protected static RegionMesService regionMesService;
+
     protected static UnitMesService unitMesService;
     protected static GameCoreManger gameCoreManger;
     protected static UnitLevelMesService unitLevelMesService;

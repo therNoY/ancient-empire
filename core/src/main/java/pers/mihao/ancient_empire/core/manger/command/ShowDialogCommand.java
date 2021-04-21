@@ -8,7 +8,7 @@ import pers.mihao.ancient_empire.core.eums.DialogEnum;
  */
 public class ShowDialogCommand extends AbstractCommand{
 
-    private DialogEnum dialogType;
+    private String dialogType;
 
     private String message;
 
@@ -20,11 +20,11 @@ public class ShowDialogCommand extends AbstractCommand{
         this.message = message;
     }
 
-    public DialogEnum getDialogType() {
+    public String getDialogType() {
         return dialogType;
     }
 
-    public void setDialogType(DialogEnum dialogType) {
+    public void setDialogType(String dialogType) {
         this.dialogType = dialogType;
     }
 }
