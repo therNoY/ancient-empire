@@ -9,7 +9,6 @@ import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
-import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
@@ -178,20 +177,19 @@ public class ClickChoosePointHandler extends CommonHandler {
      * @param gameEvent
      */
     private void handlerSummon(GameEvent gameEvent) {
-        // 展示召唤攻击区域
-        ShowAnimDTO showAnimDTO = getShowAnim(gameEvent.getAimSite(), gameContext.getUserTemplate().getSummonAnimation());
-        JSONObject showAnim = new JSONObject();
-        showAnim.put(ExtMes.ANIM, showAnimDTO);
+
         Integer derivativeId = gameContext.getUserTemplate().getDerivativeId();
         if (derivativeId == null) {
             derivativeId = gameContext.getDefaultTemplate().getDerivativeId();
         }
-        commandStream()
-                .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA)
-                .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_SUMMON_ANIM, showAnim)
-                .toGameCommand().addOrderCommand(GameCommendEnum.REMOVE_TOMB, gameEvent.getAimSite());
 
-        addNewUnit(derivativeId, gameEvent.getAimSite());
+        commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA);
+
+        showSummonAnim(gameEvent.getAimSite());
+
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.REMOVE_TOMB, gameEvent.getAimSite());
+
+        addNewUnitAtCurrArmy(derivativeId, gameEvent.getAimSite());
 
         // 处理状态
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(currUnitArmyIndex());

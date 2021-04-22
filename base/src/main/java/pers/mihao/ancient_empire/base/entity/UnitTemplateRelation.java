@@ -29,6 +29,12 @@ public class UnitTemplateRelation implements Serializable {
     private Integer tempId;
 
 
+    /**
+     * 单位的版本
+     */
+    private Integer version;
+
+
 
     public Integer getUnitId() {
         return unitId;
@@ -45,6 +51,13 @@ public class UnitTemplateRelation implements Serializable {
         this.tempId = tempId;
     }
 
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 
     @Override
     public String toString() {

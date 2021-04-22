@@ -309,7 +309,6 @@ public class GameContext extends UserTemplateHelper {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
                 listener.onUnitDead(armyIndex, unitInfo);
-//                addCommonList(handler, listener);
             }
         }
     }
@@ -326,10 +325,10 @@ public class GameContext extends UserTemplateHelper {
     }
 
     public void onUnitDone(UnitInfo unitInfo, CommonHandler handler) {
+        handler.sendCommandNow();
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
                 listener.onUnitDone(unitInfo);
-//                addCommonList(handler, listener);
             }
         }
     }

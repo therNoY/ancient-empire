@@ -33,12 +33,13 @@ import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
+import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 
 @Service
-public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implements UserMapService {
+public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap> implements UserMapService {
 
     private static final String SEA = "sea";
     private static final String LAND = "land";
@@ -326,6 +327,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
     public List<UserMap> getStoreMapList() {
         QueryWrapper<UserMap> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "store");
+        queryWrapper.orderBy(true , true, "create_time");
         return userMapDAO.selectList(queryWrapper);
     }
 

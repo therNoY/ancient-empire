@@ -23,6 +23,12 @@ public class UserTemplate implements Serializable {
     private Integer id;
 
     /**
+     * 版本
+     */
+//    @TableId
+    private Integer version;
+
+    /**
      * 所属用户
      */
     private Integer userId;
@@ -144,6 +150,8 @@ public class UserTemplate implements Serializable {
      */
     @TableField(exist = false)
     private List<UnitMes> bindUintList;
+
+
 
     public Integer getId() {
         return id;
@@ -326,6 +334,14 @@ public class UserTemplate implements Serializable {
 
     public void setBindUintList(List<UnitMes> bindUintList) {
         this.bindUintList = bindUintList;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override

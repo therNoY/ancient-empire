@@ -25,6 +25,13 @@ public class UserMap implements Serializable {
 
     @TableId(value = "uuid", type = IdType.UUID)
     private String uuid;
+
+    /**
+     * 地图版本
+     */
+//    @TableId
+    private Integer version;
+
     // 单位信息
     @TableField(exist = false)
     private List<BaseUnit> units;
@@ -58,6 +65,13 @@ public class UserMap implements Serializable {
 
     // 模板ID
     private Integer templateId;
+
+    /**
+     * 模板版本
+     */
+    private Integer templateVersion;
+
+
 
 
     public String getUuid() {
@@ -191,6 +205,22 @@ public class UserMap implements Serializable {
 
     public void setMapColumn(Integer mapColumn) {
         this.mapColumn = mapColumn;
+    }
+
+    public Integer getTemplateVersion() {
+        return templateVersion;
+    }
+
+    public void setTemplateVersion(Integer templateVersion) {
+        this.templateVersion = templateVersion;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }
 

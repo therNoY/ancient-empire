@@ -221,7 +221,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                         gameRunListener.setGameContext(gameContext);
                         userRecord.setMaxPop(gameRunListener.getMaxPop());
                         for (Army army : userRecord.getArmyList()) {
-                            army.setMoney(gameRunListener.getInitMoney());
+                            army.setMoney(gameRunListener.getInitMoney(army));
                         }
                         listeners.add(gameRunListener);
                     }

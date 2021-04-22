@@ -76,7 +76,7 @@ public class CommonHandler extends AbstractGameEventHandler {
         return unit;
     }
 
-    protected Unit addNewUnit(Integer unitId, Site site) {
+    protected Unit addNewUnitAtCurrArmy(Integer unitId, Site site) {
         return addNewUnit(unitId, site, record().getCurrArmyIndex());
     }
 
@@ -87,6 +87,23 @@ public class CommonHandler extends AbstractGameEventHandler {
         commandStream().toGameCommand().addOrderCommand(GameCommendEnum.ADD_UNIT, addUnit);
         // 这里深度拷贝一个新的单位防止对象数据变化
         addUnit.put(ExtMes.UNIT, BeanUtil.deptClone(unit));
+    }
+
+
+    /**
+     * 改变单位的军队阵营
+     * @param armyUnitIndexByUnitId
+     * @param i 改变的军队index
+     */
+    protected void changeUnitArmy(Unit unit, int i) {
+        showSummonAnim(unit);
+
+        removeUnit(getArmyUnitIndexByUnitId(unit.getId()));
+
+        JSONObject addUnit = new JSONObject();
+        addUnit.put(ExtMes.UNIT, unit);
+        addUnit.put(ExtMes.ARMY_INDEX, i);
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.ADD_UNIT, addUnit);
     }
 
     /**
@@ -145,6 +162,18 @@ public class CommonHandler extends AbstractGameEventHandler {
             .toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, leftChangeDTOS)
             .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_ATTACH_ANIM, showAnim);
 
+    }
+
+    /**
+     * 展示召唤动画
+     * @param site
+     */
+    protected void showSummonAnim(Site site) {
+        // 展示召唤动画
+        ShowAnimDTO showAnimDTO = getShowAnim(site, gameContext.getUserTemplate().getSummonAnimation());
+        JSONObject showAnim = new JSONObject();
+        showAnim.put(ExtMes.ANIM, showAnimDTO);
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.SHOW_SUMMON_ANIM, showAnim);
     }
 
 

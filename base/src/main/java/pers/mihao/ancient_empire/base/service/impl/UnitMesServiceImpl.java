@@ -25,6 +25,7 @@ import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
+import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 /**
@@ -36,7 +37,7 @@ import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
  * @since 2019-08-11
  */
 @Service
-public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> implements UnitMesService {
+public class UnitMesServiceImpl extends ComplexKeyServiceImpl<UnitMesDAO, UnitMes> implements UnitMesService {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 

@@ -197,9 +197,10 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     }
 
 
-    protected void addUnitAndMove(Integer armyIndex, Integer typeId, Site... sites) {
+    protected Unit addUnitAndMove(Integer armyIndex, Integer typeId, Site... sites) {
         Unit unit = addNewUnit(typeId, sites[0], armyIndex);
         moveUnit(unit.getId(), sites);
+        return unit;
     }
 
     protected void moveUnit(String uuid, Site... sites) {

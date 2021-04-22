@@ -140,6 +140,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
      * 触发剧情
      */
     private void triggerPlot() {
+        await(500);
         stage++;
         try {
             StatusMachineEnum preStatus = gameContext.getStatusMachine();
@@ -156,6 +157,13 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
         Unit unit = getUnitByIndex(attachIndex);
         changeCurrPoint(unit);
         changeCurrUnit(unit);
+    }
+
+    void addUnitSendNow(Integer unitId, Site site, Integer armyIndex) {
+        Unit wolf1 = addNewUnit(unitId, site, armyIndex);
+        changeUnitPoint(getArmyUnitIndexByUnitId(wolf1.getId()));
+        sendCommandNow();
+        await(500);
     }
 
 
@@ -179,7 +187,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
         return 40;
     }
 
-    public Integer getInitMoney() {
+    public Integer getInitMoney(Army army) {
         return 0;
     }
 

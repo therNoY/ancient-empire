@@ -16,9 +16,9 @@ public class Chapter1Listener extends AbstractChapterListener {
 
     @Override
     protected void initConditions() {
-//        TriggerCondition condition = new TriggerCondition(TriggerTypeEnum.ALL_DEAD);
+        TriggerCondition condition = new TriggerCondition(TriggerTypeEnum.ALL_DEAD);
 //        TriggerCondition condition = new TriggerCondition(TriggerTypeEnum.ANY_DONE);
-        TriggerCondition condition = new TriggerCondition(TriggerTypeEnum.ANY_DEAD);
+//        TriggerCondition condition = new TriggerCondition(TriggerTypeEnum.ANY_DEAD);
         triggerConditions = new TriggerCondition[]{condition};
     }
 

@@ -23,6 +23,12 @@ public class UnitMes implements Serializable {
     private Integer id;
 
     /**
+     * 版本
+     */
+//    @TableId
+    private Integer version;
+
+    /**
      * 单位类型
      */
     private String type;
@@ -81,6 +87,8 @@ public class UnitMes implements Serializable {
      * 是否启用 0 不启用 1 启用
      */
     private Integer enable;
+
+
 
     public Integer getId() {
         return id;
@@ -172,6 +180,14 @@ public class UnitMes implements Serializable {
 
     public void setEnable(Integer enable) {
         this.enable = enable;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override

@@ -1,10 +1,17 @@
 package pers.mihao.ancient_empire.core.listener.chapter;
 
+import com.alibaba.fastjson.JSONObject;
 import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.core.constans.ExtMes;
+import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
+import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.listener.chapter.enums.TriggerTypeEnum;
 
 /**
  * 第一章监听处理类
+ *
  * @Author mh32736
  * @Date 2021/4/1 9:20
  */
@@ -13,7 +20,14 @@ public class Chapter3Listener extends AbstractChapterListener {
 
     @Override
     protected void initConditions() {
+        TriggerCondition condition1 = new TriggerCondition(TriggerTypeEnum.IN_AREA);
+        condition1.setMinSite(new Site(1, 1));
+        condition1.setMaxSite(new Site(11, 10));
 
+        TriggerCondition condition2 = new TriggerCondition(TriggerTypeEnum.IN_AREA);
+        condition2.setMinSite(new Site(1, 1));
+        condition2.setMaxSite(new Site(5, 10));
+        triggerConditions = new TriggerCondition[]{condition1, condition2};
     }
 
     @Override
@@ -23,40 +37,59 @@ public class Chapter3Listener extends AbstractChapterListener {
 
     @Override
     public void onChapterGameStart() {
-        addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_3_OBJECTIVE");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_3_MESSAGE_1");
+        addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_3_MESSAGE_1");
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_3_MESSAGE_2");
-        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_3_MESSAGE_3");
+        addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_3_MESSAGE_3");
+        addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_3_OBJECTIVE");
     }
-
-
 
 
     @Override
     public void onChapterGameWin() {
+        await(1000);
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_3_MESSAGE_7");
     }
 
     /**
      * 触发阶段一
      */
-    private void triggerStage1() {
-        addNewUnit(1, null, 2);
-        addNewUnit(1, null, 2);
-        addNewUnit(1, null, 2);
-        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_3_MESSAGE_4");
+    public void triggerStage1() {
+        // 出现狼群
+        addUnitSendNow(6, new Site(9, 1), 1);
+        addUnitSendNow(6, new Site(8, 2), 1);
+        addUnitSendNow(6, new Site(7, 9), 1);
+
+        addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_3_MESSAGE_4");
+        // 出现水元素 和 小精灵
+        Unit water1 = addUnitAndMove(1, 3, new Site(9, 5), new Site(9, 4));
+        Unit elf = addUnitAndMove(1, 5, new Site(9, 5), new Site(8, 5));
+        Unit water2 = addUnitAndMove(1, 3, new Site(9, 5), new Site(9, 6));
+
+        sendCommandNow();
+
+        addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_3_MESSAGE_5");
+        addDialogAndWait(DialogEnum.FRIEND_ELF, "CAMPAIGN_AEII_STAGE_3_MESSAGE_6");
+
+        changeUnitArmy(water1, 0);
+        changeUnitArmy(elf, 0);
+        changeUnitArmy(water2, 0);
+
+        sendCommandNow();
+        await(1000);
+
+        addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_3_MESSAGE_7");
     }
 
 
-    /**
-     * 触发阶段一
-     */
-    private void triggerStage2() {
-        addNewUnit(1, null, 1);
-        addNewUnit(1, null, 1);
-        addNewUnit(1, null, 1);
 
-        addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_3_MESSAGE_5");
-        addDialogAndWait(DialogEnum.FRIEND_ELF, "CAMPAIGN_AEII_STAGE_3_MESSAGE_6");
+
+
+    /**
+     * 触发阶段二
+     */
+    public void triggerStage2() {
+        addUnitSendNow(6, new Site(3, 2), 1);
+        addUnitSendNow(5, new Site(2, 3), 1);
+        addUnitSendNow(6, new Site(3, 4), 1);
     }
 }

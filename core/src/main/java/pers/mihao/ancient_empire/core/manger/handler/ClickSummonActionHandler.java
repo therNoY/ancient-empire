@@ -21,7 +21,9 @@ public class ClickSummonActionHandler extends CommonHandler {
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
         List<Site> attachArea = AttachStrategy.getInstance().getAttachArea(currUnit().getUnitMes(), currSite(), gameMap());
-        commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ATTACH_AREA, ExtMes.ATTACH_AREA, attachArea);
+        commandStream()
+            .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION)
+            .toGameCommand().addCommand(GameCommendEnum.SHOW_ATTACH_AREA, ExtMes.ATTACH_AREA, attachArea);
         gameContext.setStatusMachine(StatusMachineEnum.WILL_SUMMON);
         gameContext.setWillAttachArea(attachArea);
     }

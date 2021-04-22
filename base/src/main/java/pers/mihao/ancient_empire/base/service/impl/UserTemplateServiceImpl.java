@@ -19,6 +19,7 @@ import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 
 import java.util.List;
+import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 
 /**
  * <p>
@@ -29,7 +30,7 @@ import java.util.List;
  * @since 2020-09-22
  */
 @Service
-public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTemplate> implements UserTemplateService {
+public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateDAO, UserTemplate> implements UserTemplateService {
 
     @Autowired
     UserTemplateDAO userTemplateDAO;
