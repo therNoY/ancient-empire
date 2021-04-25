@@ -66,6 +66,8 @@ public class ClickChoosePointHandler extends CommonHandler {
             case WILL_SUMMON:
                 handlerSummon(gameEvent);
                 break;
+            default:
+                break;
         }
 
     }
@@ -82,20 +84,17 @@ public class ClickChoosePointHandler extends CommonHandler {
         unitStatusInfoDTO.setExperience(currUnit().getExperience() + gameContext.getDestroyerExp());
         unitStatusInfoDTO.setUpdateCurr(true);
         changeUnitStatus(unitStatusInfoDTO);
-        Region region = new Region();
-        region.setType(RegionEnum.RUINS.type());
-        int regionIndex = getRegionIndexBySite(gameEvent.getAimSite());
-        changeCurrRegion(regionIndex);
 
-        ShowAnimDTO showDeadAnimDTO = getShowAnim(gameEvent.getAimSite(), gameContext.getUserTemplate().getDeadAnimation());
-        JSONObject showDeadAnim = new JSONObject();
-        showDeadAnim.put(ExtMes.ANIM, showDeadAnimDTO);
+        changeCurrRegion(getRegionIndexBySite(gameEvent.getAimSite()));
 
-        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA)
-                .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_UNIT_DEAD, showDeadAnim);
-        changeRegion(regionIndex, region);
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA);
+
+        showDestroyTown(gameEvent.getAimSite());
+
         endCurrentUnit(currUnitArmyIndex());
     }
+
+
 
     /**
      * 处理单位攻击

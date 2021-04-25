@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.core.manger;
 
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
@@ -351,7 +352,8 @@ public class GameContext extends UserTemplateHelper {
         }
     }
 
-    public void onRoundEnd(Army army) {
+    public void onRoundEnd(Army army, CommonHandler handler) {
+        handler.sendCommandNow();
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
                 listener.onRoundEnd(army);
@@ -377,4 +379,12 @@ public class GameContext extends UserTemplateHelper {
     }
 
 
+    public void onOccupiced(UnitInfo currUnit, Region region, CommonHandler handler) {
+        handler.sendCommandNow();
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.onOccupied(currUnit, region);
+            }
+        }
+    }
 }

@@ -1,16 +1,12 @@
 package pers.mihao.ancient_empire.core.listener.chapter;
 
-import com.alibaba.fastjson.JSONObject;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
-import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
-import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.listener.chapter.enums.TriggerTypeEnum;
 
 /**
- * 第一章监听处理类
+ * 第三章监听处理类
  *
  * @Author mh32736
  * @Date 2021/4/1 9:20

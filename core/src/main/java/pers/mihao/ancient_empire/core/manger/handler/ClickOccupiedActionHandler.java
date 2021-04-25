@@ -23,6 +23,6 @@ public class ClickOccupiedActionHandler extends CommonHandler{
         changeRegion(index, region);
         changeCurrRegion(index);
         endCurrentUnit(currUnitArmyIndex());
-    }
 
-}
+        gameContext.onOccupiced(currUnit(), region, this);
+    }}

@@ -31,9 +31,9 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
         userService = ApplicationContextHolder.getBean(UserService.class);
     }
 
-    private int stage = 0;
+    protected int stage = 0;
 
-    private int maxStage;
+    protected int maxStage;
 
     TriggerCondition[] triggerConditions;
 
@@ -85,6 +85,17 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
         }
     }
 
+    @Override
+    public void onRoundEnd(Army army) {
+        if (stage < maxStage && triggerConditions[stage].getTriggerType().equals(TriggerTypeEnum.END_ROUND)) {
+            if (triggerConditions[stage].getRound() == null) {
+                triggerPlot();
+            }else if (record().getCurrentRound().equals(triggerConditions[stage].getRound())) {
+                triggerPlot();
+            }
+        }
+    }
+
     /**
      * 是否有敌军
      * @return
@@ -127,13 +138,21 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
             if (triggerSite.getTriggerType().equals(TriggerTypeEnum.ANY_DONE)) {
                 // 任意单位接触触发
                 triggerPlot();
-            } else if (triggerSite.getTriggerType().equals(TriggerTypeEnum.IN_AREA)
-                && unitInfo.getRow() <= triggerSite.getMaxSite().getRow() && unitInfo.getColumn() <= triggerSite.getMaxSite().getColumn()
-                && unitInfo.getRow() >= triggerSite.getMinSite().getRow() && unitInfo.getColumn() >= triggerSite.getMinSite().getColumn()) {
+            } else if (triggerSite.getTriggerType().equals(TriggerTypeEnum.IN_AREA) && isInArea(unitInfo, triggerSite)) {
                 // 单位停留区域触发
+                triggerPlot();
+            } else if (triggerSite.getTriggerType().equals(TriggerTypeEnum.OUR_AREA) && !isInArea(unitInfo, triggerSite)) {
                 triggerPlot();
             }
         }
+    }
+
+    private boolean isInArea(UnitInfo unitInfo, TriggerCondition triggerSite) {
+        int minRow = Math.min(triggerSite.getMaxSite().getRow(), triggerSite.getMinSite().getRow());
+        int maxRow =   Math.max(triggerSite.getMaxSite().getRow(), triggerSite.getMinSite().getRow());
+        int minColumn =  Math.min(triggerSite.getMaxSite().getColumn(), triggerSite.getMinSite().getColumn());
+        int maxColumn =  Math.min(triggerSite.getMaxSite().getColumn(), triggerSite.getMinSite().getColumn());
+        return unitInfo.getRow() <= maxRow && unitInfo.getRow() >= minRow && unitInfo.getColumn() <= maxColumn && unitInfo.getColumn() >= minColumn;
     }
 
     /**
@@ -155,6 +174,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
 
     void changeUnitPoint(ArmyUnitIndexDTO attachIndex) {
         Unit unit = getUnitByIndex(attachIndex);
+        changeCurrBgColor(record().getArmyList().get(attachIndex.getArmyIndex()).getColor());
         changeCurrPoint(unit);
         changeCurrUnit(unit);
     }

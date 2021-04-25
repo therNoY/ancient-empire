@@ -30,7 +30,6 @@ import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
-import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
@@ -202,8 +201,8 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
         userMap.setUuid(StringUtil.getUUID());
         userMap.setCreateUserId(AuthUtil.getUserId());
         userMap.setCreateTime(LocalDateTime.now());
-        removeUserMapCatch(userMap);
         saveOrUpdate(userMap);
+        removeUserMapCatch(userMap);
     }
 
     @Override
@@ -221,13 +220,14 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
     }
 
     /**
-     * 超管 设置地图类型
+     * 设置地图类型
      *
      * @param userMap
      */
     @Override
     public void updateUserMapById(UserMap userMap) {
         saveOrUpdate(userMap);
+        removeUserMapCatch(userMap);
     }
 
     private void removeUserMapCatch(UserMap userMap){
@@ -240,14 +240,11 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
 
     @Override
     @CacheEvict(USER_CREATE_MAP)
-    public void removeUserMapCatch(Integer createUserId) {
-
-    }
+    public void removeUserMapCatch(Integer createUserId) {}
 
     @Override
     @CacheEvict(USER_MAP)
-    public void removeMapCatch(String uuid){
-    }
+    public void removeMapCatch(String uuid){}
 
     @Override
     @CacheEvict(CatchKey.ENCOUNTER_MAP)
@@ -310,11 +307,9 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
      */
     @Cacheable(CatchKey.USER_MAP)
     @Override
-    public UserMapVo getUserMapById(String uuid) {
-        UserMapVo userMapVo = new UserMapVo();
+    public UserMap getUserMapById(String uuid) {
         UserMap userMap = userMapDAO.selectById(uuid);
-        BeanUtils.copyProperties(userMap, userMapVo);
-        return userMapVo;
+        return userMap;
     }
 
     @Override

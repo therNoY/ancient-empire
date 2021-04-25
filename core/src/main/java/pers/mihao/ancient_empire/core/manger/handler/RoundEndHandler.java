@@ -47,7 +47,7 @@ public class RoundEndHandler extends CommonHandler {
             robotManger.startRobot(gameContext);
         }
 
-        gameContext.onRoundEnd(currArmy());
+        gameContext.onRoundEnd(currArmy(), this);
     }
 
     /**

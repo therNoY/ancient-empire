@@ -62,8 +62,10 @@ public interface UserTemplateService extends IService<UserTemplate> {
      */
     IPage<UserTemplate> getAttentionTemplateWithPage(ReqUserTemplateDTO reqUserTemplateDTO);
 
-    /*
-    获取可以下载的模板
+    /**
+     * 获取可以下载的模板
+     * @param reqUserTemplateDTO
+     * @return
      */
     IPage<UserTemplate> getDownloadAbleTempWithPage(ReqUserTemplateDTO reqUserTemplateDTO);
 }

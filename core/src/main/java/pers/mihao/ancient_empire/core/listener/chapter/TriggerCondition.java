@@ -19,7 +19,20 @@ public class TriggerCondition {
      */
     private Site minSite;
 
+    /**
+     * 返回吃法结束点
+     */
     private Site maxSite;
+
+    private Integer round;
+
+    public Integer getRound() {
+        return round;
+    }
+
+    public void setRound(Integer round) {
+        this.round = round;
+    }
 
     public TriggerCondition(TriggerTypeEnum triggerType) {
         this.triggerType = triggerType;

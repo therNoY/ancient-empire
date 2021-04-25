@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.core.listener;
 
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
@@ -63,9 +64,16 @@ public interface GameRunListener {
     void onUnitStatusChange(GameCommand command, Stream stream);
 
     /**
-     *
+     * 过滤可以购买的单位
      * @param respUnitMes
      * @return
      */
     List<UnitInfo> filterUnit(List<UnitInfo> respUnitMes);
+
+    /**
+     * 单位占领地形
+     * @param currUnit
+     * @param region
+     */
+    void onOccupied(UnitInfo currUnit, Region region);
 }

@@ -123,7 +123,7 @@ public class UserTemplateController {
 
     /**
      * 保存模板信息
-     * @param unitTemplateRelation
+     * @param reqSaveUserTemplateDTO
      * @return
      */
     @PostMapping("/api/userTemp/saveTemplate")
@@ -153,12 +153,22 @@ public class UserTemplateController {
         return RespUtil.successResJson();
     }
 
+    /**
+     * 根据模板删除
+     * @param id
+     * @return
+     */
     @DeleteMapping("/api/userTemp/{id}")
     public RespJson removeUserTemplate(@PathVariable("id") String id){
         userTemplateService.deleteUserTemplate(AuthUtil.getUserId(), id);
         return RespUtil.successResJson();
     }
 
+    /**
+     * 删除用户下载模板
+     * @param id
+     * @return
+     */
     @DeleteMapping("/api/userTempAttention/{id}")
     public RespJson removeUserTemplateAttention(@PathVariable("id") String id){
         userTempAttentionService.removeUserAttention(AuthUtil.getUserId(), id);
@@ -199,6 +209,11 @@ public class UserTemplateController {
         return RespUtil.successResJson(draftTemp);
     }
 
+    /**
+     * 下载模板
+     * @param userTempAttention
+     * @return
+     */
     @PostMapping("/api/userTemp/downloadTemp")
     public RespJson downloadTemp(@RequestBody UserTempAttention userTempAttention){
         userTempAttention.setUserId(AuthUtil.getUserId());

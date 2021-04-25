@@ -21,7 +21,17 @@ public enum  TriggerTypeEnum {
     ANY_DONE,
 
     /**
-     * 在区域内
+     * 进入某个区域内
      */
     IN_AREA,
+
+    /**
+     * 出某个区域触发
+     */
+    OUR_AREA,
+
+    /**
+     *  回合结束
+     */
+    END_ROUND,
 }

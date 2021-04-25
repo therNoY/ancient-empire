@@ -6,7 +6,6 @@ import java.util.Map;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
-import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 /**
@@ -53,6 +52,11 @@ public interface UserMapService extends IService<UserMap> {
      */
     void saveMap(UserMap userMap);
 
+    /**
+     * 获取地图名字
+     * @param mapName
+     * @return
+     */
     UserMap getUserMapByName(String mapName);
 
     /**
@@ -111,7 +115,7 @@ public interface UserMapService extends IService<UserMap> {
      *
      * @return
      */
-    UserMapVo getUserMapById(String uuid);
+    UserMap getUserMapById(String uuid);
 
     /**
      * 获取用户的草稿模板

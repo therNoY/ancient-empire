@@ -91,12 +91,15 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     @Override
     public void onUnitStatusChange(GameCommand command, Stream stream) {
-
     }
 
     @Override
     public List<UnitInfo> filterUnit(List<UnitInfo> respUnitMes) {
         return respUnitMes;
+    }
+
+    @Override
+    public void onOccupied(UnitInfo currUnit, Region region) {
     }
 
     private void addDialog(DialogEnum type, String message) {
@@ -170,7 +173,6 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     @Override
     public void onRoundEnd(Army army) {
-
     }
 
     protected List<Site> getEnemyCastle() {

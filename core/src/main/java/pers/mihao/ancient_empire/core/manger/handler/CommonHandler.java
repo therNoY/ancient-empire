@@ -16,6 +16,7 @@ import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
@@ -291,6 +292,23 @@ public class CommonHandler extends AbstractGameEventHandler {
         } else {
             sendEndUnitCommend(currUnit(), armyUnitIndexDTO);
         }
+    }
+
+
+    /**
+     * 展示破坏城镇
+     * @param aimSite 城镇的位置
+     */
+    protected void showDestroyTown(Site aimSite) {
+        ShowAnimDTO showDeadAnimDTO = getShowAnim(aimSite, gameContext.getUserTemplate().getDeadAnimation());
+        JSONObject showDeadAnim = new JSONObject();
+        showDeadAnim.put(ExtMes.ANIM, showDeadAnimDTO);
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.SHOW_UNIT_DEAD, showDeadAnim);
+
+        int regionIndex = getRegionIndexBySite(aimSite);
+        Region region = new Region();
+        region.setType(RegionEnum.RUINS.type());
+        changeRegion(regionIndex, region);
     }
 
 

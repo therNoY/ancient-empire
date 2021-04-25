@@ -35,7 +35,6 @@ import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
-import pers.mihao.ancient_empire.base.vo.UserMapVo;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
@@ -201,7 +200,7 @@ public class UserMapController {
     @GetMapping("/api/userMap/{id}")
     public RespJson getUserMap(@PathVariable("id") String id) {
         // 3.获取用户拥有的地图
-        UserMapVo map = userMapService.getUserMapById(id);
+        UserMap map = userMapService.getUserMapById(id);
         return RespUtil.successResJson(map);
     }
 
@@ -213,7 +212,7 @@ public class UserMapController {
     @PostMapping("/api/userMap/withConfig")
     public RespJson getUserMapWithConfig(@RequestBody MapShowWithConfigDTO config) {
         // 3.获取用户拥有的地图
-        UserMapVo map = userMapService.getUserMapById(config.getMapId());
+        UserMap map = userMapService.getUserMapById(config.getMapId());
         if (CollectionUtil.isNotEmpty(config.getArmyConfigList())) {
             List<BaseUnit> baseUnits = new ArrayList<>();
             for (BaseUnit baseUnit : map.getUnits()) {

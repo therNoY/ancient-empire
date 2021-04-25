@@ -93,6 +93,17 @@ public class GameController {
             initMapDTO.setArmyList(getDefaultArmyConfig().stream()
                 .filter(armyConfig -> colorList.contains(armyConfig.getColor()))
                 .collect(Collectors.toList()));
+
+            if (initMapDTO.getArmyList().size() == 1) {
+                // 这里强直加上一个新的阵营
+                ArmyConfig army = new ArmyConfig();
+                army.setColor(ColorEnum.RED.type());
+                army.setCamp(2);
+                army.setType(ArmyEnum.AI.type());
+                army.setOrder(2);
+                army.setUnits(new ArrayList<>());
+                initMapDTO.getArmyList().add(army);
+            }
         }
         // 2.生成文档注册上下文
         UserRecord userRecord = userRecordService.initMapRecord(initMapDTO, userMap);
