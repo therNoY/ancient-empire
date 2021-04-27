@@ -12,12 +12,41 @@ public class InteractiveLock {
      */
     private static final Object lock = new Object();
 
+    private Boolean isExecutionIng = false;
+
+
     /**
      * 有序命令执行中
      */
     public void executionIng() {
+        synchronized (lock) {
+            isExecutionIng = true;
+        }
     }
 
+    /**
+     * 当前是否有执行的动画
+     * @return
+     */
+    public boolean isExecutionIng(){
+        synchronized (lock) {
+            return isExecutionIng;
+        }
+    }
+
+    /**
+     * 等待前端交互完成 再等待一段时间
+     * @param time
+     * @param awaitTime
+     */
+    public void untilExecutionOk(int time, int awaitTime){
+        untilExecutionOk(time);
+        try {
+            Thread.sleep(awaitTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 直到执行完
@@ -32,16 +61,12 @@ public class InteractiveLock {
         }
     }
 
-    public void untilExecutionOk(){
-        // 最多等待10s
-        untilExecutionOk(10 * 1000);
-    }
-
     /**
      * 有序命令执行完毕
      */
     public void executionOK() {
         synchronized (lock) {
+            this.isExecutionIng = false;
             lock.notifyAll();
         }
     }

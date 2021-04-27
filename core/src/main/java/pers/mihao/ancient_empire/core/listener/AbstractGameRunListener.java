@@ -115,7 +115,8 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
      * @param maxTime
      */
     protected void waitExecutionOk(int maxTime) {
-        gameContext.getInteractiveLock().untilExecutionOk(maxTime);
+        log.info("等待前端交互完毕, 之后延迟");
+        gameContext.getInteractiveLock().untilExecutionOk(maxTime, gameContext.getWaitTime());
     }
 
     /**

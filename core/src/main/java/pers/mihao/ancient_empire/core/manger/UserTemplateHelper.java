@@ -191,4 +191,8 @@ public class UserTemplateHelper {
     public String getHeavenFuryImg(){
         return "1/heaven_fury_1.png,1/heaven_fury_2.png,1/heaven_fury_3.png,1/heaven_fury_4.png,";
     }
+
+    public int getWaitTime() {
+        return 200;
+    }
 }

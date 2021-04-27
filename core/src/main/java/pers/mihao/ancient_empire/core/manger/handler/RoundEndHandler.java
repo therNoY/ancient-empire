@@ -45,12 +45,13 @@ public class RoundEndHandler extends CommonHandler {
         // 2.保存回合信息
         userRecordService.saveRecord(record());
 
+        // 调用开始回合的钩子
+        gameContext.beforeRoundStart(currArmy(), this);
+
         // 3.判断下局游戏是否是机器人
         if (currArmy().getPlayer() == null) {
             robotManger.startRobot(gameContext);
         }
-
-        gameContext.beforeRoundStart(currArmy(), this);
     }
 
     /**

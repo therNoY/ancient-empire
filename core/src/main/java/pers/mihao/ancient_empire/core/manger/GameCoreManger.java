@@ -103,7 +103,9 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         }
 
 
-        if (gameContext.getStatusMachine().equals(StatusMachineEnum.DIALOG)) {
+        // 过滤事件
+        if (!event.getEvent().equals(GameEventEnum.COMMEND_EXEC_OVER)
+            && gameContext.getStatusMachine().equals(StatusMachineEnum.DIALOG)) {
             // 准备阶段 事件改成处理点击屏幕事件 直接返回
             gameContext.onClickTip();
             return;
