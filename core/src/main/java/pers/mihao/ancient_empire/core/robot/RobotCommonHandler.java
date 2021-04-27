@@ -473,17 +473,4 @@ public abstract class RobotCommonHandler extends CommonHandler {
         }
 
     }
-
-    protected void sendGameCommand(GameCommand command){
-        gameSessionManger.sendMessage(command, gameContext.getGameId());
-    }
-
-    protected void sendGameCommand(GameCommendEnum gameCommendEnum){
-        GameCommand gameCommand = new GameCommand();
-        gameCommand.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
-        gameCommand.setGameCommendEnum(gameCommendEnum);
-        gameSessionManger.sendMessage(gameCommand, gameContext.getGameId());
-    }
-
-
 }

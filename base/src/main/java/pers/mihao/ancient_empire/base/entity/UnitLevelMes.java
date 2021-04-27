@@ -17,19 +17,15 @@ public class UnitLevelMes implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键
-     */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
-
-    /**
      * 单位Id
      */
+    @TableId
     private Integer unitId;
 
     /**
      * 等级
      */
+    @TableId
     private Integer level;
 
     /**
@@ -62,14 +58,6 @@ public class UnitLevelMes implements Serializable {
      */
     private Integer maxLife;
 
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
     public Integer getUnitId() {
         return unitId;
     }
@@ -131,7 +119,6 @@ public class UnitLevelMes implements Serializable {
     @Override
     public String toString() {
         return "UnitLevelMes{" +
-        "id=" + id +
         ", unitId=" + unitId +
         ", level=" + level +
         ", minAttack=" + minAttack +

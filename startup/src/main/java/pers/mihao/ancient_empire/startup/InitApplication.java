@@ -69,10 +69,6 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
 
     private void initAppCatch() {
         AbstractRobot.registerRobotActiveHandler();
-        List<BaseMapInfoVO> mapInfoVOS = userMapService.getEncounterMaps();
-        for (BaseMapInfoVO vo : mapInfoVOS) {
-            userMapService.getUserMapById(vo.getMapId());
-        }
     }
 
     /**

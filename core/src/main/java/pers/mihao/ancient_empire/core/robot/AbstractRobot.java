@@ -262,6 +262,13 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
                 actionList.add(new ActionIntention(RobotActiveEnum.DEFENSIVE, regionInfo));
             }
         }
+
+        // 2 先从监听器中选择
+        ActionIntention listerChoose = gameContext.chooseAction(unit, actionList);
+        if (listerChoose != null) {
+            return listerChoose;
+        }
+
         // 2.3 给每个操作进行打分 选出一个最好的操作
         if (actionList.size() > 0) {
             log.info("有许多可选的操作size = {} 首先从当前回合就能行动的点 选出一个最好的操作", actionList.size());

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 
 /**
  * <p>
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * @since 2019-08-11
  */
 @Service
-public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLevelMes> implements UnitLevelMesService {
+public class UnitLevelMesServiceImpl extends ComplexKeyServiceImpl<UnitLevelMesDAO, UnitLevelMes> implements UnitLevelMesService {
 
     @Autowired
     UnitLevelMesDAO unitLevelMesDao;
@@ -45,11 +46,7 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
      */
     @Override
     public void saveUnitLevelMesList(UnitLevelMes unitLevelMes) {
-        if (unitLevelMes.getId() != null) {
-            unitLevelMesDao.updateById(unitLevelMes);
-        } else {
-            unitLevelMesDao.insert(unitLevelMes);
-        }
+        saveOrUpdate(unitLevelMes);
     }
 
 
@@ -59,10 +56,6 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
         return unitLevelMesDao.getUnitLevelMes(id, level);
     }
 
-    @Override
-    public void insert(UnitLevelMes unitLevelMes) {
-        unitLevelMesDao.insert(unitLevelMes);
-    }
 
     @Override
     public Map<String, UnitLevelMes> getAllUnitLevelInfoByTempId(Integer userId) {

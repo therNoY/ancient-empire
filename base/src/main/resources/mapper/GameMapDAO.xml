@@ -34,9 +34,9 @@
         SELECT * from user_map where create_user_id = #{param1} and map_name = #{param2}
     </select>
 
-  <select id="getEncounterMaps" resultMap="BaseMapInfo">
+  <select id="getEncounterMapsWithPage" resultMap="BaseMapInfo">
     select <include refid="BaseMapInfo"></include>
-    from user_map where create_user_id = 'admin' and type = 'encounter'
+    from user_map where create_user_id = '1' and type = 'encounter'
     order by create_time desc
   </select>
 

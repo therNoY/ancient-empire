@@ -92,9 +92,10 @@ public interface UserMapService extends IService<UserMap> {
     /**
      * 获取系统遭遇战地图
      *
+     * @param uuid
      * @return
      */
-    List<BaseMapInfoVO> getEncounterMaps();
+    IPage<BaseMapInfoVO> getEncounterMaps(ApiConditionDTO apiConditionDTO);
 
     /**
      * 获取遭遇战地图 的所有初始化军队

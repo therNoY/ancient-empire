@@ -35,8 +35,6 @@ public interface UnitLevelMesService extends IService<UnitLevelMes> {
      */
     UnitLevelMes getUnitLevelMes(Integer id, Integer level);
 
-    void insert(UnitLevelMes unitLevelMes);
-
     /**
      * 通过模板获取单位的等级信息
      * @param userId

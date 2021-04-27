@@ -34,16 +34,7 @@ public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceIm
         if (null == entity) {
             return false;
         } else {
-            Class<?> cls = entity.getClass();
-            TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-            Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!", new Object[0]);
-            List<FieldInfo> primaryKeys;
-            if ((primaryKeys = PRIMARY_KEY_CATCH.get(cls)) == null) {
-                primaryKeys = getEntityKey(cls);
-                PRIMARY_KEY_CATCH.put(cls, primaryKeys);
-            }
-
-            Assert.notEmpty(primaryKeys, "实体类不能没有主键", cls);
+            List<FieldInfo> primaryKeys = getFieldInfos(entity);
 
             QueryWrapper<T> queryWrapper = new QueryWrapper<>();
             Object value;
@@ -61,6 +52,26 @@ public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceIm
             return true;
         }
     }
+
+    private List<FieldInfo> getFieldInfos(T entity) {
+        Class<?> cls = entity.getClass();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+        Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!", new Object[0]);
+        List<FieldInfo> primaryKeys;
+        if ((primaryKeys = PRIMARY_KEY_CATCH.get(cls)) == null) {
+            primaryKeys = getEntityKey(cls);
+            PRIMARY_KEY_CATCH.put(cls, primaryKeys);
+        }
+
+        Assert.notEmpty(primaryKeys, "实体类不能没有主键", cls);
+        return primaryKeys;
+    }
+
+    @Override
+    public boolean updateById(T entity) {
+        return saveOrUpdate(entity);
+    }
+
 
     /**
      * 获取一个类的主键

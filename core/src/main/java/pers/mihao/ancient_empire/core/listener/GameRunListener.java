@@ -6,6 +6,7 @@ import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
+import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
  * 游戏运行时的监听
@@ -78,5 +79,11 @@ public interface GameRunListener {
     void onOccupied(UnitInfo currUnit, Region region);
 
 
-
+    /**
+     * 监听机器人的选择行动
+     * @param unitInfo
+     * @param actionList
+     * @return
+     */
+    ActionIntention chooseAction(UnitInfo unitInfo, List<ActionIntention> actionList);
 }

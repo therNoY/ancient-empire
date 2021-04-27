@@ -47,9 +47,10 @@ public interface UserMapDAO extends BaseMapper<UserMap> {
 
     /**
      * 获取遭遇战地图
+     * @param apiConditionDTO
      * @return
      */
-    List<BaseMapInfoVO> getEncounterMaps();
+    List<BaseMapInfoVO> getEncounterMapsWithPage(ApiConditionDTO apiConditionDTO);
 
     /**
      * 条件查询用户地图

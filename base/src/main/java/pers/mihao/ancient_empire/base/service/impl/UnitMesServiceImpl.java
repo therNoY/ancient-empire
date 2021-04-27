@@ -79,7 +79,7 @@ public class UnitMesServiceImpl extends ComplexKeyServiceImpl<UnitMesDAO, UnitMe
                     UnitLevelMes unitLevelMes = new UnitLevelMes();
                     unitLevelMes.setUnitId(unitMes.getId());
                     unitLevelMes.setLevel(i);
-                    unitLevelMesService.insert(unitLevelMes);
+                    unitLevelMesService.saveOrUpdate(unitLevelMes);
                 }
             } else {
                 log.error("没有获取到插入的主键");

@@ -23,6 +23,7 @@ import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.interactive.InteractiveLock;
+import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
  * 一局游戏的上下文，一局游戏一个context
@@ -390,5 +391,18 @@ public class GameContext extends UserTemplateHelper {
                 listener.beforeRoundStart(currArmy);
             }
         }
+    }
+
+    public ActionIntention chooseAction(UnitInfo unitInfo, List<ActionIntention> actionList) {
+        ActionIntention actionIntention = null;
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                actionIntention = listener.chooseAction(unitInfo, actionList);
+                if (actionIntention != null) {
+                    return actionIntention;
+                }
+            }
+        }
+        return actionIntention;
     }
 }

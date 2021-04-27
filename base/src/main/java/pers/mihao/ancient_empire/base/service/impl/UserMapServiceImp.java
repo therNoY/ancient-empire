@@ -214,10 +214,9 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
      * @return
      */
     @Override
-    @Cacheable(CatchKey.ENCOUNTER_MAP)
-    public List<BaseMapInfoVO> getEncounterMaps() {
-        List<BaseMapInfoVO> encounterMaps = userMapDAO.getEncounterMaps();
-        return encounterMaps;
+    public IPage<BaseMapInfoVO> getEncounterMaps(ApiConditionDTO apiConditionDTO) {
+        List<BaseMapInfoVO> encounterMaps = userMapDAO.getEncounterMapsWithPage(apiConditionDTO);
+        return IPageHelper.toPage(encounterMaps, apiConditionDTO);
     }
 
     @Override

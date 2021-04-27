@@ -275,10 +275,10 @@ public class UserMapController {
     /**
      * 获取遭遇战地图 遭遇战地图定义 admin 创建 type 是 encounter
      */
-    @GetMapping("/encounterMap")
-    public RespJson getEncounterMap() {
-        List<BaseMapInfoVO> encounterMaps = userMapService.getEncounterMaps();
-        return RespUtil.successResJson(encounterMaps);
+    @PostMapping("/encounterMap")
+    public RespJson getEncounterMap(@RequestBody ApiConditionDTO apiConditionDTO) {
+        IPage<BaseMapInfoVO> encounterMaps = userMapService.getEncounterMaps(apiConditionDTO);
+        return RespUtil.successPageResJson(encounterMaps);
     }
 
     /**

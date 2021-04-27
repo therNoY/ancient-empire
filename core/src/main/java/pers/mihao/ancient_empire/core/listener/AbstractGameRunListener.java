@@ -18,6 +18,7 @@ import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.command.ShowDialogCommand;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
+import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
  * @Author mh32736
@@ -86,6 +87,11 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     @Override
     public void beforeRoundStart(Army currArmy) {
+    }
+
+    @Override
+    public ActionIntention chooseAction(UnitInfo unitInfo, List<ActionIntention> actionList) {
+        return null;
     }
 
     /**

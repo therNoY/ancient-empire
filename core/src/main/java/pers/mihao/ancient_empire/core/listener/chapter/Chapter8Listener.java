@@ -1,13 +1,17 @@
 package pers.mihao.ancient_empire.core.listener.chapter;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import javafx.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
+import pers.mihao.ancient_empire.core.robot.ActionIntention;
+import pers.mihao.ancient_empire.core.robot.RobotActiveEnum;
 
 /**
  * 第一章监听处理类
@@ -16,6 +20,11 @@ import pers.mihao.ancient_empire.core.eums.DialogEnum;
  * @Date 2021/4/1 9:20
  */
 public class Chapter8Listener extends AbstractChapterListener {
+
+    /**
+     * boos的位置
+     */
+    private static final Site BOOS_SITE = new Site(3, 8);
 
 
     @Override
@@ -84,6 +93,15 @@ public class Chapter8Listener extends AbstractChapterListener {
                 waitExecutionOk(10000);
             }
         }
+    }
+
+    @Override
+    public ActionIntention chooseAction(UnitInfo unitInfo, List<ActionIntention> actionList) {
+        if (AppUtil.siteEquals(BOOS_SITE, unitInfo)) {
+            // boos直接结束
+            return new ActionIntention(RobotActiveEnum.END, BOOS_SITE);
+        }
+        return null;
     }
 
     /**
