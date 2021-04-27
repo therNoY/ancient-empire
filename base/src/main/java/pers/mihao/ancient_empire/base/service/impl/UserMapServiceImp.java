@@ -4,7 +4,7 @@ import static pers.mihao.ancient_empire.common.constant.CatchKey.USER_CREATE_MAP
 import static pers.mihao.ancient_empire.common.constant.CatchKey.USER_MAP;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,13 +28,16 @@ import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.UserMapService;
+import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
+import pers.mihao.ancient_empire.common.annotation.redis.NotGenerator;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.core.dao.UserMapAttentionDao;
 
 @Service
 public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap> implements UserMapService {
@@ -53,6 +55,9 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
     @Autowired
     UserMapService userMapService;
 
+    @Autowired
+    UserMapAttentionDao userMapAttentionDao;
+
     /**
      * 从mongo 中获取用户创建的地图
      *
@@ -66,24 +71,22 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
     }
 
     /**
-     * 从mongo 中获取用户创建的地图
+     * 获取用户创建的地图 分页
      *
      * @return
      */
     @Override
-    @Cacheable(CatchKey.USER_CREATE_MAP)
-    public List<BaseMapInfoVO> getUserAllMapByUserId(Integer id) {
-        QueryWrapper<UserMap> wrapper = new QueryWrapper<>();
-        wrapper.eq("create_user_id", id)
-            .eq("un_save", 0);
-        List<UserMap> encounterMaps = userMapDAO.selectList(wrapper);
-        return encounterMaps.stream().map(e->{
+    public IPage<BaseMapInfoVO> getUserCreateMapWithPage(Integer id, @NotGenerator ApiConditionDTO apiConditionDTO) {
+        List<UserMap> userMap = userMapDAO.selectUserCreateMapWithPage(apiConditionDTO);
+        List<BaseMapInfoVO> resultMap = userMap.stream().map(e->{
             BaseMapInfoVO infoVO = new BaseMapInfoVO();
             BeanUtil.copyValueByGetSet(e, infoVO);
             infoVO.setMapId(e.getUuid());
             infoVO.setCreateTime(DateUtil.formatDataTime(e.getCreateTime()));
             return infoVO;
         }).collect(Collectors.toList());
+
+        return IPageHelper.toPage(resultMap, apiConditionDTO);
     }
 
 
@@ -162,34 +165,7 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
         return simpleDrawings;
     }
 
-    /**
-     * 优化周围的海洋
-     *
-     * @param simpleDrawings
-     * @param index
-     * @param column
-     * @param regionList
-     */
-    private void optimizationAroundSea(Map<Integer, String> simpleDrawings, Integer index, Integer column, List<Region> regionList) {
-        Map<Integer, Integer> seaMap = getAroundSeaMap(index, regionList, column);
-        for (Map.Entry<Integer, Integer> entry : seaMap.entrySet()) {
-            Map<Integer, Integer> seaLandMap = getAroundLandMap(entry.getValue(), regionList, column);
-            if (seaLandMap.size() == 0) {
-                if (regionList.get(entry.getValue()).getType().startsWith(BANK)) {
-                    simpleDrawings.put(entry.getValue(), SEA);
-                    regionList.get(entry.getValue()).setType(SEA);
 
-                }
-                continue;
-            }
-            StringBuffer aroundBankName = new StringBuffer(BANK_);
-            seaLandMap.keySet().stream().sorted()
-                    .collect(Collectors.toList())
-                    .forEach(integer -> aroundBankName.append(integer));
-            simpleDrawings.put(entry.getValue(), aroundBankName.toString());
-            regionList.get(entry.getValue()).setType(aroundBankName.toString());
-        }
-    }
 
     /**
      * 保存地图
@@ -230,25 +206,7 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
         removeUserMapCatch(userMap);
     }
 
-    private void removeUserMapCatch(UserMap userMap){
-        userMapService.removeMapCatch(userMap.getUuid());
-        userMapService.removeUserMapCatch(userMap.getCreateUserId());
-        if (GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
-            userMapService.delEncounterMapsCatch();
-        }
-    }
 
-    @Override
-    @CacheEvict(USER_CREATE_MAP)
-    public void removeUserMapCatch(Integer createUserId) {}
-
-    @Override
-    @CacheEvict(USER_MAP)
-    public void removeMapCatch(String uuid){}
-
-    @Override
-    @CacheEvict(CatchKey.ENCOUNTER_MAP)
-    public void delEncounterMapsCatch(){}
 
     /**
      * 获取所有遭遇战 地图
@@ -300,7 +258,7 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
     }
 
     /**
-     * 获取用户凡人地图
+     * 查询用户
      *
      * @param uuid
      * @return
@@ -308,8 +266,7 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
     @Cacheable(CatchKey.USER_MAP)
     @Override
     public UserMap getUserMapById(String uuid) {
-        UserMap userMap = userMapDAO.selectById(uuid);
-        return userMap;
+        return userMapDAO.selectById(uuid);
     }
 
     @Override
@@ -327,10 +284,19 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
     }
 
     @Override
-    public List<UserMap> getUserDownloadMapList(ApiConditionDTO apiConditionDTO) {
-        // TODO
-        return null;
+    public IPage<BaseMapInfoVO> getUserDownloadMapWithPage(ApiConditionDTO apiConditionDTO) {
+        List<UserMap> userMaps = userMapAttentionDao.getUserDownloadMapWithPage(apiConditionDTO);
+        List<BaseMapInfoVO> resultMap = userMaps.stream().map(e->{
+            BaseMapInfoVO infoVO = new BaseMapInfoVO();
+            BeanUtil.copyValueByGetSet(e, infoVO);
+            infoVO.setMapId(e.getUuid());
+            infoVO.setCreateTime(DateUtil.formatDataTime(e.getCreateTime()));
+            return infoVO;
+        }).collect(Collectors.toList());
+
+        return IPageHelper.toPage(resultMap, apiConditionDTO);
     }
+
 
     @Override
     public List<UserMap> getWorldMapList(ApiConditionDTO apiConditionDTO) {
@@ -338,6 +304,26 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
         return null;
     }
 
+
+    private void removeUserMapCatch(UserMap userMap){
+        userMapService.removeMapCatch(userMap.getUuid());
+        userMapService.removeUserMapCatch(userMap.getCreateUserId());
+        if (GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
+            userMapService.delEncounterMapsCatch();
+        }
+    }
+
+    @Override
+    @CacheEvict(USER_CREATE_MAP)
+    public void removeUserMapCatch(Integer createUserId) {}
+
+    @Override
+    @CacheEvict(USER_MAP)
+    public void removeMapCatch(String uuid){}
+
+    @Override
+    @CacheEvict(CatchKey.ENCOUNTER_MAP)
+    public void delEncounterMapsCatch(){}
 
 
     /**
@@ -508,6 +494,35 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
             }
         }
         return isLandMap;
+    }
+
+    /**
+     * 优化周围的海洋
+     *
+     * @param simpleDrawings
+     * @param index
+     * @param column
+     * @param regionList
+     */
+    private void optimizationAroundSea(Map<Integer, String> simpleDrawings, Integer index, Integer column, List<Region> regionList) {
+        Map<Integer, Integer> seaMap = getAroundSeaMap(index, regionList, column);
+        for (Map.Entry<Integer, Integer> entry : seaMap.entrySet()) {
+            Map<Integer, Integer> seaLandMap = getAroundLandMap(entry.getValue(), regionList, column);
+            if (seaLandMap.size() == 0) {
+                if (regionList.get(entry.getValue()).getType().startsWith(BANK)) {
+                    simpleDrawings.put(entry.getValue(), SEA);
+                    regionList.get(entry.getValue()).setType(SEA);
+
+                }
+                continue;
+            }
+            StringBuffer aroundBankName = new StringBuffer(BANK_);
+            seaLandMap.keySet().stream().sorted()
+                .collect(Collectors.toList())
+                .forEach(integer -> aroundBankName.append(integer));
+            simpleDrawings.put(entry.getValue(), aroundBankName.toString());
+            regionList.get(entry.getValue()).setType(aroundBankName.toString());
+        }
     }
 
     private boolean isSea(String type) {

@@ -86,6 +86,7 @@ public class UnitMesController {
             .updateUnitAbility(reqSaveUnitMesDTO.getBaseInfo().getId(), reqSaveUnitMesDTO.getAbilityInfo());
         // 3.更新等级信息
         for (UnitLevelMes levelMes : reqSaveUnitMesDTO.getLevelInfoData()) {
+            levelMes.setUnitId(reqSaveUnitMesDTO.getBaseInfo().getId());
             unitLevelMesService.saveUnitLevelMesList(levelMes);
         }
         return RespUtil.successResJson();

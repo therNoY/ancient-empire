@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.jsonwebtoken.lang.Collections;
 
 import java.time.LocalDateTime;
@@ -37,7 +38,6 @@ import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 import pers.mihao.ancient_empire.common.util.*;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
@@ -169,15 +169,15 @@ public class UserMapController {
     }
 
     /**
-     * 获取用户地图列表
+     * 获取用户创建地图列表
      *
      * @return
      */
-    @GetMapping("/api/userMap/list")
-    public RespJson getUserMap(ApiRequestDTO apiRequestDTO) {
+    @PostMapping("/api/userMap/list")
+    public RespJson getUserCreateMap(@RequestBody ApiConditionDTO condition) {
         // 获取用户拥有的地图
-        List<BaseMapInfoVO> userAllMaps = userMapService.getUserAllMapByUserId(apiRequestDTO.getUserId());
-        return RespUtil.successResJson(userAllMaps);
+        IPage<BaseMapInfoVO> userAllMaps = userMapService.getUserCreateMapWithPage(condition.getUserId(), condition);
+        return RespUtil.successPageResJson(userAllMaps);
     }
 
     /**
@@ -186,10 +186,10 @@ public class UserMapController {
      * @param apiConditionDTO
      * @return
      */
-    @GetMapping("/api/userMap/download/list")
-    public RespJson getUserDownloadMapList(ApiConditionDTO apiConditionDTO) {
-        List<UserMap> mapList = userMapService.getUserDownloadMapList(apiConditionDTO);
-        return RespUtil.successResJson(mapList);
+    @PostMapping("/api/userMap/download/list")
+    public RespJson getUserDownloadMapList(@RequestBody ApiConditionDTO apiConditionDTO) {
+        IPage<BaseMapInfoVO> mapList = userMapService.getUserDownloadMapWithPage(apiConditionDTO);
+        return RespUtil.successPageResJson(mapList);
     }
 
     /**
@@ -198,7 +198,7 @@ public class UserMapController {
      * @return
      */
     @GetMapping("/api/userMap/{id}")
-    public RespJson getUserMap(@PathVariable("id") String id) {
+    public RespJson getUserCreateMap(@PathVariable("id") String id) {
         // 3.获取用户拥有的地图
         UserMap map = userMapService.getUserMapById(id);
         return RespUtil.successResJson(map);

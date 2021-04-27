@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
@@ -66,6 +65,7 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             showAction(gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         }else {
+            showHeavenFuryAnim(gameEvent.getInitiateSite());
             changeCurrPoint(gameEvent.getInitiateSite());
 
             Pair<Integer, UnitInfo> unitMes = changeCurrUnit(gameEvent.getInitiateSite());

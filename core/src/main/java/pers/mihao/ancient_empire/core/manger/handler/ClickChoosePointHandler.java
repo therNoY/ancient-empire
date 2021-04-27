@@ -1,16 +1,13 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
-import com.alibaba.fastjson.JSONObject;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
-import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.config.AppConfig;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
@@ -106,45 +103,46 @@ public class ClickChoosePointHandler extends CommonHandler {
         List<Pair<ArmyUnitIndexDTO, UnitInfo>> deadUnits = new ArrayList<>();
 
         // 获取攻击单位和被攻击单位的信息
-        ArmyUnitIndexDTO attachArmyUnitIndexDTO = currUnitArmyIndex();
+        ArmyUnitIndexDTO attachArmyUnitIndex = currUnitArmyIndex();
 
         Pair<Integer, UnitInfo> unitInfoPair = getUnitInfoFromMapBySite(gameEvent.getAimSite());
         UnitInfo beAttachUnit = unitInfoPair.getValue();
         Integer unitIndex = getUnitIndex(record().getArmyList().get(unitInfoPair.getKey()), beAttachUnit.getId());
-        ArmyUnitIndexDTO beAttachArmyUnitIndexDTO = new ArmyUnitIndexDTO(unitInfoPair.getKey(), unitIndex);
+        ArmyUnitIndexDTO beAttachArmyUnitIndex = new ArmyUnitIndexDTO(unitInfoPair.getKey(), unitIndex);
 
         // 获取攻击结果
-        AttachResultDTO attachResultDTO = getAttachResult(record().getCurrUnit(), beAttachUnit);
+        AttachResultDTO attachResult = getAttachResult(record().getCurrUnit(), beAttachUnit);
 
         // 不展示攻击区域
         commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ATTACH_AREA);
 
         // 展示攻击动画
-        showAttachAnim(attachResultDTO.getAttachResult().getAttach(), attachArmyUnitIndexDTO, beAttachArmyUnitIndexDTO);
+        showAttachAnim(attachResult.getAttachResult().getAttach(), attachArmyUnitIndex, beAttachArmyUnitIndex);
 
         // 判断攻击是否死亡
-        if (attachResultDTO.getAttachResult().getDead()) {
+        if (attachResult.getAttachResult().getDead()) {
             // 发送单位死亡命令
-            sendUnitDeadCommend(beAttachUnit, beAttachArmyUnitIndexDTO);
-            deadUnits.add(new Pair<>(beAttachArmyUnitIndexDTO, beAttachUnit));
+            sendUnitDeadCommend(beAttachUnit, beAttachArmyUnitIndex);
+            deadUnits.add(new Pair<>(beAttachArmyUnitIndex, beAttachUnit));
         } else {
             // 没有死亡
             // 更新被攻击单位的状态 血量/经验/状态
-            UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(beAttachArmyUnitIndexDTO);
-            unitStatusInfoDTO.setLife(attachResultDTO.getAttachResult().getLastLife());
-            unitStatusInfoDTO.setStatus(attachResultDTO.getAttachResult().getEndStatus());
+            UnitStatusInfoDTO unitStatusInfo = new UnitStatusInfoDTO(beAttachArmyUnitIndex);
+            unitStatusInfo.setLife(attachResult.getAttachResult().getLastLife());
+            unitStatusInfo.setStatus(attachResult.getAttachResult().getEndStatus());
 
             // 判断是否反击
-            if (attachResultDTO.getAntiAttack()) {
-                unitStatusInfoDTO.setExperience(attachResultDTO.getAntiAttackResult().getEndExperience());
+            if (attachResult.getAntiAttack()) {
+                unitStatusInfo.setExperience(attachResult.getAntiAttackResult().getEndExperience());
                 // 展示反击动画
-                showAttachAnim(attachResultDTO.getAntiAttackResult().getAttach(), beAttachArmyUnitIndexDTO, attachArmyUnitIndexDTO);
+                showAttachAnim(attachResult.getAntiAttackResult().getAttach(), beAttachArmyUnitIndex,
+                    attachArmyUnitIndex);
             }
 
-            changeUnitStatus(unitStatusInfoDTO);
+            changeUnitStatus(unitStatusInfo);
 
         }
-        if (attachResultDTO.getAntiAttack() && attachResultDTO.getAntiAttackResult().getDead()) {
+        if (attachResult.getAntiAttack() && attachResult.getAntiAttackResult().getDead()) {
             // 发送单位死亡命令
             sendUnitDeadCommend(currUnit(), currUnitArmyIndex());
             deadUnits.add(new Pair<>(currUnitArmyIndex(), currUnit()));
@@ -152,16 +150,16 @@ public class ClickChoosePointHandler extends CommonHandler {
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
         }else {
             // 修改攻击者单位的状态
-            UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(attachArmyUnitIndexDTO);
-            if (attachResultDTO.getAntiAttack()) {
-                unitStatusInfoDTO.setStatus(attachResultDTO.getAntiAttackResult().getEndStatus());
-                unitStatusInfoDTO.setLife(attachResultDTO.getAntiAttackResult().getLastLife());
+            UnitStatusInfoDTO unitStatusInfo = new UnitStatusInfoDTO(attachArmyUnitIndex);
+            if (attachResult.getAntiAttack()) {
+                unitStatusInfo.setStatus(attachResult.getAntiAttackResult().getEndStatus());
+                unitStatusInfo.setLife(attachResult.getAntiAttackResult().getLastLife());
             }
-            unitStatusInfoDTO.setExperience(attachResultDTO.getAttachResult().getEndExperience());
-            unitStatusInfoDTO.setUpdateCurr(true);
-            changeUnitStatus(unitStatusInfoDTO);
+            unitStatusInfo.setExperience(attachResult.getAttachResult().getEndExperience());
+            unitStatusInfo.setUpdateCurr(true);
+            changeUnitStatus(unitStatusInfo);
             // 结束
-            endCurrentUnit(attachArmyUnitIndexDTO);
+            endCurrentUnit(attachArmyUnitIndex);
         }
 
         for (Pair<ArmyUnitIndexDTO, UnitInfo> pair : deadUnits) {

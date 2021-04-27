@@ -187,4 +187,8 @@ public class UserTemplateHelper {
         return StringUtil.isNotBlack(userTemplate.getLevelupAnimation())
                 ? userTemplate.getLevelupAnimation() : defaultTemp.getLevelupAnimation();
     }
+
+    public String getHeavenFury(){
+        return "1/heaven_fury_1.png,1/heaven_fury_2.png,1/heaven_fury_3.png,1/heaven_fury_4.png,";
+    }
 }

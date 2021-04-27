@@ -12,7 +12,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import pers.mihao.ancient_empire.common.annotation.NotGenerator;
+import pers.mihao.ancient_empire.common.annotation.redis.NotGenerator;
 import pers.mihao.ancient_empire.common.util.PropertiesUtil;
 
 import java.lang.annotation.Annotation;

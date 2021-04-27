@@ -2,24 +2,20 @@ package pers.mihao.ancient_empire.core.listener;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.enums.ColorEnum;
-import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
-import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
-import pers.mihao.ancient_empire.core.manger.GameContextBaseHandler;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.command.ShowDialogCommand;
-import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
 
@@ -31,23 +27,14 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     private static GameSessionManger sessionManger;
 
-    protected static final int LOAD = 10;
-
-    protected static final int FRIEND_CAMP = 1;
-
-    protected static final int ENEMY_CAMP = 2;
-
-    protected static final String FRIEND_BLUE = ColorEnum.BLUE.type();
-
-    protected static final String FRIEND_GREEN = ColorEnum.GREEN.type();
-
-    protected static final String ENEMY_RED = ColorEnum.RED.type();
-
-    protected static final String ENEMY_BLACK = ColorEnum.BLACK.type();
-
+    /**
+     * 标记当前上线问是否还有效
+     */
     private boolean isEffective = true;
 
-
+    /**
+     * 对话框点击提示之后的线程锁
+     */
     private final Object lockObj = new Object();
 
     static {
@@ -80,11 +67,6 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     }
 
     @Override
-    public void onRoundStart(Army army) {
-
-    }
-
-    @Override
     public boolean onGameCommandAdd(GameCommand command) {
         return false;
     }
@@ -102,13 +84,15 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     public void onOccupied(UnitInfo currUnit, Region region) {
     }
 
-    private void addDialog(DialogEnum type, String message) {
-        ShowDialogCommand showDialogCommand = new ShowDialogCommand();
-        showDialogCommand.setDialogType(type.type());
-        showDialogCommand.setMessage(message);
-        sessionManger.sendMessage2Game(showDialogCommand, gameContext.getGameId());
+    @Override
+    public void beforeRoundStart(Army currArmy) {
     }
 
+    /**
+     * 添加一个类型的提示框
+     * @param type 类型
+     * @param message 消息
+     */
     protected void addDialogAndWait(DialogEnum type, String message) {
         addDialog(type, ChapterUtil.getMessage(message));
         // 等待用户点击
@@ -116,6 +100,29 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
         ShowDialogCommand showDialogCommand = new ShowDialogCommand();
         showDialogCommand.setDialogType(DialogEnum.DIS_SHOW_DIALOG.type());
         sessionManger.sendMessage2Game(showDialogCommand, gameContext.getGameId());
+    }
+
+    private void addDialog(DialogEnum type, String message) {
+        ShowDialogCommand showDialogCommand = new ShowDialogCommand();
+        showDialogCommand.setDialogType(type.type());
+        showDialogCommand.setMessage(message);
+        sessionManger.sendMessage2Game(showDialogCommand, gameContext.getGameId());
+    }
+
+
+    /**
+     * 等待前端的交互, 并设置最大等待时间
+     * @param maxTime
+     */
+    protected void await(int maxTime) {
+        synchronized (lockObj) {
+            try {
+                lockObj.wait(maxTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private void await() {
@@ -130,17 +137,6 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
             log.error("无效的上下文 抛出异常结束 释放线程");
             throw new AncientEmpireException("无效的上下文");
         }
-    }
-
-    protected void await(int time) {
-        synchronized (lockObj) {
-            try {
-                lockObj.wait(time);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     protected void notifySelf() {
@@ -162,54 +158,60 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
         onGameOver();
     }
 
-    protected void onGameOver(){}
+    protected void onGameOver() {
+    }
 
     protected void gameWin() {
         onGameWin();
         addDialog(DialogEnum.GAME_WIN, ChapterUtil.getMessage("GAME_WIN"));
     }
 
-    protected void onGameWin() {}
+    protected void onGameWin() {
+    }
 
     @Override
     public void onRoundEnd(Army army) {
     }
 
-    protected List<Site> getEnemyCastle() {
-        List<Site> list = new ArrayList<>();
-        for (int i = 0; i < gameMap().getRegions().size(); i++) {
-            Region region = gameMap().getRegions().get(i);
-            if ((region.getColor().equals(ENEMY_RED) || region.getColor().equals(ENEMY_BLACK))
-                && region.getType().equals(RegionEnum.CASTLE.type())) {
-                list.add(getSiteByRegionIndex(i));
-            }
-        }
-        return list;
-    }
 
-    protected List<Site> getFriendCastle() {
-        List<Site> list = new ArrayList<>();
-        for (int i = 0; i < gameMap().getRegions().size(); i++) {
-            Region region = gameMap().getRegions().get(i);
-            if (region.getColor().equals(FRIEND_BLUE) || region.getColor().equals(FRIEND_GREEN)) {
-                list.add(getSiteByRegionIndex(i));
-            }
-        }
-        return list;
-    }
-
-
+    /**
+     * 添加单位并移动
+     *
+     * @param armyIndex
+     * @param typeId
+     * @param sites
+     * @return
+     */
     protected Unit addUnitAndMove(Integer armyIndex, Integer typeId, Site... sites) {
         Unit unit = addNewUnit(typeId, sites[0], armyIndex);
         moveUnit(unit.getId(), sites);
         return unit;
     }
 
+    /**
+     * 根据初始点移动单位
+     *
+     * @param sites
+     * @return
+     */
+    protected Unit moveUnit(Site... sites) {
+        Pair<Integer, Unit> unit = getUnitFromMapBySite(sites[0]);
+        assert unit != null;
+        moveUnit(unit.getValue().getId(), sites);
+        return unit.getValue();
+    }
+
+    /**
+     * 移动单位
+     *
+     * @param uuid  单位id
+     * @param sites 移动路径
+     */
     protected void moveUnit(String uuid, Site... sites) {
         ArmyUnitIndexDTO armyUnitIndexDTO = getArmyUnitIndexByUnitId(uuid);
         List<PathPosition> pathPositions = new ArrayList<>();
-        for (int i = 0; i < sites.length; i++) {
-            pathPositions.add(new PathPosition(sites[i]));
+        for (Site site : sites) {
+            pathPositions.add(new PathPosition(site));
         }
 
         // 将路径长度放进去

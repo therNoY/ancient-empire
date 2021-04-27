@@ -9,6 +9,7 @@ import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 
 /**
+ * 发送给前端处理的任务
  * @Author mh32736
  * @Date 2020/9/17 16:26
  */

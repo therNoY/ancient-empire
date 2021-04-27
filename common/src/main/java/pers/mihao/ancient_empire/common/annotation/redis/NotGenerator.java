@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.common.annotation;
+package pers.mihao.ancient_empire.common.annotation.redis;
 
 import java.lang.annotation.*;
 

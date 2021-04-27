@@ -29,9 +29,7 @@ public class Chapter4Listener extends AbstractChapterListener {
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_4_MESSAGE_3");
 
         // 移动单位
-        Pair<Integer, Unit> catapult = getUnitFromMapBySite(new Site(11, 10));
-        changeUnitPoint(getArmyUnitIndexByUnitId(catapult.getValue().getId()));
-        moveUnit(catapult.getValue().getId(), new Site(11, 10), new Site(11, 7));
+        moveUnit(new Site(11, 10), new Site(11, 10), new Site(11, 7));
         sendCommandNow();
         await(1200);
 

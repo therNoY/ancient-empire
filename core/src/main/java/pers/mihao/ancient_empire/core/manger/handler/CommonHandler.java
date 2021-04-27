@@ -59,7 +59,7 @@ public class CommonHandler extends AbstractGameEventHandler {
         if (animList.size() % 2 != 0) {
             animList.add(animList.get(animList.size() - 1));
         }
-        ShowAnimDTO showAnimDTO = new ShowAnimDTO(site, animList);
+        ShowAnimDTO showAnimDTO = new ShowAnimDTO(site, animList.stream().map(Anim::new).collect(Collectors.toList()));
         // TODO 每个frame的间隔 需要做成配置 默认50
         showAnimDTO.setFrame(100);
         return showAnimDTO;
@@ -128,8 +128,8 @@ public class CommonHandler extends AbstractGameEventHandler {
         Site attSite = getUnitByIndex(attIndex);
         Site beAtt = getUnitByIndex(beAttIndex);
         // 1. 展示血量变化,
-        List<LifeChangeDTO> leftChangeDTOS = new ArrayList<>();
-        leftChangeDTOS.add(new LifeChangeDTO(attach, beAtt));
+        List<LifeChangeDTO> leftChangeList = new ArrayList<>();
+        leftChangeList.add(new LifeChangeDTO(attach, beAtt));
 
         // 2. 展示攻击动画
         ShowAnimDTO showAnimDTO = getShowAnim(beAtt, gameContext.getUserTemplate().getAttachAnimation());
@@ -160,7 +160,7 @@ public class CommonHandler extends AbstractGameEventHandler {
         }
 
         commandStream()
-            .toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, leftChangeDTOS)
+            .toGameCommand().addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, leftChangeList)
             .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_ATTACH_ANIM, showAnim);
 
     }
@@ -492,6 +492,48 @@ public class CommonHandler extends AbstractGameEventHandler {
 
     public List<GameCommand> getCommandList() {
         return commandList;
+    }
+
+
+    /**
+     * 展示天堂之怒动画
+     */
+    public void showHeavenFuryAnim(Site site){
+        Pair<Integer, Unit> unit = getUnitFromMapBySite(site);
+        String heavenFuryAnim = gameContext.getHeavenFury();
+        String[] animArray = heavenFuryAnim.split(CommonConstant.COMMA);
+        // 2. 展示攻击动画
+        List<Anim> animList = new ArrayList<>();
+        ShowAnimDTO showAnimDTO = new ShowAnimDTO();
+        showAnimDTO.setFrame(50);
+        int start = Math.max(site.getRow() - 4, 0);
+        Anim anim;
+        for (int i = start; i <= site.getRow(); i++) {
+            for (int j = 0; j < animArray.length - 1; j++) {
+                anim = new Anim(animArray[j]);
+                anim.setRow(i);
+                anim.setColumn(site.getColumn());
+                animList.add(anim);
+            }
+            if (i == site.getRow()) {
+                anim = new Anim(animArray[animArray.length - 1]);
+                anim.setRow(i);
+                anim.setColumn(site.getColumn());
+                animList.add(anim);
+            }
+        }
+        // 多一轮动画显示
+        for (int j = 0; j < animArray.length; j++) {
+            anim = new Anim(animArray[j]);
+            anim.setRow(site.getRow());
+            anim.setColumn(site.getColumn());
+            animList.add(anim);
+        }
+        showAnimDTO.setAnimList(animList);
+        JSONObject showAnim = new JSONObject();
+        showAnim.put(ExtMes.ANIM, showAnimDTO);
+        showAnim.put(ExtMes.ARMY_UNIT_INDEX, getArmyUnitIndexByUnitId(unit.getValue().getId()));
+        commandStream().toGameCommand().addOrderCommand(GameCommendEnum.SHOW_ATTACH_ANIM, showAnim);
     }
 
     @Override

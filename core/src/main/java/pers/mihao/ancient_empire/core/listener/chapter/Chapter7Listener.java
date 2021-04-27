@@ -122,7 +122,7 @@ public class Chapter7Listener extends AbstractChapterListener {
 
         await(500);
 
-        addUnitAndMove(0, 10, new Site(18, 14), new Site(17, 14));
+        addUnitAndMove(0, 13, new Site(18, 14), new Site(17, 14));
         addUnitAndMove(0, 8, new Site(18, 14), new Site(17, 14), new Site(17, 13));
         addUnitAndMove(0, 9, new Site(18, 14), new Site(17, 14), new Site(17, 15));
         addUnitAndMove(0, 2, new Site(18, 14), new Site(18, 13));

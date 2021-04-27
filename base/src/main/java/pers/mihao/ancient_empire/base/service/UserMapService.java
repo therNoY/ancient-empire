@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.base.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,10 @@ public interface UserMapService extends IService<UserMap> {
      * 获取用户创建的地图
      *
      * @param id
+     * @param apiConditionDTO
      * @return
      */
-    List<BaseMapInfoVO> getUserAllMapByUserId(Integer id);
+    IPage<BaseMapInfoVO> getUserCreateMapWithPage(Integer id, ApiConditionDTO apiConditionDTO);
 
     /**
      * 保存用户的草稿地图
@@ -112,7 +114,7 @@ public interface UserMapService extends IService<UserMap> {
 
     /**
      * 根据Id获取用户地图
-     *
+     * @param uuid
      * @return
      */
     UserMap getUserMapById(String uuid);
@@ -124,14 +126,6 @@ public interface UserMapService extends IService<UserMap> {
      * @return
      */
     UserMap getUserDraftEditMap(Integer userId);
-
-    /**
-     * 获取用户下载地图
-     *
-     * @param apiConditionDTO
-     * @return
-     */
-    List<UserMap> getUserDownloadMapList(ApiConditionDTO apiConditionDTO);
 
     /**
      * 获取可以下载的世界地图
@@ -152,4 +146,11 @@ public interface UserMapService extends IService<UserMap> {
      * @return
      */
     List<UserMap> getStoreMapList();
+
+    /**
+     * 获取用户下载的地图分页
+     * @param apiConditionDTO
+     * @return
+     */
+    IPage<BaseMapInfoVO> getUserDownloadMapWithPage(ApiConditionDTO apiConditionDTO);
 }

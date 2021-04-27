@@ -109,4 +109,9 @@ public enum GameEventEnum implements BaseEnum {
      */
     ROUND_END,
 
+    /**
+     * 命令执行完毕
+     */
+    COMMEND_EXEC_OVER,
+
 }

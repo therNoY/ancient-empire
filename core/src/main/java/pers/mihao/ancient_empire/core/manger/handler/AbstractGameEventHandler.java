@@ -29,9 +29,13 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    // 命令集合
+    /**
+     * 一次时间产生的命令合集 可以有多个无序命令 有一个或零个有序命令
+     */
     protected List<GameCommand> commandList = null;
-    // 帮助构建流
+    /**
+     * 帮助构建命令流
+     */
     private Stream stream;
 
     private int orderIndex = 0;
@@ -129,7 +133,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
 
     /**
-     * 流式
+     * 流式命令
      */
     public class Stream {
 
@@ -286,6 +290,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     public void sendCommandNow() {
         gameCoreManger.handleCommand(commandList, gameContext.getGameId());
         commandList = new ArrayList<>();
+        orderIndex = 0;
     }
 
 

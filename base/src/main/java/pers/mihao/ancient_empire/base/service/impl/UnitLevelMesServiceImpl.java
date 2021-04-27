@@ -45,7 +45,11 @@ public class UnitLevelMesServiceImpl extends ServiceImpl<UnitLevelMesDAO, UnitLe
      */
     @Override
     public void saveUnitLevelMesList(UnitLevelMes unitLevelMes) {
-        unitLevelMesDao.updateById(unitLevelMes);
+        if (unitLevelMes.getId() != null) {
+            unitLevelMesDao.updateById(unitLevelMes);
+        } else {
+            unitLevelMesDao.insert(unitLevelMes);
+        }
     }
 
 

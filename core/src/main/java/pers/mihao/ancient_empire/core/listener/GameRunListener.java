@@ -25,10 +25,10 @@ public interface GameRunListener {
     void onClickTip();
 
     /**
-     * 回合开始
-     * @param army
+     * 回合开始钩子
+     * @param currArmy
      */
-    void onRoundStart(Army army);
+    void beforeRoundStart(Army currArmy);
 
     /**
      * 回合结束 当前军队回合结束
@@ -76,4 +76,7 @@ public interface GameRunListener {
      * @param region
      */
     void onOccupied(UnitInfo currUnit, Region region);
+
+
+
 }

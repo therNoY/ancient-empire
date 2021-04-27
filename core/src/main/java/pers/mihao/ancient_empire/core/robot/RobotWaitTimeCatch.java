@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.core.robot;
 
-import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 
 /**
@@ -21,7 +20,7 @@ public class RobotWaitTimeCatch {
     }
 
 
-    public long getLockTimeByEvent(GameEventEnum eventEnum) {
+    public long getMaxLockTimeByEvent(GameEventEnum eventEnum) {
         return 1000L;
     }
 

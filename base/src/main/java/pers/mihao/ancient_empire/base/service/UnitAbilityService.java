@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitAbility;
-import pers.mihao.ancient_empire.common.annotation.NotGenerator;
+import pers.mihao.ancient_empire.common.annotation.redis.NotGenerator;
 
 import java.util.List;
 

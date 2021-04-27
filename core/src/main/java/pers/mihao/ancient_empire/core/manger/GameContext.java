@@ -22,6 +22,7 @@ import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
+import pers.mihao.ancient_empire.core.manger.interactive.InteractiveLock;
 
 /**
  * 一局游戏的上下文，一局游戏一个context
@@ -70,7 +71,7 @@ public class GameContext extends UserTemplateHelper {
     private String bgColor;
 
     /**
-     * 控制开始游戏
+     * 开始游戏控制器
      */
     private CyclicBarrier startGame;
 
@@ -123,6 +124,8 @@ public class GameContext extends UserTemplateHelper {
      * 游戏运行监听
      */
     private List<GameRunListener> gameRunListeners;
+
+    private InteractiveLock interactiveLock;
 
     public GameContext() {
     }
@@ -314,17 +317,6 @@ public class GameContext extends UserTemplateHelper {
         }
     }
 
-    private void addCommonList(CommonHandler handler, GameRunListener listener) {
-        if (listener instanceof AbstractChapterListener) {
-            AbstractChapterListener chapterListener = (AbstractChapterListener) listener;
-            List<GameCommand> commands = chapterListener.getCommandList();
-            if (CollectionUtil.isNotEmpty(commands)) {
-                handler.getCommandList().addAll(commands);
-                commands.clear();
-            }
-        }
-    }
-
     public void onUnitDone(UnitInfo unitInfo, CommonHandler handler) {
         handler.sendCommandNow();
         if (gameRunListeners != null) {
@@ -342,14 +334,6 @@ public class GameContext extends UserTemplateHelper {
             }
         }
         return res;
-    }
-
-    public void onRoundStart(Army army) {
-        if (gameRunListeners != null) {
-            for (GameRunListener listener : gameRunListeners) {
-                listener.onRoundStart(army);
-            }
-        }
     }
 
     public void onRoundEnd(Army army, CommonHandler handler) {
@@ -384,6 +368,15 @@ public class GameContext extends UserTemplateHelper {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
                 listener.onOccupied(currUnit, region);
+            }
+        }
+    }
+
+    public void beforeRoundStart(Army currArmy, CommonHandler handler) {
+        handler.sendCommandNow();
+        if (gameRunListeners != null) {
+            for (GameRunListener listener : gameRunListeners) {
+                listener.beforeRoundStart(currArmy);
             }
         }
     }

@@ -62,12 +62,6 @@ public class GameContextHelperListener extends AbstractGameRunListener {
         log.info("{}单位结束", unitInfo);
     }
 
-    @Override
-    public void onRoundStart(Army army) {
-        log.info("回合开始：{}", army);
-    }
-
-
 
     @Override
     public boolean onGameCommandAdd(GameCommand gameCommand) {

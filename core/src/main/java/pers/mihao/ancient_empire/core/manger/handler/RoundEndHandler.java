@@ -36,6 +36,9 @@ public class RoundEndHandler extends CommonHandler {
 
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
+
+        gameContext.onRoundEnd(currArmy(), this);
+
         // 1.开始新的回合
         startNewRound(record());
 
@@ -47,7 +50,7 @@ public class RoundEndHandler extends CommonHandler {
             robotManger.startRobot(gameContext);
         }
 
-        gameContext.onRoundEnd(currArmy(), this);
+        gameContext.beforeRoundStart(currArmy(), this);
     }
 
     /**

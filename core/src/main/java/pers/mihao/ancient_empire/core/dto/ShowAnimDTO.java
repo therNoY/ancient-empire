@@ -14,7 +14,7 @@ public class ShowAnimDTO extends Site {
     /**
      * 动画
      */
-    private List<String> animList;
+    private List<Anim> animList;
 
     /**
      * 动画过度的帧数
@@ -23,22 +23,20 @@ public class ShowAnimDTO extends Site {
      */
     private Integer frame;
 
+    public ShowAnimDTO() {
+    }
 
-    public ShowAnimDTO(Site site, List<String> animList) {
+    public ShowAnimDTO(Site site, List<Anim> animList) {
         super(site);
         this.animList = animList;
     }
 
-    public ShowAnimDTO(Integer row, Integer column, List<String> animList) {
-        super(row, column);
-        this.animList = animList;
-    }
 
-    public List<String> getAnimList() {
+    public List<Anim> getAnimList() {
         return animList;
     }
 
-    public void setAnimList(List<String> animList) {
+    public void setAnimList(List<Anim> animList) {
         this.animList = animList;
     }
 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import java.util.List;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 /**
  * @author mihao
@@ -49,4 +50,12 @@ public interface UserMapDAO extends BaseMapper<UserMap> {
      * @return
      */
     List<BaseMapInfoVO> getEncounterMaps();
+
+    /**
+     * 条件查询用户地图
+     * @param apiConditionDTO
+     * @return
+     */
+    List<UserMap> selectUserCreateMapWithPage(ApiConditionDTO apiConditionDTO);
+
 }

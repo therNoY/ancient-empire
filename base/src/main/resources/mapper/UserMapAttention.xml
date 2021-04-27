@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.mihao.ancient_empire.core.dao.UserMapAttentionDao">
+
+  <!-- 通用查询映射结果 -->
+  <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.core.entity.UserMapAttention">
+    <id column="map_id" property="mapId"/>
+    <result column="map_version" property="mapVersion"/>
+    <result column="user_id" property="userId"/>
+    <result column="map_start" property="mapStart"/>
+    <result column="map_commend" property="mapCommend"/>
+    <result column="downlaod_time" property="downlaodTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+        map_id, map_version, user_id, map_start, map_commend, downlaod_time, update_time
+    </sql>
+  <select id="getUserDownloadMapWithPage" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
+       select m.* from user_map_attention ma left join user_map m
+        on m.uuid = ma.map_id where user_id = '1' ORDER BY update_time
+    </select>
+
+</mapper>
