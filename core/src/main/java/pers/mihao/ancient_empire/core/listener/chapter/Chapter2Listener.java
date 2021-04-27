@@ -36,7 +36,7 @@ public class Chapter2Listener extends AbstractChapterListener {
         ArmyUnitIndexDTO attachIndex = new ArmyUnitIndexDTO(1, 2);
         addUnitAndMove(1, 1, new Site(4, 8), new Site(4, 7), new Site(2, 7));
         sendCommandNow();
-        await(3500);
+        waitExecutionOk(10000);
 
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_2_MESSAGE_4");
 
@@ -48,7 +48,7 @@ public class Chapter2Listener extends AbstractChapterListener {
         sendUnitDeadCommend(getUnitInfoByIndex(beAttchIndex), beAttchIndex);
         sendCommandNow();
 
-        await(1000);
+        waitExecutionOk(8000);
 
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_2_MESSAGE_5");
 
@@ -56,7 +56,7 @@ public class Chapter2Listener extends AbstractChapterListener {
         addDialogAndWait(DialogEnum.LOADER_GREEN, "CAMPAIGN_AEII_STAGE_2_MESSAGE_7");
         changeCurrPoint(new Site(6, 4));
         sendCommandNow();
-        await(300);
+        waitExecutionOk(5000);
 
         addDialogAndWait(DialogEnum.LOADER_GREEN, "CAMPAIGN_AEII_STAGE_2_MESSAGE_8");
         addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_2_OBJECTIVE");

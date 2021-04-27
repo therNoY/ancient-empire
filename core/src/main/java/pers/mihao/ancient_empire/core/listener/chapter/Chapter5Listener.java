@@ -63,7 +63,7 @@ public class Chapter5Listener extends AbstractChapterListener {
         addUnitAndMove(1, 12, new Site(5, 5), new Site(4, 5));
         sendCommandNow();
 
-        await(1500);
+        waitExecutionOk(9000);
 
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_5_MESSAGE_3");
     }
@@ -78,7 +78,7 @@ public class Chapter5Listener extends AbstractChapterListener {
         addUnitAndMove(1, 6, new Site(11, 7), new Site(11, 6));
         sendCommandNow();
 
-        await(1500);
+        waitExecutionOk(9000);
 
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_5_MESSAGE_3_1");
     }
@@ -92,7 +92,7 @@ public class Chapter5Listener extends AbstractChapterListener {
         addUnitAndMove(1, 6, new Site(6, 13), new Site(8, 13));
         sendCommandNow();
 
-        await(1500);
+        waitExecutionOk(12000);
 
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_5_MESSAGE_3_2");
     }
@@ -107,7 +107,7 @@ public class Chapter5Listener extends AbstractChapterListener {
         addUnitAndMove(1, 2, new Site(9, 19), new Site(10, 19));
         sendCommandNow();
 
-        await(2000);
+        waitExecutionOk(15000);
 
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_5_MESSAGE_4");
     }

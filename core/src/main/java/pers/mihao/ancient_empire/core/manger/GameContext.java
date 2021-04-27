@@ -125,9 +125,20 @@ public class GameContext extends UserTemplateHelper {
      */
     private List<GameRunListener> gameRunListeners;
 
-    private InteractiveLock interactiveLock;
+    /**
+     * 帮助实现交互的
+     */
+    private InteractiveLock interactiveLock = new InteractiveLock();
 
     public GameContext() {
+    }
+
+    public InteractiveLock getInteractiveLock() {
+        return interactiveLock;
+    }
+
+    public void setInteractiveLock(InteractiveLock interactiveLock) {
+        this.interactiveLock = interactiveLock;
     }
 
     public CyclicBarrier getStartGame() {

@@ -31,14 +31,14 @@ public class Chapter1Listener extends AbstractChapterListener {
         changeUnitPoint(beAttchIndex);
         sendCommandNow();
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_1");
-        await(500);
+        awaitTime(500);
         changeUnitPoint(attachIndex);
         sendCommandNow();
         // 生成攻击事件
         showAttachAnim(AppUtil.getArrayByInt(-1, 100), attachIndex, beAttchIndex);
         sendUnitDeadCommend(getUnitInfoByIndex(beAttchIndex), beAttchIndex);
         sendCommandNow();
-        await(1400);
+        waitExecutionOk(5000);
         // 对话
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_2");
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_1_MESSAGE_3");
@@ -68,12 +68,12 @@ public class Chapter1Listener extends AbstractChapterListener {
      */
     public void triggerStage1() {
         // 定时一段时间
-        await(500);
+        awaitTime(500);
         addUnitAndMove(1, 2, new Site(2, 2), new Site(2, 3));
         addUnitAndMove(1, 1, new Site(11, 11), new Site(11, 10));
         sendCommandNow();
 
-        await(1500);
+        waitExecutionOk(5000);
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_5");
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_1_MESSAGE_6");
     }

@@ -459,14 +459,9 @@ public abstract class RobotCommonHandler extends CommonHandler {
 
     protected void handleRobotEvent(GameEvent event){
         gameCoreManger.handelTask(event);
-        long wait = RobotWaitTimeCatch.getInstance().getMaxLockTimeByEvent(event.getEvent());
-        // TODO 等待当前
+        int wait = RobotWaitTimeCatch.getInstance().getMaxLockTimeByEvent(event.getEvent());
         log.info("发送命令：{}完成 准备lock:{}ms之后重新运行", event, wait);
-        try {
-            Thread.sleep(wait);
-        } catch (InterruptedException e) {
-            log.error("", e);
-        }
+        gameContext.getInteractiveLock().untilExecutionOk(wait);
         log.info("休眠完成 准备重新执行任务");
     }
 

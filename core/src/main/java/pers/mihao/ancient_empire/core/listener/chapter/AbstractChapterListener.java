@@ -79,7 +79,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
     public final void onGameStart() {
         StatusMachineEnum preStatus = gameContext.getStatusMachine();
         gameContext.setStatusMachine(StatusMachineEnum.DIALOG);
-        await(500);
+        awaitTime(500);
         onChapterGameStart();
         gameContext.setStatusMachine(preStatus);
     }
@@ -217,7 +217,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
      * 触发剧情
      */
     private void triggerPlot() {
-        await(500);
+        awaitTime(300);
         stage++;
         try {
             StatusMachineEnum preStatus = gameContext.getStatusMachine();
@@ -241,7 +241,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
         Unit wolf1 = addNewUnit(unitId, site, armyIndex);
         changeUnitPoint(getArmyUnitIndexByUnitId(wolf1.getId()));
         sendCommandNow();
-        await(500);
+        waitExecutionOk(1500);
     }
 
 

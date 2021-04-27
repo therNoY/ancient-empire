@@ -1,8 +1,6 @@
 package pers.mihao.ancient_empire.core.listener.chapter;
 
-import javafx.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Site;
-import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
 
 /**
@@ -31,12 +29,12 @@ public class Chapter4Listener extends AbstractChapterListener {
         // 移动单位
         moveUnit(new Site(11, 10), new Site(11, 10), new Site(11, 7));
         sendCommandNow();
-        await(1200);
+        waitExecutionOk(5000);
 
         // 攻击房屋
         showDestroyTown(new Site(10, 5));
         sendCommandNow();
-        await(400);
+        waitExecutionOk(3000);
 
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_4_MESSAGE_4");
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_4_MESSAGE_5");

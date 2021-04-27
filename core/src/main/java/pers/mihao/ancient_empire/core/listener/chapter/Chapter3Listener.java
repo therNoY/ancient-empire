@@ -42,7 +42,7 @@ public class Chapter3Listener extends AbstractChapterListener {
 
     @Override
     public void onChapterGameWin() {
-        await(1000);
+        awaitTime(800);
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_3_MESSAGE_7");
     }
 
@@ -71,7 +71,7 @@ public class Chapter3Listener extends AbstractChapterListener {
         changeUnitArmy(water2, 0);
 
         sendCommandNow();
-        await(1000);
+        waitExecutionOk(8000);
 
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_3_MESSAGE_7");
     }

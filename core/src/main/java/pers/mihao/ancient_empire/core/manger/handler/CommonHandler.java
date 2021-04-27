@@ -500,7 +500,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      */
     public void showHeavenFuryAnim(Site site){
         Pair<Integer, Unit> unit = getUnitFromMapBySite(site);
-        String heavenFuryAnim = gameContext.getHeavenFury();
+        String heavenFuryAnim = gameContext.getHeavenFuryImg();
         String[] animArray = heavenFuryAnim.split(CommonConstant.COMMA);
         // 2. 展示攻击动画
         List<Anim> animList = new ArrayList<>();

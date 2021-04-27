@@ -39,11 +39,11 @@ public class Chapter8Listener extends AbstractChapterListener {
         Unit unit3 = moveUnit(new Site(4, 8), new Site(3, 8));
         removeUnit(getArmyUnitIndexByUnitId(unit3.getId()));
         sendCommandNow();
-        await(2300);
+        waitExecutionOk(15000);
         addDialogAndWait(DialogEnum.LOADER_RED, "CAMPAIGN_AEII_STAGE_8_MESSAGE_3");
         moveUnit(new Site(5, 8), new Site(3, 8));
         sendCommandNow();
-        await(100);
+        waitExecutionOk(3000);
         addDialogAndWait(DialogEnum.LOADER_RED, "CAMPAIGN_AEII_STAGE_8_MESSAGE_3_1");
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_8_MESSAGE_4");
         addDialogAndWait(DialogEnum.LOADER_RED, "CAMPAIGN_AEII_STAGE_8_MESSAGE_5");
@@ -51,7 +51,7 @@ public class Chapter8Listener extends AbstractChapterListener {
         Pair<Integer, Unit> beAttach = getUnitFromMapBySite(new Site(16, 10));
         showHeavenFury(beAttach.getValue(), 100);
         sendCommandNow();
-        await(3000);
+        waitExecutionOk(9000);
 
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_8_MESSAGE_6");
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_8_MESSAGE_7");
@@ -81,7 +81,7 @@ public class Chapter8Listener extends AbstractChapterListener {
             if (unit != null) {
                 showHeavenFury(unit, 99);
                 sendCommandNow();
-                await(3000);
+                waitExecutionOk(10000);
             }
         }
     }

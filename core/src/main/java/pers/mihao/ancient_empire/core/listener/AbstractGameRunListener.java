@@ -114,17 +114,25 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
      * 等待前端的交互, 并设置最大等待时间
      * @param maxTime
      */
-    protected void await(int maxTime) {
-        synchronized (lockObj) {
-            try {
-                lockObj.wait(maxTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
+    protected void waitExecutionOk(int maxTime) {
+        gameContext.getInteractiveLock().untilExecutionOk(maxTime);
     }
 
+    /**
+     * 超时退出
+     * @param time
+     */
+    protected void awaitTime(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            log.error("" , e);
+        }
+    }
+
+    /**
+     * 等待用户点击交互
+     */
     private void await() {
         synchronized (lockObj) {
             try {

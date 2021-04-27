@@ -237,8 +237,6 @@ public class GameSessionManger {
             } catch (IOException e) {
                 log.error("发送数据给用户：{}失败", gameSession.getUser(), e);
             }
-
-
         }
     }
 

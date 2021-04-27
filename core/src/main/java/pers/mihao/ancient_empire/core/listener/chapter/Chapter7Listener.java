@@ -60,7 +60,7 @@ public class Chapter7Listener extends AbstractChapterListener {
         addUnitAndMove(1, 2, new Site(9, 12), new Site(9, 14));
         sendCommandNow();
 
-        await(4000);
+        waitExecutionOk(15000);
 
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_7_MESSAGE_3");
     }
@@ -84,7 +84,7 @@ public class Chapter7Listener extends AbstractChapterListener {
         moveUnit(dragon.getId(), new Site(crystal.getRow(), 16), new Site(crystal.getRow(), crystal.getColumn()));
         sendCommandNow();
 
-        await(1200);
+        waitExecutionOk(15000);
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_7_MESSAGE_4");
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_7_MESSAGE_5");
 
@@ -94,7 +94,7 @@ public class Chapter7Listener extends AbstractChapterListener {
         moveUnit(dragon.getId(), new Site(crystal.getRow(), crystal.getColumn()), new Site(crystal.getRow(), 1));
         removeUnit(getArmyUnitIndexByUnitId(dragon.getId()));
         sendCommandNow();
-        await(2800);
+        waitExecutionOk(15000);
         addDialogAndWait(DialogEnum.FRIEND_UNIT2, "CAMPAIGN_AEII_STAGE_7_MESSAGE_5_1");
 
         addUnitAndMove(1, 7, new Site(10, 1), new Site(10, 6));
@@ -106,7 +106,7 @@ public class Chapter7Listener extends AbstractChapterListener {
         addUnitAndMove(1, 9, new Site(10, 1), new Site(10, 2));
         addUnitAndMove(1, 10, new Site(10, 1), new Site(8, 1));
         sendCommandNow();
-        await(9500);
+        waitExecutionOk(20000);
         addDialogAndWait(DialogEnum.LOADER_RED, "CAMPAIGN_AEII_STAGE_7_MESSAGE_6");
 
 
@@ -116,11 +116,11 @@ public class Chapter7Listener extends AbstractChapterListener {
         addUnitAndMove(1, 7, new Site(15, 14), new Site(15, 15));
 
         sendCommandNow();
-        await(3000);
+        waitExecutionOk(15000);
         addDialogAndWait(DialogEnum.FRIEND_UNIT1, "CAMPAIGN_AEII_STAGE_7_MESSAGE_7");
         addDialogAndWait(DialogEnum.LOADER_BLUE, "CAMPAIGN_AEII_STAGE_7_MESSAGE_8");
 
-        await(500);
+        awaitTime(500);
 
         addUnitAndMove(0, 13, new Site(18, 14), new Site(17, 14));
         addUnitAndMove(0, 8, new Site(18, 14), new Site(17, 14), new Site(17, 13));
@@ -128,7 +128,7 @@ public class Chapter7Listener extends AbstractChapterListener {
         addUnitAndMove(0, 2, new Site(18, 14), new Site(18, 13));
         addUnitAndMove(0, 5, new Site(18, 14), new Site(18, 15));
         sendCommandNow();
-        await(4000);
+        waitExecutionOk(12000);
         addDialogAndWait(DialogEnum.LOADER_GREEN, "CAMPAIGN_AEII_STAGE_7_MESSAGE_9");
         addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_7_OBJECTIVE_2");
     }

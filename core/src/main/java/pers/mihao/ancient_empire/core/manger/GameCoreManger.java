@@ -19,6 +19,7 @@ import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
@@ -118,7 +119,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 gameHandler.setGameContext(gameContext);
                 List<GameCommand> commands = gameHandler.handler(event);
                 // 处理任务返回 处理任务结果
-                handleCommand(commands, event.getId());
+                handleCommand(commands, gameContext);
             }
         } catch (Exception e) {
             log.error("执行任务出错: {}, 回退", event, e);
@@ -136,7 +137,8 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      * @param commands
      * @param gameId
      */
-    public void handleCommand(List<GameCommand> commands, String gameId) {
+    public void handleCommand(List<GameCommand> commands, GameContext gameContext) {
+        String gameId = gameContext.getGameId();
 
         if (commands != null && commands.size() > 0) {
 
@@ -145,7 +147,11 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                     .sorted(Comparator.comparing(Command::getOrder))
                     .collect(Collectors.toList());
 
-            gameSessionManger.sendOrderMessage2Game(orderCommand, gameId);
+            if (CollectionUtil.isNotEmpty(orderCommand)) {
+                // 发送了有序命令
+                gameContext.getInteractiveLock().executionIng();
+                gameSessionManger.sendOrderMessage2Game(orderCommand, gameId);
+            }
 
             for (Command command : commands) {
                 if (command.getOrder() == null) {
