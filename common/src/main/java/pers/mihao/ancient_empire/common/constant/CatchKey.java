@@ -44,6 +44,10 @@ public class CatchKey {
     public static final String UNIT_LEVEL_MES = "unitLevelMes";
 
     public static final String TEMP_UNIT_LEVEL = "tempUnitLevel";
+    /**
+     * 单位的最新版本
+     */
+    public static final String UNIT_MAX_VERSION = "unitMaxVersion";
 
     // 单位详细信息 包含单等级信息， 基础信息， 能力信息
     public static final String UNIT_INFO = "unitInfo";

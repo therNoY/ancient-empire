@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.base.service;
 
-import pers.mihao.ancient_empire.base.entity.UserTempAttention;
+import pers.mihao.ancient_empire.base.entity.UserUnitAttention;
 import com.baomidou.mybatisplus.extension.service.IService;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
 
@@ -10,15 +10,14 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
  * </p>
  *
  * @author mihao
- * @since 2020-09-22
+ * @since 2021-04-29
  */
-public interface UserTempAttentionService extends ComplexKeyService<UserTempAttention> {
+public interface UserUnitAttentionService extends ComplexKeyService<UserUnitAttention> {
 
     /**
-     * 删除用户关注的模板
+     * 删除用户下载的单位
      * @param userId
      * @param id
      */
-    void removeUserAttention(Integer userId, String id);
-
+    void deleteUserDownloadUnit(Integer userId, Integer id);
 }

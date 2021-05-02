@@ -7,8 +7,10 @@ import java.util.List;
 
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
 import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.vo.UnitMesVO;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 /**
@@ -26,13 +28,20 @@ public interface UnitMesService extends IService<UnitMes> {
      * @param apiConditionDTO
      * @return
      */
-    IPage<UnitMes> selectUnitMesWithPage(ApiConditionDTO apiConditionDTO);
+    IPage<UnitMes> selectUnitMesByCreateUserWithPage(ApiConditionDTO apiConditionDTO);
 
     /**
      * 保存单位信息
      * @param unitMes
      */
     void saveUnitMes(UnitMes unitMes);
+
+    /**
+     * 根据Id获取单位基础信息
+     * @param id
+     * @return
+     */
+    UnitMes getUnitMesById(Integer id);
 
     /**
      *
@@ -52,12 +61,10 @@ public interface UnitMesService extends IService<UnitMes> {
 
     /**
      * 根据模板获取用户可以购买的单位
-     * @param hasLoad
+     * @param templateId
      * @return
      */
     List<UnitMes> getCanBuyUnit(Integer templateId);
-
-    UnitMes getMaxCheapUnit();
 
     /**
      * 获取用户创建的所有单位
@@ -77,4 +84,45 @@ public interface UnitMesService extends IService<UnitMes> {
      * @param baseInfo
      */
     void updateInfoById(UnitMes baseInfo);
+
+    /**
+     * 根据类型获取单位信息的草稿版本
+     * @param type
+     * @return
+     */
+    UnitMes getDraftVersionUnitMes(String type);
+
+    /**
+     * 获取用户下载单位
+     * @param conditionDTO
+     * @return
+     */
+    IPage<UnitMesVO> getUserDownloadUnitMesWithPage(ApiConditionDTO conditionDTO);
+
+    /**
+     * 获取可以下载的单位列表
+     * @param orderDTO
+     * @return
+     */
+    IPage<UnitMesVO> getDownloadAbleUnitMesWithPage(ApiOrderDTO orderDTO);
+
+    /**
+     * 批量更新某一类型的单位
+     * @param type
+     * @param delete
+     */
+    void updateUnitStatusByType(String type, Integer delete);
+
+    /**
+     * 获取单位的最新版本信息
+     * @param type
+     * @return
+     */
+    UnitMes getMaxVersionUnitByType(String type);
+
+    /**
+     * 根据类型删除缓存
+     * @param type
+     */
+    void delMaxVersionCatch(String type);
 }

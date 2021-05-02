@@ -90,8 +90,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         // 设置默认的缓存过期时间
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration
                 .defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(60))
-                .disableCachingNullValues();
+                .entryTtl(Duration.ofMinutes(60));
 
         // 设置自定义的缓存时间
         Map<String, RedisCacheConfiguration> map = new HashMap();

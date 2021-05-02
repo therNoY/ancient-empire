@@ -20,11 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 扩展mybatis-plus 支持联合主键 的serviceImpl
  *
- * @version 1.0
  * @author mihao
+ * @version 1.0
  * @date 2021\1\16 0016 14:32
  */
-public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> {
+public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> implements
+    ComplexKeyService<T> {
 
     private static Map<Class<?>, List<FieldInfo>> PRIMARY_KEY_CATCH = new ConcurrentHashMap<>(16);
 
@@ -34,15 +35,7 @@ public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceIm
         if (null == entity) {
             return false;
         } else {
-            List<FieldInfo> primaryKeys = getFieldInfos(entity);
-
-            QueryWrapper<T> queryWrapper = new QueryWrapper<>();
-            Object value;
-            for (FieldInfo fieldInfo : primaryKeys) {
-                value = ReflectUtil.getValueByField(entity, fieldInfo.field);
-                Assert.notNull(value, "主键不能为空");
-                queryWrapper.eq(fieldInfo.dataSourceFieldName, value);
-            }
+            QueryWrapper<T> queryWrapper = getQueryWrapper(entity);
             T obj = super.baseMapper.selectOne(queryWrapper);
             if (obj == null) {
                 save(entity);
@@ -53,10 +46,50 @@ public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceIm
         }
     }
 
+
+
+    @Override
+    public boolean updateById(T entity) {
+        return saveOrUpdate(entity);
+    }
+
+    @Override
+    public T selectByPrimaryKey(T t) {
+        if (null == t) {
+            return null;
+        } else {
+            QueryWrapper<T> queryWrapper = getQueryWrapper(t);
+            T obj = super.baseMapper.selectOne(queryWrapper);
+            return obj;
+        }
+    }
+
+
+
+    @Override
+    public int deleteByPrimaryKey(T t) {
+        return super.baseMapper.delete(getQueryWrapper(t));
+    }
+
+
+    private QueryWrapper<T> getQueryWrapper(T t) {
+        List<FieldInfo> primaryKeys = getFieldInfos(t);
+
+        QueryWrapper<T> queryWrapper = new QueryWrapper<>();
+        Object value;
+        for (FieldInfo fieldInfo : primaryKeys) {
+            value = ReflectUtil.getValueByField(t, fieldInfo.field);
+            Assert.notNull(value, "主键不能为空");
+            queryWrapper.eq(fieldInfo.dataSourceFieldName, value);
+        }
+        return queryWrapper;
+    }
+
     private List<FieldInfo> getFieldInfos(T entity) {
         Class<?> cls = entity.getClass();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-        Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!", new Object[0]);
+        Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!",
+            new Object[0]);
         List<FieldInfo> primaryKeys;
         if ((primaryKeys = PRIMARY_KEY_CATCH.get(cls)) == null) {
             primaryKeys = getEntityKey(cls);
@@ -67,14 +100,9 @@ public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceIm
         return primaryKeys;
     }
 
-    @Override
-    public boolean updateById(T entity) {
-        return saveOrUpdate(entity);
-    }
-
-
     /**
      * 获取一个类的主键
+     *
      * @param cls
      * @return
      */
@@ -90,7 +118,7 @@ public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceIm
                     fieldInfo = new FieldInfo();
                     if (StringUtil.isBlack(tableId.value())) {
                         fieldInfo.dataSourceFieldName = StringUtil.humpToUnderscore(field.getName());
-                    }else {
+                    } else {
                         fieldInfo.dataSourceFieldName = tableId.value();
                     }
                     fieldInfo.field = field;
@@ -101,8 +129,8 @@ public class ComplexKeyServiceImpl<M extends BaseMapper<T>, T> extends ServiceIm
         return list;
     }
 
-
     static class FieldInfo {
+
         Field field;
         String dataSourceFieldName;
     }

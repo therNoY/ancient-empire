@@ -6,6 +6,8 @@
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UnitMes">
         <id column="id" property="id"/>
         <result column="type" property="type"/>
+        <result column="version" property="version"/>
+        <result column="status" property="status"/>
         <result column="name" property="name"/>
         <result column="attack_type" property="attackType"/>
         <result column="price" property="price"/>
@@ -16,19 +18,35 @@
         <result column="create_user_id" property="createUserId"/>
         <result column="tradeable" property="tradeable"/>
         <result column="promotion" property="promotion"/>
+        <result column="img_index" property="imgIndex"/>
         <result column="enable" property="enable"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, type, name, attack_type, price, min_attach_range, max_attach_range, population, description, create_user_id, tradeable, promotion, enable
+        id, type, name, attack_type, price, min_attach_range, max_attach_range, population,
+        description, create_user_id, tradeable, promotion, enable, version, status, img_index, update_time, create_time
+    </sql>
+
+    <sql id="user_unit_max_version">
+        (select type,max(version) as version  from unit_mes
+        where create_user_id = #{userId}
+        GROUP BY type)
+    </sql>
+
+    <sql id="unit_max_version">
+        (select type,max(version) as version  from unit_mes
+        where status = '1' and enable = '1'
+        GROUP BY type)
+    </sql>
+
+    <sql id="unit_download_count">
+        (select unit_type,count(unit_type) as downLoadCount,sum(unit_start) as startCount from user_unit_attention GROUP BY unit_type)
     </sql>
     
-    <update id="updateInfoById">
-        UPDATE unit_mes SET type=#{type}, name=#{name}, attack_type=#{attackType}, price=#{price}, min_attach_range=#{minAttachRange}, max_attach_range=#{maxAttachRange},
-        population=#{population}, description=#{description}, create_user_id=#{createUserId}, tradeable=#{tradeable}, enable=#{enable}, promotion=#{promotion} WHERE id=#{id}
-    </update>
-
 
 
     <select id="selectCanTradeUnit" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
@@ -45,17 +63,63 @@
     <select id="getEnableUnitByTempId" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
         select um.* from unit_mes um left JOIN unit_template_relation utr on um.id = utr.unit_id
         where utr.temp_id = #{tempId}
-		and um.`enable` = '1'
+		    and um.`enable` = '1'
     </select>
 
-    <select id="selectUnitMesWithPage" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
-        select u.* from unit_mes u
-        where u.create_user_id = #{userId}
+    <select id="selectUnitMesByCreateUserWithPage" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
+        select um.* from <include refid="user_unit_max_version"></include> umv
+        left join unit_mes um on umv.type = um.type and um.version = umv.version
         <if test="condition != null and condition != ''">
-            and (u.name like CONCAT('%',#{condition},'%')
-            or u.description like CONCAT('%',#{condition},'%')
+            and (um.name like CONCAT('%',#{condition},'%')
+            or um.description like CONCAT('%',#{condition},'%')
             )
         </if>
+        order by update_time desc
+    </select>
+
+    <select id="getUserDownloadUnitMesWithPage" resultType="pers.mihao.ancient_empire.base.vo.UnitMesVO">
+        SELECT um.* FROM user_unit_attention uu left join unit_mes um on uu.unit_id = um.id
+        where uu.user_id = ${userId}
+        <if test="condition != null and condition != ''">
+            and um.name like concat('%', #{condition}, '%')
+        </if>
+        order by uu.update_time desc
+    </select>
+
+
+    <select id="getDownloadAbleUnitMesWithPage" resultType="pers.mihao.ancient_empire.base.vo.UnitMesVO">
+        SELECT
+        ( SELECT sum( unit_start ) AS startCount FROM user_unit_attention WHERE unit_type = um.type ) startCount,
+        ( SELECT count( 1 ) AS downLoadCount FROM user_unit_attention WHERE unit_type = um.type ) downLoadCount,
+        um.type
+        FROM
+        unit_mes um
+        WHERE
+        um.create_user_id != #{userId}
+        AND um.ENABLE = '1'
+        AND um.`status` != '0'
+        <if test="condition != null and condition != ''">
+            and um.name like concat('%', #{condition}, '%')
+        </if>
+        AND NOT EXISTS ( SELECT 1 FROM user_unit_attention uua WHERE uua.user_id = #{userId} AND uua.unit_type = um.type )
+        GROUP BY
+        um.type
+        <choose>
+            <when test="byStartSum != null and byStartSum = '1'">
+                 ORDER BY downLoadCount desc, startCount desc
+            </when>
+            <otherwise>
+                ORDER BY startCount desc, downLoadCount desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getMaxVersionByType" resultType="java.lang.Integer">
+        select  max(version) from unit_mes
+        where type = #{type}
+        and `enable` = 1
+        and `status` = 1
+        GROUP BY type
     </select>
 
 

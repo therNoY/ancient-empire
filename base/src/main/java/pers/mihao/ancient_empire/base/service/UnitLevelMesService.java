@@ -8,6 +8,7 @@ import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 
 import java.util.List;
 import java.util.Map;
+import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
 
 /**
  * <p>
@@ -17,7 +18,7 @@ import java.util.Map;
  * @author mihao
  * @since 2019-08-11
  */
-public interface UnitLevelMesService extends IService<UnitLevelMes> {
+public interface UnitLevelMesService extends ComplexKeyService<UnitLevelMes> {
 
     IPage<RespUnitLevelDto> getUnitLevelMesList(Page page);
 

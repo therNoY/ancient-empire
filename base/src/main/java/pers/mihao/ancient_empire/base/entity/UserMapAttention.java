@@ -1,5 +1,6 @@
-package pers.mihao.ancient_empire.core.entity;
+package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -15,10 +16,11 @@ public class UserMapAttention implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId
     private String mapId;
-
+    @TableId
     private Integer mapVersion;
-
+    @TableId
     private Integer userId;
 
     /**

@@ -3,10 +3,11 @@ package pers.mihao.ancient_empire.base.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
- * 单位信息表
+ * 单位信息表 Id 属于物理主键 type和version属于逻辑主键
  * </p>
  *
  * @author mihao
@@ -22,16 +23,21 @@ public class UnitMes implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 版本
-     */
-//    @TableId
-    private Integer version;
 
     /**
      * 单位类型
      */
     private String type;
+
+    /**
+     * 版本
+     */
+    private Integer version;
+
+    /**
+     * 是否发布 0为草稿 1正式
+     */
+    private Integer status;
 
     /**
      * 单位名称
@@ -84,10 +90,20 @@ public class UnitMes implements Serializable {
     private Integer promotion;
 
     /**
+     * 图片的索引 如果是新加的单位索引就是 新的的index
+     * 更新版本如果不更换图片 保持原来的index 更换图片使用新版本ID的index
+     */
+    private String imgIndex;
+
+    /**
      * 是否启用 0 不启用 1 启用
      */
     private Integer enable;
 
+
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
 
 
     public Integer getId() {
@@ -97,6 +113,7 @@ public class UnitMes implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
+
     public String getType() {
         return type;
     }
@@ -104,6 +121,7 @@ public class UnitMes implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
+
     public String getName() {
         return name;
     }
@@ -111,6 +129,7 @@ public class UnitMes implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
     public String getAttackType() {
         return attackType;
     }
@@ -118,6 +137,7 @@ public class UnitMes implements Serializable {
     public void setAttackType(String attackType) {
         this.attackType = attackType;
     }
+
     public Integer getPrice() {
         return price;
     }
@@ -125,6 +145,7 @@ public class UnitMes implements Serializable {
     public void setPrice(Integer price) {
         this.price = price;
     }
+
     public Integer getMinAttachRange() {
         return minAttachRange;
     }
@@ -132,6 +153,7 @@ public class UnitMes implements Serializable {
     public void setMinAttachRange(Integer minAttachRange) {
         this.minAttachRange = minAttachRange;
     }
+
     public Integer getMaxAttachRange() {
         return maxAttachRange;
     }
@@ -139,6 +161,7 @@ public class UnitMes implements Serializable {
     public void setMaxAttachRange(Integer maxAttachRange) {
         this.maxAttachRange = maxAttachRange;
     }
+
     public Integer getPopulation() {
         return population;
     }
@@ -146,6 +169,7 @@ public class UnitMes implements Serializable {
     public void setPopulation(Integer population) {
         this.population = population;
     }
+
     public String getDescription() {
         return description;
     }
@@ -153,6 +177,7 @@ public class UnitMes implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
     public Integer getCreateUserId() {
         return createUserId;
     }
@@ -160,6 +185,7 @@ public class UnitMes implements Serializable {
     public void setCreateUserId(Integer createUserId) {
         this.createUserId = createUserId;
     }
+
     public Integer getTradeable() {
         return tradeable;
     }
@@ -167,6 +193,7 @@ public class UnitMes implements Serializable {
     public void setTradeable(Integer tradeable) {
         this.tradeable = tradeable;
     }
+
     public Integer getPromotion() {
         return promotion;
     }
@@ -174,6 +201,7 @@ public class UnitMes implements Serializable {
     public void setPromotion(Integer promotion) {
         this.promotion = promotion;
     }
+
     public Integer getEnable() {
         return enable;
     }
@@ -190,22 +218,54 @@ public class UnitMes implements Serializable {
         this.version = version;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getImgIndex() {
+        return imgIndex;
+    }
+
+    public void setImgIndex(String imgIndex) {
+        this.imgIndex = imgIndex;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
     @Override
     public String toString() {
         return "UnitMes{" +
-        "id=" + id +
-        ", type=" + type +
-        ", name=" + name +
-        ", attackType=" + attackType +
-        ", price=" + price +
-        ", minAttachRange=" + minAttachRange +
-        ", maxAttachRange=" + maxAttachRange +
-        ", population=" + population +
-        ", description=" + description +
-        ", createUserId=" + createUserId +
-        ", tradeable=" + tradeable +
-        ", promotion=" + promotion +
-        ", enable=" + enable +
-        "}";
+            "id=" + id +
+            ", type=" + type +
+            ", name=" + name +
+            ", attackType=" + attackType +
+            ", price=" + price +
+            ", minAttachRange=" + minAttachRange +
+            ", maxAttachRange=" + maxAttachRange +
+            ", population=" + population +
+            ", description=" + description +
+            ", createUserId=" + createUserId +
+            ", tradeable=" + tradeable +
+            ", promotion=" + promotion +
+            ", enable=" + enable +
+            "}";
     }
 }

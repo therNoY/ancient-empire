@@ -1,9 +1,9 @@
-package pers.mihao.ancient_empire.core.dao;
+package pers.mihao.ancient_empire.base.dao;
 
 import java.util.List;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.core.entity.UserMapAttention;
+import pers.mihao.ancient_empire.base.entity.UserMapAttention;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

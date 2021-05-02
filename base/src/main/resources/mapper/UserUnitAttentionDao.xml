@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.mihao.ancient_empire.base.dao.UserUnitAttentionDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UserUnitAttention">
+        <id column="user_id" property="userId" />
+        <result column="unit_id" property="unitId" />
+        <result column="unit_start" property="unitStart" />
+        <result column="unit_type" property="unitType" />
+        <result column="unit_commend" property="unitCommend" />
+        <result column="download_time" property="downloadTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_id, unit_id, unit_type, unit_start, unit_commend, download_time, update_time
+    </sql>
+
+</mapper>

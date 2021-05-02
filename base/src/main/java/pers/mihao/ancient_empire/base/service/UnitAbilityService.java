@@ -19,7 +19,8 @@ public interface UnitAbilityService extends IService<UnitAbility> {
 
     /**
      * 更新单位能力
+     * @param unitId
      * @param abilityInfo
      */
-    void updateUnitAbility(Integer unitId,@NotGenerator List<Ability> abilityInfo);
+    void updateUnitAbility(Integer unitId, @NotGenerator List<Ability> abilityInfo);
 }

@@ -17,6 +17,7 @@ public interface UploadFileLogService extends IService<UploadFileLog> {
      * 保存文件上传日志
      * @param originalFilename
      * @param size
+     * @return 文件ID
      */
     String saveLog(String originalFilename, long size);
 }

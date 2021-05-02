@@ -1,12 +1,10 @@
 package pers.mihao.ancient_empire.base.dao;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
-import pers.mihao.ancient_empire.base.entity.UnitMes;
-
 import java.util.List;
+import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.vo.UnitMesVO;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 /**
@@ -38,12 +36,26 @@ public interface UnitMesDAO extends BaseMapper<UnitMes> {
      * @param apiConditionDTO
      * @return
      */
-    List<UnitMes> selectUnitMesWithPage(ApiConditionDTO apiConditionDTO);
+    List<UnitMes> selectUnitMesByCreateUserWithPage(ApiConditionDTO apiConditionDTO);
 
     /**
-     * 更新单位
-     * @param baseInfo
+     * 获取用户下载单位
+     * @param conditionDTO
+     * @return
      */
-    void updateInfoById(UnitMes baseInfo);
+    List<UnitMesVO> getUserDownloadUnitMesWithPage(ApiConditionDTO conditionDTO);
 
+    /**
+     * 获取用户可以下载的列表
+     * @param orderDTO
+     * @return
+     */
+    List<UnitMesVO> getDownloadAbleUnitMesWithPage(ApiOrderDTO orderDTO);
+
+    /**
+     * 获取这个版本的最新版
+     * @param type
+     * @return
+     */
+    Integer getMaxVersionByType(String type);
 }

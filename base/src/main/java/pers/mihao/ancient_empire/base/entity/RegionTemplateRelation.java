@@ -18,11 +18,13 @@ public class RegionTemplateRelation implements Serializable {
     /**
      * 地形Id
      */
+    @TableId
     private Integer regionId;
 
     /**
      * 模板Id
      */
+    @TableId
     private Integer templateId;
 
     public Integer getRegionId() {

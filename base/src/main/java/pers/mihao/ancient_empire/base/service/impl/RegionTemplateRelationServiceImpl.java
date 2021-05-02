@@ -5,6 +5,7 @@ import pers.mihao.ancient_empire.base.dao.RegionTemplateRelationDAO;
 import pers.mihao.ancient_empire.base.service.RegionTemplateRelationService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 
 /**
  * <p>
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
  * @since 2020-09-23
  */
 @Service
-public class RegionTemplateRelationServiceImpl extends ServiceImpl<RegionTemplateRelationDAO, RegionTemplateRelation> implements RegionTemplateRelationService {
+public class RegionTemplateRelationServiceImpl extends
+    ComplexKeyServiceImpl<RegionTemplateRelationDAO, RegionTemplateRelation> implements RegionTemplateRelationService {
 
 }

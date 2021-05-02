@@ -1,9 +1,6 @@
-package pers.mihao.ancient_empire.core.controller;
+package pers.mihao.ancient_empire.base.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
 /**

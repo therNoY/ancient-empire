@@ -1,10 +1,11 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
 /**
  * <p>
- * 
+ * 转职可以转多个
  * </p>
  *
  * @author mihao
@@ -17,11 +18,13 @@ public class UnitTransfer implements Serializable {
     /**
      * 转职之前的单位
      */
+    @TableId
     private Integer unitId;
 
     /**
      * 转职后的单位Id
      */
+    @TableId
     private Integer transferUnitId;
 
     /**

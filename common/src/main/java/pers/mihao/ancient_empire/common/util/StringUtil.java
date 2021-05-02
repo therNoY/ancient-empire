@@ -152,4 +152,23 @@ public class StringUtil {
         }
         return sb.toString();
     }
+
+    /**
+     * 字符串拼接
+     * @param split 分隔符
+     * @param strings 字符串
+     * @return
+     */
+    public static String joinWith(String split, String...strings) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (strings != null && strings.length > 0) {
+            for (int i = 0; i < strings.length; i++) {
+                stringBuilder.append(strings[i]);
+                if (i != strings.length - 1) {
+                    stringBuilder.append(split);
+                }
+            }
+        }
+        return stringBuilder.toString();
+    }
 }

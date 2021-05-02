@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ public class UploadFileLog implements Serializable {
     /**
      * 主键
      */
+    @TableId
     private String fileId;
 
     /**

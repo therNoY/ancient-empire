@@ -1,21 +1,32 @@
 package pers.mihao.ancient_empire.common.util;
 
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 
 public class HttpUtil {
 
     private final static Logger logger = LoggerFactory.getLogger(HttpUtil.class);
+
+
 
     public static Map<String, String> get(String url, String cookie) {
         BufferedReader in = null;
@@ -27,7 +38,8 @@ public class HttpUtil {
             // 1. 设置通用的请求属性
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36");
+            connection.setRequestProperty("user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36");
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
             if (null != cookie) {
@@ -57,6 +69,7 @@ public class HttpUtil {
 
     /**
      * 发送HttpPost请求
+     *
      * @param strURL 服务地址
      * @param params
      * @return 成功:返回json字符串<br/>
@@ -76,7 +89,8 @@ public class HttpUtil {
                 connection.setRequestProperty("Cookie", cookie);
             }
             connection.setRequestProperty("Accept", "*/*"); // 设置接收数据的格式
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"); // 设置发送数据的格式
+            connection
+                .setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"); // 设置发送数据的格式
 
             connection.connect();
             OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "UTF-8"); // utf-8编码

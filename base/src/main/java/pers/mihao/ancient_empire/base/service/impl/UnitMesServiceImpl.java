@@ -3,18 +3,21 @@ package pers.mihao.ancient_empire.base.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
+import java.time.LocalDateTime;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.dao.UnitMesDAO;
+import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
@@ -22,10 +25,11 @@ import pers.mihao.ancient_empire.base.service.AbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
-import pers.mihao.ancient_empire.common.constant.CommonConstant;
+import pers.mihao.ancient_empire.base.vo.UnitMesVO;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 /**
@@ -37,16 +41,20 @@ import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
  * @since 2019-08-11
  */
 @Service
-public class UnitMesServiceImpl extends ComplexKeyServiceImpl<UnitMesDAO, UnitMes> implements UnitMesService {
+public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> implements UnitMesService {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    UserService userService;
     @Autowired
     UnitMesDAO unitMesDao;
     @Autowired
     UnitLevelMesService unitLevelMesService;
     @Autowired
     AbilityService abilityService;
+    @Autowired
+    UnitMesService unitMesService;
 
     /**
      * 获取所有单位信息
@@ -55,8 +63,8 @@ public class UnitMesServiceImpl extends ComplexKeyServiceImpl<UnitMesDAO, UnitMe
      * @return
      */
     @Override
-    public IPage<UnitMes> selectUnitMesWithPage(ApiConditionDTO apiConditionDTO) {
-        List<UnitMes> unitMes = unitMesDao.selectUnitMesWithPage(apiConditionDTO);
+    public IPage<UnitMes> selectUnitMesByCreateUserWithPage(ApiConditionDTO apiConditionDTO) {
+        List<UnitMes> unitMes = unitMesDao.selectUnitMesByCreateUserWithPage(apiConditionDTO);
         return IPageHelper.toPage(unitMes, apiConditionDTO);
     }
 
@@ -104,6 +112,11 @@ public class UnitMesServiceImpl extends ComplexKeyServiceImpl<UnitMesDAO, UnitMe
     }
 
 
+    @Override
+    @Cacheable(CatchKey.UNIT_MES)
+    public UnitMes getUnitMesById(Integer id) {
+        return getById(id);
+    }
 
     /**
      * 获取一个 详细的单位信息 包括单位信息 等级信息 能力信息 用于显示在前端
@@ -122,9 +135,9 @@ public class UnitMesServiceImpl extends ComplexKeyServiceImpl<UnitMesDAO, UnitMe
     }
 
     /**
-     * 获取当前模板单位可以股买的
+     * 获取当前模板单位可以购买的单位
      *
-     * @param hasLoad 领主是否还存活 存活就无法购买
+     * @param templateId 领主是否还存活 存活就无法购买
      * @return
      */
     @Override
@@ -134,12 +147,6 @@ public class UnitMesServiceImpl extends ComplexKeyServiceImpl<UnitMesDAO, UnitMe
         return list;
     }
 
-
-    @Override
-    @Cacheable("maxCheapUnit")
-    public UnitMes getMaxCheapUnit() {
-        return null;
-    }
 
     @Override
     public List<UnitMes> getUserEnableUnitList(Integer userId) {
@@ -156,6 +163,68 @@ public class UnitMesServiceImpl extends ComplexKeyServiceImpl<UnitMesDAO, UnitMe
 
     @Override
     public void updateInfoById(UnitMes baseInfo) {
-        unitMesDao.updateInfoById(baseInfo);
+        unitMesDao.updateById(baseInfo);
+    }
+
+    @Override
+    public UnitMes getDraftVersionUnitMes(String type) {
+        QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", type);
+        wrapper.eq("status", BaseConstant.DRAFT);
+        return unitMesDao.selectOne(wrapper);
+    }
+
+    @Override
+    public IPage<UnitMesVO> getUserDownloadUnitMesWithPage(ApiConditionDTO conditionDTO) {
+        List<UnitMesVO> unitMesList = unitMesDao.getUserDownloadUnitMesWithPage(conditionDTO);
+        UnitMes maxVersionUnit;
+        for (UnitMesVO unitMes : unitMesList) {
+            maxVersionUnit = unitMesService.getMaxVersionUnitByType(unitMes.getType());
+            if (maxVersionUnit.getVersion() > unitMes.getVersion()) {
+                unitMes.setMaxVersion(maxVersionUnit.getVersion());
+            }
+        }
+        return IPageHelper.toPage(unitMesList, conditionDTO);
+    }
+
+    @Override
+    public IPage<UnitMesVO> getDownloadAbleUnitMesWithPage(ApiOrderDTO orderDTO) {
+        List<UnitMesVO> unitMesList = unitMesDao.getDownloadAbleUnitMesWithPage(orderDTO);
+        UnitMes unitMes;
+        for (UnitMesVO vo : unitMesList) {
+            unitMes = unitMesService.getMaxVersionUnitByType(vo.getType());
+            BeanUtil.copyValueByGetSet(unitMes, vo);
+            vo.setCreateUserName(userService.getUserById(unitMes.getCreateUserId()).getName());
+        }
+        return IPageHelper.toPage(unitMesList, orderDTO);
+    }
+
+    @Override
+    public void updateUnitStatusByType(String type, Integer status) {
+        QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", type);
+        List<UnitMes> unitMesList = unitMesDao.selectList(wrapper);
+        for (UnitMes unitMes : unitMesList) {
+            unitMes.setEnable(status);
+            if (status.equals(BaseConstant.DELETE)) {
+                unitMes.setCreateUserId(null);
+            }
+            unitMes.setUpdateTime(LocalDateTime.now());
+            unitMesDao.updateById(unitMes);
+        }
+    }
+
+    @Override
+    @Cacheable(CatchKey.UNIT_MAX_VERSION)
+    public UnitMes getMaxVersionUnitByType(String type) {
+        Integer version = unitMesDao.getMaxVersionByType(type);
+        QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
+        wrapper.eq("version", version).eq("type", type);
+        return unitMesDao.selectOne(wrapper);
+    }
+
+    @Override
+    @CacheEvict(CatchKey.UNIT_MAX_VERSION)
+    public void delMaxVersionCatch(String type) {
     }
 }

@@ -30,6 +30,11 @@ public class ReqSaveUnitMesDTO implements Serializable {
      */
     private List<Ability> abilityInfo;
 
+    /**
+     * 操做类型 1是保存草稿 2是发布版本
+     */
+    private Integer optType;
+
     public UnitMes getBaseInfo() {
         return baseInfo;
     }
@@ -52,6 +57,14 @@ public class ReqSaveUnitMesDTO implements Serializable {
 
     public void setAbilityInfo(List<Ability> abilityInfo) {
         this.abilityInfo = abilityInfo;
+    }
+
+    public Integer getOptType() {
+        return optType;
+    }
+
+    public void setOptType(Integer optType) {
+        this.optType = optType;
     }
 
     @Override

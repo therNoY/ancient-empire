@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.base.service;
 
-import pers.mihao.ancient_empire.base.entity.UnitTransfer;
+import pers.mihao.ancient_empire.base.entity.UserMapAttention;
 import com.baomidou.mybatisplus.extension.service.IService;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
 
@@ -10,8 +10,8 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
  * </p>
  *
  * @author mihao
- * @since 2020-10-24
+ * @since 2021-04-26
  */
-public interface UnitTransferService extends ComplexKeyService<UnitTransfer> {
+public interface UserMapAttentionService extends ComplexKeyService<UserMapAttention> {
 
 }
