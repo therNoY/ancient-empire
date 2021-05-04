@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.base.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.slf4j.Logger;
@@ -16,12 +17,15 @@ import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.controller.GameImgController;
 import pers.mihao.ancient_empire.base.dao.UnitMesDAO;
 import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
+import pers.mihao.ancient_empire.base.dto.ReqSaveUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.service.AbilityService;
+import pers.mihao.ancient_empire.base.service.UnitAbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
@@ -55,6 +59,11 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     AbilityService abilityService;
     @Autowired
     UnitMesService unitMesService;
+    @Autowired
+    UnitAbilityService unitAbilityService;
+    @Autowired
+    GameImgController gameImgController;
+
 
     /**
      * 获取所有单位信息
@@ -162,6 +171,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     }
 
     @Override
+    @Transactional
     public void updateInfoById(UnitMes baseInfo) {
         unitMesDao.updateById(baseInfo);
     }
@@ -226,5 +236,82 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     @Override
     @CacheEvict(CatchKey.UNIT_MAX_VERSION)
     public void delMaxVersionCatch(String type) {
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveUnitInfo(ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
+        Integer unitId = reqSaveUnitMesDTO.getBaseInfo().getId();
+
+        // 1.更新基本信息
+        if (BaseConstant.DRAFT.equals(reqSaveUnitMesDTO.getOptType())){
+            if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(BaseConstant.OFFICIAL)) {
+                // 当前是正式版本 新加一个版本作为草稿
+                UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
+                unitMes.setStatus(BaseConstant.DRAFT);
+                unitMes.setVersion(reqSaveUnitMesDTO.getBaseInfo().getVersion() + 1);
+                unitMes.setId(null);
+                unitMes.setCreateTime(LocalDateTime.now());
+                unitMes.setUpdateTime(LocalDateTime.now());
+                saveUnitMes(unitMes);
+                unitId = unitMes.getId();
+            } else {
+                // 当前也是草稿版本 直接更新
+                updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
+            }
+        } else if (BaseConstant.OFFICIAL.equals(reqSaveUnitMesDTO.getOptType())){
+            if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(BaseConstant.OFFICIAL)) {
+                // 当前是正式版本 新加一个版本作为草稿
+                UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
+                unitMes.setStatus(BaseConstant.OFFICIAL);
+                unitMes.setVersion(reqSaveUnitMesDTO.getBaseInfo().getVersion() + 1);
+                unitMes.setId(null);
+                unitMes.setCreateTime(LocalDateTime.now());
+                unitMes.setUpdateTime(LocalDateTime.now());
+                saveUnitMes(unitMes);
+                unitId = unitMes.getId();
+            } else {
+                // 当前是草稿版本 直接更新
+                reqSaveUnitMesDTO.getBaseInfo().setUpdateTime(LocalDateTime.now());
+                reqSaveUnitMesDTO.getBaseInfo().setStatus(BaseConstant.OFFICIAL);
+                unitMesService.updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
+            }
+            delMaxVersionCatch(reqSaveUnitMesDTO.getBaseInfo().getType());
+        } else {
+            // 新增单位  首先保存单位
+            UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
+            unitMes.setStatus(BaseConstant.OFFICIAL);
+            unitMes.setVersion(0);
+            unitMes.setId(null);
+            unitMes.setType(CommonConstant.UNDER_LINE);
+            unitMes.setCreateUserId(reqSaveUnitMesDTO.getUserId());
+            // TODO 这里设置漠然启用
+            unitMes.setEnable(BaseConstant.YES);
+            unitMes.setCreateTime(LocalDateTime.now());
+            unitMes.setUpdateTime(LocalDateTime.now());
+            saveUnitMes(unitMes);
+
+            unitMes.setType("UNIT_" + unitMes.getId());
+            unitMes.setImgIndex(unitMes.getId().toString());
+            updateInfoById(unitMes);
+            unitId = unitMes.getId();
+
+            // 生成相应的文件
+            try {
+                gameImgController.moveUnitImgName2Id(reqSaveUnitMesDTO.getNewUploadImg(), unitMes.getId());
+            } catch (IOException e) {
+                log.error("单位图片复制错误", e);
+                throw new AncientEmpireException(e.getMessage());
+            }
+        }
+
+        // 2.更新能力信息
+        unitAbilityService.updateUnitAbility(unitId, reqSaveUnitMesDTO.getAbilityInfo());
+        // 3.更新等级信息
+        for (UnitLevelMes levelMes : reqSaveUnitMesDTO.getLevelInfoData()) {
+            levelMes.setUnitId(unitId);
+            unitLevelMesService.saveUnitLevelMesList(levelMes);
+        }
+
     }
 }

@@ -9,6 +9,7 @@ import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
 import pers.mihao.ancient_empire.base.dto.ReqGetUnitMesDTO;
+import pers.mihao.ancient_empire.base.dto.ReqSaveUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.vo.UnitMesVO;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
@@ -125,4 +126,10 @@ public interface UnitMesService extends IService<UnitMes> {
      * @param type
      */
     void delMaxVersionCatch(String type);
+
+    /**
+     * 保存新的单位
+     * @param reqSaveUnitMesDTO
+     */
+    void saveUnitInfo(ReqSaveUnitMesDTO reqSaveUnitMesDTO);
 }

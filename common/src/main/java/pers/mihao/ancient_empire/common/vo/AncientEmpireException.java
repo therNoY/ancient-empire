@@ -23,6 +23,8 @@ public class AncientEmpireException extends RuntimeException{
         this.mes = CommonConstant.DEFAULT_ERROR;
     }
 
+
+
     public Integer getCode() {
         return code;
     }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.base.dao.UnitLevelMesDAO;
 import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
@@ -45,6 +46,7 @@ public class UnitLevelMesServiceImpl extends ComplexKeyServiceImpl<UnitLevelMesD
      * @param unitLevelMes
      */
     @Override
+    @Transactional
     public void saveUnitLevelMesList(UnitLevelMes unitLevelMes) {
         saveOrUpdate(unitLevelMes);
     }

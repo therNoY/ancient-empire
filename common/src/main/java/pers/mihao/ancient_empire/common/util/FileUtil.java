@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.common.util;
 
+import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,4 +33,5 @@ public class FileUtil {
         }
         Files.write(path, bytes);
     }
+
 }

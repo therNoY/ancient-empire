@@ -7,6 +7,7 @@ import pers.mihao.ancient_empire.common.annotation.ValidatedBean;
 
 import java.io.Serializable;
 import java.util.List;
+import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
 /**
  * 保存单位信息
@@ -14,7 +15,7 @@ import java.util.List;
  * @author mihao
  * @date 2021\1\17 0017 18:55
  */
-public class ReqSaveUnitMesDTO implements Serializable {
+public class ReqSaveUnitMesDTO extends ApiRequestDTO {
     /**
      * 基础信息
      */
@@ -34,6 +35,11 @@ public class ReqSaveUnitMesDTO implements Serializable {
      * 操做类型 1是保存草稿 2是发布版本
      */
     private Integer optType;
+
+    /**
+     * 新上传的单位
+     */
+    private NewUnitImgDTO newUploadImg;
 
     public UnitMes getBaseInfo() {
         return baseInfo;
@@ -65,6 +71,14 @@ public class ReqSaveUnitMesDTO implements Serializable {
 
     public void setOptType(Integer optType) {
         this.optType = optType;
+    }
+
+    public NewUnitImgDTO getNewUploadImg() {
+        return newUploadImg;
+    }
+
+    public void setNewUploadImg(NewUnitImgDTO newUploadImg) {
+        this.newUploadImg = newUploadImg;
     }
 
     @Override

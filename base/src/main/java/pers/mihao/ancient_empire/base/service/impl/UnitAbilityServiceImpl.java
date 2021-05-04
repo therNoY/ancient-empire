@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.base.dao.UnitAbilityDAO;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UnitAbility;
@@ -31,6 +32,7 @@ public class UnitAbilityServiceImpl extends ServiceImpl<UnitAbilityDAO, UnitAbil
 
 
     @Override
+    @Transactional
     @CacheEvict(UNIT_ABILITY)
     public void updateUnitAbility(Integer unitId, @NotGenerator List<Ability> abilityInfo) {
         QueryWrapper<UnitAbility> wrapper = new QueryWrapper<>();

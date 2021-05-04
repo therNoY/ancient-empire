@@ -14,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import pers.mihao.ancient_empire.base.controller.GameImgController;
 import pers.mihao.ancient_empire.base.dao.UserTemplateDAO;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
@@ -37,6 +38,9 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
     @Autowired
     RegionMesService regionMesService;
 
+    @Autowired
+    GameImgController gameImgController;
+
     @Override
     public void run(String... args) throws Exception {
         log.info("处理初始化工作");
@@ -49,6 +53,9 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
      * 删除无用的图片
      */
     private void delNoUseImg() {
+
+        gameImgController.delTempFile();
+
         List<Pair<Class, String[]>> delList = new ArrayList<>();
         delList.add(new Pair<>(UserTemplateDAO.class, new String[]{"summonAnimation", "attachAnimation", "summonAnimation", "levelupAnimation"}));
 //        doDel(delList);

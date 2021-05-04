@@ -2,10 +2,8 @@ package pers.mihao.ancient_empire.base.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fasterxml.jackson.databind.ser.Serializers.Base;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -124,53 +122,7 @@ public class UnitMesController {
      */
     @PutMapping("/api/unitMes")
     public RespJson saveUnitMes(@RequestBody @Validated ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
-
-        Integer unitId = reqSaveUnitMesDTO.getBaseInfo().getId();
-
-        // 1.更新基本信息
-        if (BaseConstant.DRAFT.equals(reqSaveUnitMesDTO.getOptType())){
-            if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(BaseConstant.OFFICIAL)) {
-                // 当前是正式版本 新加一个版本作为草稿
-                UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
-                unitMes.setStatus(BaseConstant.DRAFT);
-                unitMes.setVersion(reqSaveUnitMesDTO.getBaseInfo().getVersion() + 1);
-                unitMes.setId(null);
-                unitMes.setCreateTime(LocalDateTime.now());
-                unitMes.setUpdateTime(LocalDateTime.now());
-                unitMesService.saveUnitMes(unitMes);
-                unitId = unitMes.getId();
-            } else {
-                // 当前也是草稿版本 直接更新
-                unitMesService.updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
-            }
-        } else {
-            if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(BaseConstant.OFFICIAL)) {
-                // 当前是正式版本 新加一个版本作为草稿
-                UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
-                unitMes.setStatus(BaseConstant.OFFICIAL);
-                unitMes.setVersion(reqSaveUnitMesDTO.getBaseInfo().getVersion() + 1);
-                unitMes.setId(null);
-                unitMes.setCreateTime(LocalDateTime.now());
-                unitMes.setUpdateTime(LocalDateTime.now());
-                unitMesService.saveUnitMes(unitMes);
-                unitId = unitMes.getId();
-            } else {
-                // 当前是草稿版本 直接更新
-                reqSaveUnitMesDTO.getBaseInfo().setUpdateTime(LocalDateTime.now());
-                reqSaveUnitMesDTO.getBaseInfo().setStatus(BaseConstant.OFFICIAL);
-                unitMesService.updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
-            }
-            unitMesService.delMaxVersionCatch(reqSaveUnitMesDTO.getBaseInfo().getType());
-        }
-
-        // 2.更新能力信息
-        unitAbilityService.updateUnitAbility(unitId, reqSaveUnitMesDTO.getAbilityInfo());
-        // 3.更新等级信息
-        for (UnitLevelMes levelMes : reqSaveUnitMesDTO.getLevelInfoData()) {
-            levelMes.setUnitId(unitId);
-            unitLevelMesService.saveUnitLevelMesList(levelMes);
-        }
-
+        unitMesService.saveUnitInfo(reqSaveUnitMesDTO);
         return RespUtil.successResJson();
     }
 

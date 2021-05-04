@@ -67,14 +67,17 @@
     </select>
 
     <select id="selectUnitMesByCreateUserWithPage" resultType="pers.mihao.ancient_empire.base.entity.UnitMes">
-        select um.* from <include refid="user_unit_max_version"></include> umv
-        left join unit_mes um on umv.type = um.type and um.version = umv.version
-        <if test="condition != null and condition != ''">
-            and (um.name like CONCAT('%',#{condition},'%')
-            or um.description like CONCAT('%',#{condition},'%')
-            )
-        </if>
-        order by update_time desc
+        select * from (
+            select um.* from <include refid="user_unit_max_version"></include> umv
+            left join unit_mes um on umv.type = um.type and um.version = umv.version
+            <if test="condition != null and condition != ''">
+                and (um.name like CONCAT('%',#{condition},'%')
+                or um.description like CONCAT('%',#{condition},'%')
+                )
+            </if>
+        ) ur
+        where ur.id is not null
+        order by ur.update_time desc
     </select>
 
     <select id="getUserDownloadUnitMesWithPage" resultType="pers.mihao.ancient_empire.base.vo.UnitMesVO">
