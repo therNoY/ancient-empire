@@ -2,24 +2,31 @@ package pers.mihao.ancient_empire.base.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pers.mihao.ancient_empire.auth.service.UserService;
+import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dao.UserTempAttentionDAO;
 import pers.mihao.ancient_empire.base.dao.UserTemplateDAO;
+import pers.mihao.ancient_empire.base.dto.ReqSaveUserTemplateDTO;
 import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateCountDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateIdDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
+import pers.mihao.ancient_empire.base.service.UnitTemplateRelationService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
+import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 
 import java.util.List;
+import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
 
 /**
  * <p>
@@ -30,7 +37,8 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImp
  * @since 2020-09-22
  */
 @Service
-public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateDAO, UserTemplate> implements UserTemplateService {
+public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateDAO, UserTemplate> implements
+    UserTemplateService {
 
     @Autowired
     UserTemplateDAO userTemplateDAO;
@@ -38,22 +46,27 @@ public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateD
     @Autowired
     UserTempAttentionDAO userTempAttentionDAO;
 
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    UserTemplateService userTemplateService;
+
+    @Autowired
+    UnitTemplateRelationService unitTemplateRelationService;
+
     @Cacheable(CatchKey.USER_TEMP)
     @Override
-    public UserTemplate selectById(String id) {
+    public UserTemplate getTemplateById(Integer id) {
         return getById(id);
     }
 
 
     @Override
-    public IPage<UserTemplate> getUserTemplateWithPage(ReqUserTemplateDTO reqUserTemplateDTO) {
-        Page<UserTemplate> userTemplatePage = new Page<>(reqUserTemplateDTO.getPageStart(), reqUserTemplateDTO.getPageSize());
-        QueryWrapper<UserTemplate> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", reqUserTemplateDTO.getUserId());
-        wrapper.eq("status", 1);
-        IPage<UserTemplate> templateList = userTemplateDAO.selectPage(userTemplatePage, wrapper);
-        addTempInfo(templateList.getRecords());
-        return templateList;
+    public IPage<UserTemplateVO> getUserTemplateWithPage(ReqUserTemplateDTO reqUserTemplateDTO) {
+        List<UserTemplateVO> userTemplateList = userTemplateDAO.selectUserMaxTemplateWithPage(reqUserTemplateDTO);
+        addTemplateExtendInfo(userTemplateList);
+        return IPageHelper.toPage(userTemplateList, reqUserTemplateDTO);
     }
 
     @Override
@@ -62,43 +75,104 @@ public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateD
     }
 
     @Override
-    public UserTemplate getUserDraftTemplate(Integer userId) {
+    public UserTemplateVO getUserDraftTemplate(Integer userId) {
         QueryWrapper<UserTemplate> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("status", 0);
+        wrapper.eq("version", 0);
         UserTemplate template = userTemplateDAO.selectOne(wrapper);
-        return template;
+        return BeanUtil.copyValueFromParent(template, UserTemplateVO.class);
     }
 
     @Override
-    public void deleteUserTemplate(Integer userId, String id) {
-        userTemplateDAO.updateUserTemplateStatusById(userId, id, -1);
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteUserTemplate(UserTemplate userTemplate) {
+        if (userTemplate.getStatus().equals(VersionConstant.DRAFT)) {
+            removeById(userTemplate);
+        }
+        QueryWrapper<UserTemplate> wrapper = new QueryWrapper<>();
+        wrapper.eq("template_type", userTemplate.getTemplateType());
+        List<UserTemplate> historyTemplate = userTemplateDAO.selectList(wrapper);
+        for (UserTemplate template : historyTemplate) {
+            template.setStatus(VersionConstant.DELETE);
+            template.setUpdateTime(LocalDateTime.now());
+            template.setUserId(template.getUserId() * -1);
+            userTemplateDAO.updateById(template);
+        }
     }
 
+
     @Override
-    public IPage<UserTemplate> getAttentionTemplateWithPage(ReqUserTemplateDTO reqUserTemplateDTO) {
-        List<UserTemplate> userTemplates = userTempAttentionDAO.getAttentionTemplateWithPage(reqUserTemplateDTO);
-        addTempInfo(userTemplates);
+    public IPage<UserTemplateVO> getDownloadAbleTempWithPage(ReqUserTemplateDTO reqUserTemplateDTO) {
+        List<UserTemplateVO> userTemplates = userTempAttentionDAO.getDownloadAbleTempWithPage(reqUserTemplateDTO);
+        UserTemplate template;
+        for (UserTemplateVO templateVO : userTemplates) {
+            template = userTemplateService.getMaxTemplateByType(templateVO.getTemplateType());
+            BeanUtil.copyValueFromParent(template, templateVO);
+        }
+        addTemplateExtendInfo(userTemplates);
         return IPageHelper.toPage(userTemplates, reqUserTemplateDTO);
     }
 
-    private void addTempInfo(List<UserTemplate> userTemplates) {
+
+    /**
+     * 这只模板通用信息
+     * @param userTemplates
+     */
+    @Override
+    public void addTemplateExtendInfo(List<UserTemplateVO> userTemplates) {
         TemplateIdDTO templateIdDTO;
         TemplateCountDTO templateCountDTO;
-        for (UserTemplate template : userTemplates) {
+        for (UserTemplateVO template : userTemplates) {
             templateCountDTO = userTempAttentionDAO.selectCountStartByTempId(template.getId());
-            template.setCountStart(templateCountDTO.getSum() == null ? 0 : templateCountDTO.getSum()/templateCountDTO.getCount());
-            template.setLinkNum(templateCountDTO.getCount());
+            template.setStartCount(
+                templateCountDTO.getSum() == null ? 0 : templateCountDTO.getSum() / templateCountDTO.getCount());
+            template.setDownLoadCount(templateCountDTO.getCount());
             templateIdDTO = new TemplateIdDTO();
-            templateIdDTO.setTemplateId(template.getId().toString());
+            templateIdDTO.setTemplateId(template.getId());
+            template.setUserId(Math.abs(template.getUserId()));
+            template.setCreateUserName(userService.getUserById(template.getUserId()).getName());
             template.setBindUintList(getUserAllTempUnit(templateIdDTO));
         }
     }
 
     @Override
-    public IPage<UserTemplate> getDownloadAbleTempWithPage(ReqUserTemplateDTO reqUserTemplateDTO) {
-        List<UserTemplate> userTemplates =  userTempAttentionDAO.getDownloadAbleTempWithPage(reqUserTemplateDTO);
-        addTempInfo(userTemplates);
-        return IPageHelper.toPage(userTemplates, reqUserTemplateDTO);
+    @Transactional(rollbackFor = Exception.class)
+    public void saveTemplateInfo(ReqSaveUserTemplateDTO reqSaveUserTemplateDTO) {
+        // 1.保存模板信息
+        UserTemplate template = (UserTemplate) BeanUtil.copyValueToParent(reqSaveUserTemplateDTO, UserTemplate.class);
+        if (template.getStatus().equals(VersionConstant.DRAFT)) {
+            // 原本就是草该状态
+            template.setStatus(reqSaveUserTemplateDTO.getOptType());
+            updateById(template);
+        } else if (template.getStatus().equals(VersionConstant.OFFICIAL)) {
+            // 原来是正式版本
+            template.setVersion(template.getVersion() + 1);
+            template.setCreateTime(LocalDateTime.now());
+            template.setUpdateTime(LocalDateTime.now());
+            template.setId(null);
+            template.setStatus(reqSaveUserTemplateDTO.getOptType());
+            save(template);
+            // 设置新的ID
+            reqSaveUserTemplateDTO.setId(template.getId());
+        }
+        delTemplateCatch(template);
+        // 2.保存单位模板关系
+        unitTemplateRelationService.saveRelation(reqSaveUserTemplateDTO);
+    }
+
+    @Override
+    @Cacheable(CatchKey.TEMPLATE_MAX_VERSION)
+    public UserTemplate getMaxTemplateByType(String templateType) {
+        Integer version  = userTemplateDAO.getMaxVersionByType(templateType);
+        QueryWrapper<UserTemplate> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("template_type", templateType)
+            .eq("version", version);
+        return userTemplateDAO.selectOne(queryWrapper);
+    }
+
+    @Override
+    public void delTemplateCatch(UserTemplate userTemplate) {
+        RedisUtil.delKey(CatchKey.getKey(CatchKey.TEMPLATE_MAX_VERSION) + userTemplate.getTemplateType());
     }
 }

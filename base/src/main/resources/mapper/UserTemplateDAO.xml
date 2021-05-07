@@ -29,14 +29,22 @@
     </resultMap>
 
     <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, user_id, template_name, template_desc, attach_experience, counterattack_experience,
-         derivative_id, kill_experience, antikill_experience, attach_animation, dead_animation, summon_animation, levelup_animation, square_width, square_height, attach_model, unit_max_level, promotion_max_num, promotion_level, promotion_mode,shared,status
+    <sql id="Base_Colutn_List">
+        id, user_id, template_name, template_desc, attach_experience, counterattack_experience,template_type,
+         derivative_id, kill_experience, antikill_experience, attach_animation, dead_animation, sutmon_animation, levelup_animation, square_width, square_height, attach_model, unit_max_level, promotion_max_nut, promotion_level, promotion_mode,shared,status
     </sql>
+
+    <sql id="user_template_max_version">
+        (select template_type,max(version) as version  from user_template
+        where user_id = #{userId}
+        GROUP BY template_type)
+    </sql>
+    
     <update id="updateUserTemplateStatusById">
         update user_template set status = #{status}
         where user_id = #{userId} and id = #{id}
     </update>
+
     <select id="getUserAllTempUnit" resultMap="pers.mihao.ancient_empire.base.dao.UnitMesDAO.BaseResultMap">
         select u.* from unit_mes u
         left join unit_template_relation tr on tr.unit_id = u.id
@@ -48,6 +56,28 @@
         <if test="templateId != null and templateId != ''">
             and t.id = #{templateId}
         </if>
+    </select>
+
+    
+    <select id="selectUserMaxTemplateWithPage" resultType="pers.mihao.ancient_empire.base.vo.UserTemplateVO">
+        select * from (
+        select ut.* from <include refid="user_template_max_version"></include> utv
+        left join user_template ut on utv.template_type = ut.template_type and ut.version = utv.version
+        <if test="condition != null and condition != ''">
+            and ut.name like CONCAT('%',#{condition},'%')
+        </if>
+        ) ur
+        where ur.id is not null
+        order by ur.update_time desc
+    </select>
+
+
+    <select id="getMaxVersionByType" resultType="java.lang.Integer">
+        select  max(version) from user_template
+        where template_type = #{type}
+        and `shared` = 1
+        and `status` = 1
+        GROUP BY template_type
     </select>
 
 </mapper>

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class TemplateIdDTO extends ApiRequestDTO {
 
-    private String templateId;
+    private Integer templateId;
 
     private List<String> filter;
 
@@ -24,11 +24,11 @@ public class TemplateIdDTO extends ApiRequestDTO {
         this.filter = filter;
     }
 
-    public String getTemplateId() {
+    public Integer getTemplateId() {
         return templateId;
     }
 
-    public void setTemplateId(String templateId) {
+    public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
     }
 }

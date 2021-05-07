@@ -1,9 +1,6 @@
 package pers.mihao.ancient_empire.base.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import org.springframework.data.annotation.Id;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -30,6 +27,11 @@ public class UserTempAttention implements Serializable {
      */
     @TableId
     private Integer templateId;
+
+    /**
+     * 模板类型
+     */
+    private String templateType;
 
     /**
      * 评价
@@ -81,6 +83,14 @@ public class UserTempAttention implements Serializable {
 
     public void setTemplateComment(String templateComment) {
         this.templateComment = templateComment;
+    }
+
+    public String getTemplateType() {
+        return templateType;
+    }
+
+    public void setTemplateType(String templateType) {
+        this.templateType = templateType;
     }
 
     @Override

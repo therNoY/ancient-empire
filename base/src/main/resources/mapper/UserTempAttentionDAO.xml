@@ -21,16 +21,40 @@
         FROM user_temp_attention t where t.template_id = #{id}
     </select>
 
-    <select id="getAttentionTemplateWithPage" resultMap="pers.mihao.ancient_empire.base.dao.UserTemplateDAO.BaseResultMap">
+    <select id="getAttentionTemplateWithPage" resultType="pers.mihao.ancient_empire.base.vo.UserTemplateVO">
         select t.* from user_temp_attention ut left join user_template t on ut.template_id = t.id
-        where ut.user_id = #{userId} ORDER BY ut.create_time desc
+        where ut.user_id = #{userId}
+
+        ORDER BY ut.create_time desc
     </select>
 
-    <select id="getDownloadAbleTempWithPage" resultType="pers.mihao.ancient_empire.base.entity.UserTemplate">
-        select t.* from user_template t
-        where t.user_id != #{userId}
-        and t.status != -1 and t.shared = 1
-        and not EXISTS (select 1 from  user_temp_attention ta where ta.user_id = #{userId} and ta.template_id = t.id)
+    <select id="getDownloadAbleTempWithPage" resultType="pers.mihao.ancient_empire.base.vo.UserTemplateVO">
+        SELECT
+        ( SELECT sum( template_start ) AS startCount FROM user_temp_attention WHERE template_type = ut.template_type ) startCount,
+        ( SELECT count( 1 ) AS downLoadCount FROM user_temp_attention WHERE template_type = ut.template_type ) downLoadCount,
+        ut.template_type
+        FROM
+        user_template ut
+        WHERE
+        ut.user_id != #{userId}
+        AND ut.shared = '1'
+        AND ut.`status` != '0'
+        <if test="condition != null and condition != ''">
+            and ut.name like concat('%', #{condition}, '%')
+        </if>
+        AND NOT EXISTS ( SELECT 1 FROM user_temp_attention uua WHERE uua.user_id = #{userId} AND uua.template_type = ut.template_type )
+        GROUP BY
+        ut.template_type
+        <choose>
+            <when test="byStartSum != null and byStartSum = '1'">
+                ORDER BY downLoadCount desc, startCount desc
+            </when>
+            <otherwise>
+                ORDER BY startCount desc, downLoadCount desc
+            </otherwise>
+        </choose>
     </select>
+
+
 
 </mapper>

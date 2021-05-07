@@ -1,7 +1,11 @@
 package pers.mihao.ancient_empire.base.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
+import pers.mihao.ancient_empire.base.dto.TemplateIdDTO;
 import pers.mihao.ancient_empire.base.entity.UserTempAttention;
 import com.baomidou.mybatisplus.extension.service.IService;
+import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
 
 /**
@@ -21,4 +25,18 @@ public interface UserTempAttentionService extends ComplexKeyService<UserTempAtte
      */
     void removeUserAttention(Integer userId, String id);
 
+
+    /**
+     * 获取用户关注模板
+     *
+     * @param reqUserTemplateDTO
+     * @return
+     */
+    IPage<UserTemplateVO> getAttentionTemplateWithPage(ReqUserTemplateDTO reqUserTemplateDTO);
+
+    /**
+     * 更新最新版本的模板
+     * @param id
+     */
+    void updateMaxVersion(TemplateIdDTO id);
 }

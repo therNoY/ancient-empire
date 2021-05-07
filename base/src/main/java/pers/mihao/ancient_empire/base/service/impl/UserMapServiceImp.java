@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
-import static pers.mihao.ancient_empire.common.constant.CatchKey.USER_CREATE_MAP;
 import static pers.mihao.ancient_empire.common.constant.CatchKey.USER_MAP;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -23,6 +22,7 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.dao.UserMapAttentionDao;
 import pers.mihao.ancient_empire.base.dao.UserMapDAO;
 import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
 import pers.mihao.ancient_empire.base.entity.UserMap;
@@ -37,7 +37,6 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImp
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.base.dao.UserMapAttentionDao;
 
 @Service
 public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap> implements UserMapService {
@@ -306,15 +305,10 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
 
     private void removeUserMapCatch(UserMap userMap){
         userMapService.removeMapCatch(userMap.getUuid());
-        userMapService.removeUserMapCatch(userMap.getCreateUserId());
         if (GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
             userMapService.delEncounterMapsCatch();
         }
     }
-
-    @Override
-    @CacheEvict(USER_CREATE_MAP)
-    public void removeUserMapCatch(Integer createUserId) {}
 
     @Override
     @CacheEvict(USER_MAP)

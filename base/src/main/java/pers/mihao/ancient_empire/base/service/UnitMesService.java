@@ -75,10 +75,10 @@ public interface UnitMesService extends IService<UnitMes> {
     List<UnitMes> getUserEnableUnitList(Integer userId);
 
     /**
-     * 获取管理员启动的单位 即是默认单位
+     * 获取基础单位
      * @return
      */
-    List<UnitMes> getDefaultUnitList();
+    List<UnitMes> getBaseUnitList();
 
     /**
      * 更新单位信息

@@ -42,4 +42,10 @@ public class ImgUtilTest {
 
 
     }
+
+    @Test
+    public void name() {
+        System.out.println( (-1 << 1) >> 1);
+        System.out.println( (1 << 1) >> 1);
+    }
 }

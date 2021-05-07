@@ -22,9 +22,6 @@ public class CatchKey {
     // 遭遇战地图
     public static final String USER_MAP = "userMap";
 
-    // 我的地图
-    public static final String USER_CREATE_MAP = "userCreateMap";
-
     // 遭遇战地图
     public static final String ENCOUNTER_MAP = "encounterMap";
 
@@ -43,13 +40,18 @@ public class CatchKey {
     // 单位等级能力
     public static final String UNIT_LEVEL_MES = "unitLevelMes";
 
-    public static final String TEMP_UNIT_LEVEL = "tempUnitLevel";
     /**
      * 单位的最新版本
      */
     public static final String UNIT_MAX_VERSION = "unitMaxVersion";
+    /**
+     * 模板的最新版本
+     */
+    public static final String TEMPLATE_MAX_VERSION = "templateMaxVersion";
 
-    // 单位详细信息 包含单等级信息， 基础信息， 能力信息
+    /**
+     * 单位详细信息 包含单等级信息， 基础信息， 能力信息
+     */
     public static final String UNIT_INFO = "unitInfo";
 
     // 模板可以购买的单位

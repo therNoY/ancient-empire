@@ -5,6 +5,7 @@ import pers.mihao.ancient_empire.base.dto.TemplateCountDTO;
 import pers.mihao.ancient_empire.base.entity.UserTempAttention;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
+import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
 import pers.mihao.ancient_empire.common.jdbc.PageModel;
 
 import java.util.List;
@@ -31,12 +32,15 @@ public interface UserTempAttentionDAO extends BaseMapper<UserTempAttention> {
      * @param reqUserTemplateDTO
      * @return
      */
-    List<UserTemplate> getAttentionTemplateWithPage(ReqUserTemplateDTO reqUserTemplateDTO);
+    List<UserTemplateVO> getAttentionTemplateWithPage(ReqUserTemplateDTO reqUserTemplateDTO);
 
     /**
      * 获取可以下载的模板
      * @param reqUserTemplateDTO
      * @return
      */
-    List<UserTemplate> getDownloadAbleTempWithPage(ReqUserTemplateDTO reqUserTemplateDTO);
+    List<UserTemplateVO> getDownloadAbleTempWithPage(ReqUserTemplateDTO reqUserTemplateDTO);
+
+
+
 }

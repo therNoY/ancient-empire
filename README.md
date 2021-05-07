@@ -218,6 +218,7 @@ https://github.com/therNoY/ancient-empire-web/
     ## 思路
     1. 修改unit_mes表增加版本管理 Id 属于物理主键 type和version属于逻辑主键 type不能重复不为空且不能修改
     2. 图片是根据主键寻找的，所以发布单位如果没有上传也需要
+    3. template表增加字段 type表示同一个类型的模板
 
 2. 优化主页和弹出提示框
 

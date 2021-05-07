@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
@@ -146,7 +147,7 @@ public class UnitMesController {
     }
 
     /**
-     * 删除用户的单位
+     * 删除用户的单位(逻辑)
      * @param id
      * @return
      */
@@ -155,13 +156,13 @@ public class UnitMesController {
         UnitMes unitMes = unitMesService.getUnitMesById(id);
         if (unitMes != null && unitMes.getCreateUserId().equals(AuthUtil.getUserId())) {
             // 其他模板也会引用 先判断是否是草稿 草稿直接删除 否则改成禁用,历史版本同样如此操做
-            if (unitMes.getStatus().equals(BaseConstant.DRAFT)) {
+            if (unitMes.getStatus().equals(VersionConstant.DRAFT)) {
                 unitMesService.removeById(unitMes.getId());
             }
             // 更新低版本为禁用
-            unitMesService.updateUnitStatusByType(unitMes.getType(), BaseConstant.DELETE);
+            unitMesService.updateUnitStatusByType(unitMes.getType(), VersionConstant.DELETE);
         }
-        return RespUtil.error();
+        return RespUtil.successResJson();
     }
 
 

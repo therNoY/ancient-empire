@@ -69,7 +69,7 @@ public class UserUnitAttentionController {
     }
 
     /**
-     * 删除用户的单位
+     * 更新用户的单位
      * @param id
      * @return
      */

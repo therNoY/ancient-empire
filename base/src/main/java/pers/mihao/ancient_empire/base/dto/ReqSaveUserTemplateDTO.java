@@ -18,17 +18,9 @@ public class ReqSaveUserTemplateDTO extends UserTemplate {
     private List<Integer> relationUnitList;
 
     /**
-     * 是否是取消保存
+     * 操做类型 1是保存草稿 2是发布版本
      */
-    private Boolean cancelSave;
-
-    public Boolean getCancelSave() {
-        return cancelSave;
-    }
-
-    public void setCancelSave(Boolean cancelSave) {
-        this.cancelSave = cancelSave;
-    }
+    private Integer optType;
 
     public List<Integer> getRelationUnitList() {
         return relationUnitList;
@@ -36,5 +28,13 @@ public class ReqSaveUserTemplateDTO extends UserTemplate {
 
     public void setRelationUnitList(List<Integer> relationUnitList) {
         this.relationUnitList = relationUnitList;
+    }
+
+    public Integer getOptType() {
+        return optType;
+    }
+
+    public void setOptType(Integer optType) {
+        this.optType = optType;
     }
 }

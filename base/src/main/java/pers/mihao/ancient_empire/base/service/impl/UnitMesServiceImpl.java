@@ -5,7 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +24,7 @@ import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.controller.GameImgController;
 import pers.mihao.ancient_empire.base.dao.UnitMesDAO;
 import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
@@ -162,12 +170,29 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
         QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
         wrapper.eq("create_user_id", userId);
         wrapper.eq("enable", CommonConstant.YES);
-        return unitMesDao.selectList(wrapper);
+        wrapper.eq("status", VersionConstant.OFFICIAL);
+        List<UnitMes> unitMesList = unitMesDao.selectList(wrapper).stream()
+            .sorted(Comparator.comparingInt(UnitMes::getVersion)).collect(Collectors.toList());
+
+        Map<String, UnitMes> unitVersionMap = new HashMap<>(16);
+        for (UnitMes unitMes : unitMesList) {
+            unitVersionMap.put(unitMes.getType(), unitMes);
+        }
+
+        List<UnitMes> res = new ArrayList<>();
+        for (Map.Entry<String, UnitMes> entry : unitVersionMap.entrySet()) {
+            res.add(entry.getValue());
+        }
+        return res;
     }
 
     @Override
-    public List<UnitMes> getDefaultUnitList() {
-        return getUserEnableUnitList(CommonConstant.ADMIN_ID);
+    public List<UnitMes> getBaseUnitList() {
+        QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
+        wrapper.eq("create_user_id", CommonConstant.ADMIN_ID);
+        wrapper.eq("enable", CommonConstant.YES);
+        wrapper.lt("id", 13);
+        return unitMesDao.selectList(wrapper);
     }
 
     @Override
@@ -180,7 +205,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     public UnitMes getDraftVersionUnitMes(String type) {
         QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
         wrapper.eq("type", type);
-        wrapper.eq("status", BaseConstant.DRAFT);
+        wrapper.eq("status", VersionConstant.DRAFT);
         return unitMesDao.selectOne(wrapper);
     }
 
@@ -204,6 +229,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
         for (UnitMesVO vo : unitMesList) {
             unitMes = unitMesService.getMaxVersionUnitByType(vo.getType());
             BeanUtil.copyValueByGetSet(unitMes, vo);
+            unitMes.setCreateUserId(Math.abs(unitMes.getCreateUserId()));
             vo.setCreateUserName(userService.getUserById(unitMes.getCreateUserId()).getName());
         }
         return IPageHelper.toPage(unitMesList, orderDTO);
@@ -216,8 +242,9 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
         List<UnitMes> unitMesList = unitMesDao.selectList(wrapper);
         for (UnitMes unitMes : unitMesList) {
             unitMes.setEnable(status);
-            if (status.equals(BaseConstant.DELETE)) {
-                unitMes.setCreateUserId(null);
+            if (status.equals(VersionConstant.DELETE)) {
+                // 修改创建用户为 -id 便于找到
+                unitMes.setCreateUserId(unitMes.getCreateUserId() * -1);
             }
             unitMes.setUpdateTime(LocalDateTime.now());
             unitMesDao.updateById(unitMes);
@@ -243,12 +270,11 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     public void saveUnitInfo(ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
         Integer unitId = reqSaveUnitMesDTO.getBaseInfo().getId();
 
-        // 1.更新基本信息
-        if (BaseConstant.DRAFT.equals(reqSaveUnitMesDTO.getOptType())){
-            if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(BaseConstant.OFFICIAL)) {
+        if (VersionConstant.DRAFT.equals(reqSaveUnitMesDTO.getOptType())){
+            if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(VersionConstant.OFFICIAL)) {
                 // 当前是正式版本 新加一个版本作为草稿
                 UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
-                unitMes.setStatus(BaseConstant.DRAFT);
+                unitMes.setStatus(VersionConstant.DRAFT);
                 unitMes.setVersion(reqSaveUnitMesDTO.getBaseInfo().getVersion() + 1);
                 unitMes.setId(null);
                 unitMes.setCreateTime(LocalDateTime.now());
@@ -257,13 +283,14 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
                 unitId = unitMes.getId();
             } else {
                 // 当前也是草稿版本 直接更新
+                reqSaveUnitMesDTO.getBaseInfo().setUpdateTime(LocalDateTime.now());
                 updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
             }
-        } else if (BaseConstant.OFFICIAL.equals(reqSaveUnitMesDTO.getOptType())){
-            if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(BaseConstant.OFFICIAL)) {
+        } else if (VersionConstant.OFFICIAL.equals(reqSaveUnitMesDTO.getOptType())){
+            if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(VersionConstant.OFFICIAL)) {
                 // 当前是正式版本 新加一个版本作为草稿
                 UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
-                unitMes.setStatus(BaseConstant.OFFICIAL);
+                unitMes.setStatus(VersionConstant.OFFICIAL);
                 unitMes.setVersion(reqSaveUnitMesDTO.getBaseInfo().getVersion() + 1);
                 unitMes.setId(null);
                 unitMes.setCreateTime(LocalDateTime.now());
@@ -273,14 +300,14 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
             } else {
                 // 当前是草稿版本 直接更新
                 reqSaveUnitMesDTO.getBaseInfo().setUpdateTime(LocalDateTime.now());
-                reqSaveUnitMesDTO.getBaseInfo().setStatus(BaseConstant.OFFICIAL);
-                unitMesService.updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
+                reqSaveUnitMesDTO.getBaseInfo().setStatus(VersionConstant.OFFICIAL);
+                updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
             }
             delMaxVersionCatch(reqSaveUnitMesDTO.getBaseInfo().getType());
         } else {
             // 新增单位  首先保存单位
             UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
-            unitMes.setStatus(BaseConstant.OFFICIAL);
+            unitMes.setStatus(VersionConstant.OFFICIAL);
             unitMes.setVersion(0);
             unitMes.setId(null);
             unitMes.setType(CommonConstant.UNDER_LINE);

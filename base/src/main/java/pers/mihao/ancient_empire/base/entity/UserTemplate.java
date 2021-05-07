@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,9 +24,13 @@ public class UserTemplate implements Serializable {
     private Integer id;
 
     /**
+     * 模板类型
+     */
+    private String templateType;
+
+    /**
      * 版本
      */
-//    @TableId
     private Integer version;
 
     /**
@@ -129,28 +134,13 @@ public class UserTemplate implements Serializable {
     private Integer shared;
 
     /**
-     * 模板状态 -1 废弃 0 草稿 1正常
+     * 模板状态 -1 逻辑删除 0 草稿 1正常
      */
     private Integer status;
 
-    /**
-     * 引用总start
-     */
-    @TableField(exist = false)
-    private Integer countStart;
+    private LocalDateTime createTime;
 
-    /**
-     * 引用次数
-     */
-    @TableField(exist = false)
-    private Integer linkNum;
-
-    /**
-     * 模板绑定的单位
-     */
-    @TableField(exist = false)
-    private List<UnitMes> bindUintList;
-
+    private LocalDateTime updateTime;
 
 
     public Integer getId() {
@@ -296,22 +286,6 @@ public class UserTemplate implements Serializable {
         this.promotionMode = promotionMode;
     }
 
-    public Integer getCountStart() {
-        return countStart;
-    }
-
-    public void setCountStart(Integer countStart) {
-        this.countStart = countStart;
-    }
-
-    public Integer getLinkNum() {
-        return linkNum;
-    }
-
-    public void setLinkNum(Integer linkNum) {
-        this.linkNum = linkNum;
-    }
-
     public Integer getShared() {
         return shared;
     }
@@ -328,13 +302,6 @@ public class UserTemplate implements Serializable {
         this.status = status;
     }
 
-    public List<UnitMes> getBindUintList() {
-        return bindUintList;
-    }
-
-    public void setBindUintList(List<UnitMes> bindUintList) {
-        this.bindUintList = bindUintList;
-    }
 
     public Integer getVersion() {
         return version;
@@ -342,6 +309,30 @@ public class UserTemplate implements Serializable {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public String getTemplateType() {
+        return templateType;
+    }
+
+    public void setTemplateType(String templateType) {
+        this.templateType = templateType;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
     }
 
     @Override
