@@ -100,7 +100,7 @@
         WHERE
         um.create_user_id != #{userId}
         AND um.ENABLE = '1'
-        AND um.`status` != '0'
+        AND um.`status` = '1'
         <if test="condition != null and condition != ''">
             and um.name like concat('%', #{condition}, '%')
         </if>

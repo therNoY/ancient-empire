@@ -28,7 +28,7 @@ public interface UserTempAttentionDAO extends BaseMapper<UserTempAttention> {
     TemplateCountDTO selectCountStartByTempId(Integer id);
 
     /**
-     * 获取用户模板
+     * 获取用户下载模板
      * @param reqUserTemplateDTO
      * @return
      */

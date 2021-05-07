@@ -24,7 +24,9 @@
     <select id="getAttentionTemplateWithPage" resultType="pers.mihao.ancient_empire.base.vo.UserTemplateVO">
         select t.* from user_temp_attention ut left join user_template t on ut.template_id = t.id
         where ut.user_id = #{userId}
-
+        <if test="condition != null and condition != ''">
+            and t.template_name like CONCAT('%',#{condition},'%')
+        </if>
         ORDER BY ut.create_time desc
     </select>
 
@@ -38,9 +40,9 @@
         WHERE
         ut.user_id != #{userId}
         AND ut.shared = '1'
-        AND ut.`status` != '0'
+        AND ut.`status` = '1'
         <if test="condition != null and condition != ''">
-            and ut.name like concat('%', #{condition}, '%')
+            and ut.template_name like concat('%', #{condition}, '%')
         </if>
         AND NOT EXISTS ( SELECT 1 FROM user_temp_attention uua WHERE uua.user_id = #{userId} AND uua.template_type = ut.template_type )
         GROUP BY

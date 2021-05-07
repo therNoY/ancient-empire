@@ -215,7 +215,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
         UnitMes maxVersionUnit;
         for (UnitMesVO unitMes : unitMesList) {
             maxVersionUnit = unitMesService.getMaxVersionUnitByType(unitMes.getType());
-            if (maxVersionUnit.getVersion() > unitMes.getVersion()) {
+            if (maxVersionUnit != null && maxVersionUnit.getVersion() > unitMes.getVersion()) {
                 unitMes.setMaxVersion(maxVersionUnit.getVersion());
             }
         }

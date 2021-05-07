@@ -46,6 +46,9 @@ public class BeanUtil {
      */
     public static <T, M> M copyValueFromParent(T t, Class<M> clazz) {
         M res = null;
+        if (t == null) {
+            return null;
+        }
         try {
             res = clazz.newInstance();
             Map<String, GetSetDTO> cMap = ReflectUtil.getAllGetSetMethod(clazz);

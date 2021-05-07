@@ -29,7 +29,7 @@ public interface UserTemplateDAO extends BaseMapper<UserTemplate> {
     List<UnitMes> getUserAllTempUnit(TemplateIdDTO templateIdDTO);
 
     /**
-     *
+     * 根据id 更新用户模板状态
      * @param userId
      * @param id
      * @param status

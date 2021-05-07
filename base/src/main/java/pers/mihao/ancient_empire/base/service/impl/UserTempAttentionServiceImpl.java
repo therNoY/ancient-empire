@@ -47,7 +47,10 @@ public class UserTempAttentionServiceImpl extends ComplexKeyServiceImpl<UserTemp
         UserTemplate template;
         for (UserTemplateVO templateVO : userTemplates) {
             template = userTemplateService.getMaxTemplateByType(templateVO.getTemplateType());
-            templateVO.setMaxVersion(template.getVersion());
+            if (template != null) {
+                // 改模板可能已经删除
+                templateVO.setMaxVersion(template.getVersion());
+            }
         }
         userTemplateService.addTemplateExtendInfo(userTemplates);
         return IPageHelper.toPage(userTemplates, reqUserTemplateDTO);

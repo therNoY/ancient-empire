@@ -174,26 +174,6 @@ public class UserTemplateController {
     @GetMapping("/api/userTemp/draftTemplate")
     public RespJson getUserDraftTemplate() {
         UserTemplateVO draftTemp = userTemplateService.getUserDraftTemplate(AuthUtil.getUserId());
-        if (draftTemp == null) {
-            // 为空就创建一个草稿模板
-            // 1.获取系统默认模板
-            UserTemplate defaultTemp = userTemplateService.getById(1);
-            defaultTemp.setId(null);
-            draftTemp = BeanUtil.copyValueFromParent(defaultTemp, UserTemplateVO.class);
-            draftTemp.setUserId(AuthUtil.getUserId());
-            draftTemp.setStatus(VersionConstant.DRAFT);
-            draftTemp.setVersion(0);
-            userTemplateService.save(draftTemp);
-            // 2.模板绑定默认单位
-            List<UnitMes> defaultUnitMes = unitMesService.getBaseUnitList();
-            UnitTemplateRelation relation;
-            for (UnitMes unitMes : defaultUnitMes) {
-                relation = new UnitTemplateRelation();
-                relation.setUnitId(unitMes.getId());
-                relation.setTempId(draftTemp.getId());
-                unitTemplateRelationService.save(relation);
-            }
-        }
         TemplateIdDTO templateIdDTO = new TemplateIdDTO();
         templateIdDTO.setTemplateId(draftTemp.getId());
         draftTemp.setBindUintList(userTemplateService.getUserAllTempUnit(templateIdDTO));

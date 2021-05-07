@@ -64,7 +64,7 @@
         select ut.* from <include refid="user_template_max_version"></include> utv
         left join user_template ut on utv.template_type = ut.template_type and ut.version = utv.version
         <if test="condition != null and condition != ''">
-            and ut.name like CONCAT('%',#{condition},'%')
+            and ut.template_name like CONCAT('%',#{condition},'%')
         </if>
         ) ur
         where ur.id is not null

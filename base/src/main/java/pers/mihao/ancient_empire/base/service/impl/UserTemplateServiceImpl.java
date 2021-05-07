@@ -2,12 +2,14 @@ package pers.mihao.ancient_empire.base.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.service.UserService;
+import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dao.UserTempAttentionDAO;
 import pers.mihao.ancient_empire.base.dao.UserTemplateDAO;
@@ -16,7 +18,9 @@ import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateCountDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateIdDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.entity.UnitTemplateRelation;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
+import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UnitTemplateRelationService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
@@ -37,7 +41,7 @@ import pers.mihao.ancient_empire.common.util.BeanUtil;
  * @since 2020-09-22
  */
 @Service
-public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateDAO, UserTemplate> implements
+public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTemplate> implements
     UserTemplateService {
 
     @Autowired
@@ -54,6 +58,9 @@ public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateD
 
     @Autowired
     UnitTemplateRelationService unitTemplateRelationService;
+
+    @Autowired
+    UnitMesService unitMesService;
 
     @Cacheable(CatchKey.USER_TEMP)
     @Override
@@ -75,13 +82,40 @@ public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateD
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public UserTemplateVO getUserDraftTemplate(Integer userId) {
         QueryWrapper<UserTemplate> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("status", 0);
         wrapper.eq("version", 0);
         UserTemplate template = userTemplateDAO.selectOne(wrapper);
-        return BeanUtil.copyValueFromParent(template, UserTemplateVO.class);
+        UserTemplateVO draftTemp = BeanUtil.copyValueFromParent(template, UserTemplateVO.class);
+
+        if (draftTemp == null) {
+            // 为空就创建一个草稿模板
+            // 1.获取系统默认模板
+            UserTemplate defaultTemp = userTemplateService.getById(1);
+            defaultTemp.setId(null);
+            draftTemp = BeanUtil.copyValueFromParent(defaultTemp, UserTemplateVO.class);
+            draftTemp.setUserId(AuthUtil.getUserId());
+            draftTemp.setStatus(VersionConstant.DRAFT);
+            draftTemp.setVersion(0);
+            draftTemp.setCreateTime(LocalDateTime.now());
+            draftTemp.setUpdateTime(LocalDateTime.now());
+            userTemplateService.save(draftTemp);
+            draftTemp.setTemplateType("TEMPLATE_" + draftTemp.getId());
+            userTemplateService.updateById(draftTemp);
+            // 2.模板绑定默认单位
+            List<UnitMes> defaultUnitMes = unitMesService.getBaseUnitList();
+            UnitTemplateRelation relation;
+            for (UnitMes unitMes : defaultUnitMes) {
+                relation = new UnitTemplateRelation();
+                relation.setUnitId(unitMes.getId());
+                relation.setTempId(draftTemp.getId());
+                unitTemplateRelationService.save(relation);
+            }
+        }
+        return draftTemp;
     }
 
     @Override
@@ -99,6 +133,7 @@ public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateD
             template.setUserId(template.getUserId() * -1);
             userTemplateDAO.updateById(template);
         }
+        delTemplateCatch(userTemplate);
     }
 
 
@@ -126,7 +161,7 @@ public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateD
         for (UserTemplateVO template : userTemplates) {
             templateCountDTO = userTempAttentionDAO.selectCountStartByTempId(template.getId());
             template.setStartCount(
-                templateCountDTO.getSum() == null ? 0 : templateCountDTO.getSum() / templateCountDTO.getCount());
+                templateCountDTO.getSum() == null ? 0 : templateCountDTO.getSum());
             template.setDownLoadCount(templateCountDTO.getCount());
             templateIdDTO = new TemplateIdDTO();
             templateIdDTO.setTemplateId(template.getId());
@@ -174,5 +209,6 @@ public class UserTemplateServiceImpl extends ComplexKeyServiceImpl<UserTemplateD
     @Override
     public void delTemplateCatch(UserTemplate userTemplate) {
         RedisUtil.delKey(CatchKey.getKey(CatchKey.TEMPLATE_MAX_VERSION) + userTemplate.getTemplateType());
+        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_TEMP) + userTemplate.getId());
     }
 }
