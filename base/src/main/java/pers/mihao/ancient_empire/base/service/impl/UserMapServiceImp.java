@@ -1,9 +1,11 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
+import static pers.mihao.ancient_empire.common.constant.CatchKey.MAP_MAX_VERSION;
 import static pers.mihao.ancient_empire.common.constant.CatchKey.USER_MAP;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,30 +18,31 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.enums.UserEnum;
+import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dao.UserMapAttentionDao;
 import pers.mihao.ancient_empire.base.dao.UserMapDAO;
-import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
+import pers.mihao.ancient_empire.base.dto.CountSumDTO;
+import pers.mihao.ancient_empire.base.dto.ReqSaveMap;
+import pers.mihao.ancient_empire.base.dto.ReqDoPaintingDTO;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.UserMapService;
+import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
-import pers.mihao.ancient_empire.common.annotation.redis.NotGenerator;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
-import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 
 @Service
-public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap> implements UserMapService {
+public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implements UserMapService {
 
     private static final String SEA = "sea";
     private static final String LAND = "land";
@@ -53,9 +56,12 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
     UserMapDAO userMapDAO;
     @Autowired
     UserMapService userMapService;
-
+    @Autowired
+    UserService userService;
     @Autowired
     UserMapAttentionDao userMapAttentionDao;
+    @Autowired
+    UserTemplateService userTemplateService;
 
     /**
      * 从mongo 中获取用户创建的地图
@@ -75,42 +81,13 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
      * @return
      */
     @Override
-    public IPage<BaseMapInfoVO> getUserCreateMapWithPage(Integer id, @NotGenerator ApiConditionDTO apiConditionDTO) {
-        List<UserMap> userMap = userMapDAO.selectUserCreateMapWithPage(apiConditionDTO);
-        List<BaseMapInfoVO> resultMap = userMap.stream().map(e->{
-            BaseMapInfoVO infoVO = new BaseMapInfoVO();
-            BeanUtil.copyValueByGetSet(e, infoVO);
-            infoVO.setMapId(e.getUuid());
-            infoVO.setCreateTime(DateUtil.formatDataTime(e.getCreateTime()));
-            return infoVO;
-        }).collect(Collectors.toList());
-
-        return IPageHelper.toPage(resultMap, apiConditionDTO);
+    public IPage<BaseMapInfoVO> getUserCreateMapWithPage(ApiConditionDTO apiConditionDTO) {
+        List<BaseMapInfoVO> userMap = userMapDAO.selectUserCreateMapWithPage(apiConditionDTO);
+        setBaseMapInfo(userMap);
+        return IPageHelper.toPage(userMap, apiConditionDTO);
     }
 
 
-
-
-
-    /**
-     * 保存临时地图
-     *
-     * @param userMap
-     */
-    @Override
-    @Transactional
-    public void saveUserTempMap(UserMap userMap, Integer userId) {
-        // 1.删除临时的地图
-        UserMap map = userMapDAO.getFirstByCreateUserIdAndUnSave(userId);
-        if (map != null) {
-            userMap.setUuid(map.getUuid());
-            userMap.setCreateTime(LocalDateTime.now());
-            userMap.setMapName("temp");
-            userMap.setCreateUserId(map.getCreateUserId());
-            userMap.setUnSave(BaseConstant.YES);
-            updateUserMapById(userMap);
-        }
-    }
 
     /**
      * 获取优化后的地形
@@ -120,19 +97,19 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
      * 思路 九宫格模型
      * 当前需要绘画的是九宫格的中心 然后 左上 到右下 一次是 1到8  编号
      *
-     * @param reqSimpleDrawing
+     * @param reqDoPaintingDTO
      * @return
      */
     @Override
-    public Map<Integer, String> getSimpleDrawing(ReqSimpleDrawing reqSimpleDrawing) {
+    public Map<Integer, String> getSimpleDrawing(ReqDoPaintingDTO reqDoPaintingDTO) {
         Map<Integer, String> simpleDrawings = new HashMap<>(16);
-        simpleDrawings.put(reqSimpleDrawing.getIndex(), reqSimpleDrawing.getType());
+        simpleDrawings.put(reqDoPaintingDTO.getIndex(), reqDoPaintingDTO.getType());
 
-        Integer index = reqSimpleDrawing.getIndex();
-        String type = reqSimpleDrawing.getType();
-        Integer column = reqSimpleDrawing.getColumn();
-        List<Region> regionList = reqSimpleDrawing.getRegionList();
-        regionList.get(index).setType(reqSimpleDrawing.getType());
+        Integer index = reqDoPaintingDTO.getIndex();
+        String type = reqDoPaintingDTO.getType();
+        Integer column = reqDoPaintingDTO.getColumn();
+        List<Region> regionList = reqDoPaintingDTO.getRegionList();
+        regionList.get(index).setType(reqDoPaintingDTO.getType());
 
         // 判断当前是不是 海
         if (isSea(type)) {
@@ -187,11 +164,21 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
     }
 
     @Override
-    @CacheEvict(USER_MAP)
     public void deleteMapById(String id) {
         UserMap userMap = userMapDAO.selectById(id);
+        if (userMap.getStatus().equals(VersionConstant.DRAFT)) {
+            removeById(userMap.getUuid());
+        }
+        QueryWrapper<UserMap> wrapper = new QueryWrapper<>();
+        wrapper.eq("map_type", userMap.getMapType());
+        List<UserMap> historyMap = userMapDAO.selectList(wrapper);
+        for (UserMap map : historyMap) {
+            map.setStatus(VersionConstant.DELETE);
+            map.setUpdateTime(LocalDateTime.now());
+            map.setCreateUserId(map.getCreateUserId() * -1);
+            userMapDAO.updateById(map);
+        }
         removeUserMapCatch(userMap);
-        userMapDAO.deleteByCreateUserIdAndUuid(AuthUtil.getUserId(), id);
     }
 
     /**
@@ -267,11 +254,6 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
         return userMapDAO.selectById(uuid);
     }
 
-    @Override
-    public UserMap getUserDraftEditMap(Integer userId) {
-        return userMapDAO.getFirstByCreateUserIdAndUnSave(userId);
-    }
-
 
     @Override
     public List<UserMap> getStoreMapList() {
@@ -283,36 +265,137 @@ public class UserMapServiceImp extends ComplexKeyServiceImpl<UserMapDAO, UserMap
 
     @Override
     public IPage<BaseMapInfoVO> getUserDownloadMapWithPage(ApiConditionDTO apiConditionDTO) {
-        List<UserMap> userMaps = userMapAttentionDao.getUserDownloadMapWithPage(apiConditionDTO);
-        List<BaseMapInfoVO> resultMap = userMaps.stream().map(e->{
-            BaseMapInfoVO infoVO = new BaseMapInfoVO();
-            BeanUtil.copyValueByGetSet(e, infoVO);
-            infoVO.setMapId(e.getUuid());
-            infoVO.setCreateTime(DateUtil.formatDataTime(e.getCreateTime()));
-            return infoVO;
-        }).collect(Collectors.toList());
+        List<BaseMapInfoVO> userMaps = userMapAttentionDao.getUserDownloadMapWithPage(apiConditionDTO);
+        setBaseMapInfo(userMaps);
+        return IPageHelper.toPage(userMaps, apiConditionDTO);
+    }
 
-        return IPageHelper.toPage(resultMap, apiConditionDTO);
+    /**
+     * 返回VO
+     * @param userMaps
+     * @return
+     */
+    private void setBaseMapInfo(List<BaseMapInfoVO> userMaps) {
+        UserMap userMap;
+        CountSumDTO countSumDTO;
+        for (BaseMapInfoVO infoVO : userMaps) {
+            infoVO.setMapId(infoVO.getUuid());
+            infoVO.setCreateUserName(userService.getUserById(Math.abs(infoVO.getCreateUserId())).getName());
+            infoVO.setTemplateName(userTemplateService.getTemplateById(infoVO.getTemplateId()).getTemplateName());
+
+            if (infoVO.getStartCount() == null) {
+                countSumDTO = userMapService.selectCountStartByMapType(infoVO.getMapType());
+                infoVO.setStartCount(countSumDTO.getSum() == null ? 0 : countSumDTO.getSum());
+                infoVO.setDownLoadCount(countSumDTO.getCount());
+            }
+
+
+
+            if (infoVO.getMaxVersion() == null) {
+                userMap = userMapService.getMaxVersionMapByMapType(infoVO.getMapType());
+                if (userMap != null) {
+                    infoVO.setMaxVersion(userMap.getVersion());
+                }
+            }
+        }
     }
 
 
     @Override
-    public List<UserMap> getWorldMapList(ApiConditionDTO apiConditionDTO) {
-        // TODO
-        return null;
+    public IPage<BaseMapInfoVO> getWorldMapList(ApiConditionDTO apiConditionDTO) {
+        List<BaseMapInfoVO> userMaps = userMapAttentionDao.getDownloadAbleMapWithPage(apiConditionDTO);
+        UserMap userMap;
+        for (BaseMapInfoVO mapInfoVO : userMaps) {
+            userMap = userMapService.getMaxVersionMapByMapType(mapInfoVO.getMapType());
+            BeanUtil.copyValueFromParent(userMap, mapInfoVO);
+            mapInfoVO.setMaxVersion(userMap.getVersion());
+        }
+        setBaseMapInfo(userMaps);
+        return IPageHelper.toPage(userMaps, apiConditionDTO);
     }
 
+    @Override
+    @Cacheable(CatchKey.MAP_MAX_VERSION)
+    public UserMap getMaxVersionMapByMapType(String mapType) {
+        Integer version = userMapDAO.getMaxVersionByMapType(mapType);
+        QueryWrapper<UserMap> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("map_type", mapType)
+            .eq("version", version);
+        List<UserMap> userMaps = userMapDAO.selectList(queryWrapper);
+        if (userMaps == null || userMaps.size() == 0) {
+            return null;
+        }
+        return userMaps.get(0);
+    }
+
+    @Override
+    public CountSumDTO selectCountStartByMapType(String mapType) {
+        return userMapDAO.selectCountStartByMapType(mapType);
+    }
+
+    @Override
+    public UserMap getLastEditMapById(Integer userId) {
+        return userMapDAO.getLastEditMapById(userId);
+    }
+
+    @Override
+    public void saveUserMap(ReqSaveMap reqSaveMap) {
+        UserMap userMap = (UserMap) BeanUtil.copyValueToParent(reqSaveMap, UserMap.class);
+        // 默认是遭遇战地图
+        if (StringUtil.isBlack(userMap.getType())) {
+            userMap.setType(GameTypeEnum.ENCOUNTER.type());
+        }
+        if (StringUtil.isNotBlack(userMap.getUuid())) {
+            UserMap map = userMapService.getUserMapById(userMap.getUuid());
+            map.setRegions(userMap.getRegions());
+            map.setUnits(userMap.getUnits());
+            map.setMapName(reqSaveMap.getMapName());
+            map.setShare(reqSaveMap.getShare());
+
+            if (map.getStatus().equals(VersionConstant.DRAFT)) {
+                // 原本就是草稿状态
+                map.setStatus(reqSaveMap.getOptType());
+                map.setUpdateTime(LocalDateTime.now());
+                userMapService.updateById(map);
+            } else if (map.getStatus().equals(VersionConstant.OFFICIAL)) {
+                // 原来是正式版本
+                map.setVersion(map.getVersion() + 1);
+                map.setCreateTime(LocalDateTime.now());
+                map.setUpdateTime(LocalDateTime.now());
+                map.setUuid(null);
+                map.setStatus(reqSaveMap.getOptType());
+                userMapService.save(map);
+                // 设置新的ID
+                map.setUuid(map.getUuid());
+            }
+            removeUserMapCatch(map);
+        } else {
+            userMap.setVersion(0);
+            userMap.setStatus(reqSaveMap.getOptType());
+            userMap.setCreateUserId(AuthUtil.getUserId());
+            userMap.setCreateTime(LocalDateTime.now());
+            userMap.setUpdateTime(LocalDateTime.now());
+            userMapService.saveMap(userMap);
+            removeUserMapCatch(userMap);
+        }
+
+    }
 
     private void removeUserMapCatch(UserMap userMap){
         userMapService.removeMapCatch(userMap.getUuid());
         if (GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
             userMapService.delEncounterMapsCatch();
         }
+        userMapService.removeMaxVersionCatch(userMap.getMapType());
     }
 
     @Override
     @CacheEvict(USER_MAP)
     public void removeMapCatch(String uuid){}
+
+    @Override
+    @CacheEvict(MAP_MAX_VERSION)
+    public void removeMaxVersionCatch(String type){}
 
     @Override
     @CacheEvict(CatchKey.ENCOUNTER_MAP)

@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.base.service;
 
+import pers.mihao.ancient_empire.base.dto.UserMapIdDTO;
 import pers.mihao.ancient_empire.base.entity.UserMapAttention;
-import com.baomidou.mybatisplus.extension.service.IService;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
 
 /**
@@ -14,4 +14,9 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
  */
 public interface UserMapAttentionService extends ComplexKeyService<UserMapAttention> {
 
+    /**
+     * 更新版本
+     * @param id
+     */
+    void updateMaxVersion(UserMapIdDTO id);
 }

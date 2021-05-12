@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.base.dao;
 
 import java.util.List;
 import pers.mihao.ancient_empire.base.entity.UserMap;
+import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.base.entity.UserMapAttention;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -21,5 +22,12 @@ public interface UserMapAttentionDao extends BaseMapper<UserMapAttention> {
      * @param apiConditionDTO
      * @return
      */
-    List<UserMap> getUserDownloadMapWithPage(ApiConditionDTO apiConditionDTO);
+    List<BaseMapInfoVO> getUserDownloadMapWithPage(ApiConditionDTO apiConditionDTO);
+
+    /**
+     * 获取可以下载的地图
+     * @param apiConditionDTO
+     * @return
+     */
+    List<BaseMapInfoVO> getDownloadAbleMapWithPage(ApiConditionDTO apiConditionDTO);
 }

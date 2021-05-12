@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.service.imp;
+package pers.mihao.ancient_empire.base.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.base.entity.UserUnitAttention;

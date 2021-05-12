@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author mihao
  * @date 2020\12\1 0001 23:54
  */
-public class TemplateCountDTO implements Serializable {
+public class CountSumDTO implements Serializable {
 
     private Integer count;
 

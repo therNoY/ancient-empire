@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.mihao.ancient_empire.base.dao.AeSequenceDAO">
+
+
+    <select id="getNewId" resultType="java.lang.Integer">
+        SELECT (sequence + 1) FROM `ae_sequence` where table_name = #{tableName} for update;
+    </select>
+
+    <update id="increase">
+       UPDATE ae_sequence set sequence =  (sequence + 1) where table_name = #{tableName};
+    </update>
+</mapper>

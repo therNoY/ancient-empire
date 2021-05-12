@@ -58,7 +58,7 @@ public class PageInterceptor implements Interceptor {
             if (mappedStatement != null && mappedStatement.getId().endsWith("WithPage")) {
                 // 以withPage结尾的自动分页
                 // 1.查询总和
-                Long count = null;
+                Long count;
                 BoundSql boundSql = delegate.getBoundSql();
                 if (boundSql.getParameterObject() instanceof ApiPageDTO) {
                     ApiPageDTO apiPageDTO = (ApiPageDTO) boundSql.getParameterObject();

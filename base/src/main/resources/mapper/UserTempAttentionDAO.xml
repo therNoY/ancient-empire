@@ -16,9 +16,9 @@
         user_id, template_id, template_start, template_comment, create_time
     </sql>
 
-    <select id="selectCountStartByTempId" resultType="pers.mihao.ancient_empire.base.dto.TemplateCountDTO">
+    <select id="selectCountStartByTempType" resultType="pers.mihao.ancient_empire.base.dto.CountSumDTO">
         SELECT count(t.template_start) as count ,sum(t.template_start) as sum
-        FROM user_temp_attention t where t.template_id = #{id}
+        FROM user_temp_attention t where t.template_type = #{type}
     </select>
 
     <select id="getAttentionTemplateWithPage" resultType="pers.mihao.ancient_empire.base.vo.UserTemplateVO">

@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ * 地图下载
  * </p>
  *
  * @author mihao
@@ -16,12 +16,23 @@ public class UserMapAttention implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 地图id
+     */
     @TableId
     private String mapId;
-    @TableId
-    private Integer mapVersion;
+
+    /**
+     * 用户Id
+     */
     @TableId
     private Integer userId;
+
+    /**
+     * 地图类型
+     */
+    private String mapType;
+
 
     /**
      * 地图的评分
@@ -31,12 +42,12 @@ public class UserMapAttention implements Serializable {
     /**
      * 评论
      */
-    private String mapCommend;
+    private String mapComment;
 
     /**
      * 下载时间
      */
-    private LocalDateTime downlaodTime;
+    private LocalDateTime downloadTime;
 
     /**
      * 更新时间(版本)
@@ -50,12 +61,12 @@ public class UserMapAttention implements Serializable {
     public void setMapId(String mapId) {
         this.mapId = mapId;
     }
-    public Integer getMapVersion() {
-        return mapVersion;
+    public String getMapType() {
+        return mapType;
     }
 
-    public void setMapVersion(Integer mapVersion) {
-        this.mapVersion = mapVersion;
+    public void setMapType(String mapType) {
+        this.mapType = mapType;
     }
     public Integer getUserId() {
         return userId;
@@ -71,19 +82,19 @@ public class UserMapAttention implements Serializable {
     public void setMapStart(Integer mapStart) {
         this.mapStart = mapStart;
     }
-    public String getMapCommend() {
-        return mapCommend;
+    public String getMapComment() {
+        return mapComment;
     }
 
-    public void setMapCommend(String mapCommend) {
-        this.mapCommend = mapCommend;
+    public void setMapComment(String mapComment) {
+        this.mapComment = mapComment;
     }
-    public LocalDateTime getDownlaodTime() {
-        return downlaodTime;
+    public LocalDateTime getDownloadTime() {
+        return downloadTime;
     }
 
-    public void setDownlaodTime(LocalDateTime downlaodTime) {
-        this.downlaodTime = downlaodTime;
+    public void setDownloadTime(LocalDateTime downloadTime) {
+        this.downloadTime = downloadTime;
     }
     public LocalDateTime getUpdateTime() {
         return updateTime;
@@ -97,11 +108,11 @@ public class UserMapAttention implements Serializable {
     public String toString() {
         return "UserMapAttention{" +
         "mapId=" + mapId +
-        ", mapVersion=" + mapVersion +
+        ", mapVersion=" + mapType +
         ", userId=" + userId +
         ", mapStart=" + mapStart +
-        ", mapCommend=" + mapCommend +
-        ", downlaodTime=" + downlaodTime +
+        ", mapCommend=" + mapComment +
+        ", downlaodTime=" + downloadTime +
         ", updateTime=" + updateTime +
         "}";
     }

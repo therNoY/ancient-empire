@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dao.UserTempAttentionDAO;
 import pers.mihao.ancient_empire.base.dao.UserTemplateDAO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveUserTemplateDTO;
 import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
-import pers.mihao.ancient_empire.base.dto.TemplateCountDTO;
+import pers.mihao.ancient_empire.base.dto.CountSumDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateIdDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UnitTemplateRelation;
@@ -29,7 +30,6 @@ import pers.mihao.ancient_empire.common.constant.CatchKey;
 
 import java.util.List;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
-import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 
 /**
@@ -103,7 +103,7 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
             draftTemp.setCreateTime(LocalDateTime.now());
             draftTemp.setUpdateTime(LocalDateTime.now());
             userTemplateService.save(draftTemp);
-            draftTemp.setTemplateType("TEMPLATE_" + draftTemp.getId());
+            draftTemp.setTemplateType(BaseConstant.TEMPLATE_TYPE + draftTemp.getId());
             userTemplateService.updateById(draftTemp);
             // 2.模板绑定默认单位
             List<UnitMes> defaultUnitMes = unitMesService.getBaseUnitList();
@@ -157,12 +157,12 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
     @Override
     public void addTemplateExtendInfo(List<UserTemplateVO> userTemplates) {
         TemplateIdDTO templateIdDTO;
-        TemplateCountDTO templateCountDTO;
+        CountSumDTO countSumDTO;
         for (UserTemplateVO template : userTemplates) {
-            templateCountDTO = userTempAttentionDAO.selectCountStartByTempId(template.getId());
+            countSumDTO = userTempAttentionDAO.selectCountStartByTempType(template.getTemplateType());
             template.setStartCount(
-                templateCountDTO.getSum() == null ? 0 : templateCountDTO.getSum());
-            template.setDownLoadCount(templateCountDTO.getCount());
+                countSumDTO.getSum() == null ? 0 : countSumDTO.getSum());
+            template.setDownLoadCount(countSumDTO.getCount());
             templateIdDTO = new TemplateIdDTO();
             templateIdDTO.setTemplateId(template.getId());
             template.setUserId(Math.abs(template.getUserId()));

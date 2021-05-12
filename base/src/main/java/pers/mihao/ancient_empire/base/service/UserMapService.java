@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 import java.util.Map;
-import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
+import pers.mihao.ancient_empire.base.dto.CountSumDTO;
+import pers.mihao.ancient_empire.base.dto.ReqSaveMap;
+import pers.mihao.ancient_empire.base.dto.ReqDoPaintingDTO;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
@@ -29,26 +31,18 @@ public interface UserMapService extends IService<UserMap> {
      * @param apiConditionDTO
      * @return
      */
-    IPage<BaseMapInfoVO> getUserCreateMapWithPage(Integer id, ApiConditionDTO apiConditionDTO);
-
-    /**
-     * 保存用户的草稿地图
-     *
-     * @param userMap
-     * @param userId
-     */
-    void saveUserTempMap(UserMap userMap, Integer userId);
+    IPage<BaseMapInfoVO> getUserCreateMapWithPage(ApiConditionDTO apiConditionDTO);
 
     /**
      * 获取优化后的画面
      *
-     * @param reqSimpleDrawing
+     * @param reqDoPaintingDTO
      * @return
      */
-    Map<Integer, String> getSimpleDrawing(ReqSimpleDrawing reqSimpleDrawing);
+    Map<Integer, String> getSimpleDrawing(ReqDoPaintingDTO reqDoPaintingDTO);
 
     /**
-     * 草稿地图保存成设计地图
+     * 保存地图
      *
      * @param userMap
      */
@@ -83,6 +77,11 @@ public interface UserMapService extends IService<UserMap> {
      */
     void removeMapCatch(String uuid);
 
+    /**
+     * 删除最大版本缓存
+     * @param type
+     */
+    void removeMaxVersionCatch(String type);
 
     /**
      * 删除遭遇战缓存
@@ -121,20 +120,12 @@ public interface UserMapService extends IService<UserMap> {
     UserMap getUserMapById(String uuid);
 
     /**
-     * 获取用户的草稿模板
-     *
-     * @param userId
-     * @return
-     */
-    UserMap getUserDraftEditMap(Integer userId);
-
-    /**
      * 获取可以下载的世界地图
      *
      * @param apiConditionDTO
      * @return
      */
-    List<UserMap> getWorldMapList(ApiConditionDTO apiConditionDTO);
+    IPage<BaseMapInfoVO> getWorldMapList(ApiConditionDTO apiConditionDTO);
 
     /**
      * 获取故事模式地图
@@ -148,4 +139,32 @@ public interface UserMapService extends IService<UserMap> {
      * @return
      */
     IPage<BaseMapInfoVO> getUserDownloadMapWithPage(ApiConditionDTO apiConditionDTO);
+
+    /**
+     * 根据map_type获取最大版本地图
+     * @param mapType
+     * @return
+     */
+    UserMap getMaxVersionMapByMapType(String mapType);
+
+    /**
+     * 根据地图的类型获取星星树
+     * @param mapType
+     * @return
+     */
+    CountSumDTO selectCountStartByMapType(String mapType);
+
+    /**
+     * 获取用户上一个编辑的地图 没有创建一个
+     * @param userId
+     * @return
+     */
+    UserMap getLastEditMapById(Integer userId);
+
+    /**
+     * 保存用户地图 返回Id
+     * @param reqSaveMap
+     * @return
+     */
+    void saveUserMap(ReqSaveMap reqSaveMap);
 }

@@ -16,10 +16,13 @@ import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dto.ReqSaveUserTemplateDTO;
 import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
+import pers.mihao.ancient_empire.base.dto.RespUserMapDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateIdDTO;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UnitTemplateRelation;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
+import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UnitTemplateRelationService;
 import pers.mihao.ancient_empire.base.service.UserTempAttentionService;
@@ -47,6 +50,9 @@ public class UserTemplateController {
 
     @Autowired
     UnitMesService unitMesService;
+
+    @Autowired
+    RegionMesService regionMesService;
 
     @Autowired
     UnitTemplateRelationService unitTemplateRelationService;
@@ -97,7 +103,11 @@ public class UserTemplateController {
     @PostMapping("/api/userTemp/unitList")
     public RespJson getUserAllTempUnit(@RequestBody TemplateIdDTO templateIdDTO) {
         List<UnitMes> unitList = userTemplateService.getUserAllTempUnit(templateIdDTO);
-        return RespUtil.successResJson(unitList);
+        List<RegionMes> regionMes = regionMesService.getEnableRegionByTempId(templateIdDTO.getTemplateId());
+        RespUserMapDTO userMapDTO = new RespUserMapDTO();
+        userMapDTO.setUnitMesList(unitList);
+        userMapDTO.setRegionMes(regionMes);
+        return RespUtil.successResJson(userMapDTO);
     }
 
     /**

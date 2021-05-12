@@ -2,46 +2,55 @@ package pers.mihao.ancient_empire.base.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.jsonwebtoken.lang.Collections;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
+import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dto.ArmyConfig;
 import pers.mihao.ancient_empire.base.dto.MapShowWithConfigDTO;
-import pers.mihao.ancient_empire.base.dto.ReqSimpleDrawing;
+import pers.mihao.ancient_empire.base.dto.ReqSaveMap;
+import pers.mihao.ancient_empire.base.dto.ReqDoPaintingDTO;
 import pers.mihao.ancient_empire.base.dto.RespUserMapDTO;
 import pers.mihao.ancient_empire.base.dto.UserMapDraftDTO;
-import pers.mihao.ancient_empire.base.entity.*;
+import pers.mihao.ancient_empire.base.entity.RegionMes;
+import pers.mihao.ancient_empire.base.entity.UnitMes;
+import pers.mihao.ancient_empire.base.entity.UserMap;
+import pers.mihao.ancient_empire.base.entity.UserSetting;
+import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.enums.ArmyEnum;
-import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
-import pers.mihao.ancient_empire.base.service.*;
+import pers.mihao.ancient_empire.base.service.AeSequenceService;
+import pers.mihao.ancient_empire.base.service.RegionMesService;
+import pers.mihao.ancient_empire.base.service.UnitMesService;
+import pers.mihao.ancient_empire.base.service.UserMapService;
+import pers.mihao.ancient_empire.base.service.UserSettingService;
+import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
-import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.util.*;
+import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
+import pers.mihao.ancient_empire.common.util.CollectionUtil;
+import pers.mihao.ancient_empire.common.util.RespUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 import pers.mihao.ancient_empire.common.vo.RespJson;
-
-import javax.websocket.server.PathParam;
 
 /**
  * 用户地图管理的Controller
@@ -59,6 +68,8 @@ public class UserMapController {
     UserTemplateService userTemplateService;
     @Autowired
     UserSettingService userSettingService;
+    @Autowired
+    AeSequenceService aeSequenceService;
 
 
     /**
@@ -92,80 +103,20 @@ public class UserMapController {
     }
 
     /**
-     * 获取用户的草稿地图 没有就新建一个
-     *
-     * @return
-     */
-    @PostMapping("/api/userMap/draft")
-    public RespJson getUserDraftEditMap(@RequestBody UserMapDraftDTO requestDTO) {
-
-        Integer templateId;
-        UserSetting userSetting = userSettingService.getUserSettingById(requestDTO.getUserId());
-        UserTemplate userTemplate;
-        UserMap userMap = userMapService.getUserDraftEditMap(requestDTO.getUserId());
-        if ((templateId = requestDTO.getTemplateId()) != null && userMap != null) {
-            // 使用新的模板 建立新的草稿地图
-            userMapService.deleteMapById(userMap.getUuid());
-            userMap = null;
-        }
-
-        if (userMap != null) {
-            templateId = userMap.getTemplateId();
-            userTemplate = userTemplateService.getById(templateId);
-        } else {
-            // 没有指定模板 使用默认模板
-            templateId = templateId == null ? userSetting.getMapInitTempId() : templateId;
-            userTemplate = userTemplateService.getById(templateId);
-            userMap = new UserMap();
-            userMap.setCreateTime(LocalDateTime.now());
-            userMap.setCreateUserId(requestDTO.getUserId());
-            userMap.setRow(userSetting.getMapInitRow());
-            userMap.setColumn(userSetting.getMapInitColumn());
-            userMap.setUuid(StringUtil.getUUID());
-            userMap.setUnSave(BaseConstant.YES);
-            userMap.setTemplateId(templateId);
-            List<Region> list = new ArrayList<>();
-            Region region;
-            for (int i = 0; i < userMap.getRow() * userMap.getColumn(); i++) {
-                region = new Region();
-                region.setType(AppConfig.get("map.init.regionType"));
-                list.add(region);
-            }
-            userMap.setRegions(list);
-            userMapService.saveMap(userMap);
-        }
-
-        // 1.获取可用单位信息
-        List<UnitMes> unitMesList = unitMesService.getEnableUnitByTempId(templateId.toString());
-        // 2.获取可用地形信息
-        List<RegionMes> regionMes = regionMesService.getEnableRegionByTempId(templateId);
-        RespUserMapDTO userMapDao = new RespUserMapDTO(unitMesList, regionMes, userMap, userTemplate);
-        userMapDao.setUserSetting(userSetting);
-        return RespUtil.successResJson(userMapDao);
-    }
-
-    /**
-     * 用于用户保存临时地图
-     *
-     * @param userMap
-     * @return
-     */
-    @PostMapping("/api/userMap/saveTemp")
-    public RespJson saveTempMap(@RequestBody UserMap userMap) {
-        if (Collections.isEmpty(userMap.getRegions())) {
-            return RespUtil.error(40010);
-        }
-        userMapService.saveUserTempMap(userMap, AuthUtil.getUserId());
-        return RespUtil.successResJson();
-    }
-
-    /**
      * 获取优化后的绘图type
      */
     @PostMapping("/api/userMap/simpleDrawing")
-    public RespJson getSimpleDrawing(@RequestBody ReqSimpleDrawing reqSimpleDrawing) {
-        Map<Integer, String> simpleDrawings = userMapService.getSimpleDrawing(reqSimpleDrawing);
+    public RespJson getSimpleDrawing(@RequestBody ReqDoPaintingDTO reqDoPaintingDTO) {
+        Map<Integer, String> simpleDrawings = userMapService.getSimpleDrawing(reqDoPaintingDTO);
         return RespUtil.successResJson(simpleDrawings);
+    }
+
+    /**
+     * TODO 地图回退恢复功能 实现思路通过simpleDrawing 记录修改的结果 第一次修改记录两次 之后每次修改都只记录一次
+     */
+    @PostMapping("/api/userMap/getHistoryMap")
+    public RespJson getHistoryMap(@RequestBody ReqDoPaintingDTO reqDoPaintingDTO) {
+        return RespUtil.successResJson();
     }
 
     /**
@@ -176,7 +127,7 @@ public class UserMapController {
     @PostMapping("/api/userMap/list")
     public RespJson getUserCreateMap(@RequestBody ApiConditionDTO condition) {
         // 获取用户拥有的地图
-        IPage<BaseMapInfoVO> userAllMaps = userMapService.getUserCreateMapWithPage(condition.getUserId(), condition);
+        IPage<BaseMapInfoVO> userAllMaps = userMapService.getUserCreateMapWithPage(condition);
         return RespUtil.successPageResJson(userAllMaps);
     }
 
@@ -190,6 +141,25 @@ public class UserMapController {
     public RespJson getUserDownloadMapList(@RequestBody ApiConditionDTO apiConditionDTO) {
         IPage<BaseMapInfoVO> mapList = userMapService.getUserDownloadMapWithPage(apiConditionDTO);
         return RespUtil.successPageResJson(mapList);
+    }
+
+    /**
+     * 修改地图基本信息 不修改版本
+     *
+     * @param userMap
+     * @return
+     */
+    @PostMapping("/api/userMap/changeBaseInfo")
+    public RespJson changeMapBaseInfo(@RequestBody UserMap userMap) {
+        UserMap map = userMapService.getUserMapById(userMap.getUuid());
+        if (!map.getCreateUserId().equals(AuthUtil.getUserId())) {
+            throw new AncientEmpireException("权限不足");
+        }
+        map.setMapName(userMap.getMapName());
+        map.setShare(userMap.getShare());
+        map.setUpdateTime(LocalDateTime.now());
+        userMapService.updateUserMapById(userMap);
+        return RespUtil.successResJson();
     }
 
     /**
@@ -238,25 +208,8 @@ public class UserMapController {
      * 保存用户地图
      */
     @PostMapping("/api/userMap")
-    public RespJson saveUserMap(@RequestBody @Validated UserMap userMap, BindingResult result) {
-        // 管理员创建地图默认是遭遇战地图
-        if (AuthUtil.getUserId().equals(1)) {
-            // TODO 后面去掉
-            userMap.setType(GameTypeEnum.ENCOUNTER.type());
-        }
-        if (StringUtil.isNotBlack(userMap.getUuid())) {
-            UserMap map = userMapService.getUserMapById(userMap.getUuid());
-            map.setRegions(userMap.getRegions());
-            map.setUnits(userMap.getUnits());
-            userMapService.updateUserMapById(map);
-        } else {
-            UserMap map = userMapService.getUserMapByName(userMap.getMapName());
-            if (map != null) {
-                return RespUtil.error(42000);
-            }
-            userMap.setUnSave(BaseConstant.NO);
-            userMapService.saveMap(userMap);
-        }
+    public RespJson saveUserMap(@RequestBody ReqSaveMap reqSaveMap) {
+        userMapService.saveUserMap(reqSaveMap);
         return RespUtil.successResJson();
     }
 
@@ -283,13 +236,14 @@ public class UserMapController {
 
     /**
      * 获取可以下子的地图
+     *
      * @param apiConditionDTO
      * @return
      */
-    @GetMapping("/api/worldMap/list")
-    public RespJson getWorldMapList(ApiConditionDTO apiConditionDTO) {
-        List<UserMap> mapList = userMapService.getWorldMapList(apiConditionDTO);
-        return RespUtil.successResJson(mapList);
+    @PostMapping("/api/worldMap/list")
+    public RespJson getWorldMapList(@RequestBody ApiConditionDTO apiConditionDTO) {
+        IPage<BaseMapInfoVO> mapList = userMapService.getWorldMapList(apiConditionDTO);
+        return RespUtil.successPageResJson(mapList);
     }
 
     /**
@@ -301,11 +255,112 @@ public class UserMapController {
         return RespUtil.successResJson(colors);
     }
 
+    /**
+     * 获取故事模式地图
+     *
+     * @return
+     */
     @GetMapping("/map/store/list")
-    public RespJson getStoreMapList(){
+    public RespJson getStoreMapList() {
         List<UserMap> userMaps = userMapService.getStoreMapList();
         return RespUtil.successResJson(userMaps);
     }
+
+    /**
+     * 获取最后编辑的地图
+     *
+     * @param requestDTO
+     * @return
+     */
+    @RequestMapping("/api/userMap/lastEdit")
+    public RespJson getLastEditMap(@RequestBody ApiRequestDTO requestDTO) {
+        Integer templateId;
+        UserTemplate userTemplate;
+
+        UserSetting userSetting = userSettingService.getUserSettingById(requestDTO.getUserId());
+        UserMap userMap = userMapService.getLastEditMapById(requestDTO.getUserId());
+
+        if (userMap != null) {
+            templateId = userMap.getTemplateId();
+            userTemplate = userTemplateService.getById(templateId);
+        } else {
+            // 没有指定模板 使用默认模板
+            templateId = userSetting.getMapInitTempId();
+            userTemplate = userTemplateService.getById(templateId);
+            userMap = new UserMap();
+            userMap.setCreateUserId(requestDTO.getUserId());
+            userMap.setRow(userSetting.getMapInitRow());
+            userMap.setColumn(userSetting.getMapInitColumn());
+            setMapBaseInfo(userSetting, templateId, userMap);
+            userMapService.saveMap(userMap);
+        }
+
+        RespUserMapDTO userMapDao = getRespUserMapDTO(userTemplate, userSetting, userMap);
+        return RespUtil.successResJson(userMapDao);
+    }
+
+    private RespUserMapDTO getRespUserMapDTO(UserTemplate userTemplate, UserSetting userSetting, UserMap userMap) {
+        // 1.获取可用单位信息
+        List<UnitMes> unitMesList = unitMesService.getEnableUnitByTempId(userTemplate.getId().toString());
+        // 2.获取可用地形信息
+        List<RegionMes> regionMes = regionMesService.getEnableRegionByTempId(userTemplate.getId());
+        RespUserMapDTO userMapDao = new RespUserMapDTO(unitMesList, regionMes, userMap, userTemplate);
+        userMapDao.setUserSetting(userSetting);
+        return userMapDao;
+    }
+
+
+    /**
+     * @param userMap
+     * @param result
+     * @return
+     */
+    @PostMapping("/api/userMap/createDraftMap")
+    public RespJson createDraftMap(@RequestBody UserMapDraftDTO userMapDraftDTO) {
+        UserSetting userSetting = userSettingService.getUserSettingById(userMapDraftDTO.getUserId());
+        if (userMapDraftDTO.getTemplateId() == null) {
+            userMapDraftDTO.setTemplateId(userSetting.getMapInitTempId());
+        }
+        if (userMapDraftDTO.getMapRow() == null) {
+            userMapDraftDTO.setMapRow(userSetting.getMapInitRow());
+        }
+        if (userMapDraftDTO.getMapColumn() == null) {
+            userMapDraftDTO.setMapColumn(userSetting.getMapInitColumn());
+        }
+
+        // 没有指定模板 使用默认模板
+        Integer templateId = userMapDraftDTO.getTemplateId();
+        UserTemplate userTemplate = userTemplateService.getById(templateId);
+        UserMap userMap = new UserMap();
+        userMap.setMapName(userMapDraftDTO.getMapName());
+        userMap.setCreateUserId(userMapDraftDTO.getUserId());
+        userMap.setRow(userMapDraftDTO.getMapRow());
+        userMap.setColumn(userMapDraftDTO.getMapColumn());
+        setMapBaseInfo(userSetting, templateId, userMap);
+        userMapService.saveMap(userMap);
+
+        RespUserMapDTO userMapDao = getRespUserMapDTO(userTemplate, userSetting, userMap);
+        return RespUtil.successResJson(userMapDao);
+    }
+
+    private void setMapBaseInfo(UserSetting userSetting, Integer templateId, UserMap userMap) {
+        userMap.setCreateTime(LocalDateTime.now());
+        userMap.setUpdateTime(LocalDateTime.now());
+        userMap.setMapType(BaseConstant.MAP_TYPE + aeSequenceService.getNewIdByType(BaseConstant.USER_MAP_SEQ));
+        userMap.setUuid(StringUtil.getUUID());
+        userMap.setVersion(0);
+        userMap.setStatus(VersionConstant.DRAFT);
+        userMap.setTemplateId(templateId);
+        List<Region> list = new ArrayList<>();
+        Region region;
+        for (int i = 0; i < userMap.getRow() * userMap.getColumn(); i++) {
+            region = new Region();
+            region.setType(userSetting.getMapInitRegionType());
+            list.add(region);
+        }
+        userMap.setRegions(list);
+    }
+
 
     /**
      * 超管权限设置全局的 遭遇战地图和 故事模式

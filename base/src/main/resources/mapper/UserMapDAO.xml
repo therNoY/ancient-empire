@@ -14,8 +14,8 @@
   </resultMap>
 
   <sql id="BaseMapInfo">
-        uuid, map_name, `map_row`, `map_column`,create_user_id,create_time,type
-    </sql>
+        uuid, version, template_id, map_name, `map_row`, `map_column`,create_user_id,create_time,`type`, `status`, `share`
+  </sql>
 
   <delete id="deleteByCreateUserIdAndUuid">
       delete from user_map where create_user_id = #{param1} and uuid = #{param2}
@@ -26,29 +26,50 @@
     </select>
 
 
-  <select id="getFirstByCreateUserIdAndUnSave" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
-         SELECT * from user_map where create_user_id = #{userId} and un_save = '1'
-    </select>
-
   <select id="getFirstByCreateUserIdAndMapName" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
         SELECT * from user_map where create_user_id = #{param1} and map_name = #{param2}
     </select>
 
   <select id="getEncounterMapsWithPage" resultMap="BaseMapInfo">
-    select <include refid="BaseMapInfo"></include>
+    select map_type,update_time, <include refid="BaseMapInfo"></include>
     from user_map where create_user_id = '1' and type = 'encounter'
     order by create_time desc
   </select>
 
+  <sql id="user_map_max_version">
+        (select map_type,max(version) as version  from user_map
+        where create_user_id = #{userId}
+        GROUP BY map_type)
+    </sql>
 
-  <select id="selectUserCreateMapWithPage" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
-    select <include refid="BaseMapInfo"></include>
-    from user_map where create_user_id = #{userId}
-    and un_save = 0
+  <select id="selectUserCreateMapWithPage" resultType="pers.mihao.ancient_empire.base.vo.BaseMapInfoVO">
+    select ur.map_type,ur.update_time,<include refid="BaseMapInfo"></include> from (
+    select um.* from <include refid="user_map_max_version"></include> umv
+    left join user_map um on umv.map_type = um.map_type and um.version = umv.version
     <if test="condition != null and condition != ''">
-      and map_name like concat('%', #{condition} ,'%')
+      and um.map_name like CONCAT('%',#{condition},'%')
     </if>
-    order by create_time desc
+    ) ur
+    where ur.uuid is not null
+    order by ur.update_time desc
+  </select>
+
+
+  <select id="getMaxVersionByMapType" resultType="java.lang.Integer">
+      select  max(version) from user_map
+      where map_type = #{type}
+      and `share` = 1
+      and `status` = 1
+      GROUP BY map_type
+   </select>
+
+  <select id="selectCountStartByMapType" resultType="pers.mihao.ancient_empire.base.dto.CountSumDTO">
+    SELECT count(t.map_start) as count ,sum(t.map_start) as sum
+    FROM user_map_attention t where t.map_type = #{mapType}
+  </select>
+
+  <select id="getLastEditMapById" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
+    SELECT * FROM user_map ORDER BY update_time desc LIMIT 1
   </select>
 
 

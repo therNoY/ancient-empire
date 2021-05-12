@@ -11,6 +11,36 @@ public class UserMapDraftDTO extends ApiRequestDTO {
 
     private Integer templateId;
 
+    private String mapName;
+
+    private Integer mapRow;
+
+    private Integer mapColumn;
+
+    public String getMapName() {
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
+    }
+
+    public Integer getMapRow() {
+        return mapRow;
+    }
+
+    public void setMapRow(Integer mapRow) {
+        this.mapRow = mapRow;
+    }
+
+    public Integer getMapColumn() {
+        return mapColumn;
+    }
+
+    public void setMapColumn(Integer mapColumn) {
+        this.mapColumn = mapColumn;
+    }
+
     public Integer getTemplateId() {
         return templateId;
     }

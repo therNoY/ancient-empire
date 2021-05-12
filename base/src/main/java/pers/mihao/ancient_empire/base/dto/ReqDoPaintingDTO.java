@@ -3,8 +3,13 @@ package pers.mihao.ancient_empire.base.dto;
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
-public class ReqSimpleDrawing {
+/**
+ * 绘画DTO
+ */
+public class ReqDoPaintingDTO extends ApiRequestDTO {
+
     private Integer index;
     private String type;
     private Integer row;

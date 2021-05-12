@@ -115,8 +115,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     }
 
     /**
-     * 根据创建者的用户获取 可用的Unit
-     * 获取所有可用单位信息
+     * 根据创建者的用户获取 可用的Unit 获取所有可用单位信息
      *
      * @return
      */
@@ -270,7 +269,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     public void saveUnitInfo(ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
         Integer unitId = reqSaveUnitMesDTO.getBaseInfo().getId();
 
-        if (VersionConstant.DRAFT.equals(reqSaveUnitMesDTO.getOptType())){
+        if (VersionConstant.DRAFT.equals(reqSaveUnitMesDTO.getOptType())) {
             if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(VersionConstant.OFFICIAL)) {
                 // 当前是正式版本 新加一个版本作为草稿
                 UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
@@ -286,7 +285,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
                 reqSaveUnitMesDTO.getBaseInfo().setUpdateTime(LocalDateTime.now());
                 updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
             }
-        } else if (VersionConstant.OFFICIAL.equals(reqSaveUnitMesDTO.getOptType())){
+        } else if (VersionConstant.OFFICIAL.equals(reqSaveUnitMesDTO.getOptType())) {
             if (reqSaveUnitMesDTO.getBaseInfo().getStatus().equals(VersionConstant.OFFICIAL)) {
                 // 当前是正式版本 新加一个版本作为草稿
                 UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());
@@ -318,7 +317,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
             unitMes.setUpdateTime(LocalDateTime.now());
             saveUnitMes(unitMes);
 
-            unitMes.setType("UNIT_" + unitMes.getId());
+            unitMes.setType(BaseConstant.UNIT_TYPE + unitMes.getId());
             unitMes.setImgIndex(unitMes.getId().toString());
             updateInfoById(unitMes);
             unitId = unitMes.getId();

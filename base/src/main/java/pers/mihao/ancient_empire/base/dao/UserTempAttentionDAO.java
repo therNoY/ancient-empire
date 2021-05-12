@@ -1,12 +1,10 @@
 package pers.mihao.ancient_empire.base.dao;
 
 import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
-import pers.mihao.ancient_empire.base.dto.TemplateCountDTO;
+import pers.mihao.ancient_empire.base.dto.CountSumDTO;
 import pers.mihao.ancient_empire.base.entity.UserTempAttention;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
-import pers.mihao.ancient_empire.common.jdbc.PageModel;
 
 import java.util.List;
 
@@ -22,10 +20,10 @@ public interface UserTempAttentionDAO extends BaseMapper<UserTempAttention> {
 
     /**
      * 选择模板的引用数和总星星数
-     * @param id
+     * @param type
      * @return
      */
-    TemplateCountDTO selectCountStartByTempId(Integer id);
+    CountSumDTO selectCountStartByTempType(String type);
 
     /**
      * 获取用户下载模板

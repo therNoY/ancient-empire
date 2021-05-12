@@ -44,6 +44,8 @@ public class CatchKey {
      * 单位的最新版本
      */
     public static final String UNIT_MAX_VERSION = "unitMaxVersion";
+
+    public static final String MAP_MAX_VERSION = "mapMaxVersion";
     /**
      * 模板的最新版本
      */

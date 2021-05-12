@@ -13,5 +13,12 @@ public class BaseConstant {
     public static final String AE_ROOM = "aeRoom_";
 
     public static final Integer YES = 1;
+
     public static final Integer NO = 0;
+
+    public static final String USER_MAP_SEQ = "user_map";
+    public static final String MAP_TYPE = "MAP_";
+    public static final String UNIT_TYPE = "UNIT_";
+
+    public static final String TEMPLATE_TYPE = "TEMPLATE_";
 }

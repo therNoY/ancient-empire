@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.base.vo;
 
 import java.io.Serializable;
+import pers.mihao.ancient_empire.base.entity.UserMap;
 
 /**
  * 地图的基础信息
@@ -9,21 +10,19 @@ import java.io.Serializable;
  * @version 1.0
  * @date 2020\9\20 0020 11:18
  */
-public class BaseMapInfoVO implements Serializable {
+public class BaseMapInfoVO extends UserMap {
 
     private String mapId;
-    // 地图的名字
-    private String mapName;
-    // 列
-    private Integer row;
-    // 行
-    private Integer column;
-    // 创建者Id
-    private Integer createUserId;
-    // 创建时间
-    private String createTime;
-    // 地图类型
-    private String type;
+
+    private Integer startCount;
+
+    private Integer downLoadCount;
+
+    private String createUserName;
+
+    private String templateName;
+
+    private Integer maxVersion;
 
     public String getMapId() {
         return mapId;
@@ -33,51 +32,43 @@ public class BaseMapInfoVO implements Serializable {
         this.mapId = mapId;
     }
 
-    public String getMapName() {
-        return mapName;
+    public Integer getStartCount() {
+        return startCount;
     }
 
-    public void setMapName(String mapName) {
-        this.mapName = mapName;
+    public void setStartCount(Integer startCount) {
+        this.startCount = startCount;
     }
 
-    public Integer getRow() {
-        return row;
+    public Integer getDownLoadCount() {
+        return downLoadCount;
     }
 
-    public void setRow(Integer row) {
-        this.row = row;
+    public void setDownLoadCount(Integer downLoadCount) {
+        this.downLoadCount = downLoadCount;
     }
 
-    public Integer getColumn() {
-        return column;
+    public String getCreateUserName() {
+        return createUserName;
     }
 
-    public void setColumn(Integer column) {
-        this.column = column;
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
     }
 
-    public Integer getCreateUserId() {
-        return createUserId;
+    public Integer getMaxVersion() {
+        return maxVersion;
     }
 
-    public void setCreateUserId(Integer createUserId) {
-        this.createUserId = createUserId;
+    public void setMaxVersion(Integer maxVersion) {
+        this.maxVersion = maxVersion;
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public String getTemplateName() {
+        return templateName;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 }

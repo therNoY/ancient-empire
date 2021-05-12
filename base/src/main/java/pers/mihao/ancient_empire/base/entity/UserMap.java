@@ -2,7 +2,6 @@ package pers.mihao.ancient_empire.base.entity;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -27,18 +26,32 @@ public class UserMap implements Serializable {
     private String uuid;
 
     /**
+     * 地图类型
+     */
+    private String mapType;
+
+    /**
      * 地图版本
      */
-//    @TableId
     private Integer version;
 
-    // 单位信息
+
+    /**
+     * 模板ID
+     */
+    private Integer templateId;
+
+    /**
+     * 单位信息
+     */
     @TableField(exist = false)
     private List<BaseUnit> units;
     @JsonIgnore
     private String unitsString;
 
-    // 地形信息
+    /**
+     * 地形信息
+     */
     @TableField(exist = false)
     private List<Region> regions;
     @JsonIgnore
@@ -58,20 +71,18 @@ public class UserMap implements Serializable {
     private Integer createUserId;
     // 创建时间
     private LocalDateTime createTime;
-    // 地图类型
+
+    private LocalDateTime updateTime;
+
+    // 地图类型(遭遇战, 多人游戏, 战役)
     private String type;
+
     // 是否保存 未保存的地图信息 最多只有一个
     private Integer unSave;
 
-    // 模板ID
-    private Integer templateId;
+    private Integer status;
 
-    /**
-     * 模板版本
-     */
-    private Integer templateVersion;
-
-
+    private Integer share;
 
 
     public String getUuid() {
@@ -207,13 +218,6 @@ public class UserMap implements Serializable {
         this.mapColumn = mapColumn;
     }
 
-    public Integer getTemplateVersion() {
-        return templateVersion;
-    }
-
-    public void setTemplateVersion(Integer templateVersion) {
-        this.templateVersion = templateVersion;
-    }
 
     public Integer getVersion() {
         return version;
@@ -221,6 +225,38 @@ public class UserMap implements Serializable {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public String getMapType() {
+        return mapType;
+    }
+
+    public void setMapType(String mapType) {
+        this.mapType = mapType;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getShare() {
+        return share;
+    }
+
+    public void setShare(Integer share) {
+        this.share = share;
     }
 }
 

@@ -5,21 +5,48 @@
   <!-- 通用查询映射结果 -->
   <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UserMapAttention">
     <id column="map_id" property="mapId"/>
-    <result column="map_version" property="mapVersion"/>
+    <result column="map_type" property="mapType"/>
     <result column="user_id" property="userId"/>
     <result column="map_start" property="mapStart"/>
-    <result column="map_commend" property="mapCommend"/>
-    <result column="downlaod_time" property="downlaodTime"/>
+    <result column="map_comment" property="mapComment"/>
+    <result column="download_time" property="downloadTime"/>
     <result column="update_time" property="updateTime"/>
   </resultMap>
 
   <!-- 通用查询结果列 -->
   <sql id="Base_Column_List">
-        map_id, map_version, user_id, map_start, map_commend, downlaod_time, update_time
+        map_id, map_type, user_id, map_start, map_comment, download_time, update_time
     </sql>
-  <select id="getUserDownloadMapWithPage" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
-       select m.* from user_map_attention ma left join user_map m
-        on m.uuid = ma.map_id where user_id = '1' ORDER BY update_time
+
+  <select id="getUserDownloadMapWithPage" resultType="pers.mihao.ancient_empire.base.vo.BaseMapInfoVO">
+       select m.map_type,m.update_time, <include refid="pers.mihao.ancient_empire.base.dao.UserMapDAO.BaseMapInfo"></include>
+       from user_map_attention ma
+       left join user_map m on m.uuid = ma.map_id
+       where user_id = #{userId}
+       <if test="condition != null and condition != ''">
+         and m.map_name like CONCAT('%',#{condition},'%')
+       </if>
+       ORDER BY ma.update_time desc
     </select>
+
+  <select id="getDownloadAbleMapWithPage" resultType="pers.mihao.ancient_empire.base.vo.BaseMapInfoVO">
+      SELECT
+      ( SELECT sum( map_start ) AS startCount FROM user_map_attention WHERE map_type = ut.map_type ) startCount,
+      ( SELECT count( 1 ) AS downLoadCount FROM user_map_attention WHERE map_type = ut.map_type ) downLoadCount,
+      ut.map_type
+      FROM
+      user_map ut
+      WHERE
+      ut.create_user_id != #{userId}
+      AND ut.share = '1'
+      AND ut.`status` = '1'
+      <if test="condition != null and condition != ''">
+        and ut.map_name like concat('%', #{condition}, '%')
+      </if>
+      AND NOT EXISTS ( SELECT 1 FROM user_map_attention uua WHERE uua.user_id = #{userId} AND uua.map_type = ut.map_type )
+      GROUP BY
+      ut.map_type
+      ORDER BY startCount desc, downLoadCount desc
+  </select>
 
 </mapper>
