@@ -4,7 +4,7 @@ import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
 import pers.mihao.ancient_empire.core.listener.chapter.enums.TriggerTypeEnum;
 
@@ -74,7 +74,7 @@ public class Chapter7Listener extends AbstractChapterListener {
             }
         }
         if (crystal == null) {
-            throw new AncientEmpireException();
+            throw new AeException();
         }
 
         stage++;

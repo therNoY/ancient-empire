@@ -24,7 +24,7 @@ import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
 import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 
 /**
@@ -105,7 +105,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 List<Permission> permissionList = userService.getPermissionList(user.getId());
                 return new MyUserDetails(user,permissionList);
             }
-            throw new AncientEmpireException(40011);
+            throw new AeException(40011);
         };
     }
 
@@ -127,7 +127,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0);
+        bean.setOrder(1);
         return new CorsFilter(source);
     }
 

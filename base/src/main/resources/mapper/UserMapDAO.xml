@@ -69,7 +69,7 @@
   </select>
 
   <select id="getLastEditMapById" resultType="pers.mihao.ancient_empire.base.entity.UserMap">
-    SELECT * FROM user_map ORDER BY update_time desc LIMIT 1
+    SELECT * FROM user_map where create_user_id = #{userId} ORDER BY update_time desc LIMIT 1
   </select>
 
 

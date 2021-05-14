@@ -8,7 +8,7 @@ import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.common.util.IntegerUtil;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class AppUtil {
             }
         }
         if (cArmy == null) {
-            throw new AncientEmpireException("record 记录错误 根据当前军队颜色找军队");
+            throw new AeException("record 记录错误 根据当前军队颜色找军队");
         }
         return cArmy;
     }
@@ -114,7 +114,7 @@ public class AppUtil {
                 return i;
             }
         }
-        throw new AncientEmpireException("错误的军队状态");
+        throw new AeException("错误的军队状态");
     }
 
     /**

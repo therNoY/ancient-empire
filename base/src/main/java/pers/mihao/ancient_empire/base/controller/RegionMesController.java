@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
  * <p>
@@ -37,10 +35,9 @@ public class RegionMesController {
      * @return
      */
     @GetMapping("/root/region")
-    public RespJson getRegionMesList(@RequestParam Long pageSize, @RequestParam Long pageNow) {
+    public IPage<RegionMes> getRegionMesList(@RequestParam Long pageSize, @RequestParam Long pageNow) {
         Page<RegionMes> page = new Page<>(pageNow, pageSize);
-        IPage<RegionMes> unitMesIPage = regionMesService.getList(page);
-        return RespUtil.successPageResJson(unitMesIPage);
+        return regionMesService.getList(page);
     }
 
     /**
@@ -50,15 +47,14 @@ public class RegionMesController {
      * @return
      */
     @PutMapping("/root/region")
-    public RespJson saveRegion(@RequestBody @Validated RegionMes regionMes, BindingResult result) {
+    public void saveRegion(@RequestBody @Validated RegionMes regionMes, BindingResult result) {
         regionMesService.saveUnitMes(regionMes);
-        return RespUtil.successResJson();
     }
 
 
     @GetMapping("/regionInfo")
-    public RespJson getRegionInfo(@RequestParam  String type) {
+    public RegionMes getRegionInfo(@RequestParam  String type) {
         RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(type);
-        return RespUtil.successResJson(regionMes);
+        return regionMes;
     }
 }

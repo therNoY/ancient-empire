@@ -33,7 +33,7 @@ import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
 
@@ -188,7 +188,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         List<String> hasArmy = userJoinRoomService.getUserByRoomId(userJoinRoom.getRoomId())
                 .stream().map(UserJoinRoom::getJoinArmy).collect(Collectors.toList());
         if (hasArmy.contains(armyChangeDTO.getNewArmy())) {
-            throw new AncientEmpireException("加入重复");
+            throw new AeException("加入重复");
         }
         userJoinRoom.setJoinArmy(armyChangeDTO.getNewArmy());
         userJoinRoomService.saveOrUpdate(userJoinRoom);

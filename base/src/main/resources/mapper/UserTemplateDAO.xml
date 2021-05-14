@@ -45,14 +45,11 @@
         where user_id = #{userId} and id = #{id}
     </update>
 
-    <select id="getUserAllTempUnit" resultMap="pers.mihao.ancient_empire.base.dao.UnitMesDAO.BaseResultMap">
+    <select id="getUnitListByTempId" resultMap="pers.mihao.ancient_empire.base.dao.UnitMesDAO.BaseResultMap">
         select u.* from unit_mes u
         left join unit_template_relation tr on tr.unit_id = u.id
         left join user_template t on t.id = tr.temp_id
         where 1=1
-        <if test="userId!= null and userId != ''">
-            and t.user_id = #{userId}
-        </if>
         <if test="templateId != null and templateId != ''">
             and t.id = #{templateId}
         </if>

@@ -1,6 +1,9 @@
 package pers.mihao.ancient_empire.auth.dto;
 
-public class RespAuthDao {
+/**
+ * @author mihao
+ */
+public class RespAuthDAO {
 
     private Integer userId;
 
@@ -8,7 +11,7 @@ public class RespAuthDao {
     private String password;
     private String token;
 
-    public RespAuthDao(String userName, String password, String token) {
+    public RespAuthDAO(String userName, String password, String token) {
         this.userName = userName;
         this.password = password;
         this.token = token;

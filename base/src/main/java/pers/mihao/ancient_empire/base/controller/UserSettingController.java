@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
 import pers.mihao.ancient_empire.base.service.UserSettingService;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
  * <p>
@@ -26,11 +24,10 @@ public class UserSettingController {
     UserSettingService userSettingService;
 
     @PutMapping("/api/user/useSetting")
-    public RespJson saveUserSetting(@RequestBody UserSetting userSetting) {
+    public void saveUserSetting(@RequestBody UserSetting userSetting) {
         Integer userId = AuthUtil.getUserId();
         userSetting.setUserId(userId);
         userSettingService.updateByUserId(userSetting);
-        return RespUtil.successResJson();
     }
 
 }

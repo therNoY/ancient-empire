@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.imageio.ImageIO;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * @Author mh32736
@@ -32,7 +32,7 @@ public class ImgUtil {
         File sourceFile, String newFilePath) throws IOException {
 
         if (sourceColors.size() != newColorList.size()) {
-            throw new AncientEmpireException("需要替换颜色数量不新颜色数量不一致");
+            throw new AeException("需要替换颜色数量不新颜色数量不一致");
         }
         String[] sourceColorArray = new String[sourceColors.size()], newColorArray = new String[sourceColors.size()];
         sourceColors.toArray(sourceColorArray);
@@ -87,7 +87,7 @@ public class ImgUtil {
             rgb[2] = Integer.valueOf(hexStr.substring(5, 7), 16);
             return rgb;
         }
-        throw new AncientEmpireException("颜色格式错误");
+        throw new AeException("颜色格式错误");
     }
 
     /**

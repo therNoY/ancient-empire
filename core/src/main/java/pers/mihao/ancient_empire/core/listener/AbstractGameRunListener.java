@@ -9,7 +9,7 @@ import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
@@ -150,7 +150,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
         }
         if (!isEffective) {
             log.error("无效的上下文 抛出异常结束 释放线程");
-            throw new AncientEmpireException("无效的上下文");
+            throw new AeException("无效的上下文");
         }
     }
 

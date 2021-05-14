@@ -3,8 +3,13 @@ package pers.mihao.ancient_empire.auth.dto;
 import pers.mihao.ancient_empire.common.annotation.Length;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
-public class ReqUserDto extends ApiRequestDTO {
+/**
+ * @author hspcadmin
+ */
+public class ReqUserDTO extends ApiRequestDTO {
+
     private String userName;
+
     @Length(min = 5, message = "密码太短")
     private String password;
 
@@ -24,4 +29,11 @@ public class ReqUserDto extends ApiRequestDTO {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        return "ReqUserDTO{" +
+            "userName='" + userName + '\'' +
+            ", password='" + password + '\'' +
+            '}';
+    }
 }

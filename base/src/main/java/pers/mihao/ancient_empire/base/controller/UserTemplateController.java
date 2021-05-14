@@ -20,7 +20,6 @@ import pers.mihao.ancient_empire.base.dto.RespUserMapDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateIdDTO;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
-import pers.mihao.ancient_empire.base.entity.UnitTemplateRelation;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
@@ -28,11 +27,8 @@ import pers.mihao.ancient_empire.base.service.UnitTemplateRelationService;
 import pers.mihao.ancient_empire.base.service.UserTempAttentionService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
-import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
-import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * @author mihao
@@ -66,8 +62,8 @@ public class UserTemplateController {
      * @return
      */
     @GetMapping("/api/userTemp/{id}")
-    public RespJson selectById(@PathVariable("id") Integer id) {
-        return RespUtil.successResJson(userTemplateService.getTemplateById(id));
+    public UserTemplate selectById(@PathVariable("id") Integer id) {
+        return userTemplateService.getTemplateById(id);
     }
 
     /**
@@ -76,9 +72,8 @@ public class UserTemplateController {
      * @return
      */
     @PostMapping("/api/userTemp/page")
-    public RespJson getAllTemplateWithPage(@RequestBody ReqUserTemplateDTO reqUserTemplateDTO) {
-        IPage<UserTemplateVO> templateList = userTemplateService.getUserTemplateWithPage(reqUserTemplateDTO);
-        return RespUtil.successPageResJson(templateList);
+    public IPage<UserTemplateVO> getAllTemplateWithPage(@RequestBody ReqUserTemplateDTO reqUserTemplateDTO) {
+        return userTemplateService.getUserTemplateWithPage(reqUserTemplateDTO);
     }
 
     /**
@@ -87,11 +82,9 @@ public class UserTemplateController {
      * @return
      */
     @PostMapping("/api/userTemp/download/page")
-    public RespJson downloadAbleTempWithPage(@RequestBody ReqUserTemplateDTO reqUserTemplateDTO) {
-        IPage<UserTemplateVO> templateList = userTemplateService.getDownloadAbleTempWithPage(reqUserTemplateDTO);
-        return RespUtil.successPageResJson(templateList);
+    public IPage<UserTemplateVO> downloadAbleTempWithPage(@RequestBody ReqUserTemplateDTO reqUserTemplateDTO) {
+        return userTemplateService.getDownloadAbleTempWithPage(reqUserTemplateDTO);
     }
-
 
 
     /**
@@ -101,13 +94,13 @@ public class UserTemplateController {
      * @return
      */
     @PostMapping("/api/userTemp/unitList")
-    public RespJson getUserAllTempUnit(@RequestBody TemplateIdDTO templateIdDTO) {
-        List<UnitMes> unitList = userTemplateService.getUserAllTempUnit(templateIdDTO);
+    public RespUserMapDTO getUserAllTempUnit(@RequestBody TemplateIdDTO templateIdDTO) {
+        List<UnitMes> unitList = userTemplateService.getUnitListByTempId(templateIdDTO);
         List<RegionMes> regionMes = regionMesService.getEnableRegionByTempId(templateIdDTO.getTemplateId());
         RespUserMapDTO userMapDTO = new RespUserMapDTO();
         userMapDTO.setUnitMesList(unitList);
         userMapDTO.setRegionMes(regionMes);
-        return RespUtil.successResJson(userMapDTO);
+        return userMapDTO;
     }
 
     /**
@@ -117,18 +110,18 @@ public class UserTemplateController {
      * @return
      */
     @PostMapping("/api/userTemp/addAbleUnitList")
-    public RespJson getAddAbleUnitList(@RequestBody TemplateIdDTO templateIdDTO) {
+    public List<UnitMes> getAddAbleUnitList(@RequestBody TemplateIdDTO templateIdDTO) {
         // 获取当前用户创建的
         List<UnitMes> units = unitMesService.getUserEnableUnitList(AuthUtil.getUserId());
         List<UnitMes> defaultUnis = unitMesService.getBaseUnitList();
         // 返回代添加的
-        return RespUtil.successResJson(
+        return
             CollectionUtil.assignDistinct(UnitMes::getId, units, defaultUnis).stream().filter(unitMes -> {
                 if (templateIdDTO.getFilter() != null) {
                     return !templateIdDTO.getFilter().contains(unitMes.getId().toString());
                 }
                 return true;
-            }).collect(Collectors.toList()));
+            }).collect(Collectors.toList());
     }
 
 
@@ -139,23 +132,22 @@ public class UserTemplateController {
      * @return
      */
     @PostMapping("/api/userTemp/saveTemplate")
-    public RespJson saveTemplateInfo(@RequestBody ReqSaveUserTemplateDTO reqSaveUserTemplateDTO) {
+    public void saveTemplateInfo(@RequestBody ReqSaveUserTemplateDTO reqSaveUserTemplateDTO) {
         if (!reqSaveUserTemplateDTO.getUserId().equals(AuthUtil.getUserId())) {
             log.error("用户权限异常{}, {}", reqSaveUserTemplateDTO, AuthUtil.getUserId());
-            throw new AncientEmpireException("用户权限异常");
+            throw new AeException("用户权限异常");
         }
         userTemplateService.saveTemplateInfo(reqSaveUserTemplateDTO);
-        return RespUtil.successResJson();
     }
 
     @PostMapping("/api/userTempAttention/version/revert")
-    public RespJson revertTemplateVersion(@RequestBody TemplateIdDTO idDTO) {
+    public void revertTemplateVersion(@RequestBody TemplateIdDTO idDTO) {
         UserTemplate userTemplate = userTemplateService.getTemplateById(idDTO.getTemplateId());
-        if (idDTO.getUserId().equals(userTemplate.getUserId()) && userTemplate.getStatus().equals(VersionConstant.DRAFT)) {
+        if (idDTO.getUserId().equals(userTemplate.getUserId()) && userTemplate.getStatus()
+            .equals(VersionConstant.DRAFT)) {
             userTemplateService.removeById(userTemplate);
             userTemplateService.delTemplateCatch(userTemplate);
         }
-        return RespUtil.successResJson();
     }
 
     /**
@@ -165,14 +157,13 @@ public class UserTemplateController {
      * @return
      */
     @DeleteMapping("/api/userTemp/{id}")
-    public RespJson removeUserTemplate(@PathVariable("id") Integer id) {
+    public void removeUserTemplate(@PathVariable("id") Integer id) {
         UserTemplate userTemplate = userTemplateService.getTemplateById(id);
         if (!AuthUtil.getUserId().equals(userTemplate.getUserId())) {
             log.error("权限不足{}, {}", userTemplate, AuthUtil.getUserId());
-            return RespUtil.error();
+            throw new AeException();
         }
         userTemplateService.deleteUserTemplate(userTemplate);
-        return RespUtil.successResJson();
     }
 
 
@@ -182,12 +173,12 @@ public class UserTemplateController {
      * @return
      */
     @GetMapping("/api/userTemp/draftTemplate")
-    public RespJson getUserDraftTemplate() {
+    public UserTemplateVO getUserDraftTemplate() {
         UserTemplateVO draftTemp = userTemplateService.getUserDraftTemplate(AuthUtil.getUserId());
         TemplateIdDTO templateIdDTO = new TemplateIdDTO();
         templateIdDTO.setTemplateId(draftTemp.getId());
-        draftTemp.setBindUintList(userTemplateService.getUserAllTempUnit(templateIdDTO));
-        return RespUtil.successResJson(draftTemp);
+        draftTemp.setBindUintList(userTemplateService.getUnitListByTempId(templateIdDTO));
+        return draftTemp;
     }
 
 }

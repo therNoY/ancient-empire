@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.auth.dao.PermissionDao;
 import pers.mihao.ancient_empire.auth.dao.UserDao;
 import pers.mihao.ancient_empire.auth.dao.UserRoleRelationDao;
-import pers.mihao.ancient_empire.auth.dto.ReqUserDto;
-import pers.mihao.ancient_empire.auth.dto.RespAuthDao;
+import pers.mihao.ancient_empire.auth.dto.ReqUserDTO;
+import pers.mihao.ancient_empire.auth.dto.RespAuthDAO;
 import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
@@ -74,13 +74,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
      * @return
      */
     @Override
-    public RespAuthDao login(LoginDto loginDto) {
+    public RespAuthDAO login(LoginDto loginDto) {
         String token;
         User loginUser = getUserByNameOrEmail(loginDto.getUserName());
         if (loginUser != null && passwordEncoder.matches(loginDto.getPassword(), loginUser.getPassword())) {
             token = JwtTokenUtil.generateToken(loginUser.getId().toString());
             log.info("给用户：{}生成token", loginDto);
-            RespAuthDao respAuthDao = new RespAuthDao(loginUser.getName(), loginDto.getPassword(), token);
+            RespAuthDAO respAuthDao = new RespAuthDAO(loginUser.getName(), loginDto.getPassword(), token);
             respAuthDao.setUserId(loginUser.getId());
             return respAuthDao;
         }
@@ -149,7 +149,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
      * @return
      */
     @Override
-    public String updateUserInfo(ReqUserDto user) {
+    public String updateUserInfo(ReqUserDTO user) {
         // 清除缓存
         RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO) + userDao.selectById(user.getUserId()).getName());
         user.setPassword(passwordEncoder.encode(user.getPassword()));

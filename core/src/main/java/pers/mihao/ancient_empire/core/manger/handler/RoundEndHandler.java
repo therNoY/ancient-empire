@@ -13,7 +13,7 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.config.AppConfig;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyStatusInfoDTO;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
@@ -239,6 +239,6 @@ public class RoundEndHandler extends CommonHandler {
                 return i;
             }
         }
-        throw new AncientEmpireException();
+        throw new AeException();
     }
 }

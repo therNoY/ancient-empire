@@ -25,6 +25,7 @@ import java.io.IOException;
 
 /**
  * JWT登录授权过滤器
+ * @author mihao
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static Logger log = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);

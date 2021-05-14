@@ -9,16 +9,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.base.dto.*;
+import pers.mihao.ancient_empire.base.dto.ArmyConfig;
+import pers.mihao.ancient_empire.base.dto.ReqAddRoomDTO;
+import pers.mihao.ancient_empire.base.dto.ReqRoomIdDTO;
+import pers.mihao.ancient_empire.base.dto.RoomArmyChangeDTO;
+import pers.mihao.ancient_empire.base.dto.RoomArmyLevelDTO;
 import pers.mihao.ancient_empire.base.entity.GameRoom;
 import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.event.AppRoomEvent;
 import pers.mihao.ancient_empire.base.service.GameRoomService;
 import pers.mihao.ancient_empire.base.service.UserJoinRoomService;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * <p>
@@ -49,9 +52,8 @@ public class GameRoomController {
      * @return
      */
     @RequestMapping("/api/room/list")
-    public RespJson listRoomWithPage(@RequestBody ApiConditionDTO conditionDTO) {
-        IPage<GameRoom> page = gameRoomService.getCanJoinGameRoomWithPage(conditionDTO);
-        return RespUtil.successPageResJson(page);
+    public IPage<GameRoom> listRoomWithPage(@RequestBody ApiConditionDTO conditionDTO) {
+        return gameRoomService.getCanJoinGameRoomWithPage(conditionDTO);
     }
 
     /**
@@ -61,7 +63,7 @@ public class GameRoomController {
      * @return
      */
     @RequestMapping("/api/room/save")
-    public RespJson saveRoom(@RequestBody ReqAddRoomDTO reqAddRoomDTO) {
+    public GameRoom saveRoom(@RequestBody ReqAddRoomDTO reqAddRoomDTO) {
         int playCount = 0;
         for (ArmyConfig armyConfig : reqAddRoomDTO.getInitMap().getArmyList()) {
             if (armyConfig.getType().equals(ArmyEnum.USER.type())) {
@@ -69,11 +71,10 @@ public class GameRoomController {
             }
         }
         if (playCount == 0) {
-            return RespUtil.error("玩家不能为空");
+            throw new AeException("玩家不能为空");
         }
         reqAddRoomDTO.setPlayerCount(playCount);
-        GameRoom room = gameRoomService.addRoomAndJoinRoomOwner(reqAddRoomDTO);
-        return RespUtil.successResJson(room);
+        return gameRoomService.addRoomAndJoinRoomOwner(reqAddRoomDTO);
     }
 
     /**
@@ -83,15 +84,14 @@ public class GameRoomController {
      * @return
      */
     @RequestMapping("/api/room/playerJoin")
-    public RespJson playerJoinRoom(@RequestBody ReqRoomIdDTO reqRoomIdDTO) {
+    public void playerJoinRoom(@RequestBody ReqRoomIdDTO reqRoomIdDTO) {
         String color = gameRoomService.playerJoinRoom(reqRoomIdDTO);
-        if (StringUtil.isNotBlack(color)) {
-            AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_CTL, reqRoomIdDTO.getRoomId(), reqRoomIdDTO.getUserId());
-            appRoomEvent.setJoinArmy(color);
-            applicationContext.publishEvent(appRoomEvent);
-            return RespUtil.successResJson();
+        if (StringUtil.isBlack(color)) {
+            throw new AeException();
         }
-        return RespUtil.error();
+        AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_CTL, reqRoomIdDTO.getRoomId(), reqRoomIdDTO.getUserId());
+        appRoomEvent.setJoinArmy(color);
+        applicationContext.publishEvent(appRoomEvent);
     }
 
     /**
@@ -101,9 +101,8 @@ public class GameRoomController {
      * @return
      */
     @RequestMapping("/api/room/playerLevel")
-    public RespJson playerLevelRoom(@RequestBody ReqRoomIdDTO reqRoomIdDTO) {
+    public void playerLevelRoom(@RequestBody ReqRoomIdDTO reqRoomIdDTO) {
 //        boolean res = gameRoomService.playerLevelRoom(reqRoomIdDTO);
-        return RespUtil.successResJson();
     }
 
 
@@ -114,7 +113,7 @@ public class GameRoomController {
      * @return
      */
     @RequestMapping("/api/room/changeArmy")
-    public RespJson changeCtlArmy(@RequestBody RoomArmyChangeDTO roomArmyChangeDTO) {
+    public void changeCtlArmy(@RequestBody RoomArmyChangeDTO roomArmyChangeDTO) {
         String levelArmy = null;
         try {
             levelArmy = gameRoomService.changeCtlArmy(roomArmyChangeDTO);
@@ -124,10 +123,8 @@ public class GameRoomController {
             appRoomEvent.setJoinArmy(roomArmyChangeDTO.getNewArmy());
             appRoomEvent.setPlayer(roomArmyChangeDTO.getUserId());
             applicationContext.publishEvent(appRoomEvent);
-            return RespUtil.successResJson();
         } catch (Exception e) {
-            log.error("", e);
-            return RespUtil.error();
+            throw new AeException(e);
         }
     }
 
@@ -139,7 +136,7 @@ public class GameRoomController {
      * @return
      */
     @RequestMapping("/api/room/levelCtlArmy")
-    public RespJson levelCtlArmy(@RequestBody RoomArmyLevelDTO levelDTO) {
+    public void levelCtlArmy(@RequestBody RoomArmyLevelDTO levelDTO) {
         try {
             String roomId = userJoinRoomService.getById(levelDTO.getUserId()).getRoomId();
             levelDTO.setRoomId(roomId);
@@ -148,10 +145,8 @@ public class GameRoomController {
             appRoomEvent.setLevelArmy(levelDTO.getColor());
             appRoomEvent.setPlayer(levelDTO.getPlayerId());
             applicationContext.publishEvent(appRoomEvent);
-            return RespUtil.successResJson();
         } catch (Exception e) {
-            log.error("", e);
-            return RespUtil.error();
+            throw new AeException(e);
         }
     }
 

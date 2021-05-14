@@ -2,12 +2,9 @@ package pers.mihao.ancient_empire.auth.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
 
 /**
  * 和用户身份相关的工具类

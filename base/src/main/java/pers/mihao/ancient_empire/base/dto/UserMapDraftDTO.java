@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.dto;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
 /**
- * 用户草噶地图DTO
+ * 用户草稿地图DTO
  * @Author mh32736
  * @Date 2021/4/10 17:58
  */
@@ -47,5 +47,15 @@ public class UserMapDraftDTO extends ApiRequestDTO {
 
     public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
+    }
+
+    @Override
+    public String toString() {
+        return "UserMapDraftDTO{" +
+            "templateId=" + templateId +
+            ", mapName='" + mapName + '\'' +
+            ", mapRow=" + mapRow +
+            ", mapColumn=" + mapColumn +
+            '}';
     }
 }

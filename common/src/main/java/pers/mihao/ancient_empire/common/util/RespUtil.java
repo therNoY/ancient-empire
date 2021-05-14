@@ -8,7 +8,18 @@ import org.springframework.web.servlet.DispatcherServlet;
 import pers.mihao.ancient_empire.common.config.ErrorCode;
 import pers.mihao.ancient_empire.common.vo.RespJson;
 
+/**
+ * @author mihao
+ */
 public class RespUtil {
+
+    /**
+     * 返回默认的操作成功
+     * @return
+     */
+    public static RespJson success () {
+        return new RespJson(0,"ok");
+    }
 
     /**
      * 返回默认的操作成功
@@ -76,6 +87,18 @@ public class RespUtil {
      */
     public static RespJson error(Integer errCode) {
         return new RespJson(errCode, ErrorCode.getErrorMes(errCode));
+    }
+
+    /**
+     * 返回有错误码和错误原因的结果
+     * @param errCode
+     * @return
+     */
+    public static RespJson error(Integer errCode, String errMsg) {
+        if (StringUtil.isBlack(errMsg)) {
+            errMsg = ErrorCode.getErrorMes(errCode);
+        }
+        return new RespJson(errCode, errMsg);
     }
 
     /**

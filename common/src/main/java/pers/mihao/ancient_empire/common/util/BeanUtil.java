@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * @version 1.0
@@ -74,7 +74,7 @@ public class BeanUtil {
             }
             return (T) obj;
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new AncientEmpireException(e.getMessage());
+            throw new AeException(e.getMessage());
         }
     }
 

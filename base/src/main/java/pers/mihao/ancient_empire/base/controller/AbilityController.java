@@ -1,15 +1,12 @@
 package pers.mihao.ancient_empire.base.controller;
 
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
+import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.service.AbilityService;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
  * <p>
@@ -31,8 +28,8 @@ public class AbilityController {
      * @return
      */
     @GetMapping("/api/ability/list")
-    public RespJson getAllAbility () {
-        return RespUtil.successResJson(abilityService.list());
+    public List<Ability> getAllAbility () {
+        return abilityService.list();
     }
 
 }

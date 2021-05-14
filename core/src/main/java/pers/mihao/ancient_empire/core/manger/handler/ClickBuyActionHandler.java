@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
@@ -29,11 +29,11 @@ public class ClickBuyActionHandler extends CommonHandler {
         // 验证军队资金
         UnitInfo newUnitInfo = unitMesService.getUnitInfo(gameEvent.getUnitId(), 0);
         if (currArmy().getMoney() < newUnitInfo.getUnitMes().getPrice()) {
-            throw new AncientEmpireException("军队购买 资金不足");
+            throw new AeException("军队购买 资金不足");
         }
         // 验证军队人口
         if (currArmy().getPop() + newUnitInfo.getUnitMes().getPopulation() > record().getMaxPop()) {
-            throw new AncientEmpireException("军队购买 超过最大人口");
+            throw new AeException("军队购买 超过最大人口");
         }
         // 更新
         Unit newUnit = UnitFactory.createUnit(gameEvent.getUnitId(), currSite());

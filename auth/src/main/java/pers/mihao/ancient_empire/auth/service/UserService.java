@@ -2,8 +2,8 @@ package pers.mihao.ancient_empire.auth.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
-import pers.mihao.ancient_empire.auth.dto.ReqUserDto;
-import pers.mihao.ancient_empire.auth.dto.RespAuthDao;
+import pers.mihao.ancient_empire.auth.dto.ReqUserDTO;
+import pers.mihao.ancient_empire.auth.dto.RespAuthDAO;
 import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
@@ -28,7 +28,7 @@ public interface UserService extends IService<User> {
      * @param loginDto
      * @return
      */
-    RespAuthDao login(LoginDto loginDto);
+    RespAuthDAO login(LoginDto loginDto);
 
     String adminLogin(LoginDto loginDto);
 
@@ -45,5 +45,5 @@ public interface UserService extends IService<User> {
      * @param user
      * @return
      */
-    String updateUserInfo(ReqUserDto user);
+    String updateUserInfo(ReqUserDTO user);
 }

@@ -42,7 +42,7 @@ public interface UserTemplateService extends IService<UserTemplate> {
      * @param templateIdDTO
      * @return
      */
-    List<UnitMes> getUserAllTempUnit(TemplateIdDTO templateIdDTO);
+    List<UnitMes> getUnitListByTempId(TemplateIdDTO templateIdDTO);
 
     /**
      * 获取用户的草稿模板

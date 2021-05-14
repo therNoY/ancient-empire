@@ -1,5 +1,8 @@
 package pers.mihao.ancient_empire.startup.config;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -7,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * 配置静态资源映射
  **/
+@Configuration
 @Component
 public class WebMvcConfig implements WebMvcConfigurer {
 
@@ -30,4 +34,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(false)
                 .maxAge(3600);
     }
+
 }

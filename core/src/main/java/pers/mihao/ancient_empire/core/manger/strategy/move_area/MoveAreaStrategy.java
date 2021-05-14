@@ -9,7 +9,7 @@ import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.manger.strategy.AbstractStrategy;
 
@@ -204,7 +204,7 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         String type = gameMap.getRegions().get(index).getType();
         RegionMes regionMes = ApplicationContextHolder.getBean(RegionMesService.class).getRegionByTypeFromLocalCatch(type);
         if (regionMes == null) {
-            throw new AncientEmpireException("服务器错误");
+            throw new AeException("服务器错误");
         }
         return regionMes.getDeplete();
     }

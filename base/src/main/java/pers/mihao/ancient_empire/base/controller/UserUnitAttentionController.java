@@ -16,8 +16,7 @@ import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserUnitAttention;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserUnitAttentionService;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * <p>
@@ -43,9 +42,8 @@ public class UserUnitAttentionController {
      * @return
      */
     @DeleteMapping("/api/unitMes/download")
-    public RespJson deleteUserDownloadUnit(@RequestParam Integer id) {
+    public void deleteUserDownloadUnit(@RequestParam Integer id) {
         userUnitAttentionService.deleteUserDownloadUnit(AuthUtil.getUserId(), id);
-        return RespUtil.successResJson();
     }
 
     /**
@@ -55,7 +53,7 @@ public class UserUnitAttentionController {
      * @return
      */
     @PutMapping("/api/unitMes/download")
-    public RespJson deleteUserDownloadUnit(@RequestBody RequestDownUnitDTO unitIdDTO) {
+    public void deleteUserDownloadUnit(@RequestBody RequestDownUnitDTO unitIdDTO) {
         UserUnitAttention attention = new UserUnitAttention();
         attention.setUserId(unitIdDTO.getUserId());
         attention.setUnitId(unitIdDTO.getUnitId());
@@ -65,16 +63,16 @@ public class UserUnitAttentionController {
         attention.setDownloadTime(LocalDateTime.now());
         attention.setUpdateTime(LocalDateTime.now());
         userUnitAttentionService.saveOrUpdate(attention);
-        return RespUtil.successResJson();
     }
 
     /**
      * 更新用户的单位
+     *
      * @param id
      * @return
      */
     @PostMapping("/api/unitMes/version/update")
-    public RespJson updateDownloadVersion(@RequestBody ReqUnitIdDTO id){
+    public void updateDownloadVersion(@RequestBody ReqUnitIdDTO id) {
 
         // 查询已经下载的单位
         UserUnitAttention attention = new UserUnitAttention();
@@ -83,7 +81,7 @@ public class UserUnitAttentionController {
         UserUnitAttention userUnitAttention = userUnitAttentionService.selectByPrimaryKey(attention);
 
         if (userUnitAttention == null) {
-            return RespUtil.error();
+            throw new AeException();
         }
 
         UnitMes unit = unitMesService.getUnitMesById(id.getUnitId());
@@ -92,7 +90,7 @@ public class UserUnitAttentionController {
         UnitMes unitMes = unitMesService.getMaxVersionUnitByType(unit.getType());
 
         if (userUnitAttention.getUnitId().equals(unitMes.getId())) {
-            return RespUtil.error("已经是最新版本 不需要更新");
+            throw new AeException("已经是最新版本 不需要更新");
         }
         // 更新单位
         userUnitAttentionService.deleteByPrimaryKey(attention);
@@ -100,23 +98,23 @@ public class UserUnitAttentionController {
         userUnitAttention.setUpdateTime(LocalDateTime.now());
         userUnitAttention.setUnitType(unitMes.getType());
         userUnitAttentionService.saveOrUpdate(userUnitAttention);
-        return RespUtil.successResJson();
     }
 
     /**
      * 回退草稿版本
+     *
      * @param id
      * @return
      */
     @PostMapping("/api/unitMes/version/revert")
-    public RespJson revertDraftVersion(@RequestBody ReqUnitIdDTO id) {
+    public void revertDraftVersion(@RequestBody ReqUnitIdDTO id) {
         UnitMes unitMes = unitMesService.getUnitMesById(id.getUnitId());
 
         if (unitMes.getCreateUserId().equals(id.getUserId())) {
             unitMesService.removeById(unitMes.getId());
-            return RespUtil.successResJson();
+
         } else {
-            return RespUtil.error("用户信息异常");
+            throw new AeException("用户信息异常");
         }
     }
 

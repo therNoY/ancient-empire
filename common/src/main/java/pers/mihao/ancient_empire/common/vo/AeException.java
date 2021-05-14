@@ -4,26 +4,37 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 
 /**
  * 自定义错误类型
+ *
+ * @author mihao
  */
-public class AncientEmpireException extends RuntimeException{
+public class AeException extends RuntimeException {
+
     private Integer code;
     private String mes;
 
-    public AncientEmpireException(Integer code) {
+
+    public AeException(Exception e) {
+        super(e);
+    }
+
+    public AeException(Integer code) {
         this.code = code;
     }
 
 
-    public AncientEmpireException(String mes) {
+    public AeException(String mes) {
         super(mes);
         this.mes = mes;
     }
 
-    public AncientEmpireException() {
-        this.mes = CommonConstant.DEFAULT_ERROR;
+    public AeException(Integer code, String mes) {
+        this.code = code;
+        this.mes = mes;
     }
 
-
+    public AeException() {
+        this.mes = CommonConstant.DEFAULT_ERROR;
+    }
 
     public Integer getCode() {
         return code;

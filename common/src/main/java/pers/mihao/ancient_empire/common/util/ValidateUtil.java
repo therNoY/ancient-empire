@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.common.util;
 
 import pers.mihao.ancient_empire.common.annotation.ValidatedBean;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -49,11 +49,11 @@ public class ValidateUtil {
         Object value = ReflectUtil.getValueByField(object, field);
         if (value instanceof String) {
             if (value == null || StringUtil.isBlack(value.toString())) {
-                throw new AncientEmpireException("字段:" + field.getName() + "不能为空");
+                throw new AeException("字段:" + field.getName() + "不能为空");
             }
         }else {
             if (value == null) {
-                throw new AncientEmpireException("字段:" + field.getName() + "不能为空");
+                throw new AeException("字段:" + field.getName() + "不能为空");
             }
         }
     }

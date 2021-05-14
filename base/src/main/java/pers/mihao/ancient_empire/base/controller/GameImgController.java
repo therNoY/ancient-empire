@@ -1,7 +1,10 @@
 package pers.mihao.ancient_empire.base.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.file.Files;
@@ -9,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -35,15 +39,8 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.FileUtil;
 import pers.mihao.ancient_empire.common.util.ImgUtil;
-import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
-import pers.mihao.ancient_empire.common.vo.RespJson;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * <p>
@@ -119,7 +116,7 @@ public class GameImgController {
      */
     @ResponseBody
     @RequestMapping("/upload/{type}/{id}")
-    public RespJson singleFileUpload(@RequestParam("file") MultipartFile file, @PathVariable String id,
+    public String singleFileUpload(@RequestParam("file") MultipartFile file, @PathVariable String id,
         @PathVariable String type) {
 
         // 验证是否是图片
@@ -128,12 +125,12 @@ public class GameImgController {
             image = ImageIO.read(file.getInputStream());
         } catch (IOException e) {
             log.info("", e);
-            return RespUtil.error("上传的文件不符合");
+            throw new AeException("上传的文件不符合");
         }
         int width = image.getWidth();
         int height = image.getHeight();
         if (width != IMG_SIZE || height != IMG_SIZE) {
-            return RespUtil.error("图片的宽或者高度需要是" + IMG_SIZE + "px");
+            throw new AeException("图片的宽或者高度需要是" + IMG_SIZE + "px");
         }
 
         try {
@@ -147,7 +144,7 @@ public class GameImgController {
                 String fileRealPath = StringUtil
                     .joinWith(File.separator, filePathHead, TEMPLATE_PATH, id, fileName);
                 FileUtil.createFile(fileRealPath, bytes);
-                return RespUtil.successResJson(id + File.separator + fileName);
+                return id + File.separator + fileName;
 
             } else if (type.equals(UNIT_PATH)) {
                 // 保存的是单位文件
@@ -156,14 +153,14 @@ public class GameImgController {
                     String fileRealPath = StringUtil
                         .joinWith(File.separator, filePathHead, UNIT_PATH, TEMPORARY_PATH, fileName);
                     FileUtil.createFile(fileRealPath, bytes);
-                    return RespUtil.successResJson(fileId);
+                    return fileId;
                 }
                 return null;
             }
             return null;
         } catch (IOException e) {
             log.error("", e);
-            return RespUtil.error("上传失败，请联系管理员");
+            throw new AeException("上传失败，请联系管理员");
         }
     }
 
@@ -259,7 +256,7 @@ public class GameImgController {
 
     @RequestMapping("/api/unitMes/img/create")
     @ResponseBody
-    public RespJson createUnitImg(@RequestBody CreateUnitImgDTO createUnitImgDTO) {
+    public NewUnitImgDTO createUnitImg(@RequestBody CreateUnitImgDTO createUnitImgDTO) {
         List<String> imgList = createUnitImgDTO.getImgList();
         // 验证图片正确
         verificationImg(imgList);
@@ -275,7 +272,7 @@ public class GameImgController {
         newUnitImgDTO.setImg1(img1Id.split("\\.")[0]);
         newUnitImgDTO.setImg2(img2Id.split("\\.")[0]);
 
-        return RespUtil.successResJson(newUnitImgDTO);
+        return newUnitImgDTO;
     }
 
     /**
@@ -315,7 +312,7 @@ public class GameImgController {
                     ImgUtil.replaceColor(baseColorValue, replaceColorValue, imgFile, newFilePath);
                 } catch (IOException e) {
                     log.error("", e);
-                    throw new AncientEmpireException("复制文件错误");
+                    throw new AeException("复制文件错误");
                 }
             } else {
                 // 直接复制文件
@@ -326,7 +323,7 @@ public class GameImgController {
                     Files.copy(Paths.get(fileRealPath), Paths.get(newFilePath));
                 } catch (IOException e) {
                     log.error("", e);
-                    throw new AncientEmpireException("文件复制错误");
+                    throw new AeException("文件复制错误");
                 }
             }
         }
@@ -399,7 +396,7 @@ public class GameImgController {
                 .joinWith(File.separator, filePathHead, UNIT_PATH, color.type(), newUploadImg.getImg2() + FILE_SUFFIX));
 
             if (!img1.exists() || !img2.exists()) {
-                throw new AncientEmpireException("图片资源不存在" + newUploadImg);
+                throw new AeException("图片资源不存在" + newUploadImg);
             }
 
             // 设置新的文件名字

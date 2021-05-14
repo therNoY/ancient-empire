@@ -13,6 +13,7 @@ import pers.mihao.ancient_empire.common.util.RespUtil;
 
 /**
  * 当访问接口没有权限时，自定义的返回结果
+ * @author mihao
  */
 @Component
 public class RestfulAccessDeniedHandler implements AccessDeniedHandler {

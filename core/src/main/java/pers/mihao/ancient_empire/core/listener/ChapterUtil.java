@@ -19,7 +19,7 @@ public class ChapterUtil {
 
     static {
         map = new HashMap<>();
-        Properties properties = PropertiesUtil.getProperties("chapter.properties");
+        Properties properties = PropertiesUtil.getProperties("chapter-zh.properties");
         properties.forEach((key, value)->{
             map.put(key.toString(), value.toString());
         });

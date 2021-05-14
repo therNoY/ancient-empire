@@ -2,7 +2,6 @@ package pers.mihao.ancient_empire.base.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -17,11 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.auth.util.AuthUtil;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
-import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveUnitMesDTO;
-import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.service.UnitAbilityService;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
@@ -30,9 +27,7 @@ import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.vo.UnitMesVO;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
-import pers.mihao.ancient_empire.common.util.BeanUtil;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * <p>
@@ -62,32 +57,31 @@ public class UnitMesController {
      * @return
      */
     @PostMapping("/api/unitMes/user/list")
-    public RespJson selectUnitMesByCreateUserWithPage(@RequestBody ApiConditionDTO apiConditionDTO) {
-        IPage<UnitMes> page = unitMesService.selectUnitMesByCreateUserWithPage(apiConditionDTO);
-        return RespUtil.successPageResJson(page);
+    public IPage<UnitMes> selectUnitMesByCreateUserWithPage(@RequestBody ApiConditionDTO apiConditionDTO) {
+        return unitMesService.selectUnitMesByCreateUserWithPage(apiConditionDTO);
     }
 
     /**
      * 获取用户下载的单位
+     *
      * @param conditionDTO
      * @return
      */
     @RequestMapping("/api/unitMes/user/download")
-    public RespJson getUserDownloadUnitMesWithPage(@RequestBody ApiConditionDTO conditionDTO){
-        IPage<UnitMesVO> page = unitMesService.getUserDownloadUnitMesWithPage(conditionDTO);
-        return RespUtil.successPageResJson(page);
+    public IPage<UnitMesVO> getUserDownloadUnitMesWithPage(@RequestBody ApiConditionDTO conditionDTO) {
+        return unitMesService.getUserDownloadUnitMesWithPage(conditionDTO);
     }
 
 
     /**
      * 获取用户可以下载的单位
+     *
      * @param conditionDTO
      * @return
      */
     @RequestMapping("/api/unitMes/downloadAble/list")
-    public RespJson getDownloadAbleUnitMesWithPage(@RequestBody ApiOrderDTO orderDTO){
-        IPage<UnitMesVO> page = unitMesService.getDownloadAbleUnitMesWithPage(orderDTO);
-        return RespUtil.successPageResJson(page);
+    public IPage<UnitMesVO> getDownloadAbleUnitMesWithPage(@RequestBody ApiOrderDTO orderDTO) {
+        return unitMesService.getDownloadAbleUnitMesWithPage(orderDTO);
     }
 
     /**
@@ -98,9 +92,8 @@ public class UnitMesController {
      * @return
      */
     @PostMapping("/api/unitMes/enable/all")
-    public RespJson getUserEnableUnitList(ApiRequestDTO apiRequestDTO) {
-        List<UnitMes> unitMesIPage = unitMesService.getUserEnableUnitList(apiRequestDTO.getUserId());
-        return RespUtil.successResJson(unitMesIPage);
+    public List<UnitMes> getUserEnableUnitList(ApiRequestDTO apiRequestDTO) {
+        return unitMesService.getUserEnableUnitList(apiRequestDTO.getUserId());
     }
 
     /**
@@ -110,8 +103,8 @@ public class UnitMesController {
      * @return
      */
     @GetMapping("/api/unitMes/{id}")
-    public RespJson getUnitMesById(@PathVariable Integer id) {
-        return RespUtil.successResJson(unitMesService.getUnitInfo(id, 0));
+    public UnitInfo getUnitMesById(@PathVariable Integer id) {
+        return unitMesService.getUnitInfo(id, 0);
     }
 
     /**
@@ -122,9 +115,8 @@ public class UnitMesController {
      * @return
      */
     @PutMapping("/api/unitMes")
-    public RespJson saveUnitMes(@RequestBody @Validated ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
+    public void saveUnitMes(@RequestBody @Validated ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
         unitMesService.saveUnitInfo(reqSaveUnitMesDTO);
-        return RespUtil.successResJson();
     }
 
     /**
@@ -134,25 +126,26 @@ public class UnitMesController {
      * @return
      */
     @GetMapping("/unitInfo")
-    public RespJson getUnitInfo(@RequestParam String idLevelInfo) {
+    public UnitInfo getUnitInfo(@RequestParam String idLevelInfo) {
 
         int index = idLevelInfo.lastIndexOf("_");
         if (index == 0) {
-            return RespUtil.error(40010);
+            throw new AeException(40010);
         }
         String id = idLevelInfo.substring(0, index);
         Integer level = Integer.valueOf(idLevelInfo.substring(index + 1));
         UnitInfo unitInfo = unitMesService.getUnitInfo(Integer.valueOf(id), level);
-        return RespUtil.successResJson(unitInfo);
+        return unitInfo;
     }
 
     /**
      * 删除用户的单位(逻辑)
+     *
      * @param id
      * @return
      */
     @DeleteMapping("/api/unitMes")
-    public RespJson deleteUserUnit(@RequestParam Integer id){
+    public void deleteUserUnit(@RequestParam Integer id) {
         UnitMes unitMes = unitMesService.getUnitMesById(id);
         if (unitMes != null && unitMes.getCreateUserId().equals(AuthUtil.getUserId())) {
             // 其他模板也会引用 先判断是否是草稿 草稿直接删除 否则改成禁用,历史版本同样如此操做
@@ -162,10 +155,7 @@ public class UnitMesController {
             // 更新低版本为禁用
             unitMesService.updateUnitStatusByType(unitMes.getType(), VersionConstant.DELETE);
         }
-        return RespUtil.successResJson();
     }
-
-
 
 
 }

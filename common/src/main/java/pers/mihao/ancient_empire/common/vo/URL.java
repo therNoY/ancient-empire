@@ -46,7 +46,7 @@ public class URL {
             return;
         }
         if (mess.length > 2) {
-            throw new AncientEmpireException("URL 格式异常");
+            throw new AeException("URL 格式异常");
         }
         // 解析出path
         this.path = mess[0];
@@ -61,7 +61,7 @@ public class URL {
             }else if (parMess.length == 1) {
                 paramMap.put(parMess[0], "");
             }else {
-                throw new AncientEmpireException("URL 格式异常");
+                throw new AeException("URL 格式异常");
             }
         }
     }

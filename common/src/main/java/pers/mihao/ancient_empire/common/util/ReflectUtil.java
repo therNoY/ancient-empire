@@ -13,9 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import pers.mihao.ancient_empire.common.dto.GetSetDTO;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import sun.misc.Unsafe;
 
 /**
@@ -215,7 +214,7 @@ public class ReflectUtil {
         if (name != null && name.length() > 0) {
             return Character.toUpperCase(name.charAt(0)) + name.substring(1);
         }
-        throw new AncientEmpireException();
+        throw new AeException();
     }
 
 
@@ -231,7 +230,7 @@ public class ReflectUtil {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        throw new AncientEmpireException();
+        throw new AeException();
     }
 
     /**

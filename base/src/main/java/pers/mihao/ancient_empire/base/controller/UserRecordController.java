@@ -23,9 +23,8 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 @RestController
 public class UserRecordController {
@@ -43,24 +42,23 @@ public class UserRecordController {
      * @return
      */
     @PostMapping("/tempRecord")
-    public RespJson saveTempRecord() {
-        return null;
+    public void saveTempRecord() {
+
     }
 
     /**
      * 获取record信息
      */
     @GetMapping("/record/{uuid}")
-    public RespJson getRecordById(@PathVariable("uuid") String uuid) {
-        UserRecord userRecord = userRecordService.getRecordById(uuid);
-        return RespUtil.successResJson(userRecord);
+    public UserRecord getRecordById(@PathVariable("uuid") String uuid) {
+        return userRecordService.getRecordById(uuid);
     }
 
     /**
      * record另存为
      */
     @PostMapping("/api/record/saveAs")
-    public RespJson recordSaveAs(@RequestBody ReqSaveRecordDTO reqSaveRecordDto) {
+    public UserRecord recordSaveAs(@RequestBody ReqSaveRecordDTO reqSaveRecordDto) {
         UserRecord userRecord = userRecordService.getRecordById(reqSaveRecordDto.getUuid());
         userRecord.setRecordName(reqSaveRecordDto.getName());
         userRecord.setCreateTime(LocalDateTime.now());
@@ -68,7 +66,7 @@ public class UserRecordController {
         userRecord.setCreateUserId(reqSaveRecordDto.getUserId());
         userRecord.setUuid(StringUtil.getUUID());
         userRecordService.saveRecord(userRecord);
-        return RespUtil.successResJson(userRecord);
+        return userRecord;
     }
 
 
@@ -76,47 +74,46 @@ public class UserRecordController {
      * 用户 登陆过保存临时地图
      */
     @PostMapping("/api/tempRecord")
-    public RespJson saveTempRecord(@NotBlank String uuid) {
+    public void saveTempRecord(@NotBlank String uuid) {
         // 判断是否存在
         boolean isSave = userRecordService.saveTempRecord(uuid);
         if (isSave) {
-            return RespUtil.successResJson();
+
         }
-        return RespUtil.error(41000);
+        throw new AeException(41000);
     }
 
     /**
      * 保存地图
      */
     @PostMapping("/api/record")
-    public RespJson saveRecord(@RequestBody @Validated ReqSaveRecordDTO saveRecordDto, BindingResult result) {
+    public void saveRecord(@RequestBody @Validated ReqSaveRecordDTO saveRecordDto, BindingResult result) {
         // 判断是否存在
         boolean isSave = userRecordService.saveRecord(saveRecordDto);
         if (isSave) {
-            return RespUtil.successResJson();
         }
-        return RespUtil.error(41000);
+        throw new AeException(41000);
     }
 
     /**
      * 查询用户保存的record
+     *
      * @param apiConditionDTO
      * @return
      */
     @PostMapping("/api/record/list")
-    public RespJson listUserRecordWithPage(@RequestBody ApiConditionDTO apiConditionDTO) {
-        IPage<UserRecord> iPage = userRecordService.listUserRecordWithPage(apiConditionDTO);
-        return RespUtil.successPageResJson(iPage);
+    public IPage<UserRecord> listUserRecordWithPage(@RequestBody ApiConditionDTO apiConditionDTO) {
+        return userRecordService.listUserRecordWithPage(apiConditionDTO);
     }
 
     /**
      * 查询用户保存的record
+     *
      * @param apiConditionDTO
      * @return
      */
     @DeleteMapping("/api/record/{uuid}")
-    public RespJson listUserRecordWithPage(@PathVariable("uuid") String uuid) {
+    public void listUserRecordWithPage(@PathVariable("uuid") String uuid) {
         userRecordService.delById(uuid, AuthUtil.getUserId());
-        return RespUtil.successResJson();
     }
 }

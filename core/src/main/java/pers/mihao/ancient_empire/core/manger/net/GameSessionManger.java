@@ -24,7 +24,7 @@ import pers.mihao.ancient_empire.base.service.GameRoomService;
 import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.RoomCommendEnum;
@@ -248,7 +248,7 @@ public class GameSessionManger {
                 }
             }
         }
-        throw new AncientEmpireException();
+        throw new AeException();
     }
 
     /**

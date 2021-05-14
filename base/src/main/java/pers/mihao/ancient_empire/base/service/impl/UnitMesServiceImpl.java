@@ -10,8 +10,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +40,7 @@ import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * <p>
@@ -108,7 +106,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
                 }
             } else {
                 log.error("没有获取到插入的主键");
-                throw new AncientEmpireException(500);
+                throw new AeException(500);
             }
 
         }
@@ -327,7 +325,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
                 gameImgController.moveUnitImgName2Id(reqSaveUnitMesDTO.getNewUploadImg(), unitMes.getId());
             } catch (IOException e) {
                 log.error("单位图片复制错误", e);
-                throw new AncientEmpireException(e.getMessage());
+                throw new AeException(e.getMessage());
             }
         }
 

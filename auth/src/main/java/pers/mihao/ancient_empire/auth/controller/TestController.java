@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
 import pers.mihao.ancient_empire.common.vo.test_dto.Dog;
 
 @RestController
@@ -21,38 +19,32 @@ public class TestController {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     @GetMapping("/get/{id}")
-    public RespJson getTest(@PathVariable String id) {
+    public void getTest(@PathVariable String id) {
         log.info("get id: {}", id);
-        return RespUtil.successResJson();
     }
 
     @PostMapping("/post")
-    public RespJson postTest(@RequestBody Dog dog) {
+    public void postTest(@RequestBody Dog dog) {
         log.info("post dog: {}", dog);
-        return RespUtil.successResJson();
     }
 
     @DeleteMapping("/delete/{id}")
-    public RespJson deleteTest(@PathVariable String id) {
+    public void deleteTest(@PathVariable String id) {
         log.info("delete id: {}", id);
-        return RespUtil.successResJson();
     }
 
     @PutMapping("/put")
-    public RespJson putTest(@RequestBody Dog dog) {
+    public void putTest(@RequestBody Dog dog) {
         log.info("put dog: {}", dog);
-        return RespUtil.successResJson();
     }
 
     @RequestMapping("/root/get")
-    public RespJson getRootMes() {
+    public void getRootMes() {
         log.info("只有管理员才能看到");
-        return RespUtil.successResJson();
     }
 
     @RequestMapping("/api/get")
-    public RespJson getApiMes() {
+    public void getApiMes() {
         log.info("只有登录过才能看到");
-        return RespUtil.successResJson();
     }
 }

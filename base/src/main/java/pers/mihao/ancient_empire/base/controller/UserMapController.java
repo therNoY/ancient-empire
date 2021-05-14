@@ -27,8 +27,8 @@ import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dto.ArmyConfig;
 import pers.mihao.ancient_empire.base.dto.MapShowWithConfigDTO;
-import pers.mihao.ancient_empire.base.dto.ReqSaveMap;
 import pers.mihao.ancient_empire.base.dto.ReqDoPaintingDTO;
+import pers.mihao.ancient_empire.base.dto.ReqSaveMap;
 import pers.mihao.ancient_empire.base.dto.RespUserMapDTO;
 import pers.mihao.ancient_empire.base.dto.UserMapDraftDTO;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
@@ -47,13 +47,13 @@ import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
-import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.vo.AncientEmpireException;
-import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * 用户地图管理的Controller
+ *
+ * @author mihao
  */
 @RestController
 public class UserMapController {
@@ -78,7 +78,7 @@ public class UserMapController {
      * @return
      */
     @GetMapping("/api/userMap/init/{id}")
-    public RespJson getInitUserMap(@PathParam("id") String templateId) {
+    public RespUserMapDTO getInitUserMap(@PathParam("id") String templateId) {
         UserTemplate userTemplate = userTemplateService.getById(templateId);
         // 获取当前用户
         Integer id = AuthUtil.getUserId();
@@ -99,24 +99,24 @@ public class UserMapController {
         }
         // 4.获取初始化地图信息
         RespUserMapDTO userMapDao = new RespUserMapDTO(unitMesList, regionMes, unSaveMap, userTemplate);
-        return RespUtil.successResJson(userMapDao);
+        return userMapDao;
     }
 
     /**
      * 获取优化后的绘图type
      */
     @PostMapping("/api/userMap/simpleDrawing")
-    public RespJson getSimpleDrawing(@RequestBody ReqDoPaintingDTO reqDoPaintingDTO) {
+    public Map<Integer, String> getSimpleDrawing(@RequestBody ReqDoPaintingDTO reqDoPaintingDTO) {
         Map<Integer, String> simpleDrawings = userMapService.getSimpleDrawing(reqDoPaintingDTO);
-        return RespUtil.successResJson(simpleDrawings);
+        return simpleDrawings;
     }
 
     /**
      * TODO 地图回退恢复功能 实现思路通过simpleDrawing 记录修改的结果 第一次修改记录两次 之后每次修改都只记录一次
      */
     @PostMapping("/api/userMap/getHistoryMap")
-    public RespJson getHistoryMap(@RequestBody ReqDoPaintingDTO reqDoPaintingDTO) {
-        return RespUtil.successResJson();
+    public void getHistoryMap(@RequestBody ReqDoPaintingDTO reqDoPaintingDTO) {
+
     }
 
     /**
@@ -125,10 +125,9 @@ public class UserMapController {
      * @return
      */
     @PostMapping("/api/userMap/list")
-    public RespJson getUserCreateMap(@RequestBody ApiConditionDTO condition) {
+    public IPage<BaseMapInfoVO> getUserCreateMap(@RequestBody ApiConditionDTO condition) {
         // 获取用户拥有的地图
-        IPage<BaseMapInfoVO> userAllMaps = userMapService.getUserCreateMapWithPage(condition);
-        return RespUtil.successPageResJson(userAllMaps);
+        return userMapService.getUserCreateMapWithPage(condition);
     }
 
     /**
@@ -138,9 +137,8 @@ public class UserMapController {
      * @return
      */
     @PostMapping("/api/userMap/download/list")
-    public RespJson getUserDownloadMapList(@RequestBody ApiConditionDTO apiConditionDTO) {
-        IPage<BaseMapInfoVO> mapList = userMapService.getUserDownloadMapWithPage(apiConditionDTO);
-        return RespUtil.successPageResJson(mapList);
+    public IPage<BaseMapInfoVO> getUserDownloadMapList(@RequestBody ApiConditionDTO apiConditionDTO) {
+        return userMapService.getUserDownloadMapWithPage(apiConditionDTO);
     }
 
     /**
@@ -150,16 +148,15 @@ public class UserMapController {
      * @return
      */
     @PostMapping("/api/userMap/changeBaseInfo")
-    public RespJson changeMapBaseInfo(@RequestBody UserMap userMap) {
+    public void changeMapBaseInfo(@RequestBody UserMap userMap) {
         UserMap map = userMapService.getUserMapById(userMap.getUuid());
         if (!map.getCreateUserId().equals(AuthUtil.getUserId())) {
-            throw new AncientEmpireException("权限不足");
+            throw new AeException("权限不足");
         }
         map.setMapName(userMap.getMapName());
         map.setShare(userMap.getShare());
         map.setUpdateTime(LocalDateTime.now());
         userMapService.updateUserMapById(userMap);
-        return RespUtil.successResJson();
     }
 
     /**
@@ -168,10 +165,9 @@ public class UserMapController {
      * @return
      */
     @GetMapping("/api/userMap/{id}")
-    public RespJson getUserCreateMap(@PathVariable("id") String id) {
-        // 3.获取用户拥有的地图
-        UserMap map = userMapService.getUserMapById(id);
-        return RespUtil.successResJson(map);
+    public UserMap getUserCreateMap(@PathVariable("id") String id) {
+        // 获取用户拥有的地图
+        return userMapService.getUserMapById(id);
     }
 
     /**
@@ -180,7 +176,7 @@ public class UserMapController {
      * @return
      */
     @PostMapping("/api/userMap/withConfig")
-    public RespJson getUserMapWithConfig(@RequestBody MapShowWithConfigDTO config) {
+    public UserMap getUserMapWithConfig(@RequestBody MapShowWithConfigDTO config) {
         // 3.获取用户拥有的地图
         UserMap map = userMapService.getUserMapById(config.getMapId());
         if (CollectionUtil.isNotEmpty(config.getArmyConfigList())) {
@@ -200,7 +196,7 @@ public class UserMapController {
             }
             map.setUnits(baseUnits);
         }
-        return RespUtil.successResJson(map);
+        return map;
     }
 
 
@@ -208,9 +204,8 @@ public class UserMapController {
      * 保存用户地图
      */
     @PostMapping("/api/userMap")
-    public RespJson saveUserMap(@RequestBody ReqSaveMap reqSaveMap) {
+    public void saveUserMap(@RequestBody ReqSaveMap reqSaveMap) {
         userMapService.saveUserMap(reqSaveMap);
-        return RespUtil.successResJson();
     }
 
 
@@ -220,18 +215,16 @@ public class UserMapController {
      * @return
      */
     @DeleteMapping("/api/userMap/{id}")
-    public RespJson deleteUserMap(@PathVariable("id") String id) {
+    public void deleteUserMap(@PathVariable("id") String id) {
         userMapService.deleteMapById(id);
-        return RespUtil.successResJson();
     }
 
     /**
      * 获取遭遇战地图 遭遇战地图定义 admin 创建 type 是 encounter
      */
     @PostMapping("/encounterMap")
-    public RespJson getEncounterMap(@RequestBody ApiConditionDTO apiConditionDTO) {
-        IPage<BaseMapInfoVO> encounterMaps = userMapService.getEncounterMaps(apiConditionDTO);
-        return RespUtil.successPageResJson(encounterMaps);
+    public IPage<BaseMapInfoVO> getEncounterMap(@RequestBody ApiConditionDTO apiConditionDTO) {
+        return userMapService.getEncounterMaps(apiConditionDTO);
     }
 
     /**
@@ -241,18 +234,16 @@ public class UserMapController {
      * @return
      */
     @PostMapping("/api/worldMap/list")
-    public RespJson getWorldMapList(@RequestBody ApiConditionDTO apiConditionDTO) {
-        IPage<BaseMapInfoVO> mapList = userMapService.getWorldMapList(apiConditionDTO);
-        return RespUtil.successPageResJson(mapList);
+    public IPage<BaseMapInfoVO> getWorldMapList(@RequestBody ApiConditionDTO apiConditionDTO) {
+        return userMapService.getWorldMapList(apiConditionDTO);
     }
 
     /**
      * 获取遭遇战地图的 可选则的设定 包括 初始金额,最大金额 初始人口,最大人口, 所有队伍
      */
     @GetMapping("/encounter/initSetting")
-    public RespJson getEncounterInitSetting(@RequestParam String uuid) {
-        List<String> colors = userMapService.getInitArmy(uuid);
-        return RespUtil.successResJson(colors);
+    public List<String> getEncounterInitSetting(@RequestParam String uuid) {
+        return userMapService.getInitArmy(uuid);
     }
 
     /**
@@ -261,9 +252,8 @@ public class UserMapController {
      * @return
      */
     @GetMapping("/map/store/list")
-    public RespJson getStoreMapList() {
-        List<UserMap> userMaps = userMapService.getStoreMapList();
-        return RespUtil.successResJson(userMaps);
+    public List<UserMap> getStoreMapList() {
+        return userMapService.getStoreMapList();
     }
 
     /**
@@ -273,7 +263,7 @@ public class UserMapController {
      * @return
      */
     @RequestMapping("/api/userMap/lastEdit")
-    public RespJson getLastEditMap(@RequestBody ApiRequestDTO requestDTO) {
+    public RespUserMapDTO getLastEditMap(@RequestBody ApiRequestDTO requestDTO) {
         Integer templateId;
         UserTemplate userTemplate;
 
@@ -291,12 +281,13 @@ public class UserMapController {
             userMap.setCreateUserId(requestDTO.getUserId());
             userMap.setRow(userSetting.getMapInitRow());
             userMap.setColumn(userSetting.getMapInitColumn());
+            userMap.setMapName("我的" + userTemplate.getTemplateName() + "地图");
+            userMap.setShare(1);
             setMapBaseInfo(userSetting, templateId, userMap);
             userMapService.saveMap(userMap);
         }
 
-        RespUserMapDTO userMapDao = getRespUserMapDTO(userTemplate, userSetting, userMap);
-        return RespUtil.successResJson(userMapDao);
+        return getRespUserMapDTO(userTemplate, userSetting, userMap);
     }
 
     private RespUserMapDTO getRespUserMapDTO(UserTemplate userTemplate, UserSetting userSetting, UserMap userMap) {
@@ -311,12 +302,13 @@ public class UserMapController {
 
 
     /**
-     * @param userMap
-     * @param result
+     * 创建用户草稿地图
+     *
+     * @param userMapDraftDTO
      * @return
      */
     @PostMapping("/api/userMap/createDraftMap")
-    public RespJson createDraftMap(@RequestBody UserMapDraftDTO userMapDraftDTO) {
+    public RespUserMapDTO createDraftMap(@RequestBody UserMapDraftDTO userMapDraftDTO) {
         UserSetting userSetting = userSettingService.getUserSettingById(userMapDraftDTO.getUserId());
         if (userMapDraftDTO.getTemplateId() == null) {
             userMapDraftDTO.setTemplateId(userSetting.getMapInitTempId());
@@ -339,8 +331,7 @@ public class UserMapController {
         setMapBaseInfo(userSetting, templateId, userMap);
         userMapService.saveMap(userMap);
 
-        RespUserMapDTO userMapDao = getRespUserMapDTO(userTemplate, userSetting, userMap);
-        return RespUtil.successResJson(userMapDao);
+        return getRespUserMapDTO(userTemplate, userSetting, userMap);
     }
 
     private void setMapBaseInfo(UserSetting userSetting, Integer templateId, UserMap userMap) {
@@ -370,9 +361,8 @@ public class UserMapController {
      * @return
      */
     @PutMapping("/roots/map")
-    public RespJson save(UserMap userMap, BindingResult result) {
+    public void save(UserMap userMap, BindingResult result) {
         userMapService.updateUserMapById(userMap);
-        return RespUtil.successResJson();
     }
 
 }

@@ -26,9 +26,8 @@ import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
-import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.SendMessageDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
@@ -78,17 +77,17 @@ public class GameController {
      * @return
      */
     @PostMapping("/api/map/init")
-    public RespJson registerUserMap(@RequestBody @Validated InitMapDTO initMapDTO, BindingResult result) {
+    public UserRecord registerUserMap(@RequestBody @Validated InitMapDTO initMapDTO, BindingResult result) {
         int playerCount = 1;
         initMapDTO.setPlayer(new HashMap<>(16));
         // 1.获取用户地图
         UserMap userMap = userMapService.getUserMapById(initMapDTO.getMapId());
         if (userMap == null) {
             log.error("错误的地图信息{}", initMapDTO);
-            return RespUtil.error();
+            throw new AeException();
         }
         if (GameTypeEnum.STORY.type().equals(initMapDTO.getGameType())) {
-            List<String> colorList =  userMap.getUnits().stream().map(u->u.getColor()).collect(Collectors.toList());
+            List<String> colorList = userMap.getUnits().stream().map(u -> u.getColor()).collect(Collectors.toList());
             initMapDTO.setArmyList(getDefaultArmyConfig().stream()
                 .filter(armyConfig -> colorList.contains(armyConfig.getColor()))
                 .collect(Collectors.toList()));
@@ -111,7 +110,7 @@ public class GameController {
             playerCount);
 
         // 3.返回前端保存
-        return RespUtil.successResJson(userRecord);
+        return userRecord;
     }
 
     private List<ArmyConfig> getDefaultArmyConfig() {
@@ -154,7 +153,7 @@ public class GameController {
      * @return
      */
     @PostMapping("/api/record/continue")
-    public RespJson registerUserMap(@RequestBody ReqRecordContinueDTO continueDTO) {
+    public UserRecord registerUserMap(@RequestBody ReqRecordContinueDTO continueDTO) {
         UserRecord record = userRecordService.getRecordById(continueDTO.getUuid());
         UserRecord userRecord = userRecordService.getRecordById(continueDTO.getUuid());
         userRecord.setUuid(StringUtil.getUUID());
@@ -163,9 +162,9 @@ public class GameController {
         userRecord.setRecordName("系统保存");
         userRecordService.saveRecord(userRecord);
         userRecordService.delOtherUnSaveStandRecord(userRecord.getUuid(), continueDTO.getUserId());
-        gameCoreManger.registerGameContext(record, EnumUtil.valueOf(GameTypeEnum.class, record.getType()),1);
+        gameCoreManger.registerGameContext(record, EnumUtil.valueOf(GameTypeEnum.class, record.getType()), 1);
         // 3.返回前端保存
-        return RespUtil.successResJson(record);
+        return record;
     }
 
 
@@ -177,7 +176,7 @@ public class GameController {
      * @return
      */
     @PostMapping("/api/room/init")
-    public RespJson registerFormRoom(@RequestBody ReqRoomIdDTO reqRoomIdDTO) {
+    public UserRecord registerFormRoom(@RequestBody ReqRoomIdDTO reqRoomIdDTO) {
         GameRoom gameRoom = roomService.getById(reqRoomIdDTO.getRoomId());
         InitMapDTO initMapDTO = JSON.parseObject(gameRoom.getMapConfig(), InitMapDTO.class);
         initMapDTO.setUserId(AuthUtil.getUserId());
@@ -191,7 +190,8 @@ public class GameController {
         );
         // 设置没有参加的人为人机
         for (ArmyConfig armyConfig : initMapDTO.getArmyList()) {
-            if (armyConfig.getType().equals(ArmyEnum.USER.type()) && !initMapDTO.getPlayer().containsKey(armyConfig.getColor())) {
+            if (armyConfig.getType().equals(ArmyEnum.USER.type()) && !initMapDTO.getPlayer()
+                .containsKey(armyConfig.getColor())) {
                 armyConfig.setType(ArmyEnum.AI.type());
             }
         }
@@ -210,18 +210,18 @@ public class GameController {
         roomCommend.setMessage("准备开始游戏...");
         gameSessionManger.sendMessage2Room(roomCommend, reqRoomIdDTO.getRoomId());
         // 3.返回前端保存
-        return RespUtil.successResJson(userRecord);
+        return userRecord;
     }
 
     /**
      * 获取可购买的所有的单位的详细信息
      */
     @GetMapping("/unitInfo/list")
-    public RespJson getUnitInfoList(@RequestParam String uuid) {
+    public List<UnitInfo> getUnitInfoList(@RequestParam String uuid) {
         GameContext context = gameCoreManger.getGameSessionById(uuid);
         UserRecord record = context.getUserRecord();
         if (record == null) {
-            return RespUtil.error(40010);
+            throw new AeException(40010);
         }
         // 获取当前模板可以购买的单位
         List<UnitMes> unitInfoList = unitMesService.getCanBuyUnit(context.getUserTemplate().getId());
@@ -241,7 +241,7 @@ public class GameController {
             .collect(Collectors.toList());
         respUnitMes = context.filterUnit(respUnitMes);
 
-        return RespUtil.successResJson(respUnitMes);
+        return respUnitMes;
     }
 
 
@@ -252,7 +252,7 @@ public class GameController {
      * @return
      */
     @PostMapping("/api/message/send")
-    public RespJson sendMessage(@RequestBody SendMessageDTO sendMessageDTO) {
+    public void sendMessage(@RequestBody SendMessageDTO sendMessageDTO) {
         switch (sendMessageDTO.getSendTypeEnum()) {
             case SEND_TO_GAME:
                 String gameId = gameSessionManger.getUserGameId(AuthUtil.getUserId());
@@ -269,7 +269,6 @@ public class GameController {
             default:
                 break;
         }
-        return RespUtil.successResJson();
     }
 
 }

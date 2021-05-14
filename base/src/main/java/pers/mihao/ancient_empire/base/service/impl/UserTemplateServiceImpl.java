@@ -77,8 +77,8 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
     }
 
     @Override
-    public List<UnitMes> getUserAllTempUnit(TemplateIdDTO templateIdDTO) {
-        return userTemplateDAO.getUserAllTempUnit(templateIdDTO);
+    public List<UnitMes> getUnitListByTempId(TemplateIdDTO templateIdDTO) {
+        return userTemplateDAO.getUnitListByTempId(templateIdDTO);
     }
 
     @Override
@@ -167,7 +167,7 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
             templateIdDTO.setTemplateId(template.getId());
             template.setUserId(Math.abs(template.getUserId()));
             template.setCreateUserName(userService.getUserById(template.getUserId()).getName());
-            template.setBindUintList(getUserAllTempUnit(templateIdDTO));
+            template.setBindUintList(getUnitListByTempId(templateIdDTO));
         }
     }
 

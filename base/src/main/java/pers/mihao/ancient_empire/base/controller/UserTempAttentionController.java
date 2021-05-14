@@ -16,8 +16,6 @@ import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.service.UserTempAttentionService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
-import pers.mihao.ancient_empire.common.util.RespUtil;
-import pers.mihao.ancient_empire.common.vo.RespJson;
 
 /**
  * @Author mh32736
@@ -39,13 +37,12 @@ public class UserTempAttentionController {
      * @return
      */
     @PostMapping("/api/userTemp/downloadTemp")
-    public RespJson downloadTemp(@RequestBody UserTempAttention userTempAttention) {
+    public void downloadTemp(@RequestBody UserTempAttention userTempAttention) {
         UserTemplate template = userTemplateService.getTemplateById(userTempAttention.getTemplateId());
         userTempAttention.setUserId(AuthUtil.getUserId());
         userTempAttention.setCreateTime(LocalDateTime.now());
         userTempAttention.setTemplateType(template.getTemplateType());
         userTempAttentionService.saveOrUpdate(userTempAttention);
-        return RespUtil.successResJson();
     }
 
     /**
@@ -54,9 +51,8 @@ public class UserTempAttentionController {
      * @return
      */
     @PostMapping("/api/userAttentionTemp/page")
-    public RespJson getAttentionTemplateWithPage(@RequestBody ReqUserTemplateDTO reqUserTemplateDTO) {
-        IPage<UserTemplateVO> templateList = userTempAttentionService.getAttentionTemplateWithPage(reqUserTemplateDTO);
-        return RespUtil.successPageResJson(templateList);
+    public IPage<UserTemplateVO> getAttentionTemplateWithPage(@RequestBody ReqUserTemplateDTO reqUserTemplateDTO) {
+        return userTempAttentionService.getAttentionTemplateWithPage(reqUserTemplateDTO);
     }
 
 
@@ -67,19 +63,18 @@ public class UserTempAttentionController {
      * @return
      */
     @DeleteMapping("/api/userTempAttention/{id}")
-    public RespJson removeUserTemplateAttention(@PathVariable("id") String id) {
+    public void removeUserTemplateAttention(@PathVariable("id") String id) {
         userTempAttentionService.removeUserAttention(AuthUtil.getUserId(), id);
-        return RespUtil.successResJson();
     }
 
     /**
      * 更新用户的模板
+     *
      * @param id
      * @return
      */
     @PostMapping("/api/userTempAttention/version/update")
-    public RespJson updateMaxVersion(@RequestBody TemplateIdDTO id) {
+    public void updateMaxVersion(@RequestBody TemplateIdDTO id) {
         userTempAttentionService.updateMaxVersion(id);
-        return RespUtil.successResJson();
     }
 }
