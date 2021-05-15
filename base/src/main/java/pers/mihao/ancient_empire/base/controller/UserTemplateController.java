@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dto.ReqSaveUserTemplateDTO;
 import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
@@ -112,7 +112,7 @@ public class UserTemplateController {
     @PostMapping("/api/userTemp/addAbleUnitList")
     public List<UnitMes> getAddAbleUnitList(@RequestBody TemplateIdDTO templateIdDTO) {
         // 获取当前用户创建的
-        List<UnitMes> units = unitMesService.getUserEnableUnitList(AuthUtil.getUserId());
+        List<UnitMes> units = unitMesService.getUserEnableUnitList(LoginUserHolder.getUserId());
         List<UnitMes> defaultUnis = unitMesService.getBaseUnitList();
         // 返回代添加的
         return
@@ -133,8 +133,8 @@ public class UserTemplateController {
      */
     @PostMapping("/api/userTemp/saveTemplate")
     public void saveTemplateInfo(@RequestBody ReqSaveUserTemplateDTO reqSaveUserTemplateDTO) {
-        if (!reqSaveUserTemplateDTO.getUserId().equals(AuthUtil.getUserId())) {
-            log.error("用户权限异常{}, {}", reqSaveUserTemplateDTO, AuthUtil.getUserId());
+        if (!reqSaveUserTemplateDTO.getUserId().equals(LoginUserHolder.getUserId())) {
+            log.error("用户权限异常{}, {}", reqSaveUserTemplateDTO, LoginUserHolder.getUserId());
             throw new AeException("用户权限异常");
         }
         userTemplateService.saveTemplateInfo(reqSaveUserTemplateDTO);
@@ -159,8 +159,8 @@ public class UserTemplateController {
     @DeleteMapping("/api/userTemp/{id}")
     public void removeUserTemplate(@PathVariable("id") Integer id) {
         UserTemplate userTemplate = userTemplateService.getTemplateById(id);
-        if (!AuthUtil.getUserId().equals(userTemplate.getUserId())) {
-            log.error("权限不足{}, {}", userTemplate, AuthUtil.getUserId());
+        if (!LoginUserHolder.getUserId().equals(userTemplate.getUserId())) {
+            log.error("权限不足{}, {}", userTemplate, LoginUserHolder.getUserId());
             throw new AeException();
         }
         userTemplateService.deleteUserTemplate(userTemplate);
@@ -174,7 +174,7 @@ public class UserTemplateController {
      */
     @GetMapping("/api/userTemp/draftTemplate")
     public UserTemplateVO getUserDraftTemplate() {
-        UserTemplateVO draftTemp = userTemplateService.getUserDraftTemplate(AuthUtil.getUserId());
+        UserTemplateVO draftTemp = userTemplateService.getUserDraftTemplate(LoginUserHolder.getUserId());
         TemplateIdDTO templateIdDTO = new TemplateIdDTO();
         templateIdDTO.setTemplateId(draftTemp.getId());
         draftTemp.setBindUintList(userTemplateService.getUnitListByTempId(templateIdDTO));

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
@@ -179,7 +179,7 @@ public class GameController {
     public UserRecord registerFormRoom(@RequestBody ReqRoomIdDTO reqRoomIdDTO) {
         GameRoom gameRoom = roomService.getById(reqRoomIdDTO.getRoomId());
         InitMapDTO initMapDTO = JSON.parseObject(gameRoom.getMapConfig(), InitMapDTO.class);
-        initMapDTO.setUserId(AuthUtil.getUserId());
+        initMapDTO.setUserId(LoginUserHolder.getUserId());
         initMapDTO.setGameType(GameTypeEnum.ROOM.type());
         List<UserJoinRoom> userJoinRooms = userJoinRoomService.getUserByRoomId(reqRoomIdDTO.getRoomId());
         int playerCount = (int) userJoinRooms.stream()
@@ -255,7 +255,7 @@ public class GameController {
     public void sendMessage(@RequestBody SendMessageDTO sendMessageDTO) {
         switch (sendMessageDTO.getSendTypeEnum()) {
             case SEND_TO_GAME:
-                String gameId = gameSessionManger.getUserGameId(AuthUtil.getUserId());
+                String gameId = gameSessionManger.getUserGameId(LoginUserHolder.getUserId());
                 GameCommand command = new GameCommand();
                 command.setGameCommendEnum(GameCommendEnum.SHOW_GAME_NEWS);
                 JSONObject extData = new JSONObject(2);

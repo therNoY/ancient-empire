@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
 import pers.mihao.ancient_empire.base.service.UserSettingService;
 
@@ -25,7 +25,7 @@ public class UserSettingController {
 
     @PutMapping("/api/user/useSetting")
     public void saveUserSetting(@RequestBody UserSetting userSetting) {
-        Integer userId = AuthUtil.getUserId();
+        Integer userId = LoginUserHolder.getUserId();
         userSetting.setUserId(userId);
         userSettingService.updateByUserId(userSetting);
     }

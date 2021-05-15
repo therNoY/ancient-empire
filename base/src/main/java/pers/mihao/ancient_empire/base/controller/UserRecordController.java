@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 
-import org.apache.ibatis.annotations.Delete;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.dto.ReqSaveRecordDTO;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -114,6 +113,6 @@ public class UserRecordController {
      */
     @DeleteMapping("/api/record/{uuid}")
     public void listUserRecordWithPage(@PathVariable("uuid") String uuid) {
-        userRecordService.delById(uuid, AuthUtil.getUserId());
+        userRecordService.delById(uuid, LoginUserHolder.getUserId());
     }
 }

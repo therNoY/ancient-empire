@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.event.AppRoomEvent;
 import pers.mihao.ancient_empire.base.service.GameRoomService;
 import pers.mihao.ancient_empire.common.annotation.Manger;
@@ -165,8 +165,8 @@ public class GameSessionManger {
             GameCommand gameCommand = (GameCommand) command;
             if (gameCommand.getGameCommendEnum().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
                 String oldMes = gameCommand.getExtMes().getString(ExtMes.MESSAGE);
-                if (AuthUtil.getLoginUser() != null) {
-                    gameCommand.getExtMes().put(ExtMes.MESSAGE, "【" + AuthUtil.getLoginUser().getUsername() + "】" + oldMes);
+                if (LoginUserHolder.getLoginUser() != null) {
+                    gameCommand.getExtMes().put(ExtMes.MESSAGE, "【" + LoginUserHolder.getLoginUser().getUsername() + "】" + oldMes);
                 }else {
                     gameCommand.getExtMes().put(ExtMes.MESSAGE, "【系统消息】" + oldMes);
                 }

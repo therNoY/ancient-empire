@@ -19,7 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
@@ -92,7 +92,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     @Transactional
     public void saveUnitMes(UnitMes unitMes) {
         if (unitMes.getId() != null) {
-            unitMes.setCreateUserId(AuthUtil.getUserId());
+            unitMes.setCreateUserId(LoginUserHolder.getUserId());
             unitMesDao.updateById(unitMes);
         } else {
             unitMesDao.insert(unitMes);

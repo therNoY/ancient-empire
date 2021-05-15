@@ -20,7 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.auth.enums.UserEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
@@ -151,7 +151,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
     @Override
     public void saveMap(UserMap userMap) {
         userMap.setUuid(StringUtil.getUUID());
-        userMap.setCreateUserId(AuthUtil.getUserId());
+        userMap.setCreateUserId(LoginUserHolder.getUserId());
         userMap.setCreateTime(LocalDateTime.now());
         saveOrUpdate(userMap);
         removeUserMapCatch(userMap);
@@ -159,7 +159,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
 
     @Override
     public UserMap getUserMapByName(String mapName) {
-        UserMap userMap = userMapDAO.getFirstByCreateUserIdAndMapName(AuthUtil.getUserId(), mapName);
+        UserMap userMap = userMapDAO.getFirstByCreateUserIdAndMapName(LoginUserHolder.getUserId(), mapName);
         return userMap;
     }
 
@@ -372,7 +372,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
         } else {
             userMap.setVersion(0);
             userMap.setStatus(reqSaveMap.getOptType());
-            userMap.setCreateUserId(AuthUtil.getUserId());
+            userMap.setCreateUserId(LoginUserHolder.getUserId());
             userMap.setCreateTime(LocalDateTime.now());
             userMap.setUpdateTime(LocalDateTime.now());
             userMapService.saveMap(userMap);

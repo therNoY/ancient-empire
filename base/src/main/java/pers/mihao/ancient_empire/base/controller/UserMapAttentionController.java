@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.dto.UserMapIdDTO;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserMapAttention;
@@ -38,7 +38,7 @@ public class UserMapAttentionController {
      */
     @PostMapping("/api/userMap/download")
     public void downloadMap(@RequestBody UserMapAttention userMapAttention) {
-        userMapAttention.setUserId(AuthUtil.getUserId());
+        userMapAttention.setUserId(LoginUserHolder.getUserId());
         UserMap userMap = userMapService.getUserMapById(userMapAttention.getMapId());
         userMapAttention.setUpdateTime(LocalDateTime.now());
         userMapAttention.setDownloadTime(LocalDateTime.now());

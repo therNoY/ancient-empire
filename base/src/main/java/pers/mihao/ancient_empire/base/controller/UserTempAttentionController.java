@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateIdDTO;
 import pers.mihao.ancient_empire.base.entity.UserTempAttention;
@@ -39,7 +39,7 @@ public class UserTempAttentionController {
     @PostMapping("/api/userTemp/downloadTemp")
     public void downloadTemp(@RequestBody UserTempAttention userTempAttention) {
         UserTemplate template = userTemplateService.getTemplateById(userTempAttention.getTemplateId());
-        userTempAttention.setUserId(AuthUtil.getUserId());
+        userTempAttention.setUserId(LoginUserHolder.getUserId());
         userTempAttention.setCreateTime(LocalDateTime.now());
         userTempAttention.setTemplateType(template.getTemplateType());
         userTempAttentionService.saveOrUpdate(userTempAttention);
@@ -64,7 +64,7 @@ public class UserTempAttentionController {
      */
     @DeleteMapping("/api/userTempAttention/{id}")
     public void removeUserTemplateAttention(@PathVariable("id") String id) {
-        userTempAttentionService.removeUserAttention(AuthUtil.getUserId(), id);
+        userTempAttentionService.removeUserAttention(LoginUserHolder.getUserId(), id);
     }
 
     /**

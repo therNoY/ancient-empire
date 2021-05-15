@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.common.annotation.ValidatedBean;
 import pers.mihao.ancient_empire.common.dto.ApiPageDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
@@ -59,10 +59,10 @@ public class ControllerFilterAspect {
                 pageStart = apiPageDTO.getPageStart();
                 apiPageDTO.setLimitStart((pageStart - 1) * pageSize);
                 apiPageDTO.setLimitCount(pageSize);
-                apiPageDTO.setUserId(AuthUtil.getUserId());
+                apiPageDTO.setUserId(LoginUserHolder.getUserId());
             } else if (arg instanceof ApiRequestDTO) {
                 apiRequestDTO = (ApiRequestDTO) arg;
-                apiRequestDTO.setUserId(AuthUtil.getUserId());
+                apiRequestDTO.setUserId(LoginUserHolder.getUserId());
             }
         }
     }

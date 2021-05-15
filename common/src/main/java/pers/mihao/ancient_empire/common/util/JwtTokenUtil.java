@@ -175,7 +175,14 @@ public class JwtTokenUtil {
     }
 
     public static class TokenInfo{
+
+        /**
+         * 用户Id
+         */
         String info;
+        /**
+         * 颁发token时间
+         */
         Date date;
 
         public TokenInfo() {
@@ -201,6 +208,7 @@ public class JwtTokenUtil {
         public void setDate(Date date) {
             this.date = date;
         }
+
     }
 
 }

@@ -100,7 +100,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
      * @param message 消息
      */
     protected void addDialogAndWait(DialogEnum type, String message) {
-        addDialog(type, ChapterUtil.getMessage(message));
+        addDialog(type, ChapterDialogHelper.getMessage(message));
         // 等待用户点击
         await();
         ShowDialogCommand showDialogCommand = new ShowDialogCommand();
@@ -168,7 +168,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     }
 
     protected void gameOver() {
-        addDialog(DialogEnum.GAME_OVER, ChapterUtil.getMessage("GAME_OVER"));
+        addDialog(DialogEnum.GAME_OVER, ChapterDialogHelper.getMessage("GAME_OVER"));
 
         onGameOver();
     }
@@ -178,7 +178,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     protected void gameWin() {
         onGameWin();
-        addDialog(DialogEnum.GAME_WIN, ChapterUtil.getMessage("GAME_WIN"));
+        addDialog(DialogEnum.GAME_WIN, ChapterDialogHelper.getMessage("GAME_WIN"));
     }
 
     protected void onGameWin() {

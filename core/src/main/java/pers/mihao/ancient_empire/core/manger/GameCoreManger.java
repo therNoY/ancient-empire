@@ -25,7 +25,7 @@ import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
 import pers.mihao.ancient_empire.core.listener.GameContextHelperListener;
-import pers.mihao.ancient_empire.core.listener.ChapterUtil;
+import pers.mihao.ancient_empire.core.listener.ChapterDialogHelper;
 import pers.mihao.ancient_empire.core.listener.GameRunListener;
 import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 import pers.mihao.ancient_empire.core.manger.command.Command;
@@ -224,7 +224,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 coreListener.setGameContext(gameContext);
                 listeners.add(coreListener);
                 if (gameType.equals(GameTypeEnum.STORY)) {
-                    AbstractChapterListener gameRunListener = ChapterUtil.getChapterClass(userMap.getMapName());
+                    AbstractChapterListener gameRunListener = ChapterDialogHelper.getChapterClass(userMap.getMapName());
                     if (gameRunListener != null) {
                         gameRunListener.setGameContext(gameContext);
                         userRecord.setMaxPop(gameRunListener.getMaxPop());

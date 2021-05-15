@@ -8,10 +8,11 @@ import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 
 /**
  * 和用户身份相关的工具类
+ * @author hspcadmin
  */
-public class AuthUtil {
+public class LoginUserHolder {
 
-    private static Logger log = LoggerFactory.getLogger(AuthUtil.class);
+    private static Logger log = LoggerFactory.getLogger(LoginUserHolder.class);
 
     private static ThreadLocal<Integer> authId = new ThreadLocal<>();
     private static ThreadLocal<MyUserDetails> userDetailsThreadLocal = new ThreadLocal<>();

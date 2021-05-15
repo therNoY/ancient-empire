@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.entity.UploadFileLog;
 import pers.mihao.ancient_empire.base.dao.UploadFileLogDao;
 import pers.mihao.ancient_empire.base.service.UploadFileLogService;
@@ -27,7 +27,7 @@ public class UploadFileLogServiceImpl extends ServiceImpl<UploadFileLogDao, Uplo
         uploadFileLog.setFileSize((int) size);
         uploadFileLog.setFileRealName(originalFilename);
         uploadFileLog.setFileId(StringUtil.getUUID());
-        uploadFileLog.setUploadUser(AuthUtil.getUserId());
+        uploadFileLog.setUploadUser(LoginUserHolder.getUserId());
         uploadFileLog.setUploadTime(LocalDateTime.now());
         save(uploadFileLog);
         return uploadFileLog.getFileId();

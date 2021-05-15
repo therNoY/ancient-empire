@@ -39,6 +39,10 @@ public class CommonConstant {
      * 逗号
      */
     public static final String COMMA = ",";
+    /**
+     * 星
+     */
+    public static final String START = "*";
 
     /**
      * linux 分隔符

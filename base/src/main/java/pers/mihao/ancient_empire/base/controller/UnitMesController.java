@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
@@ -147,7 +147,7 @@ public class UnitMesController {
     @DeleteMapping("/api/unitMes")
     public void deleteUserUnit(@RequestParam Integer id) {
         UnitMes unitMes = unitMesService.getUnitMesById(id);
-        if (unitMes != null && unitMes.getCreateUserId().equals(AuthUtil.getUserId())) {
+        if (unitMes != null && unitMes.getCreateUserId().equals(LoginUserHolder.getUserId())) {
             // 其他模板也会引用 先判断是否是草稿 草稿直接删除 否则改成禁用,历史版本同样如此操做
             if (unitMes.getStatus().equals(VersionConstant.DRAFT)) {
                 unitMesService.removeById(unitMes.getId());

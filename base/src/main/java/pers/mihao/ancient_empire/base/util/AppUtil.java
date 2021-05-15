@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.base.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class AppUtil {
 
-    static Logger log = LoggerFactory.getLogger(AuthUtil.class);
+    static Logger log = LoggerFactory.getLogger(LoginUserHolder.class);
 
     /**
      * 根据地图的 region 的index 和map的column 获取position

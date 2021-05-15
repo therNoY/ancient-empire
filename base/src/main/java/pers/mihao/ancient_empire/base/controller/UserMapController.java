@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
@@ -81,13 +81,13 @@ public class UserMapController {
     public RespUserMapDTO getInitUserMap(@PathParam("id") String templateId) {
         UserTemplate userTemplate = userTemplateService.getById(templateId);
         // 获取当前用户
-        Integer id = AuthUtil.getUserId();
+        Integer id = LoginUserHolder.getUserId();
         // 1.获取可用单位信息
         List<UnitMes> unitMesList = unitMesService.getEnableUnitByTempId(id.toString());
         // 2.获取可用地形信息
         List<RegionMes> regionMes = regionMesService.getEnableRegionByTempId(id);
         // 3.获取用户拥有的地图
-        List<UserMap> userAllMaps = userMapService.getUserCreateMap(AuthUtil.getUserId());
+        List<UserMap> userAllMaps = userMapService.getUserCreateMap(LoginUserHolder.getUserId());
         List<UserMap> userMaps = userAllMaps.stream()
             .filter(userMap -> BaseConstant.NO.equals(userMap.getUnSave()))
             .collect(Collectors.toList());
@@ -150,7 +150,7 @@ public class UserMapController {
     @PostMapping("/api/userMap/changeBaseInfo")
     public void changeMapBaseInfo(@RequestBody UserMap userMap) {
         UserMap map = userMapService.getUserMapById(userMap.getUuid());
-        if (!map.getCreateUserId().equals(AuthUtil.getUserId())) {
+        if (!map.getCreateUserId().equals(LoginUserHolder.getUserId())) {
             throw new AeException("权限不足");
         }
         map.setMapName(userMap.getMapName());

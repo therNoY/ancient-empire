@@ -13,7 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.base.bo.Region;
@@ -163,7 +163,7 @@ public class UserRecordServiceImp extends ServiceImpl<UserRecordDAO, UserRecord>
     @Override
     public boolean saveRecord(ReqSaveRecordDTO saveRecordDto) {
 
-        Integer userId = AuthUtil.getUserId();
+        Integer userId = LoginUserHolder.getUserId();
         UserRecord record = userRecordDAO.getFirstByCreateUserIdAndRecordName(userId, saveRecordDto.getName());
         if (record != null) {
             return false;
@@ -187,7 +187,7 @@ public class UserRecordServiceImp extends ServiceImpl<UserRecordDAO, UserRecord>
     @Override
     public boolean saveTempRecord(String uuid) {
         // 1.删除原来的用户的临时地图
-        userRecordDAO.delOtherUnSave(uuid, AuthUtil.getUserId());
+        userRecordDAO.delOtherUnSave(uuid, LoginUserHolder.getUserId());
         // 2.添加
         UserRecord userRecord = getRecordById(uuid);
         userRecord.setRecordName(TEMP_MAP);

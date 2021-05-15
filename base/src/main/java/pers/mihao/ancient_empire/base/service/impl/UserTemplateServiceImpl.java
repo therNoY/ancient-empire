@@ -9,7 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dao.UserTempAttentionDAO;
@@ -97,7 +97,7 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
             UserTemplate defaultTemp = userTemplateService.getById(1);
             defaultTemp.setId(null);
             draftTemp = BeanUtil.copyValueFromParent(defaultTemp, UserTemplateVO.class);
-            draftTemp.setUserId(AuthUtil.getUserId());
+            draftTemp.setUserId(LoginUserHolder.getUserId());
             draftTemp.setStatus(VersionConstant.DRAFT);
             draftTemp.setVersion(0);
             draftTemp.setCreateTime(LocalDateTime.now());

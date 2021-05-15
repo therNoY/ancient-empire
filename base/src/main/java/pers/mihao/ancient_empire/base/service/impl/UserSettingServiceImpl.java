@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.dao.RegionMesDAO;
 import pers.mihao.ancient_empire.base.dao.UserSettingDAO;
 import pers.mihao.ancient_empire.base.entity.UserSetting;
@@ -45,7 +45,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     @Override
     public void updateByUserId(UserSetting userSetting) {
         // 删除缓存
-        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_SETTING) + AuthUtil.getUserId());
+        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_SETTING) + LoginUserHolder.getUserId());
         QueryWrapper<UserSetting> wrapper = new QueryWrapper();
         wrapper.eq("user_id", userSetting.getUserId());
         userSettingDao.update(userSetting, wrapper);

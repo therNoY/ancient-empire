@@ -13,7 +13,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.OncePerRequestFilter;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
+import pers.mihao.ancient_empire.common.bean.UserLanguageSet;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
+import pers.mihao.ancient_empire.common.enums.LanguageEnum;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 
@@ -25,9 +29,11 @@ import java.io.IOException;
 
 /**
  * JWT登录授权过滤器
+ *
  * @author mihao
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
+
     private static Logger log = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
     @Autowired
     private UserDetailsService userDetailsService;
@@ -36,10 +42,12 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
+    UserLanguageSet userLanguageSet;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
+        HttpServletResponse response,
+        FilterChain chain) throws ServletException, IOException {
         // 1.判断如果是OPTIONS 请求直接掉过
         if (request.getMethod().equals(RequestMethod.OPTIONS.toString())) {
             chain.doFilter(request, response);
@@ -57,16 +65,24 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring(this.tokenHead.length());
             // 3. 判断token是否过期 如果token 没有过期就设置 信息到Spring Security 上下文中
             JwtTokenUtil.TokenInfo tokenInfo = JwtTokenUtil.getTokenInfoFromToken(authToken);
-            String userId;
+            String userId = null;
             if (tokenInfo != null && JwtTokenUtil.isEffectiveToken(tokenInfo.getDate())
-                    && (userId = tokenInfo.getInfo()) != null) {
-                AuthUtil.setUserId(Integer.parseInt(userId));
+                && (userId = tokenInfo.getInfo()) != null) {
+                LoginUserHolder.setUserId(Integer.parseInt(userId));
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userId);
-                AuthUtil.setLoginUser(userDetails);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                LoginUserHolder.setLoginUser(userDetails);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 securityContext.setAuthentication(authentication);
+            }
+            UserLanguageSet userLanguageSet = getUserLanguageSet();
+            if (userLanguageSet != null) {
+                UserLanguageSet.LANG.set(userLanguageSet.getLanguageByUserId(userId));
+            } else {
+                // 设置默认
+                UserLanguageSet.LANG.set(LanguageEnum.LANG_ZH);
             }
         } else {
             response.setCharacterEncoding("UTF-8");
@@ -79,7 +95,15 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
         } finally {
             // 保证清除
-            AuthUtil.clear();
+            LoginUserHolder.clear();
         }
+    }
+
+    public UserLanguageSet getUserLanguageSet() {
+        UserLanguageSet userLanguageSet = ApplicationContextHolder.getBean(UserLanguageSet.class);
+        if (userLanguageSet != null) {
+            this.userLanguageSet = userLanguageSet;
+        }
+        return this.userLanguageSet;
     }
 }

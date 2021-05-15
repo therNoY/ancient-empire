@@ -12,7 +12,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.auth.util.AuthUtil;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.dao.RegionMesDAO;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
@@ -45,7 +45,7 @@ public class RegionMesServiceImpl extends ServiceImpl<RegionMesDAO, RegionMes> i
 
         if (regionMes.getId() == null) {
             // 新增地形
-            regionMes.setCreateUserId(AuthUtil.getUserId());
+            regionMes.setCreateUserId(LoginUserHolder.getUserId());
             regionMesDao.insert(regionMes);
         }else {
             regionMesDao.updateById(regionMes);
