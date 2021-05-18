@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.core.robot.handler;
 
-import javafx.util.Pair;
+import pers.mihao.ancient_empire.common.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Tomb;
 import pers.mihao.ancient_empire.base.bo.Unit;

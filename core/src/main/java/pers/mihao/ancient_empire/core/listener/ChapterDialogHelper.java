@@ -16,6 +16,7 @@ import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 public class ChapterDialogHelper {
 
     static Logger log = LoggerFactory.getLogger(ChapterDialogHelper.class);
+
     static Map<String, Map<String, String>> dialogMap;
 
     static {

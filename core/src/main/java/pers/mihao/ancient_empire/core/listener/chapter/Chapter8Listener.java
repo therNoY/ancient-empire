@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.listener.chapter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import javafx.util.Pair;
+import pers.mihao.ancient_empire.common.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;

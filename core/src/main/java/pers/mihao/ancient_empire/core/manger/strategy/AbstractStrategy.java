@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.util.Pair;
+import pers.mihao.ancient_empire.common.util.Pair;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
@@ -62,7 +62,7 @@ public abstract class AbstractStrategy<T> extends BaseHandler {
      * 填充处理结果
      * @param affectUnits
      * @param endUnitDTO
-     * @param endUnitDTO1
+     * @param record
      */
     protected EndUnitDTO warpEndResult(List<Pair<Integer, Integer>> affectUnits, EndUnitDTO endUnitDTO, UserRecord record){
         return endUnitDTO;

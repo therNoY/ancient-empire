@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.core.manger;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import javafx.util.Pair;
+import pers.mihao.ancient_empire.common.util.Pair;
 import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;

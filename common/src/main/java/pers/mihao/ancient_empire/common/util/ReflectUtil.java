@@ -15,7 +15,6 @@ import java.util.Map;
 
 import pers.mihao.ancient_empire.common.dto.GetSetDTO;
 import pers.mihao.ancient_empire.common.vo.AeException;
-import sun.misc.Unsafe;
 
 /**
  * @version 1.0
@@ -218,20 +217,6 @@ public class ReflectUtil {
     }
 
 
-
-    private static Unsafe getUnsafe() {
-        try {
-            Field unsafeStaticField =
-                    Unsafe.class.getDeclaredField("theUnsafe");
-            unsafeStaticField.setAccessible(true);
-            return (Unsafe) unsafeStaticField.get(Unsafe.class);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        throw new AeException();
-    }
 
     /**
      * 通过反射获取对象

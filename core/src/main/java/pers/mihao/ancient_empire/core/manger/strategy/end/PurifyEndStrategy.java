@@ -1,6 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.strategy.end;
 
-import javafx.util.Pair;
+import pers.mihao.ancient_empire.common.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Army;

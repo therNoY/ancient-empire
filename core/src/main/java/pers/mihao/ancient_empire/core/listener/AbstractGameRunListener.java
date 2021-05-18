@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.core.listener;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.util.Pair;
+import pers.mihao.ancient_empire.common.util.Pair;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
