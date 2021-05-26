@@ -6,6 +6,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.common.bean.UserLanguageSet;
+import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.common.util.PropertiesUtil;
 import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 
@@ -25,7 +26,11 @@ public class ChapterDialogHelper {
 
 
     public static AbstractChapterListener getChapterClass(String mapName) {
-        return getChapterClassByLang(mapName, dialogMap.get(UserLanguageSet.LANG.get().type()));
+        LanguageEnum lang = UserLanguageSet.LANG.get();
+        if (lang == null) {
+            lang = LanguageEnum.LANG_ZH;
+        }
+        return getChapterClassByLang(mapName, dialogMap.get(lang.type()));
     }
 
     private static AbstractChapterListener getChapterClassByLang(String mapName, Map<String, String> dialogMap) {
@@ -40,7 +45,11 @@ public class ChapterDialogHelper {
     }
 
     public static String getMessage(String key) {
-        return getMessageByLang(key, dialogMap.get(UserLanguageSet.LANG.get().type()));
+        LanguageEnum lang = UserLanguageSet.LANG.get();
+        if (lang == null) {
+            lang = LanguageEnum.LANG_ZH;
+        }
+        return getMessageByLang(key, dialogMap.get(lang.type()));
     }
 
     private static String getMessageByLang(String key, Map<String, String> dialogMap) {

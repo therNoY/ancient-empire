@@ -46,4 +46,13 @@ public interface UserService extends IService<User> {
      * @return
      */
     String updateUserInfo(ReqUserDTO user);
+
+    /**
+     * 根据手机号获取用户
+     * @param phone
+     * @return
+     */
+    User getUserByPhone(String phone);
+
+    RespAuthDAO registerWeChatUser(RegisterDTO registerDto);
 }

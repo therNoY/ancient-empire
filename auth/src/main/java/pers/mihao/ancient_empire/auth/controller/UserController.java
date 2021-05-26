@@ -1,12 +1,14 @@
 package pers.mihao.ancient_empire.auth.controller;
 
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -20,14 +22,21 @@ import org.springframework.web.servlet.ModelAndView;
 import pers.mihao.ancient_empire.auth.dto.ChangePwdDTO;
 import pers.mihao.ancient_empire.auth.dto.ReqUserDTO;
 import pers.mihao.ancient_empire.auth.dto.RespAuthDAO;
+import pers.mihao.ancient_empire.auth.dto.WeChatInfoDTO;
+import pers.mihao.ancient_empire.auth.dto.WeChatSourceInfoDTO;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
+import pers.mihao.ancient_empire.auth.enums.LoginTypeEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
+import pers.mihao.ancient_empire.auth.util.WeChatUtil;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.email.EmailService;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
@@ -50,6 +59,12 @@ public class UserController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Value("${wx.appid}")
+    String wxAppId;
+
+    @Value("${wx.secret}")
+    String wxSecret;
+
     /**
      * 用户登录
      *
@@ -57,8 +72,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/login")
-    public RespAuthDAO login(@RequestBody @Validated LoginDto loginDto, BindingResult result,
-        HttpServletResponse response) {
+    public RespAuthDAO login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
         RespAuthDAO respAuthDao = userService.login(loginDto);
         if (respAuthDao == null) {
             throw new AeException(40011);
@@ -73,7 +87,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/admin/login")
-    public String adminLogin(@RequestBody @Validated LoginDto loginDto, BindingResult result) {
+    public String adminLogin(@RequestBody LoginDto loginDto) {
         String token = userService.adminLogin(loginDto);
         if (token == null) {
             throw new AeException(40011);
@@ -89,26 +103,34 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/register")
-    public void userRegister(@RequestBody @Validated RegisterDTO registerDto, BindingResult result) {
-        // 先验证邮箱是否存在 再验证用户是否存在
-        User userByEmail = userService.getUserByEmail(registerDto.getEmail());
-        if (userByEmail != null) {
-            log.error("用户注册错误 邮箱 {} 已注册", userByEmail.getName());
-            throw new AeException(40013);
-        }
+    public RespAuthDAO userRegister(@RequestBody RegisterDTO registerDto) {
         User user = userService.getUserByName(registerDto.getUserName());
         if (user != null) {
             log.error("用户注册错误 用户名 {} 重复", user.getName());
             throw new AeException(40012);
         }
-        // 准备发送给邮件服务器
-        // 1.获取token
-        String uuid = UUID.randomUUID().toString();
-        // 2.发送邮件
-        emailService.sendRegisterEmail(registerDto, uuid);
-        // 3.放到缓存中 key email+_REGISTER 时间60s
-        RedisUtil.set(uuid, registerDto, 600L);
+
+        if (StringUtil.isNotBlack(registerDto.getPhone())) {
+            RespAuthDAO respAuthDAO = userService.registerWeChatUser(registerDto);
+            return respAuthDAO;
+        } else {
+            // 邮箱注册 先验证邮箱是否存在 再验证用户是否存在
+            User userByEmail = userService.getUserByEmail(registerDto.getEmail());
+            if (userByEmail != null) {
+                log.error("用户注册错误 邮箱 {} 已注册", userByEmail.getName());
+                throw new AeException(40013);
+            }
+            // 准备发送给邮件服务器
+            // 1.获取token
+            String uuid = UUID.randomUUID().toString();
+            // 2.发送邮件
+            emailService.sendRegisterEmail(registerDto, uuid);
+            // 3.放到缓存中 key email+_REGISTER 时间60s
+            RedisUtil.set(uuid, registerDto, 600L);
+            return null;
+        }
     }
+
 
     /**
      * 用户通过邮箱确认注册的api
@@ -172,4 +194,33 @@ public class UserController {
     public String getUserNameById(@PathParam("id") Integer userId) {
         return userService.getUserById(userId).getName();
     }
+
+
+    @PostMapping("/user/getWeiXinPhone")
+    public WeChatInfoDTO getWeiXinUserInfo(@RequestBody WeChatSourceInfoDTO weChatSourceInfoDTO) {
+
+        // 1.获取用户手机号
+        String codeSessionKey = WeChatUtil.codeChangeSessionKey(weChatSourceInfoDTO.getCode(), wxAppId, wxSecret);
+        if (StringUtil.isBlack(codeSessionKey)) {
+            throw new AeException(40016);
+        }
+        WeChatInfoDTO phoneInfo = WeChatUtil
+            .decrypt(codeSessionKey, weChatSourceInfoDTO.getEncryptedData(), weChatSourceInfoDTO.getIv());
+
+        User user = userService.getUserByPhone(phoneInfo.getPhoneNumber());
+        if (user != null) {
+            // 用户属于老用户
+            phoneInfo.setUserName(user.getName());
+            String token = JwtTokenUtil.generateToken(user.getId().toString());
+            phoneInfo.setToken(token);
+            phoneInfo.setUserId(user.getId().toString());
+        } else {
+            // 新用户
+            WeChatInfoDTO userInfo = WeChatUtil.decrypt(codeSessionKey, weChatSourceInfoDTO.getUserInfoEncrypted(),
+                weChatSourceInfoDTO.getUserInfoIv());
+            BeanUtil.copyValueByGetSet(userInfo, phoneInfo);
+        }
+        return phoneInfo;
+    }
+
 }

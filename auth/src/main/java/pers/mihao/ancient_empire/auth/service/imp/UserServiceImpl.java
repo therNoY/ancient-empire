@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.dao.PermissionDao;
 import pers.mihao.ancient_empire.auth.dao.UserDao;
 import pers.mihao.ancient_empire.auth.dao.UserRoleRelationDao;
@@ -22,6 +23,7 @@ import pers.mihao.ancient_empire.auth.dto.RespAuthDAO;
 import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
+import pers.mihao.ancient_empire.auth.enums.LoginTypeEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
@@ -132,6 +134,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         user.setCreateTime(LocalDateTime.now());
         user.setEmail(registerDto.getEmail());
+        user.setLoginType(LoginTypeEnum.PC_H5.getCode());
         userDao.insert(user);
         if (user.getId() != null) {
             UserRoleRelation userRoleRelation = new UserRoleRelation();
@@ -157,4 +160,34 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return JwtTokenUtil.generateToken(user.getUserName());
     }
 
+    @Override
+    public User getUserByPhone(String phone) {
+        QueryWrapper<User> userWp = new QueryWrapper<>();
+        userWp.eq("login_type", LoginTypeEnum.MP_WE_CHAT.getCode())
+            .eq("phone", phone);
+        User user = userDao.selectOne(userWp);
+        return user;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public RespAuthDAO registerWeChatUser(RegisterDTO registerDto) {
+        // 微信注册 直接保存
+        User newUser = new User();
+        newUser.setName(registerDto.getUserName());
+        newUser.setPassword(passwordEncoder.encode(registerDto.getPhone()));
+        newUser.setCreateTime(LocalDateTime.now());
+        newUser.setLoginType(LoginTypeEnum.MP_WE_CHAT.getCode());
+        newUser.setPhone(registerDto.getPhone());
+        save(newUser);
+
+        UserRoleRelation userRoleRelation = new UserRoleRelation();
+        userRoleRelation.setUserId(newUser.getId());
+        userRoleRelationDao.insert(userRoleRelation);
+
+        String token = JwtTokenUtil.generateToken(newUser.getId().toString());
+        RespAuthDAO respAuthDAO = new RespAuthDAO(newUser.getName(), registerDto.getPhone(), token);
+        respAuthDAO.setUserId(newUser.getId());
+        return respAuthDAO;
+    }
 }

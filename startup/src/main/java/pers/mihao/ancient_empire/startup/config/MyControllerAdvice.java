@@ -2,6 +2,8 @@ package pers.mihao.ancient_empire.startup.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,11 +30,13 @@ public class MyControllerAdvice {
     @ExceptionHandler(value = Throwable.class)
     public RespJson allErrorHandler(Exception ex) {
         log.error("", ex);
-        if (ex instanceof AeException) {
+        if (ex instanceof DataAccessException) {
+            return RespUtil.error(50001);
+        } else if (ex instanceof AeException) {
             AeException e = (AeException) ex;
             return RespUtil.error(e.getCode(), e.getMes());
         }
-        return RespUtil.error(ex.getMessage());
+        return RespUtil.error();
     }
 
 }

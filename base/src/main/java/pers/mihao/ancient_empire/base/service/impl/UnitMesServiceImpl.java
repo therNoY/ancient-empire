@@ -23,7 +23,7 @@ import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
-import pers.mihao.ancient_empire.base.controller.GameImgController;
+import pers.mihao.ancient_empire.base.controller.GameFileController;
 import pers.mihao.ancient_empire.base.dao.UnitMesDAO;
 import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveUnitMesDTO;
@@ -68,7 +68,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     @Autowired
     UnitAbilityService unitAbilityService;
     @Autowired
-    GameImgController gameImgController;
+    GameFileController gameFileController;
 
 
     /**
@@ -322,7 +322,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
 
             // 生成相应的文件
             try {
-                gameImgController.moveUnitImgName2Id(reqSaveUnitMesDTO.getNewUploadImg(), unitMes.getId());
+                gameFileController.moveUnitImgName2Id(reqSaveUnitMesDTO.getNewUploadImg(), unitMes.getId());
             } catch (IOException e) {
                 log.error("单位图片复制错误", e);
                 throw new AeException(e.getMessage());

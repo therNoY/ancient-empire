@@ -9,12 +9,22 @@ public class RegisterDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotBlank(message = "用户名不能为空")
+    private String phone;
+
+    @NotBlank
     private String userName;
-    @Email(message = "邮箱格式错误")
+    @Email
     private String email;
-    @NotBlank(message = "密码不能为空")
+    @NotBlank
     private String password;
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public String getUserName() {
         return userName;

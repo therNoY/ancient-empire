@@ -17,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, name, password, icon, email, note, create_time, login_time, status
+        id, name, password, icon, email, note, create_time, login_time, status, phone, login_type
     </sql>
 
 

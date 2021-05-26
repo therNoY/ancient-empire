@@ -4,6 +4,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.common.bean.UserLanguageSet;
+import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.common.util.PropertiesUtil;
 
 /**
@@ -22,7 +23,11 @@ public class ErrorCodeHelper {
 
 
     public static String getErrorMes(Integer errorCode) {
-        return getByLanguageMap(errorCode, errCodeMap.get(UserLanguageSet.LANG.get().type()));
+        LanguageEnum lang = UserLanguageSet.LANG.get();
+        if (lang == null) {
+            lang = LanguageEnum.LANG_ZH;
+        }
+        return getByLanguageMap(errorCode, errCodeMap.get(lang.type()));
     }
 
     private static String getByLanguageMap(Integer errorCode, Map<String, String> errCodeMap) {

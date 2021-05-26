@@ -45,6 +45,13 @@ public class User implements Serializable {
      */
     private String email;
 
+    private String phone;
+
+    /**
+     * 登录类型
+     */
+    private Integer loginType;
+
     /**
      * 备注信息
      */
@@ -127,6 +134,22 @@ public class User implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Integer getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(Integer loginType) {
+        this.loginType = loginType;
     }
 
     @Override

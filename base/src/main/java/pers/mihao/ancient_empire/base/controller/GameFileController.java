@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
@@ -39,6 +40,7 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.FileUtil;
 import pers.mihao.ancient_empire.common.util.ImgUtil;
+import pers.mihao.ancient_empire.common.util.IntegerUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
 
@@ -51,7 +53,7 @@ import pers.mihao.ancient_empire.common.vo.AeException;
  * @since 2019-08-31
  */
 @Controller
-public class GameImgController {
+public class GameFileController {
 
     Logger log = LoggerFactory.getLogger(this.toString());
 
@@ -63,6 +65,8 @@ public class GameImgController {
 
     @Value("${file.img.upload.path}")
     String filePathHead;
+
+    String fontPath = "font\\aeFont.ttf";
 
     /**
      * 模板的文件夹
@@ -173,7 +177,7 @@ public class GameImgController {
      * @param response
      */
     @RequestMapping("/img/ae/{type}/{id}/{fileName}")
-    public void downloadFile(@PathVariable String type, @PathVariable String fileName, @PathVariable String id,
+    public void downloadImgFile(@PathVariable String type, @PathVariable String fileName, @PathVariable String id,
         HttpServletResponse response, HttpServletRequest request) {
 
         response.setContentType("image/png");
@@ -189,6 +193,7 @@ public class GameImgController {
 
         String fileRealPath, fileRealName;
         if (type.equals(UNIT_PATH) && !fileName.startsWith(TEMPORARY_FILE_PREFIX) && !id.equals(TEMPORARY_PATH)) {
+
             // 获取单位的图片根据Id获取
             String realName = fileName.split("\\.")[0];
             String fileNameSuffix = null, unitId;
@@ -197,6 +202,10 @@ public class GameImgController {
                 unitId = realName.split(CommonConstant.UNDER_LINE)[0];
             } else {
                 unitId = realName;
+            }
+            if (!IntegerUtil.isNum(unitId)) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return;
             }
             UnitMes unitMes = unitMesService.getUnitMesById(Integer.valueOf(unitId));
             fileRealName = fileNameSuffix == null ? unitMes.getImgIndex() : unitMes.getImgIndex() + fileNameSuffix;
@@ -208,7 +217,7 @@ public class GameImgController {
         File file = new File(fileRealPath);
         if (file.exists()) {
             try {
-                returnFile(response, file);
+                returnFile(response, file, null);
             } catch (IOException e) {
                 log.error("返回文件异常", e);
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -218,6 +227,7 @@ public class GameImgController {
         }
     }
 
+
     /**
      * 请求http返回文件 会使用前端缓存
      *
@@ -226,8 +236,7 @@ public class GameImgController {
      * @throws IOException
      */
     @KnowledgePoint("Http请求资源的前端缓存的使用")
-    private void returnFile(HttpServletResponse response, File file)
-        throws IOException {
+    private void returnFile(HttpServletResponse response, File file, Map<String, String> head) throws IOException {
 
         // 缓存的key
         String catchKey = file.getParentFile().getName() + File.separator + file.getName();
@@ -238,11 +247,21 @@ public class GameImgController {
             BufferedInputStream in = new BufferedInputStream(fis)) {
             long totalSize = fis.available();
 
-            response.addHeader("Content-Disposition", "inline;" + URLEncoder.encode(file.getName(), "UTF-8"));
+            if (StringUtil.isNotBlack(response.getHeader("Content-Disposition"))) {
+                response.addHeader("Content-Disposition", "inline;" + URLEncoder.encode(file.getName(), "UTF-8"));
+            }
+
             response.addHeader("Content-Length", String.valueOf(totalSize));
             response.addHeader("Pragma", "none");
             response.setHeader("Last-Modified", DateUtil.getDataTime());
             response.setHeader("ETag", catchKey);
+
+            if (head != null) {
+                for (Map.Entry<String, String> entry : head.entrySet()) {
+                    response.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+
             response.setStatus(HttpServletResponse.SC_OK);
             byte[] temp = new byte[bufferSize];
             int size;
@@ -250,8 +269,18 @@ public class GameImgController {
                 outputStream.write(temp, 0, size);
             }
             outputStream.flush();
-        } finally {
+        } catch (Exception e) {
+            log.error("", e);
         }
+    }
+
+    @RequestMapping("/font/download/aeFont.ttf")
+    public void downloadFontFile(HttpServletResponse response, HttpServletRequest request) throws IOException {
+        File file = new File(StringUtil.joinWith(File.separator, filePathHead, fontPath));
+        Map<String, String> map = new HashMap<>(16);
+        map.put("Content-Type", "font/ttf");
+        map.put("Content-Disposition", "attachment;" + URLEncoder.encode(file.getName(), "UTF-8"));
+        returnFile(response, file, map);
     }
 
     @RequestMapping("/api/unitMes/img/create")

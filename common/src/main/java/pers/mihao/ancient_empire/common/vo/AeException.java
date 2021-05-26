@@ -18,6 +18,7 @@ public class AeException extends RuntimeException {
     }
 
     public AeException(Integer code) {
+        super("错误码： " + code);
         this.code = code;
     }
 

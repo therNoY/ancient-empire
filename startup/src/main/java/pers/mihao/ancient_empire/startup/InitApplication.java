@@ -14,12 +14,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import pers.mihao.ancient_empire.base.controller.GameImgController;
+import pers.mihao.ancient_empire.base.controller.GameFileController;
 import pers.mihao.ancient_empire.base.dao.UserTemplateDAO;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
-import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 
@@ -39,7 +38,7 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
     RegionMesService regionMesService;
 
     @Autowired
-    GameImgController gameImgController;
+    GameFileController gameFileController;
 
     @Override
     public void run(String... args) throws Exception {
@@ -54,7 +53,7 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
      */
     private void delNoUseImg() {
 
-        gameImgController.delTempFile();
+        gameFileController.delTempFile();
 
         List<Pair<Class, String[]>> delList = new ArrayList<>();
         delList.add(new Pair<>(UserTemplateDAO.class, new String[]{"summonAnimation", "attachAnimation", "summonAnimation", "levelupAnimation"}));

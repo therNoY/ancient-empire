@@ -6,7 +6,6 @@ package pers.mihao.ancient_empire.auth.dto;
 public class RespAuthDAO {
 
     private Integer userId;
-
     private String userName;
     private String password;
     private String token;
