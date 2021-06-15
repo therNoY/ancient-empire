@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Army;
@@ -10,9 +11,11 @@ import pers.mihao.ancient_empire.base.bo.Tomb;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.ColorEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.config.AppConfig;
+import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyStatusInfoDTO;
@@ -23,6 +26,7 @@ import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.start.StartStrategy;
+import pers.mihao.ancient_empire.core.util.GameCoreUtil;
 
 /**
  * 回合结束事件处理器 也是回合开始处理器  当一个回合结束时处理
@@ -103,11 +107,18 @@ public class RoundEndHandler extends CommonHandler {
         gameInfoDTO.setCurrColor(currArmy().getColor());
         gameInfoDTO.setCurrPlayer(currArmy().getPlayer());
         gameInfoDTO.setCurrArmyIndex(record().getCurrArmyIndex());
+
+        // 新回合的提示
+        JSONObject newRoundTip = new JSONObject();
+        newRoundTip.put(ExtMes.MESSAGE, GameCoreUtil.getMessage("tip.newRecord", record().getCurrentRound(), addMoney));
+        newRoundTip.put(ExtMes.COLOR, currArmy().getColor());
+
         commandStream()
             .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_RECORD_INFO, ExtMes.RECORD_INFO, gameInfoDTO)
             .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_ARMY_INFO, ExtMes.ARMY_INFO, armyStatusInfoDTO)
+            .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_SYSTEM_NEWS, newRoundTip)
             .toGameCommand().addOrderCommand(GameCommendEnum.SHOW_GAME_NEWS, ExtMes.MESSAGE,
-            currArmy().getColor() + "色方回合收入" + addMoney);
+            EnumUtil.valueOf(ColorEnum.class, currArmy().getColor()).getZhString() + "色方回合收入" + addMoney);
 
     }
 

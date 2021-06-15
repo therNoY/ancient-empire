@@ -65,7 +65,6 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             showAction(gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         }else {
-            showHeavenFuryAnim(gameEvent.getInitiateSite());
             changeCurrPoint(gameEvent.getInitiateSite());
 
             Pair<Integer, UnitInfo> unitMes = changeCurrUnit(gameEvent.getInitiateSite());

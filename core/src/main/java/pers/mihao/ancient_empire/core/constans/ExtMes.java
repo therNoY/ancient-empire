@@ -14,6 +14,8 @@ public class ExtMes {
      */
     public static final String BG_COLOR = "bg_color";
 
+    public static final String COLOR = "color";
+
     /**
      * 地形信息
      */
@@ -109,5 +111,10 @@ public class ExtMes {
      * 发出消息
      */
     public static final String MESSAGE = "message";
+
+    /**
+     * 发出消息
+     */
+    public static final String SEND_MESSAGE = "send_message";
 
 }

@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.Army;
@@ -36,7 +34,7 @@ import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 import pers.mihao.ancient_empire.core.manger.command.RoomCommand;
-import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
 import java.util.ArrayList;
@@ -63,7 +61,7 @@ public class GameController {
     @Autowired
     GameCoreManger gameCoreManger;
     @Autowired
-    GameSessionManger gameSessionManger;
+    WebSocketSessionManger webSocketSessionManger;
     @Autowired
     GameRoomService roomService;
     @Autowired
@@ -77,7 +75,7 @@ public class GameController {
      * @return
      */
     @PostMapping("/api/map/init")
-    public UserRecord registerUserMap(@RequestBody @Validated InitMapDTO initMapDTO, BindingResult result) {
+    public UserRecord registerUserMap(@RequestBody InitMapDTO initMapDTO) {
         int playerCount = 1;
         initMapDTO.setPlayer(new HashMap<>(16));
         // 1.获取用户地图
@@ -208,7 +206,7 @@ public class GameController {
         roomCommend.setRoomCommend(RoomCommendEnum.START_GAME);
         roomCommend.setRecordId(userRecord.getUuid());
         roomCommend.setMessage("准备开始游戏...");
-        gameSessionManger.sendMessage2Room(roomCommend, reqRoomIdDTO.getRoomId());
+        webSocketSessionManger.sendMessage2Room(roomCommend, reqRoomIdDTO.getRoomId());
         // 3.返回前端保存
         return userRecord;
     }
@@ -255,14 +253,14 @@ public class GameController {
     public void sendMessage(@RequestBody SendMessageDTO sendMessageDTO) {
         switch (sendMessageDTO.getSendTypeEnum()) {
             case SEND_TO_GAME:
-                String gameId = gameSessionManger.getUserGameId(LoginUserHolder.getUserId());
+                String gameId = webSocketSessionManger.getUserGameId(LoginUserHolder.getUserId());
                 GameCommand command = new GameCommand();
                 command.setGameCommendEnum(GameCommendEnum.SHOW_GAME_NEWS);
                 JSONObject extData = new JSONObject(2);
                 extData.put(ExtMes.MESSAGE, sendMessageDTO.getMessage());
                 command.setExtMes(extData);
                 command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
-                gameSessionManger.sendMessage(command, gameId);
+                webSocketSessionManger.sendMessage(command, gameId);
                 break;
             case SEND_TO_SYSTEM:
             case SEND_TO_GAME_USER:

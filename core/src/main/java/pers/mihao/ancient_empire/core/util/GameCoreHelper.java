@@ -92,4 +92,6 @@ public class GameCoreHelper {
         return regions.get((row - 1) * mapColumn - 1 + column);
     }
 
+
+
 }

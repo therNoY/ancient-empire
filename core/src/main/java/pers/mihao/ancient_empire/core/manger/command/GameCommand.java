@@ -1,19 +1,29 @@
 package pers.mihao.ancient_empire.core.manger.command;
 
 import com.alibaba.fastjson.JSONObject;
+import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.common.enums.LanguageEnum;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.util.EnumUtil;
+import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
+import pers.mihao.ancient_empire.core.util.GameCoreHelper;
+import pers.mihao.ancient_empire.core.util.GameCoreUtil;
 
 /**
  * 发送给前端处理的任务
+ *
  * @Author mh32736
  * @Date 2020/9/17 16:26
  */
-public class GameCommand extends AbstractCommand{
+public class GameCommand extends AbstractCommand {
 
     /**
      * 游戏命令类型枚举
@@ -107,14 +117,40 @@ public class GameCommand extends AbstractCommand{
     }
 
     @Override
+    public Command beforeSend(User user) {
+        this.setMessagePrefix(this, user);
+        return this;
+    }
+
+    private void setMessagePrefix(Command command, User user) {
+        GameCommand gameCommand = (GameCommand) command;
+        if (gameCommand.getGameCommendEnum().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
+            String oldMes = gameCommand.getExtMes().getString(ExtMes.MESSAGE);
+            if (LoginUserHolder.getLoginUser() != null) {
+                gameCommand.getExtMes()
+                    .put(ExtMes.SEND_MESSAGE, "【" + LoginUserHolder.getLoginUser().getUsername() + "】: " + oldMes);
+            } else {
+                gameCommand.getExtMes().put(ExtMes.SEND_MESSAGE, "【系统消息】" + oldMes);
+            }
+        } else if (gameCommand.getGameCommendEnum().equals(GameCommendEnum.SHOW_SYSTEM_NEWS)) {
+            GameCoreUtil.Globalization globalization = gameCommand.getExtMes()
+                .getObject(ExtMes.MESSAGE, GameCoreUtil.Globalization.class);
+            LanguageEnum languageEnum = EnumUtil
+                .valueOf(LanguageEnum.class, getUserSettingService().getUserSettingById(user.getId()).getLanguage());
+            String message = GameCoreUtil.getMessageByLang(globalization, languageEnum);
+            gameCommand.getExtMes().put(ExtMes.SEND_MESSAGE, message);
+        }
+    }
+
+    @Override
     public String toString() {
         return "GameCommand{" +
-                ", gameCommendEnum=" + gameCommendEnum +
-                ", aimSite=" + aimSite +
-                ", aimUnit=" + aimUnit +
-                ", aimRegion=" + aimRegion +
-                ", unitIndex=" + unitIndex +
-                ", extMes=" + extMes +
-                '}';
+            ", gameCommendEnum=" + gameCommendEnum +
+            ", aimSite=" + aimSite +
+            ", aimUnit=" + aimUnit +
+            ", aimRegion=" + aimRegion +
+            ", unitIndex=" + unitIndex +
+            ", extMes=" + extMes +
+            '}';
     }
 }

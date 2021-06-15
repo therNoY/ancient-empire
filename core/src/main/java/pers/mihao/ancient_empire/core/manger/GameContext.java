@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.manger;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Region;
@@ -74,6 +75,7 @@ public class GameContext extends UserTemplateHelper {
     /**
      * 开始游戏控制器
      */
+    @JSONField(serialize = false)
     private CyclicBarrier startGame;
 
     /**
@@ -124,11 +126,13 @@ public class GameContext extends UserTemplateHelper {
     /**
      * 游戏运行监听
      */
+    @JSONField(serialize = false)
     private List<GameRunListener> gameRunListeners;
 
     /**
      * 帮助实现交互的
      */
+    @JSONField(serialize = false)
     private InteractiveLock interactiveLock = new InteractiveLock();
 
     public GameContext() {

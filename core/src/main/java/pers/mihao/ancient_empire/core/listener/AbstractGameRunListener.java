@@ -17,7 +17,7 @@ import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.command.ShowDialogCommand;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
-import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
 import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
@@ -26,7 +26,7 @@ import pers.mihao.ancient_empire.core.robot.ActionIntention;
  */
 public abstract class AbstractGameRunListener extends CommonHandler implements GameRunListener {
 
-    private static GameSessionManger sessionManger;
+    private static WebSocketSessionManger sessionManger;
 
     /**
      * 标记当前上线问是否还有效
@@ -39,7 +39,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     private final Object lockObj = new Object();
 
     static {
-        sessionManger = ApplicationContextHolder.getBean(GameSessionManger.class);
+        sessionManger = ApplicationContextHolder.getBean(WebSocketSessionManger.class);
     }
 
     @Override

@@ -20,7 +20,7 @@ import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
 
 /**
  * 游戏监控的
@@ -35,7 +35,7 @@ public class GameMonitorController {
     @Autowired
     GameCoreManger gameCoreManger;
     @Autowired
-    GameSessionManger gameSessionManger;
+    WebSocketSessionManger webSocketSessionManger;
 
     @RequestMapping("/api/monitor")
     public Object getGameDetailById(@RequestBody MonitorDTO monitorDTO) {
@@ -76,8 +76,8 @@ public class GameMonitorController {
 
     private JSONObject getSessionMessage() {
         JSONObject jsonObject = new JSONObject();
-        Map gameSessionMap = (Map) ReflectUtil.getValueByFieldName(gameSessionManger, "gameSessionMap");
-        Map roomSessionMap = (Map) ReflectUtil.getValueByFieldName(gameSessionManger, "roomSessionMap");
+        Map gameSessionMap = (Map) ReflectUtil.getValueByFieldName(webSocketSessionManger, "gameSessionMap");
+        Map roomSessionMap = (Map) ReflectUtil.getValueByFieldName(webSocketSessionManger, "roomSessionMap");
         jsonObject.put("gameSession", gameSessionMap);
         jsonObject.put("roomSessionMap", roomSessionMap);
         return jsonObject;

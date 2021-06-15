@@ -32,7 +32,7 @@ import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
-import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
 import pers.mihao.ancient_empire.core.robot.RobotManger;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
@@ -46,7 +46,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     private Logger log = LoggerFactory.getLogger(GameCoreManger.class);
     @Autowired
-    GameSessionManger gameSessionManger;
+    WebSocketSessionManger webSocketSessionManger;
     @Autowired
     UserMapService userMapService;
     @Autowired
@@ -110,9 +110,15 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             gameContext.onClickTip();
             return;
         }
-
+        boolean roolBackGame = false;
         // 备份内存数据
-        GameContext cloneContext = BeanUtil.deptClone(gameContext);
+        GameContext cloneContext = null;
+        if (roolBackGame) {
+            cloneContext = BeanUtil.deptClone(gameContext);
+            cloneContext.setGameRunListeners(gameContext.getGameRunListeners());
+            cloneContext.setInteractiveLock(gameContext.getInteractiveLock());
+        }
+        
         GameCoreHelper.setContext(gameContext);
         try {
             Class clazz = handlerMap.get(event.getEvent());
@@ -126,7 +132,9 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         } catch (Exception e) {
             log.error("执行任务出错: {}, 回退", event, e);
             gameContext = null;
-            contextMap.put(event.getId(), cloneContext);
+            if (roolBackGame) {
+                contextMap.put(event.getId(), cloneContext);
+            }
         } finally {
             GameContext.clear();
             GameCoreHelper.removeContext();
@@ -152,13 +160,13 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             if (CollectionUtil.isNotEmpty(orderCommand)) {
                 // 发送了有序命令
                 gameContext.getInteractiveLock().executionIng();
-                gameSessionManger.sendOrderMessage2Game(orderCommand, gameId);
+                webSocketSessionManger.sendOrderMessage2Game(orderCommand, gameId);
             }
 
             for (Command command : commands) {
                 if (command.getOrder() == null) {
                     GameCommand gameCommand = (GameCommand) command;
-                    gameSessionManger.sendMessage(gameCommand, gameId);
+                    webSocketSessionManger.sendMessage(gameCommand, gameId);
                 }
             }
         }
@@ -238,7 +246,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
                 try {
                     log.info("开始检测上下文：{} 如果没有完成 就会撤销", userRecord.getUuid());
-                    cyclicBarrier.await(60, TimeUnit.SECONDS);
+                    cyclicBarrier.await(10, TimeUnit.SECONDS);
                     onGameStart(gameContext);
                 } catch (InterruptedException | BrokenBarrierException e) {
                     log.error("", e);

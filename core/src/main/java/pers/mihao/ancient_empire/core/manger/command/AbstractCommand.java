@@ -1,5 +1,8 @@
 package pers.mihao.ancient_empire.core.manger.command;
 
+import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.base.service.UserSettingService;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 
 /**
@@ -43,5 +46,14 @@ public abstract class AbstractCommand implements Command {
 
     public void setSendTypeEnum(SendTypeEnum sendTypeEnum) {
         this.sendTypeEnum = sendTypeEnum;
+    }
+
+    @Override
+    public Command beforeSend(User user) {
+        return this;
+    }
+
+    protected UserSettingService getUserSettingService(){
+        return ApplicationContextHolder.getBean(UserSettingService.class);
     }
 }

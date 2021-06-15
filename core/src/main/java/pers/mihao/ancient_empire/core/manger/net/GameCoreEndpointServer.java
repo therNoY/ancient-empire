@@ -53,7 +53,7 @@ import pers.mihao.ancient_empire.core.manger.event.RoomEvent;
 public class GameCoreEndpointServer {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    private static GameSessionManger gameSessionManger;
+    private static WebSocketSessionManger webSocketSessionManger;
     private static GameCoreManger gameCoreManger;
     private static UserService userService;
     private static GameRoomService gameRoomService;
@@ -76,7 +76,7 @@ public class GameCoreEndpointServer {
     private String id;
 
     static {
-        gameSessionManger = ApplicationContextHolder.getBean(GameSessionManger.class);
+        webSocketSessionManger = ApplicationContextHolder.getBean(WebSocketSessionManger.class);
         gameCoreManger = ApplicationContextHolder.getBean(GameCoreManger.class);
         userService = ApplicationContextHolder.getBean(UserService.class);
         gameRoomService = ApplicationContextHolder.getBean(GameRoomService.class);
@@ -114,7 +114,7 @@ public class GameCoreEndpointServer {
                         log.error("加入失败：{}", id);
                         closeSession(session);
                     } else {
-                        joinSession = gameSessionManger.addNewGameSession(session, id, connectUser);
+                        joinSession = webSocketSessionManger.addNewGameSession(session, id, connectUser);
                     }
                     break;
                 case CREATE_ROOM:
@@ -125,12 +125,17 @@ public class GameCoreEndpointServer {
                         ReqRoomIdDTO reqRoomIdDTO = new ReqRoomIdDTO();
                         reqRoomIdDTO.setRoomId(gameRoom.getRoomId());
                         reqRoomIdDTO.setUserId(Integer.valueOf(userId));
-                        joinGameCtlArmyColor = gameRoomService.playerJoinRoom(reqRoomIdDTO);
+                        try {
+                            joinGameCtlArmyColor = gameRoomService.playerJoinRoom(reqRoomIdDTO);
+                        } catch (Exception e) {
+                            log.error("玩家加入房间失败", e);
+                        }
                     }
                     // 处理创建一定能成功 不能就是有问题
                     if (StringUtil.isNotBlack(joinGameCtlArmyColor)) {
+                        log.info("玩家加入房间成功");
                         RedisUtil.delKey(BaseConstant.AE_ROOM + id);
-                        joinSession = gameSessionManger.addNewRoomSession(session, id, connectUser);
+                        joinSession = webSocketSessionManger.addNewRoomSession(session, id, connectUser);
                         RoomEvent roomEvent = new RoomEvent(this.id, RoomEventEnum.JOIN_ROOM, connectUser);
                         roomEvent.setArmyColor(joinGameCtlArmyColor);
                         handleRoomEvent(roomEvent);
@@ -143,7 +148,7 @@ public class GameCoreEndpointServer {
                     reqRoomIdDTO.setRoomId(id);
                     reqRoomIdDTO.setUserId(Integer.valueOf(userId));
                     joinGameCtlArmyColor = gameRoomService.playerJoinRoom(reqRoomIdDTO);
-                    joinSession = gameSessionManger.addNewRoomSession(session, id, connectUser);
+                    joinSession = webSocketSessionManger.addNewRoomSession(session, id, connectUser);
                     if (StringUtil.isNotBlack(joinGameCtlArmyColor)) {
                         RoomEvent roomEvent = new RoomEvent(this.id, RoomEventEnum.JOIN_ROOM, connectUser);
                         roomEvent.setArmyColor(joinGameCtlArmyColor);
@@ -245,19 +250,19 @@ public class GameCoreEndpointServer {
         switch (roomEvent.getEventType()) {
             case SEND_MESSAGE:
                 roomCommand.setRoomCommend(RoomCommendEnum.SEND_MESSAGE);
-                roomCommand.setMessage("玩家【" + roomEvent.getUser().getName() + "】: " + roomEvent.getMessage());
+                roomCommand.setMessage("【" + roomEvent.getUser().getName() + "】: " + roomEvent.getMessage());
                 break;
             case JOIN_ROOM:
                 roomCommand.setJoinArmy(roomEvent.getArmyColor());
                 roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
-                roomCommand.setMessage("玩家【" + roomEvent.getUser().getName() + "】: " + "加入房间");
+                roomCommand.setMessage("【" + roomEvent.getUser().getName() + "】: " + "加入房间");
                 break;
             default:
                 break;
         }
         roomCommand.setUserName(roomEvent.getUser().getName());
         roomCommand.setUserId(roomEvent.getUser().getId().toString());
-        gameSessionManger.sendMessage2Room(roomCommand, roomEvent.getId());
+        webSocketSessionManger.sendMessage2Room(roomCommand, roomEvent.getId());
     }
 
 
@@ -271,11 +276,11 @@ public class GameCoreEndpointServer {
             case STAND_GAME:
             case NET_GAME:
             case CHAPTER_GAME:
-                gameSessionManger.removeGameSession(id, session);
+                webSocketSessionManger.removeGameSession(id, session);
                 break;
             case CREATE_ROOM:
             case JOIN_ROOM:
-                gameSessionManger.userLevelRoom(id, session);
+                webSocketSessionManger.userLevelRoom(id, session);
                 break;
             case WORLD:
             case FRIEND:

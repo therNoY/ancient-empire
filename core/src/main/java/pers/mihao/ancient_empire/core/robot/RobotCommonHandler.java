@@ -21,12 +21,9 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
-import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
-import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
-import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
-import pers.mihao.ancient_empire.core.manger.command.GameCommand;
+import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
@@ -46,11 +43,11 @@ public abstract class RobotCommonHandler extends CommonHandler {
     private List<RegionInfo> threatenedRegion;
 
     protected static GameCoreManger gameCoreManger;
-    protected static GameSessionManger gameSessionManger;
+    protected static WebSocketSessionManger webSocketSessionManger;
 
     static {
         gameCoreManger = ApplicationContextHolder.getBean(GameCoreManger.class);
-        gameSessionManger = ApplicationContextHolder.getBean(GameSessionManger.class);
+        webSocketSessionManger = ApplicationContextHolder.getBean(WebSocketSessionManger.class);
     }
 
     /**

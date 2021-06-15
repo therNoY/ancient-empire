@@ -3,8 +3,8 @@ package pers.mihao.ancient_empire.core.eums;
 import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /**
- * 网络连接类型枚举
- * @Author mh32736
+ * WS连接类型
+ * @Author mihao
  * @Date 2021/3/4 9:29
  */
 public enum NetConnectTypeEnum implements BaseEnum {

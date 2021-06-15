@@ -18,31 +18,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.event.AppRoomEvent;
 import pers.mihao.ancient_empire.base.service.GameRoomService;
 import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
-import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.RoomCommendEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 import pers.mihao.ancient_empire.core.manger.command.Command;
-import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.command.RoomCommand;
 
 /**
  * 管理用户游戏连接的
  *
- * @version 1.0
  * @author mihao
+ * @version 1.0
  * @date 2020\9\14 0014 23:24
  */
 @Manger
-public class GameSessionManger {
+public class WebSocketSessionManger {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -62,7 +58,6 @@ public class GameSessionManger {
 
     @Autowired
     UserService userService;
-
     @Autowired
     private GameRoomService gameRoomService;
     @Autowired
@@ -88,7 +83,8 @@ public class GameSessionManger {
             gameSession.setSessionId(session.getId());
             list.add(gameSession);
             playerCount.incrementAndGet();
-            log.info("将玩家：{} 加入到游戏：{}中, sessionId:{}, 此局游戏目前{}人", user.getName(), recordId, session.getId(), list.size());
+            log.info("将玩家：{} 加入到游戏：{}中, sessionId:{}, 此局游戏目前{}人", user.getName(), recordId, session.getId(),
+                list.size());
         }
         return gameSession;
     }
@@ -114,7 +110,7 @@ public class GameSessionManger {
                     gameSession.setLevelDate(new Date());
                     handlePlayerLevel(gameSession);
                     log.info("玩家:{}从游戏:{}中离开,游戏剩余:{}", gameSession.getUser(), gameSession.getRecordId(),
-                            sessionList.size());
+                        sessionList.size());
                     break;
                 }
             }
@@ -160,22 +156,6 @@ public class GameSessionManger {
         }
     }
 
-    private void setMessagePrefix(Command command) {
-        if (command instanceof GameCommand) {
-            GameCommand gameCommand = (GameCommand) command;
-            if (gameCommand.getGameCommendEnum().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
-                String oldMes = gameCommand.getExtMes().getString(ExtMes.MESSAGE);
-                if (LoginUserHolder.getLoginUser() != null) {
-                    gameCommand.getExtMes().put(ExtMes.MESSAGE, "【" + LoginUserHolder.getLoginUser().getUsername() + "】" + oldMes);
-                }else {
-                    gameCommand.getExtMes().put(ExtMes.MESSAGE, "【系统消息】" + oldMes);
-                }
-            }
-        }
-
-    }
-
-
     @EventListener
     public void onGetRoomEvent(AppRoomEvent appRoomEvent) {
         log.info("收到了APP房间类型的事件" + appRoomEvent.toString());
@@ -190,7 +170,7 @@ public class GameSessionManger {
                 break;
             case AppRoomEvent.PUBLIC_MESSAGE:
                 roomCommand.setRoomCommend(RoomCommendEnum.SEND_MESSAGE);
-                roomCommand.setMessage("玩家【" + player.getName() + "】: " + roomCommand.getMessage());
+                roomCommand.setMessage("【" + player.getName() + "】: " + roomCommand.getMessage());
                 break;
             case AppRoomEvent.CHANG_ROOM_OWNER:
                 roomCommand.setRoomCommend(RoomCommendEnum.CHANG_ROOM_OWNER);
@@ -199,7 +179,7 @@ public class GameSessionManger {
                 break;
         }
         if (StringUtil.isNotBlack(appRoomEvent.getSysMessage())) {
-            roomCommand.setMessage("【系统消息】：" + appRoomEvent.getSysMessage());
+            roomCommand.setMessage("【系统消息】" + appRoomEvent.getSysMessage());
         } else if (StringUtil.isNotBlack(appRoomEvent.getMessage())) {
             roomCommand.setMessage(appRoomEvent.getMessage());
         }
@@ -221,18 +201,21 @@ public class GameSessionManger {
      */
     public void sendOrderMessage2Game(List<? extends Command> commandList, String gameId) {
         List<GameSession> gameSessions = gameSessionMap.get(gameId);
-        for (Command command : commandList) {
-            setMessagePrefix(command);
-        }
         if (gameSessions != null && commandList.size() > 0) {
             GameSession gameSession = null;
+            List<Command> sendCommandList;
             log.info("发送有序命令{} 给群组：{}", commandList, gameId);
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
+                    sendCommandList = new ArrayList<>();
+                    for (Command command : commandList) {
+                        sendCommandList.add(command.beforeSend(gameSession.getUser()));
+                    }
                     SerializeConfig config = new SerializeConfig();
                     config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-                    gameSession.getSession().getBasicRemote().sendText(JSONArray.toJSONString(commandList, config, SerializerFeature.DisableCircularReferenceDetect));
+                    gameSession.getSession().getBasicRemote().sendText(JSONArray
+                        .toJSONString(sendCommandList, config, SerializerFeature.DisableCircularReferenceDetect));
                 }
             } catch (IOException e) {
                 log.error("发送数据给用户：{}失败", gameSession.getUser(), e);
@@ -277,7 +260,7 @@ public class GameSessionManger {
      * @throws IOException
      */
     private void sendMessage2User(Command command, String gameId) {
-        setMessagePrefix(command);
+
         List<GameSession> gameSessions = gameSessionMap.get(gameId);
         if (gameSessions != null) {
             GameSession gameSession = null;
@@ -285,8 +268,9 @@ public class GameSessionManger {
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
+                    Command newCommand = command.beforeSend(gameSession.getUser());
                     if (gameSession.getUser().equals(GameContext.getUser())) {
-                        gameSession.sendCommand(command);
+                        gameSession.sendCommand(newCommand);
                         break;
                     }
                 }
@@ -304,7 +288,7 @@ public class GameSessionManger {
      * @throws IOException
      */
     public void sendMessage2Game(Command command, String gameId) {
-        setMessagePrefix(command);
+
         List<GameSession> gameSessions = gameSessionMap.get(gameId);
         if (gameSessions != null) {
             GameSession gameSession = null;
@@ -312,7 +296,8 @@ public class GameSessionManger {
             try {
                 for (int i = 0; i < gameSessions.size(); i++) {
                     gameSession = gameSessions.get(i);
-                    gameSession.sendCommand(command);
+                    Command newCommand = command.beforeSend(gameSession.getUser());
+                    gameSession.sendCommand(newCommand);
                 }
             } catch (IOException e) {
                 log.error("发送数据给用户：{}失败", gameSession.getUser(), e);
@@ -381,10 +366,11 @@ public class GameSessionManger {
 
     /**
      * 给房间发送消息
+     *
      * @param command
      * @param roomId
      */
-    public void sendMessage2Room(Command command, String roomId){
+    public void sendMessage2Room(Command command, String roomId) {
         List<RoomSession> roomSessions = roomSessionMap.get(roomId);
         if (roomSessions != null) {
             for (RoomSession roomSession : roomSessions) {
