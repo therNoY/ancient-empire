@@ -1,10 +1,21 @@
 package pers.mihao.ancient_empire.core.manger;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executor;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +35,15 @@ import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
-import pers.mihao.ancient_empire.core.listener.GameContextHelperListener;
 import pers.mihao.ancient_empire.core.listener.ChapterDialogHelper;
+import pers.mihao.ancient_empire.core.listener.GameContextHelperListener;
 import pers.mihao.ancient_empire.core.listener.GameRunListener;
 import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
-import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
 import pers.mihao.ancient_empire.core.robot.RobotManger;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
@@ -46,7 +57,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     private Logger log = LoggerFactory.getLogger(GameCoreManger.class);
     @Autowired
-    WebSocketSessionManger webSocketSessionManger;
+    GameSessionManger gameSessionManger;
     @Autowired
     UserMapService userMapService;
     @Autowired
@@ -77,13 +88,13 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      * 注册哨兵线程池
      */
     private Executor sentinelPool = new ThreadPoolExecutor(
-            0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
-            new SynchronousQueue(),
-            runnable -> {
-                Thread thread = new Thread(runnable);
-                thread.setName(START_GAME_SENTINEL + threadIndex.getAndIncrement());
-                return thread;
-            });
+        0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
+        new SynchronousQueue(),
+        runnable -> {
+            Thread thread = new Thread(runnable);
+            thread.setName(START_GAME_SENTINEL + threadIndex.getAndIncrement());
+            return thread;
+        });
 
 
     /**
@@ -96,12 +107,12 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         User user = event.getUser();
         GameContext.setUser(user);
         GameContext gameContext = contextMap.get(event.getId());
-        String player = gameContext.getUserRecord().getArmyList().get(gameContext.getUserRecord().getCurrArmyIndex()).getPlayer();
+        String player = gameContext.getUserRecord().getArmyList().get(gameContext.getUserRecord().getCurrArmyIndex())
+            .getPlayer();
         if (StringUtil.isNotBlack(player) && !player.equals(user.getId().toString())) {
             // 不是当前回合用户触发的事件不处理
             return;
         }
-
 
         // 过滤事件
         if (!event.getEvent().equals(GameEventEnum.COMMEND_EXEC_OVER)
@@ -118,7 +129,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             cloneContext.setGameRunListeners(gameContext.getGameRunListeners());
             cloneContext.setInteractiveLock(gameContext.getInteractiveLock());
         }
-        
+
         GameCoreHelper.setContext(gameContext);
         try {
             Class clazz = handlerMap.get(event.getEvent());
@@ -154,19 +165,19 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
             // 过滤掉需要顺序执行的 其他的直接发送
             List<GameCommand> orderCommand = commands.stream().filter(command -> command.getOrder() != null)
-                    .sorted(Comparator.comparing(Command::getOrder))
-                    .collect(Collectors.toList());
+                .sorted(Comparator.comparing(Command::getOrder))
+                .collect(Collectors.toList());
 
             if (CollectionUtil.isNotEmpty(orderCommand)) {
                 // 发送了有序命令
                 gameContext.getInteractiveLock().executionIng();
-                webSocketSessionManger.sendOrderMessage2Game(orderCommand, gameId);
+                gameSessionManger.sendOrderMessage(orderCommand, gameId);
             }
 
             for (Command command : commands) {
                 if (command.getOrder() == null) {
                     GameCommand gameCommand = (GameCommand) command;
-                    webSocketSessionManger.sendMessage(gameCommand, gameId);
+                    gameSessionManger.sendMessage(gameCommand, gameId);
                 }
             }
         }
@@ -181,7 +192,6 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     @KnowledgePoint("遍历枚举")
     public void run(String... args) {
         setThreadName("GameEventHandel-");
-
         // 注册事件对应的处理器
         String packName = GameHandler.class.getPackage().getName();
         String className = Handler.class.getSimpleName();
@@ -305,6 +315,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     /**
      * 处理所有的人离开
+     *
      * @param recordId
      */
     public void allUserLevel(String recordId) {

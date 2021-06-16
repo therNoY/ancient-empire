@@ -26,11 +26,11 @@ public interface GameRoomService extends IService<GameRoom> {
     IPage<GameRoom> getCanJoinGameRoomWithPage(ApiConditionDTO conditionDTO);
 
     /**
-     * 创建房间
+     * 创建一个准备好的房间
      * @param reqAddRoomDTO
      * @return
      */
-    GameRoom addRoomAndJoinRoomOwner(ReqAddRoomDTO reqAddRoomDTO);
+    GameRoom addReadyRoom2Catch(ReqAddRoomDTO reqAddRoomDTO);
 
     /**
      * 玩家加入房间 返回可以控制的军队

@@ -82,7 +82,7 @@ public class UnitMes implements Serializable {
     /**
      * 是否是可以购买的0 不可 1可以
      */
-    private Integer tradeable;
+    private Integer tradable;
 
     /**
      * 是否是晋升单位，晋升单位无法购买
@@ -186,12 +186,12 @@ public class UnitMes implements Serializable {
         this.createUserId = createUserId;
     }
 
-    public Integer getTradeable() {
-        return tradeable;
+    public Integer getTradable() {
+        return tradable;
     }
 
-    public void setTradeable(Integer tradeable) {
-        this.tradeable = tradeable;
+    public void setTradable(Integer tradable) {
+        this.tradable = tradable;
     }
 
     public Integer getPromotion() {
@@ -263,7 +263,7 @@ public class UnitMes implements Serializable {
             ", population=" + population +
             ", description=" + description +
             ", createUserId=" + createUserId +
-            ", tradeable=" + tradeable +
+            ", tradable=" + tradable +
             ", promotion=" + promotion +
             ", enable=" + enable +
             "}";

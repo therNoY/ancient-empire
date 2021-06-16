@@ -74,8 +74,10 @@ public class ControllerFilterAspect {
      */
     private void verificationParameters(Object[] args) {
         for (Object arg : args) {
-            if (arg.getClass().getAnnotationsByType(ValidatedBean.class).length > 0) {
-                ValidateUtil.validateBean(arg);
+            if (arg != null) {
+                if (arg.getClass().getAnnotationsByType(ValidatedBean.class).length > 0) {
+                    ValidateUtil.validateBean(arg);
+                }
             }
         }
     }

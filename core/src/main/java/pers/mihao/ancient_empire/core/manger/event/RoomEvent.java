@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.core.eums.RoomEventEnum;
 
 /**
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\3\27 0027 22:42
  */
 public class RoomEvent extends AbstractEvent{

@@ -9,22 +9,10 @@ public enum LanguageEnum implements BaseEnum {
     /**
      * 简体中文
      */
-    LANG_ZH("zh"),
+    ZH,
 
     /**
      * 英文
      */
-    LANG_EN("en");
-
-    String key;
-
-    LanguageEnum(String key) {
-        this.key = key;
-    }
-
-
-    @Override
-    public String type() {
-        return this.key;
-    }
+    EN;
 }

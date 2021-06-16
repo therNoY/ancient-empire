@@ -18,6 +18,7 @@ import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
 import pers.mihao.ancient_empire.base.dto.ApiOrderDTO;
+import pers.mihao.ancient_empire.base.dto.ReqIdDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveUnitMesDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.service.UnitAbilityService;
@@ -67,7 +68,7 @@ public class UnitMesController {
      * @param conditionDTO
      * @return
      */
-    @RequestMapping("/api/unitMes/user/download")
+    @PostMapping("/api/unitMes/user/download")
     public IPage<UnitMesVO> getUserDownloadUnitMesWithPage(@RequestBody ApiConditionDTO conditionDTO) {
         return unitMesService.getUserDownloadUnitMesWithPage(conditionDTO);
     }
@@ -145,9 +146,9 @@ public class UnitMesController {
      * @return
      */
     @DeleteMapping("/api/unitMes")
-    public void deleteUserUnit(@RequestParam Integer id) {
-        UnitMes unitMes = unitMesService.getUnitMesById(id);
-        if (unitMes != null && unitMes.getCreateUserId().equals(LoginUserHolder.getUserId())) {
+    public void deleteUserUnit(@RequestBody ReqIdDTO id) {
+        UnitMes unitMes = unitMesService.getUnitMesById(id.getId());
+        if (unitMes != null && unitMes.getCreateUserId().equals(id.getUserId())) {
             // 其他模板也会引用 先判断是否是草稿 草稿直接删除 否则改成禁用,历史版本同样如此操做
             if (unitMes.getStatus().equals(VersionConstant.DRAFT)) {
                 unitMesService.removeById(unitMes.getId());

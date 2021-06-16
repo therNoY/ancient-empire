@@ -234,7 +234,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
     @Override
     public UserMap getEncounterMapById(String uuid) {
         UserMap userMap = userMapDAO.selectById(uuid);
-        if (GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
+        if (!GameTypeEnum.ENCOUNTER.type().equals(userMap.getType())) {
             // 不是遭遇地图
             return null;
         }

@@ -1,11 +1,7 @@
 package pers.mihao.ancient_empire.core.manger.net;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -13,37 +9,22 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
-import pers.mihao.ancient_empire.base.constant.BaseConstant;
-import pers.mihao.ancient_empire.base.dto.ArmyConfig;
-import pers.mihao.ancient_empire.base.dto.ReqRoomIdDTO;
-import pers.mihao.ancient_empire.base.entity.GameRoom;
-import pers.mihao.ancient_empire.base.service.GameRoomService;
-import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
 import pers.mihao.ancient_empire.common.util.RespUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.eums.NetConnectTypeEnum;
-import pers.mihao.ancient_empire.core.eums.RoomCommendEnum;
-import pers.mihao.ancient_empire.core.eums.RoomEventEnum;
-import pers.mihao.ancient_empire.core.manger.GameCoreManger;
-import pers.mihao.ancient_empire.core.manger.command.RoomCommand;
-import pers.mihao.ancient_empire.core.manger.command.StatusCommand;
-import pers.mihao.ancient_empire.core.manger.event.AbstractEvent;
-import pers.mihao.ancient_empire.core.manger.event.GameEvent;
-import pers.mihao.ancient_empire.core.manger.event.RoomEvent;
+import pers.mihao.ancient_empire.core.manger.net.session.AbstractSession;
 
 /**
- * 管理游戏连接统一连接的端点
+ * 管理游戏连接统一连接的端点 基础校验,分派
  *
  * @Author mh32736
  * @Date 2020/9/10 13:26
@@ -53,10 +34,9 @@ import pers.mihao.ancient_empire.core.manger.event.RoomEvent;
 public class GameCoreEndpointServer {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    private static WebSocketSessionManger webSocketSessionManger;
-    private static GameCoreManger gameCoreManger;
+    private static RoomSessionManger roomSessionManger;
+    private static GameSessionManger gameSessionManger;
     private static UserService userService;
-    private static GameRoomService gameRoomService;
 
     public GameCoreEndpointServer() {
     }
@@ -76,11 +56,9 @@ public class GameCoreEndpointServer {
     private String id;
 
     static {
-        webSocketSessionManger = ApplicationContextHolder.getBean(WebSocketSessionManger.class);
-        gameCoreManger = ApplicationContextHolder.getBean(GameCoreManger.class);
+        roomSessionManger = ApplicationContextHolder.getBean(RoomSessionManger.class);
+        gameSessionManger = ApplicationContextHolder.getBean(GameSessionManger.class);
         userService = ApplicationContextHolder.getBean(UserService.class);
-        gameRoomService = ApplicationContextHolder.getBean(GameRoomService.class);
-
     }
 
     /**
@@ -88,85 +66,33 @@ public class GameCoreEndpointServer {
      *
      * @param session
      * @param type    是单机还是组
-     * @param id      游戏的一个gameId
+     * @param id      Id
      * @param token   用户的token信息
      */
     @OnOpen
-    public void onOpen(Session session, @PathParam("type") String type, @PathParam("id") String id, @PathParam("token") String token) {
+    public void onOpen(Session session, @PathParam("type") String type, @PathParam("id") String id,
+        @PathParam("token") String token) {
         log.info("有玩家加入 sessionId:{}", session.getId());
         try {
             this.id = id;
+            // 首先验证连接信息
             String userId = JwtTokenUtil.getEffectiveUserId(token);
-            // 首先接受信息
             if (StringUtil.isBlack(userId) || (this.connectUser = userService.getById(userId)) == null) {
                 log.error("toke无效或者过期, 禁止连接");
                 session.getBasicRemote().sendText(JSONObject.toJSONString(RespUtil.error(40003)));
                 closeSession(session);
                 return;
             }
+
+            // 分发session到sessionManger
             this.netConnectType = EnumUtil.valueOf(NetConnectTypeEnum.class, type);
-            AbstractSession joinSession = null;
-            switch (netConnectType) {
-                case CHAPTER_GAME:
-                case STAND_GAME:
-                case NET_GAME:
-                    if (!gameCoreManger.joinGame(id)) {
-                        log.error("加入失败：{}", id);
-                        closeSession(session);
-                    } else {
-                        joinSession = webSocketSessionManger.addNewGameSession(session, id, connectUser);
-                    }
-                    break;
-                case CREATE_ROOM:
-                    GameRoom gameRoom = RedisUtil.getObjectFromJson(BaseConstant.AE_ROOM + id, GameRoom.class);
-                    String joinGameCtlArmyColor = null;
-                    if (gameRoom != null) {
-                        gameRoomService.save(gameRoom);
-                        ReqRoomIdDTO reqRoomIdDTO = new ReqRoomIdDTO();
-                        reqRoomIdDTO.setRoomId(gameRoom.getRoomId());
-                        reqRoomIdDTO.setUserId(Integer.valueOf(userId));
-                        try {
-                            joinGameCtlArmyColor = gameRoomService.playerJoinRoom(reqRoomIdDTO);
-                        } catch (Exception e) {
-                            log.error("玩家加入房间失败", e);
-                        }
-                    }
-                    // 处理创建一定能成功 不能就是有问题
-                    if (StringUtil.isNotBlack(joinGameCtlArmyColor)) {
-                        log.info("玩家加入房间成功");
-                        RedisUtil.delKey(BaseConstant.AE_ROOM + id);
-                        joinSession = webSocketSessionManger.addNewRoomSession(session, id, connectUser);
-                        RoomEvent roomEvent = new RoomEvent(this.id, RoomEventEnum.JOIN_ROOM, connectUser);
-                        roomEvent.setArmyColor(joinGameCtlArmyColor);
-                        handleRoomEvent(roomEvent);
-                    } else {
-                        closeSession(session);
-                    }
-                    break;
-                case JOIN_ROOM:
-                    ReqRoomIdDTO reqRoomIdDTO = new ReqRoomIdDTO();
-                    reqRoomIdDTO.setRoomId(id);
-                    reqRoomIdDTO.setUserId(Integer.valueOf(userId));
-                    joinGameCtlArmyColor = gameRoomService.playerJoinRoom(reqRoomIdDTO);
-                    joinSession = webSocketSessionManger.addNewRoomSession(session, id, connectUser);
-                    if (StringUtil.isNotBlack(joinGameCtlArmyColor)) {
-                        RoomEvent roomEvent = new RoomEvent(this.id, RoomEventEnum.JOIN_ROOM, connectUser);
-                        roomEvent.setArmyColor(joinGameCtlArmyColor);
-                        handleRoomEvent(roomEvent);
-                    } else {
-                        RoomEvent roomEvent = new RoomEvent(this.id, RoomEventEnum.SEND_MESSAGE, connectUser);
-                        roomEvent.setMessage("加入房间");
-                        handleRoomEvent(roomEvent);
-                    }
-                    break;
-                case WORLD:
-                case FRIEND:
-                case SYSTEM:
-                default:
-                    break;
-            }
-            if (joinSession != null) {
-                sendJoinSessionOk(id, joinSession, netConnectType);
+            SessionManger sessionManger = getSessionManger();
+            // 添加session
+            AbstractSession warpSession = sessionManger.addNewSession(session, id, connectUser);
+            if (warpSession != null) {
+                warpSession.sendCommand(sessionManger.getJoinSuccessCommon(id));
+            } else {
+                closeSession(session);
             }
         } catch (Exception e) {
             log.error("", e);
@@ -175,95 +101,19 @@ public class GameCoreEndpointServer {
     }
 
     /**
-     * 发送加入成功
-     * @param id
-     * @param joinSession
-     * @param netConnectType
-     * @throws IOException
-     */
-    private void sendJoinSessionOk(String id, AbstractSession joinSession, NetConnectTypeEnum netConnectType) throws IOException {
-        StatusCommand command = new StatusCommand();
-        command.setOpenId(id);
-        switch (netConnectType) {
-            case JOIN_ROOM:
-                List<ArmyConfig> list = gameRoomService.getCurrentArmyConfigByRoomId(id);
-                SerializeConfig config = new SerializeConfig();
-                config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-                command.setMessage(JSON.toJSONString(list, config));
-                break;
-            default:
-                break;
-        }
-
-        joinSession.sendCommand(command);
-    }
-
-    /**
-     * 收到客户端消息后调用的方法
+     * 收到客户端消息
      *
-     * @param message 客户端发送过来的消息
+     * @param message
      */
     @OnMessage
     public void onMessage(String message, Session session) {
         log.info("收到：{} 发来的消息：{}", connectUser.getName(), message);
         // 校验session状态
         checkSessionStatus(session);
-        switch (netConnectType) {
-            case STAND_GAME:
-            case NET_GAME:
-            case CHAPTER_GAME:
-                try {
-                    // 校验参数
-                    GameEvent gameEvent = warpEventMessage(message, GameEvent.class);
-                    // 添加到任务队列
-                    gameCoreManger.addTask(gameEvent);
-                } catch (Exception e) {
-                    log.error("", e);
-                }
-                break;
-            case CREATE_ROOM:
-            case JOIN_ROOM:
-                try {
-                    // 校验参数
-                    RoomEvent roomEvent = warpEventMessage(message, RoomEvent.class);
-                    // 直接处理
-                    handleRoomEvent(roomEvent);
-                } catch (Exception e) {
-                    log.error("", e);
-                }
-            case SYSTEM:
-            case WORLD:
-            case FRIEND:
-            default:
-                break;
-        }
-
+        getSessionManger().handleMessage(message, id, connectUser);
     }
 
-    /**
-     * 处理ws发来的房间事件消息
-     *
-     * @param roomEvent
-     */
-    private void handleRoomEvent(RoomEvent roomEvent) {
-        RoomCommand roomCommand = new RoomCommand();
-        switch (roomEvent.getEventType()) {
-            case SEND_MESSAGE:
-                roomCommand.setRoomCommend(RoomCommendEnum.SEND_MESSAGE);
-                roomCommand.setMessage("【" + roomEvent.getUser().getName() + "】: " + roomEvent.getMessage());
-                break;
-            case JOIN_ROOM:
-                roomCommand.setJoinArmy(roomEvent.getArmyColor());
-                roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
-                roomCommand.setMessage("【" + roomEvent.getUser().getName() + "】: " + "加入房间");
-                break;
-            default:
-                break;
-        }
-        roomCommand.setUserName(roomEvent.getUser().getName());
-        roomCommand.setUserId(roomEvent.getUser().getId().toString());
-        webSocketSessionManger.sendMessage2Room(roomCommand, roomEvent.getId());
-    }
+
 
 
     /**
@@ -272,22 +122,7 @@ public class GameCoreEndpointServer {
     @OnClose
     public void onClose(@PathParam("id") String id, Session session) {
         log.info("玩家{}离开：{}", connectUser.getName(), id);
-        switch (netConnectType) {
-            case STAND_GAME:
-            case NET_GAME:
-            case CHAPTER_GAME:
-                webSocketSessionManger.removeGameSession(id, session);
-                break;
-            case CREATE_ROOM:
-            case JOIN_ROOM:
-                webSocketSessionManger.userLevelRoom(id, session);
-                break;
-            case WORLD:
-            case FRIEND:
-            case SYSTEM:
-            default:
-                break;
-        }
+        getSessionManger().removeSession(id ,session);
     }
 
     /**
@@ -303,20 +138,6 @@ public class GameCoreEndpointServer {
 
 
     /**
-     * 将参数包装成event
-     *
-     * @param message
-     * @return
-     */
-    private <T extends AbstractEvent> T warpEventMessage(String message, Class<T> tClass) {
-        AbstractEvent event = JSON.parseObject(message, tClass);
-        event.setId(id);
-        event.setUser(connectUser);
-        event.setCreateTime(new Date());
-        return (T) event;
-    }
-
-    /**
      * 检查session
      *
      * @param session
@@ -326,12 +147,36 @@ public class GameCoreEndpointServer {
     }
 
     private void closeSession(Session session) {
-        log.warn("关闭session：{}", session.getId());
         try {
-            session.close();
+            if (session != null && session.isOpen()) {
+                log.warn("关闭session：{}", session.getId());
+                session.close();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("", e);
         }
+    }
+
+    /**
+     * 获取sessionManger
+     * @return
+     */
+    private SessionManger getSessionManger(){
+        switch (netConnectType) {
+            case STAND_GAME:
+            case NET_GAME:
+            case CHAPTER_GAME:
+                return gameSessionManger;
+            case CREATE_ROOM:
+            case JOIN_ROOM:
+                return roomSessionManger;
+            case WORLD:
+            case FRIEND:
+            case SYSTEM:
+            default:
+                break;
+        }
+        throw new AeException("不支持的session类型");
     }
 
 }

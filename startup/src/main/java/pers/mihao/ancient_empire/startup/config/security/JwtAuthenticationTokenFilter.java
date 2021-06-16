@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.common.bean.UserLanguageSet;
-import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
@@ -82,7 +81,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 UserLanguageSet.LANG.set(userLanguageSet.getLanguageByUserId(userId));
             } else {
                 // 设置默认
-                UserLanguageSet.LANG.set(LanguageEnum.LANG_ZH);
+                UserLanguageSet.LANG.set(LanguageEnum.ZH);
             }
         } else {
             response.setCharacterEncoding("UTF-8");

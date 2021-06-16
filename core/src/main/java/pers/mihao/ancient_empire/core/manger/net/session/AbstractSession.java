@@ -1,17 +1,22 @@
-package pers.mihao.ancient_empire.core.manger.net;
+package pers.mihao.ancient_empire.core.manger.net.session;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.websocket.Session;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 
 /**
+ *
+ * 基础session
  * @Author mh32736
  * @Date 2021/3/4 18:13
  */
@@ -28,7 +33,7 @@ public abstract class AbstractSession implements Serializable {
     protected String sessionId;
 
     /**
-     * session
+     * WS session
      */
     protected Session session;
 
@@ -89,6 +94,30 @@ public abstract class AbstractSession implements Serializable {
         config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
         synchronized (session) {
             session.getBasicRemote().sendText(JSONObject.toJSONString(command, config));
+        }
+    }
+
+    /**
+     * 发送有序命令
+     * @param command
+     * @throws IOException
+     */
+    public void sendOrderCommand(List<Command> command) throws IOException {
+        SerializeConfig config = new SerializeConfig();
+        config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+        synchronized (session) {
+            session.getBasicRemote().sendText(JSONArray
+                .toJSONString(command, config, SerializerFeature.DisableCircularReferenceDetect));
+        }
+    }
+
+    public void closeSession() {
+        try {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

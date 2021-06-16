@@ -104,4 +104,31 @@ public class PropertiesUtil {
     }
 
 
+    /**
+     * 替换参数
+     *
+     * @param value
+     * @param args
+     * @return
+     */
+    public static String replaceArgs(String value, Object[] args) {
+        if (StringUtil.isBlack(value)) {
+            return value;
+        }
+
+        if (args == null || args.length == 0) {
+            return value;
+        }
+        int index = 0;
+        String replaceContent = "\\{}";
+        while (value.contains("{}") && index < args.length) {
+            Object newObj = args[index++];
+            if (newObj == null) {
+                value = value.replaceFirst(replaceContent, "");
+            } else {
+                value = value.replaceFirst(replaceContent, newObj.toString());
+            }
+        }
+        return value;
+    }
 }

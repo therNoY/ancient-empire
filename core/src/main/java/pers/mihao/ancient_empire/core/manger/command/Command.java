@@ -23,10 +23,14 @@ public interface Command {
     Boolean isAsync();
 
 
-    SendTypeEnum getSendTypeEnum();
+    /**
+     * 发送类型
+     * @return
+     */
+    SendTypeEnum getSendType();
 
     /**
-     * 处理完回调
+     * 准备发送的回调
      */
     Command beforeSend(User sendUser);
 

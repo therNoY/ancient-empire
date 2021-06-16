@@ -16,7 +16,7 @@
         <result column="population" property="population"/>
         <result column="description" property="description"/>
         <result column="create_user_id" property="createUserId"/>
-        <result column="tradeable" property="tradeable"/>
+        <result column="tradable" property="tradable"/>
         <result column="promotion" property="promotion"/>
         <result column="img_index" property="imgIndex"/>
         <result column="enable" property="enable"/>
@@ -28,7 +28,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, type, name, attack_type, price, min_attach_range, max_attach_range, population,
-        description, create_user_id, tradeable, promotion, enable, version, status, img_index, update_time, create_time
+        description, create_user_id, tradable, promotion, enable, version, status, img_index, update_time, create_time
     </sql>
 
     <sql id="user_unit_max_version">
@@ -56,7 +56,7 @@
             unit_mes ul
             INNER JOIN ( SELECT * FROM unit_template_relation WHERE temp_id = #{templateId} ) u ON ul.id = u.unit_id
         WHERE
-            ul.tradeable = '1'
+            ul.tradable = '1'
             AND ul.`enable` = '1'
     </select>
 

@@ -40,6 +40,7 @@ import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
@@ -91,6 +92,12 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     @Override
     @Transactional
     public void saveUnitMes(UnitMes unitMes) {
+        if (StringUtil.isBlack(unitMes.getAttackType())){
+            unitMes.setAttackType(BaseConstant.PHYSICAL);
+        }
+        if (unitMes.getTradable() == null) {
+            unitMes.setTradable(1);
+        }
         if (unitMes.getId() != null) {
             unitMes.setCreateUserId(LoginUserHolder.getUserId());
             unitMesDao.updateById(unitMes);
@@ -300,7 +307,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
                 reqSaveUnitMesDTO.getBaseInfo().setStatus(VersionConstant.OFFICIAL);
                 updateInfoById(reqSaveUnitMesDTO.getBaseInfo());
             }
-            delMaxVersionCatch(reqSaveUnitMesDTO.getBaseInfo().getType());
+            unitMesService.delMaxVersionCatch(reqSaveUnitMesDTO.getBaseInfo().getType());
         } else {
             // 新增单位  首先保存单位
             UnitMes unitMes = BeanUtil.deptClone(reqSaveUnitMesDTO.getBaseInfo());

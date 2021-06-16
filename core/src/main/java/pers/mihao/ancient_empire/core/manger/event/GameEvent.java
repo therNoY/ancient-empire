@@ -6,8 +6,8 @@ import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 /**
  * 游戏事件
  *
- * @Author mh32736
- * @Date 2020/9/10 16:22
+ * @author mh32736
+ * @date 2020/9/10 16:22
  */
 public class GameEvent extends AbstractEvent {
 

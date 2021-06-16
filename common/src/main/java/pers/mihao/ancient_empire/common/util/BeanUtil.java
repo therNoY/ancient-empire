@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.common.util;
 
+import com.alibaba.fastjson.JSONObject;
+import java.lang.reflect.Type;
 import pers.mihao.ancient_empire.common.dto.GetSetDTO;
 
 import java.lang.reflect.Field;
@@ -67,14 +69,9 @@ public class BeanUtil {
 
     public static <T> T deptClone(T t) {
         try {
-            Object obj = t.getClass().newInstance();
-            List<Field> list = ReflectUtil.listFields(t.getClass());
-            for (Field field : list) {
-                ReflectUtil.setValueByFieldName(obj, field.getName(), ReflectUtil.getValueByField(t, field));
-            }
-            return (T) obj;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new AeException(e.getMessage());
+            return JSONObject.parseObject(JSONObject.toJSONString(t), (Type) t.getClass());
+        } catch (Exception e) {
+            throw new AeException(e);
         }
     }
 

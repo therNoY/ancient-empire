@@ -55,7 +55,7 @@ public class UserSetting implements Serializable {
     /**
      * 语言
      */
-    private Integer language;
+    private String language;
 
     public Integer getUserId() {
         return userId;
@@ -108,11 +108,11 @@ public class UserSetting implements Serializable {
         this.mapInitRegionType = mapInitRegionType;
     }
 
-    public Integer getLanguage() {
+    public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(Integer language) {
+    public void setLanguage(String language) {
         this.language = language;
     }
 

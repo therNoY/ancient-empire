@@ -17,7 +17,7 @@ import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.command.ShowDialogCommand;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
-import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
 import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
@@ -26,7 +26,7 @@ import pers.mihao.ancient_empire.core.robot.ActionIntention;
  */
 public abstract class AbstractGameRunListener extends CommonHandler implements GameRunListener {
 
-    private static WebSocketSessionManger sessionManger;
+    private static GameSessionManger gameSessionManger;
 
     /**
      * 标记当前上线问是否还有效
@@ -39,7 +39,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     private final Object lockObj = new Object();
 
     static {
-        sessionManger = ApplicationContextHolder.getBean(WebSocketSessionManger.class);
+        gameSessionManger = ApplicationContextHolder.getBean(GameSessionManger.class);
     }
 
     @Override
@@ -105,14 +105,14 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
         await();
         ShowDialogCommand showDialogCommand = new ShowDialogCommand();
         showDialogCommand.setDialogType(DialogEnum.DIS_SHOW_DIALOG.type());
-        sessionManger.sendMessage2Game(showDialogCommand, gameContext.getGameId());
+        gameSessionManger.sendMessageToGroup(showDialogCommand, gameContext.getGameId());
     }
 
     private void addDialog(DialogEnum type, String message) {
         ShowDialogCommand showDialogCommand = new ShowDialogCommand();
         showDialogCommand.setDialogType(type.type());
         showDialogCommand.setMessage(message);
-        sessionManger.sendMessage2Game(showDialogCommand, gameContext.getGameId());
+        gameSessionManger.sendMessageToGroup(showDialogCommand, gameContext.getGameId());
     }
 
 

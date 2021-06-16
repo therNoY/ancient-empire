@@ -47,7 +47,7 @@ public class RoomCommand extends AbstractCommand{
     }
 
     public RoomCommand() {
-        setSendTypeEnum(SendTypeEnum.SEND_TO_ROOM);
+        setSendType(SendTypeEnum.SEND_TO_GROUP);
     }
 
     public RoomCommendEnum getRoomCommend() {

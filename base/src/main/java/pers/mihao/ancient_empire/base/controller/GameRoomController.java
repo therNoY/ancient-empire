@@ -57,7 +57,7 @@ public class GameRoomController {
     }
 
     /**
-     * 创建房间
+     * 创建房间 只保存缓存 等创建者加入房间成功才保存
      *
      * @param reqAddRoomDTO
      * @return
@@ -74,7 +74,7 @@ public class GameRoomController {
             throw new AeException("玩家不能为空");
         }
         reqAddRoomDTO.setPlayerCount(playCount);
-        return gameRoomService.addRoomAndJoinRoomOwner(reqAddRoomDTO);
+        return gameRoomService.addReadyRoom2Catch(reqAddRoomDTO);
     }
 
     /**

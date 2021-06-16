@@ -2,16 +2,12 @@ package pers.mihao.ancient_empire.core.manger.handler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.*;
 import pers.mihao.ancient_empire.common.annotation.ExecuteTime;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
-import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
-import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
@@ -151,7 +147,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
         public FlowGameCommand toUserCommand() {
             FlowGameCommand command = new FlowGameCommand();
-            command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME_USER);
+            command.setSendType(SendTypeEnum.SEND_TO_USER);
             if (order) {
                 command.setOrder(orderIndex++);
             }
@@ -161,7 +157,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
 
         public FlowGameCommand toGameCommand() {
             FlowGameCommand command = new FlowGameCommand();
-            command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
+            command.setSendType(SendTypeEnum.SEND_TO_GROUP);
             if (order) {
                 command.setOrder(orderIndex++);
             }

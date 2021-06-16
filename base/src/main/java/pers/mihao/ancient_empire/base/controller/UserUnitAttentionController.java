@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
+import pers.mihao.ancient_empire.base.dto.ReqIdDTO;
 import pers.mihao.ancient_empire.base.dto.ReqUnitIdDTO;
 import pers.mihao.ancient_empire.base.dto.RequestDownUnitDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
@@ -42,8 +43,8 @@ public class UserUnitAttentionController {
      * @return
      */
     @DeleteMapping("/api/unitMes/download")
-    public void deleteUserDownloadUnit(@RequestParam Integer id) {
-        userUnitAttentionService.deleteUserDownloadUnit(LoginUserHolder.getUserId(), id);
+    public void deleteUserDownloadUnit(@RequestBody ReqIdDTO reqIdDTO) {
+        userUnitAttentionService.deleteUserDownloadUnit(reqIdDTO.getUserId(), reqIdDTO.getId());
     }
 
     /**

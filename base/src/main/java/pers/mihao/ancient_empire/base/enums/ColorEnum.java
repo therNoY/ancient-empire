@@ -4,22 +4,33 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /**
  * 军队颜色枚举 固定
+ * @author mihao
  */
-public enum  ColorEnum implements BaseEnum {
+public enum ColorEnum implements BaseEnum {
     /**
      * 蓝色
      */
-    BLUE,
+    BLUE("蓝色"),
     /**
      * 红色
      */
-    RED,
+    RED("红色"),
     /**
      * 绿色
      */
-    GREEN,
+    GREEN("绿色"),
     /**
      * 黑色
      */
-    BLACK
+    BLACK("黑色");
+
+    String zhString;
+
+    ColorEnum(String zhString) {
+        this.zhString = zhString;
+    }
+
+    public String getZhString() {
+        return zhString;
+    }
 }

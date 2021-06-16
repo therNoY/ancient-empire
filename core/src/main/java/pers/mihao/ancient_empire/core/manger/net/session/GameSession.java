@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.core.manger.net;
+package pers.mihao.ancient_empire.core.manger.net.session;
 
 import java.util.Date;
 import javax.websocket.Session;

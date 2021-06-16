@@ -73,7 +73,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
     }
 
     @Override
-    public GameRoom addRoomAndJoinRoomOwner(ReqAddRoomDTO reqAddRoomDTO) {
+    public GameRoom addReadyRoom2Catch(ReqAddRoomDTO reqAddRoomDTO) {
         GameRoom gameRoom = new GameRoom();
         gameRoom.setCreater(reqAddRoomDTO.getUserId());
         gameRoom.setCreateTime(LocalDateTime.now());
@@ -114,7 +114,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         userJoinRoom.setUserId(reqRoomIdDTO.getUserId());
         for (ArmyConfig armyConfig : initMapDTO.getArmyList()) {
             if (ArmyEnum.USER.type().equals(armyConfig.getType()) && !joinArmyList.contains(armyConfig.getColor())) {
-                userJoinRoom.setJoinArmy(armyConfig.getColor());
+                    userJoinRoom.setJoinArmy(armyConfig.getColor());
                 break;
             }
         }
@@ -156,7 +156,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
                     gameRoom.setRoomOwner(userIdList.get(0));
                     gameRoomDao.updateById(gameRoom);
                     log.info("新的房主：{}", gameRoom.getRoomOwner());
-                    String message = "房主离开, 新的房主：" + userService.getById(gameRoom.getRoomOwner()).getName();
+                    String message = "房主离开,新的房主：" + userService.getById(gameRoom.getRoomOwner()).getName();
                     AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_ROOM_OWNER, gameRoom.getRoomId());
                     appRoomEvent.setLevelArmy(userJoinRoom.getJoinArmy());
                     appRoomEvent.setPlayer(gameRoom.getRoomOwner());
@@ -173,7 +173,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
             AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_CTL, gameRoom.getRoomId());
             appRoomEvent.setLevelArmy(userJoinRoom.getJoinArmy());
             appRoomEvent.setPlayer(id);
-            appRoomEvent.setSysMessage("玩家: " + userService.getById(id).getName() + "离开");
+            appRoomEvent.setSysMessage("玩家【" + userService.getById(id).getName() + "】离开");
             applicationContext.publishEvent(appRoomEvent);
         }
     }

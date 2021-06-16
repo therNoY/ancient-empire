@@ -16,6 +16,10 @@ public class BaseConstant {
 
     public static final Integer NO = 0;
 
+    public static final String PHYSICAL = "1";
+
+    public static final String MAGIC = "2";
+
     public static final String USER_MAP_SEQ = "user_map";
     public static final String MAP_TYPE = "MAP_";
     public static final String UNIT_TYPE = "UNIT_";

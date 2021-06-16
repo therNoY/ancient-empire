@@ -25,7 +25,7 @@ public class ErrorCodeHelper {
     public static String getErrorMes(Integer errorCode) {
         LanguageEnum lang = UserLanguageSet.LANG.get();
         if (lang == null) {
-            lang = LanguageEnum.LANG_ZH;
+            lang = LanguageEnum.ZH;
         }
         return getByLanguageMap(errorCode, errCodeMap.get(lang.type()));
     }

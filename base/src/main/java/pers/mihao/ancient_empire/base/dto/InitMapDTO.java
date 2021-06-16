@@ -31,7 +31,9 @@ public class InitMapDTO extends ApiRequestDTO {
      */
     private List<ArmyConfig> armyList;
 
-    /* 游戏的类型 遭遇战单机 多人游戏 故事模式 */
+    /**
+     * 游戏的类型 遭遇战单机 多人游戏 故事模式
+     */
     private String gameType;
 
     /**

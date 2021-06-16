@@ -27,6 +27,7 @@ public abstract class AbstractEvent implements Event{
         return user;
     }
 
+    @Override
     public void setUser(User user) {
         this.user = user;
     }
@@ -35,6 +36,7 @@ public abstract class AbstractEvent implements Event{
         return createTime;
     }
 
+    @Override
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
@@ -43,6 +45,7 @@ public abstract class AbstractEvent implements Event{
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

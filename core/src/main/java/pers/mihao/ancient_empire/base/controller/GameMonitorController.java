@@ -1,7 +1,10 @@
 package pers.mihao.ancient_empire.base.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,11 +19,8 @@ import pers.mihao.ancient_empire.core.dto.MonitorDTO;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.RoomSessionManger;
 
 /**
  * 游戏监控的
@@ -35,7 +35,9 @@ public class GameMonitorController {
     @Autowired
     GameCoreManger gameCoreManger;
     @Autowired
-    WebSocketSessionManger webSocketSessionManger;
+    GameSessionManger gameSessionManger;
+    @Autowired
+    RoomSessionManger roomSessionManger;
 
     @RequestMapping("/api/monitor")
     public Object getGameDetailById(@RequestBody MonitorDTO monitorDTO) {
@@ -76,8 +78,8 @@ public class GameMonitorController {
 
     private JSONObject getSessionMessage() {
         JSONObject jsonObject = new JSONObject();
-        Map gameSessionMap = (Map) ReflectUtil.getValueByFieldName(webSocketSessionManger, "gameSessionMap");
-        Map roomSessionMap = (Map) ReflectUtil.getValueByFieldName(webSocketSessionManger, "roomSessionMap");
+        Map gameSessionMap = (Map) ReflectUtil.getValueByFieldName(gameSessionManger, "gameSessionMap");
+        Map roomSessionMap = (Map) ReflectUtil.getValueByFieldName(roomSessionManger, "roomSessionMap");
         jsonObject.put("gameSession", gameSessionMap);
         jsonObject.put("roomSessionMap", roomSessionMap);
         return jsonObject;

@@ -15,7 +15,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * 发送消息类型枚举
      */
-    private SendTypeEnum sendTypeEnum;
+    private SendTypeEnum sendType;
 
     private Integer order;
 
@@ -40,12 +40,12 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public SendTypeEnum getSendTypeEnum() {
-        return sendTypeEnum;
+    public SendTypeEnum getSendType() {
+        return sendType;
     }
 
-    public void setSendTypeEnum(SendTypeEnum sendTypeEnum) {
-        this.sendTypeEnum = sendTypeEnum;
+    public void setSendType(SendTypeEnum sendType) {
+        this.sendType = sendType;
     }
 
     @Override

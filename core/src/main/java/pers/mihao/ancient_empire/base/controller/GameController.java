@@ -34,7 +34,8 @@ import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 import pers.mihao.ancient_empire.core.manger.command.RoomCommand;
-import pers.mihao.ancient_empire.core.manger.net.WebSocketSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
+import pers.mihao.ancient_empire.core.manger.net.RoomSessionManger;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
 import java.util.ArrayList;
@@ -61,11 +62,15 @@ public class GameController {
     @Autowired
     GameCoreManger gameCoreManger;
     @Autowired
-    WebSocketSessionManger webSocketSessionManger;
-    @Autowired
     GameRoomService roomService;
     @Autowired
     UserJoinRoomService userJoinRoomService;
+
+    @Autowired
+    RoomSessionManger roomSessionManger;
+
+    @Autowired
+    GameSessionManger gameSessionManger;
 
     /**
      * 用于单机遭遇战
@@ -206,7 +211,7 @@ public class GameController {
         roomCommend.setRoomCommend(RoomCommendEnum.START_GAME);
         roomCommend.setRecordId(userRecord.getUuid());
         roomCommend.setMessage("准备开始游戏...");
-        webSocketSessionManger.sendMessage2Room(roomCommend, reqRoomIdDTO.getRoomId());
+        roomSessionManger.sendMessageToGroup(roomCommend, reqRoomIdDTO.getRoomId());
         // 3.返回前端保存
         return userRecord;
     }
@@ -252,18 +257,18 @@ public class GameController {
     @PostMapping("/api/message/send")
     public void sendMessage(@RequestBody SendMessageDTO sendMessageDTO) {
         switch (sendMessageDTO.getSendTypeEnum()) {
-            case SEND_TO_GAME:
-                String gameId = webSocketSessionManger.getUserGameId(LoginUserHolder.getUserId());
+            case SEND_TO_GROUP:
+                String gameId = gameSessionManger.getUserGroupId(LoginUserHolder.getUserId());
                 GameCommand command = new GameCommand();
                 command.setGameCommendEnum(GameCommendEnum.SHOW_GAME_NEWS);
                 JSONObject extData = new JSONObject(2);
                 extData.put(ExtMes.MESSAGE, sendMessageDTO.getMessage());
                 command.setExtMes(extData);
-                command.setSendTypeEnum(SendTypeEnum.SEND_TO_GAME);
-                webSocketSessionManger.sendMessage(command, gameId);
+                command.setSendType(SendTypeEnum.SEND_TO_GROUP);
+                gameSessionManger.sendMessage(command, gameId);
                 break;
-            case SEND_TO_SYSTEM:
-            case SEND_TO_GAME_USER:
+            case SEND_TO_ALL_GROUP:
+            case SEND_TO_USER:
             default:
                 break;
         }

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import pers.mihao.ancient_empire.base.dto.CreateUnitImgDTO;
 import pers.mihao.ancient_empire.base.dto.NewUnitImgDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
@@ -120,9 +121,8 @@ public class GameFileController {
      */
     @ResponseBody
     @RequestMapping("/upload/{type}/{id}")
-    public String singleFileUpload(@RequestParam("file") MultipartFile file, @PathVariable String id,
-        @PathVariable String type) {
-
+    public String singleFileUpload(@PathVariable String id, @PathVariable String type, MultipartHttpServletRequest request) {
+        MultipartFile file = request.getFile("file");
         // 验证是否是图片
         BufferedImage image;
         try {

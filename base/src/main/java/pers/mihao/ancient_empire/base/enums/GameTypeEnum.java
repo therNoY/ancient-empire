@@ -4,6 +4,7 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /**
  * 游戏类型枚举
+ * @author mihao
  */
 public enum GameTypeEnum implements BaseEnum {
     /**
