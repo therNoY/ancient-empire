@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.dto;
 /**
  * 有一个查询条件的分页
  * @version 1.0
- * @auther mihao
+ * @author mihao
  * @date 2021\3\1 0001 21:14
  */
 public class ApiConditionDTO extends ApiPageDTO{

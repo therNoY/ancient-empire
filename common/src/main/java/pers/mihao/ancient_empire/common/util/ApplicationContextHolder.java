@@ -7,6 +7,8 @@ import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * 以静态变量保存Spring ApplicationContext 方便在不将单例类交给Spring 管理时使用被Spring 管理的类
+ *
+ * @author hspcadmin
  */
 public class ApplicationContextHolder {
 
@@ -16,13 +18,25 @@ public class ApplicationContextHolder {
         ApplicationContextHolder.applicationContext = applicationContext;
     }
 
-    //从静态变量ApplicationContext中取得Bean, 自动转型为所赋值对象的类型.
+    /**
+     * 从静态变量ApplicationContext中取得Bean, 自动转型为所赋值对象的类型.
+     *
+     * @param name
+     * @param <T>
+     * @return
+     */
     public static <T> T getBean(String name) {
         checkApplicationContext();
         return (T) applicationContext.getBean(name);
     }
 
-    //从静态变量ApplicationContext中取得Bean, 自动转型为所赋值对象的类型.如果有多个Bean符合Class, 取出第一个.
+    /**
+     * 从静态变量ApplicationContext中取得Bean, 自动转型为所赋值对象的类型.如果有多个Bean符合Class, 取出第一个.
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     public static <T> T getBean(Class<T> clazz) {
         checkApplicationContext();
         Map beanMaps = applicationContext.getBeansOfType(clazz);

@@ -101,9 +101,9 @@ public class StringUtil {
         StringBuilder sb = new StringBuilder();
         for (char c : types) {
             if ('a' <= c && c <= 'z') {
-                sb.append(Character.toLowerCase(c));
+                sb.append(c);
             }else if ('A' <= c && c <= 'Z' ){
-                sb.append("_").append(c);
+                sb.append("_").append(Character.toLowerCase(c));
             }else {
                 sb.append(c);
             }

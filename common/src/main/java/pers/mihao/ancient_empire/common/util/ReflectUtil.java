@@ -14,20 +14,26 @@ import java.util.List;
 import java.util.Map;
 
 import pers.mihao.ancient_empire.common.dto.GetSetDTO;
+import pers.mihao.ancient_empire.common.log.invoke.PersistentLogInvoke;
 import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
- * @version 1.0
  * @author mihao
+ * @version 1.0
  * @date 2020\9\20 0020 11:14
  */
-public class ReflectUtil {
+public final class ReflectUtil {
 
     private static final String GET = "get";
 
     private static final String SET = "set";
 
     private static Map<Class, Map<String, GetSetDTO>> getSetMap = new HashMap<>(16);
+
+    /**
+     * 单例缓存
+     */
+    private static Map<Class, Object> singletonMap = new HashMap<>(16);
 
 
     private ReflectUtil() {
@@ -101,7 +107,7 @@ public class ReflectUtil {
      * @param cls
      * @return
      */
-    public static Field getFieldByName(String fieldName, Class<?> cls)  {
+    public static Field getFieldByName(String fieldName, Class<?> cls) {
         Field field = null;
         for (; cls != Object.class; cls = cls.getSuperclass()) {
             try {
@@ -137,11 +143,12 @@ public class ReflectUtil {
 
     /**
      * 反射设置对象的字段值
+     *
      * @param object
      * @param filedName
      * @param value
      */
-    public static void setValueBySetMethod(Object object, String filedName, String value){
+    public static void setValueBySetMethod(Object object, String filedName, String value) {
         Method method = getSetter(filedName, object.getClass());
         try {
             method.invoke(object, value);
@@ -217,9 +224,9 @@ public class ReflectUtil {
     }
 
 
-
     /**
      * 通过反射获取对象
+     *
      * @param obj
      * @param delegate
      * @return
@@ -231,6 +238,7 @@ public class ReflectUtil {
 
     /**
      * 通过反射获取对象
+     *
      * @param obj
      * @param delegate
      * @return
@@ -241,7 +249,7 @@ public class ReflectUtil {
             try {
                 if (filed.isAccessible()) {
                     value = filed.get(obj);
-                }else {
+                } else {
                     filed.setAccessible(true);
                     value = filed.get(obj);
                     filed.setAccessible(false);
@@ -255,6 +263,7 @@ public class ReflectUtil {
 
     /**
      * 反射设置值
+     *
      * @param object
      * @param fieldName
      * @param fieldValue
@@ -265,7 +274,7 @@ public class ReflectUtil {
             try {
                 if (field.isAccessible()) {
                     field.set(object, fieldValue);
-                }else {
+                } else {
                     field.setAccessible(true);
                     field.set(object, fieldValue);
                     field.setAccessible(false);
@@ -274,5 +283,35 @@ public class ReflectUtil {
                 // doNoting
             }
         }
+    }
+
+    /**
+     * 获取一个新的实例
+     *
+     * @param invoke
+     * @param <T>
+     * @return
+     */
+    public static <T> T getNewInstance(Class<T> invoke) throws IllegalAccessException, InstantiationException {
+        return invoke.newInstance();
+    }
+
+
+    /**
+     * 获取一个单例对象
+     *
+     * @param invoke
+     * @param <T>
+     * @return
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    public static <T> T getSingleton(Class<T> invoke) throws InstantiationException, IllegalAccessException {
+        Object obj = singletonMap.get(invoke);
+        if (obj == null) {
+            obj = getNewInstance(invoke);
+            singletonMap.put(invoke, obj);
+        }
+        return (T) obj;
     }
 }
