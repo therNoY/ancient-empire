@@ -121,10 +121,10 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             gameContext.onClickTip();
             return;
         }
-        boolean roolBackGame = false;
+        boolean rollBackGame = false;
         // 备份内存数据
         GameContext cloneContext = null;
-        if (roolBackGame) {
+        if (rollBackGame) {
             cloneContext = BeanUtil.deptClone(gameContext);
             cloneContext.setGameRunListeners(gameContext.getGameRunListeners());
             cloneContext.setInteractiveLock(gameContext.getInteractiveLock());
@@ -143,7 +143,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         } catch (Exception e) {
             log.error("执行任务出错: {}, 回退", event, e);
             gameContext = null;
-            if (roolBackGame) {
+            if (rollBackGame) {
                 contextMap.put(event.getId(), cloneContext);
             }
         } finally {

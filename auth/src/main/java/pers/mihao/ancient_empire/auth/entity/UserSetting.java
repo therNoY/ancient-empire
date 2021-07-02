@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.entity;
+package pers.mihao.ancient_empire.auth.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 

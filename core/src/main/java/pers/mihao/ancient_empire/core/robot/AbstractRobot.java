@@ -298,7 +298,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
      */
     private boolean siteIsCanEffectAction(ActionIntention intention, Site site) {
         boolean isCanEffect = false;
-        switch (intention.getResultEnum()) {
+        switch (intention.getActive()) {
             case ATTACH:
             case HEAL:
             case SUMMON:
@@ -361,7 +361,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
      * @param intention
      */
     private void actionUnit(ActionIntention intention) {
-        Class clazz = robotHandlerMap.get(intention.getResultEnum());
+        Class clazz = robotHandlerMap.get(intention.getActive());
         if (clazz != null) {
             AbstractRobotHandler robotHandler = null;
             try {

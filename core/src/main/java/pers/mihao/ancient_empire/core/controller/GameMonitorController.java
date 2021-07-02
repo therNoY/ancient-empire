@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.controller;
+package pers.mihao.ancient_empire.core.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import java.util.ArrayList;

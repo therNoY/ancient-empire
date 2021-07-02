@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.base.controller;
+package pers.mihao.ancient_empire.core.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -256,11 +256,11 @@ public class GameController {
      */
     @PostMapping("/api/message/send")
     public void sendMessage(@RequestBody SendMessageDTO sendMessageDTO) {
-        switch (sendMessageDTO.getSendTypeEnum()) {
+        switch (sendMessageDTO.getSendType()) {
             case SEND_TO_GROUP:
                 String gameId = gameSessionManger.getUserGroupId(LoginUserHolder.getUserId());
                 GameCommand command = new GameCommand();
-                command.setGameCommendEnum(GameCommendEnum.SHOW_GAME_NEWS);
+                command.setGameCommend(GameCommendEnum.SHOW_GAME_NEWS);
                 JSONObject extData = new JSONObject(2);
                 extData.put(ExtMes.MESSAGE, sendMessageDTO.getMessage());
                 command.setExtMes(extData);

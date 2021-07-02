@@ -3,18 +3,13 @@ package pers.mihao.ancient_empire.core.manger.command;
 import com.alibaba.fastjson.JSONObject;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
-import pers.mihao.ancient_empire.base.bo.BaseSquare;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
-import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
-import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
-import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 import pers.mihao.ancient_empire.core.util.GameCoreUtil;
 
 /**
@@ -28,7 +23,7 @@ public class GameCommand extends AbstractCommand {
     /**
      * 游戏命令类型枚举
      */
-    private GameCommendEnum gameCommendEnum;
+    private GameCommendEnum gameCommend;
 
     /**
      * 目标点的位置
@@ -60,12 +55,12 @@ public class GameCommand extends AbstractCommand {
      */
     private JSONObject extMes;
 
-    public GameCommendEnum getGameCommendEnum() {
-        return gameCommendEnum;
+    public GameCommendEnum getGameCommend() {
+        return gameCommend;
     }
 
-    public void setGameCommendEnum(GameCommendEnum gameCommendEnum) {
-        this.gameCommendEnum = gameCommendEnum;
+    public void setGameCommend(GameCommendEnum gameCommend) {
+        this.gameCommend = gameCommend;
     }
 
     public Site getAimSite() {
@@ -124,7 +119,7 @@ public class GameCommand extends AbstractCommand {
 
     private void setMessagePrefix(Command command, User user) {
         GameCommand gameCommand = (GameCommand) command;
-        if (gameCommand.getGameCommendEnum().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
+        if (gameCommand.getGameCommend().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
             String oldMes = gameCommand.getExtMes().getString(ExtMes.MESSAGE);
             if (LoginUserHolder.getLoginUser() != null) {
                 gameCommand.getExtMes()
@@ -132,7 +127,7 @@ public class GameCommand extends AbstractCommand {
             } else {
                 gameCommand.getExtMes().put(ExtMes.SEND_MESSAGE, "【系统消息】" + oldMes);
             }
-        } else if (gameCommand.getGameCommendEnum().equals(GameCommendEnum.SHOW_SYSTEM_NEWS)) {
+        } else if (gameCommand.getGameCommend().equals(GameCommendEnum.SHOW_SYSTEM_NEWS)) {
             GameCoreUtil.Globalization globalization = gameCommand.getExtMes()
                 .getObject(ExtMes.MESSAGE, GameCoreUtil.Globalization.class);
             LanguageEnum languageEnum = EnumUtil
@@ -145,7 +140,7 @@ public class GameCommand extends AbstractCommand {
     @Override
     public String toString() {
         return "GameCommand{" +
-            ", gameCommendEnum=" + gameCommendEnum +
+            ", gameCommendEnum=" + gameCommend +
             ", aimSite=" + aimSite +
             ", aimUnit=" + aimUnit +
             ", aimRegion=" + aimRegion +

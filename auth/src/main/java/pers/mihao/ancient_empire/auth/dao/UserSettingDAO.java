@@ -1,7 +1,7 @@
-package pers.mihao.ancient_empire.base.dao;
+package pers.mihao.ancient_empire.auth.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import pers.mihao.ancient_empire.base.entity.UserSetting;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 
 /**
  * <p>

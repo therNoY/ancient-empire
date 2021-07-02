@@ -1,7 +1,7 @@
-package pers.mihao.ancient_empire.base.service;
+package pers.mihao.ancient_empire.auth.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import pers.mihao.ancient_empire.base.entity.UserSetting;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 
 /**
  * <p>

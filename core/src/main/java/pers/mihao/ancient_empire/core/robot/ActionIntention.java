@@ -14,7 +14,7 @@ public class ActionIntention {
     /**
      * 结果枚举类
      */
-    private RobotActiveEnum resultEnum;
+    private RobotActiveEnum active;
 
     /**
      * 目标地点
@@ -31,19 +31,19 @@ public class ActionIntention {
      */
     private RegionInfo aimRegion;
 
-    public ActionIntention(RobotActiveEnum resultEnum, Site site) {
-        this.resultEnum = resultEnum;
+    public ActionIntention(RobotActiveEnum active, Site site) {
+        this.active = active;
         this.site = site;
     }
 
-    public ActionIntention(RobotActiveEnum resultEnum, Site site, UnitInfo aimUnit) {
-        this.resultEnum = resultEnum;
+    public ActionIntention(RobotActiveEnum active, Site site, UnitInfo aimUnit) {
+        this.active = active;
         this.site = site;
         this.aimUnit = aimUnit;
     }
 
-    public ActionIntention(RobotActiveEnum resultEnum, RegionInfo aimRegion) {
-        this.resultEnum = resultEnum;
+    public ActionIntention(RobotActiveEnum active, RegionInfo aimRegion) {
+        this.active = active;
         this.aimRegion = aimRegion;
         this.site = new Site(aimRegion.getRow(), aimRegion.getColumn());
     }
@@ -56,12 +56,12 @@ public class ActionIntention {
         this.site = site;
     }
 
-    public RobotActiveEnum getResultEnum() {
-        return resultEnum;
+    public RobotActiveEnum getActive() {
+        return active;
     }
 
-    public void setResultEnum(RobotActiveEnum resultEnum) {
-        this.resultEnum = resultEnum;
+    public void setActive(RobotActiveEnum active) {
+        this.active = active;
     }
 
     public UnitInfo getAimUnit() {
@@ -83,7 +83,7 @@ public class ActionIntention {
     @Override
     public String toString() {
         return "ActionIntention{" +
-            "resultEnum=" + resultEnum +
+            "resultEnum=" + active +
             ", site=" + site +
             ", aimUnit=" + aimUnit +
             ", aimRegion=" + aimRegion +

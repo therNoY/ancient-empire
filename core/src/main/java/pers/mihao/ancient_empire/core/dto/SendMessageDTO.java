@@ -18,7 +18,7 @@ public class SendMessageDTO implements Serializable {
     /**
      * 发送的类型
      */
-    private SendTypeEnum sendTypeEnum;
+    private SendTypeEnum sendType;
 
     /**
      * 单独发送的目标
@@ -33,12 +33,12 @@ public class SendMessageDTO implements Serializable {
         this.message = message;
     }
 
-    public SendTypeEnum getSendTypeEnum() {
-        return sendTypeEnum;
+    public SendTypeEnum getSendType() {
+        return sendType;
     }
 
-    public void setSendTypeEnum(SendTypeEnum sendTypeEnum) {
-        this.sendTypeEnum = sendTypeEnum;
+    public void setSendType(SendTypeEnum sendType) {
+        this.sendType = sendType;
     }
 
     public String getToUser() {

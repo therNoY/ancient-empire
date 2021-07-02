@@ -172,27 +172,27 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
     public class FlowGameCommand extends GameCommand {
 
         public Stream addCommand(GameCommendEnum gameCommendEnum) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             addGameCommand(this);
             return stream;
         }
 
         public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setAimSite(aimSite);
             addGameCommand(this);
             return stream;
         }
 
         public Stream addOrderCommand(GameCommendEnum gameCommendEnum) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             addGameCommand(this);
             setOrder(orderIndex++);
             return stream;
         }
 
         public Stream addOrderCommand(GameCommendEnum gameCommendEnum, Site aimSite) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setAimSite(aimSite);
             addGameCommand(this);
             setOrder(orderIndex++);
@@ -200,7 +200,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite, JSONObject extData) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setAimSite(aimSite);
             setExtMes(extData);
             addGameCommand(this);
@@ -208,7 +208,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream addCommand(GameCommendEnum gameCommendEnum, Site aimSite, Integer unitIndex) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setAimSite(aimSite);
             setUnitIndex(unitIndex);
             addGameCommand(this);
@@ -216,7 +216,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream addCommand(GameCommendEnum gameCommendEnum, String key, Object value) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             JSONObject extData = new JSONObject(2);
             extData.put(key, value);
             setExtMes(extData);
@@ -225,7 +225,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream addOrderCommand(GameCommendEnum gameCommendEnum, String key, Object value) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             JSONObject extData = new JSONObject(2);
             extData.put(key, value);
             setExtMes(extData);
@@ -235,14 +235,14 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream addCommand(GameCommendEnum gameCommendEnum, JSONObject extData) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setExtMes(extData);
             addGameCommand(this);
             return stream;
         }
 
         public Stream addOrderCommand(GameCommendEnum gameCommendEnum, JSONObject extData) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setExtMes(extData);
             setOrder(orderIndex++);
             addGameCommand(this);
@@ -250,7 +250,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream addCommand(GameCommendEnum gameCommendEnum, JSONObject extData, Integer unitIndex) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setExtMes(extData);
             setUnitIndex(unitIndex);
             addGameCommand(this);
@@ -258,7 +258,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream addOrderCommand(GameCommendEnum gameCommendEnum, JSONObject extData, Integer unitIndex) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setExtMes(extData);
             setUnitIndex(unitIndex);
             setOrder(orderIndex++);
@@ -267,14 +267,14 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
         }
 
         public Stream addCommand(GameCommendEnum gameCommendEnum, Unit aimUnit) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setAimUnit(aimUnit);
             addGameCommand(this);
             return stream;
         }
 
         public Stream addCommand(GameCommendEnum gameCommendEnum, Region square) {
-            setGameCommendEnum(gameCommendEnum);
+            setGameCommend(gameCommendEnum);
             setAimRegion(square);
             addGameCommand(this);
             return stream;

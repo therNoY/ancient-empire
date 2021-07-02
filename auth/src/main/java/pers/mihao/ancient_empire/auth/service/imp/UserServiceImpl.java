@@ -25,6 +25,7 @@ import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
 import pers.mihao.ancient_empire.auth.enums.LoginTypeEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
+import pers.mihao.ancient_empire.common.annotation.PersistentLog;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
@@ -76,6 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
      * @return
      */
     @Override
+    @PersistentLog(tableName = "user_login_log")
     public RespAuthDAO login(LoginDto loginDto) {
         String token;
         User loginUser = getUserByNameOrEmail(loginDto.getUserName());

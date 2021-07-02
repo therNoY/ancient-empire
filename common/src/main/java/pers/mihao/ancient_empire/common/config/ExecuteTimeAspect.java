@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.startup.config.aspect;
+package pers.mihao.ancient_empire.common.config;
 
 import java.lang.reflect.Method;
 import org.aspectj.lang.ProceedingJoinPoint;

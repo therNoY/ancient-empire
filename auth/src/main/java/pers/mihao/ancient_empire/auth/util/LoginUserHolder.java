@@ -1,20 +1,17 @@
 package pers.mihao.ancient_empire.auth.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
+import pers.mihao.ancient_empire.common.util.CurrUserIdHolder;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 
 /**
  * 和用户身份相关的工具类
+ *
  * @author hspcadmin
  */
-public class LoginUserHolder {
+public class LoginUserHolder extends CurrUserIdHolder {
 
-    private static Logger log = LoggerFactory.getLogger(LoginUserHolder.class);
-
-    private static ThreadLocal<Integer> authId = new ThreadLocal<>();
     private static ThreadLocal<MyUserDetails> userDetailsThreadLocal = new ThreadLocal<>();
 
     public static MyUserDetails getLoginUser() {
@@ -26,17 +23,17 @@ public class LoginUserHolder {
     }
 
     public static Integer getUserId() {
-        return authId.get();
+        return CurrUserIdHolder.getUserId();
     }
 
-    public static void setUserId(Integer userId){
-        authId.set(userId);
+    public static void setUserId(Integer userId) {
+        CurrUserIdHolder.setUserId(userId);
     }
 
     @KnowledgePoint("对于threadLocal的使用如果是线程池使用（有回收的情况）就需要" +
-            "每次使用完都清除掉，不然线程回收了，但是保存的对象没有回收，会造成内存泄漏")
-    public static void clear(){
-        authId.remove();
+        "每次使用完都清除掉，不然线程回收了，但是保存的对象没有回收，会造成内存泄漏")
+    public static void clear() {
+        CurrUserIdHolder.clean();
         userDetailsThreadLocal.remove();
     }
 }

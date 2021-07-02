@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pers.mihao.ancient_empire.base.log.UserMapOperationLog;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
@@ -34,16 +35,17 @@ import pers.mihao.ancient_empire.base.dto.UserMapDraftDTO;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserMap;
-import pers.mihao.ancient_empire.base.entity.UserSetting;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.service.AeSequenceService;
 import pers.mihao.ancient_empire.base.service.RegionMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
-import pers.mihao.ancient_empire.base.service.UserSettingService;
+import pers.mihao.ancient_empire.auth.service.UserSettingService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
+import pers.mihao.ancient_empire.common.annotation.PersistentLog;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
@@ -210,11 +212,12 @@ public class UserMapController {
 
 
     /**
-     * 删除用户地图
+     * 操做删除用户地图
      *
      * @return
      */
     @DeleteMapping("/api/userMap/{id}")
+    @PersistentLog(bean = UserMapOperationLog.class)
     public void deleteUserMap(@PathVariable("id") String id) {
         userMapService.deleteMapById(id);
     }

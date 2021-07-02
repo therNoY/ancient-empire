@@ -110,7 +110,11 @@ public class GameCoreEndpointServer {
         log.info("收到：{} 发来的消息：{}", connectUser.getName(), message);
         // 校验session状态
         checkSessionStatus(session);
-        getSessionManger().handleMessage(message, id, connectUser);
+        try {
+            getSessionManger().handleMessage(message, id, connectUser);
+        } catch (Exception e) {
+            log.error("", e);
+        }
     }
 
 

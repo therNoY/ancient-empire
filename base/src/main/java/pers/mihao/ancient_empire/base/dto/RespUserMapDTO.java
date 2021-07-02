@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.base.dto;
 
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.base.entity.*;
 
 import java.util.List;

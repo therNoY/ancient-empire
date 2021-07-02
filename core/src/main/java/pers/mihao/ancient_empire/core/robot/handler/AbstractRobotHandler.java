@@ -8,7 +8,6 @@ import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.core.dto.MovePathDTO;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
-import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
@@ -83,7 +82,7 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
         if (aimSite == null) {
             // 直接结束
             handleRobotEvent(GameEventEnum.CLICK_POINT, intention.getSite());
-            intention.setResultEnum(RobotActiveEnum.END);
+            intention.setActive(RobotActiveEnum.END);
             robotClickAction(intention);
             return;
         }

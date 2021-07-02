@@ -1,17 +1,13 @@
 package pers.mihao.ancient_empire.auth.controller;
 
 
-import java.time.LocalDateTime;
 import java.util.UUID;
-import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,10 +21,9 @@ import pers.mihao.ancient_empire.auth.dto.RespAuthDAO;
 import pers.mihao.ancient_empire.auth.dto.WeChatInfoDTO;
 import pers.mihao.ancient_empire.auth.dto.WeChatSourceInfoDTO;
 import pers.mihao.ancient_empire.auth.entity.User;
-import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
-import pers.mihao.ancient_empire.auth.enums.LoginTypeEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.WeChatUtil;
+import pers.mihao.ancient_empire.common.annotation.PersistentLog;
 import pers.mihao.ancient_empire.common.constant.CatchKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
@@ -72,7 +67,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/login")
-    public RespAuthDAO login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
+    public RespAuthDAO login(@RequestBody LoginDto loginDto) {
         RespAuthDAO respAuthDao = userService.login(loginDto);
         if (respAuthDao == null) {
             throw new AeException(40011);
@@ -155,7 +150,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/api/user/changePwd")
-    public String changePwd(@RequestBody @Validated ChangePwdDTO pwdDto, BindingResult result) {
+    public String changePwd(@RequestBody ChangePwdDTO pwdDto) {
         // 根据Token 获取用户信息
         User user = userService.getById(pwdDto.getUserId());
         // 验证密码是否正确
@@ -176,7 +171,7 @@ public class UserController {
      * @return
      */
     @PutMapping("/api/user")
-    public String changeUserInfo(@RequestBody @Validated ReqUserDTO user, BindingResult result) {
+    public String changeUserInfo(@RequestBody ReqUserDTO user) {
         String token = userService.updateUserInfo(user);
         if (token == null) {
             throw new AeException(40003);
@@ -196,6 +191,12 @@ public class UserController {
     }
 
 
+    /**
+     * 获取微信用户的手机
+     *
+     * @param weChatSourceInfoDTO
+     * @return
+     */
     @PostMapping("/user/getWeiXinPhone")
     public WeChatInfoDTO getWeiXinUserInfo(@RequestBody WeChatSourceInfoDTO weChatSourceInfoDTO) {
 

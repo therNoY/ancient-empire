@@ -1,13 +1,13 @@
-package pers.mihao.ancient_empire.base.controller;
+package pers.mihao.ancient_empire.auth.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
+import pers.mihao.ancient_empire.auth.service.UserSettingService;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
-import pers.mihao.ancient_empire.base.entity.UserSetting;
-import pers.mihao.ancient_empire.base.service.UserSettingService;
 
 /**
  * <p>

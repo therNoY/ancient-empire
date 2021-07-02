@@ -66,7 +66,7 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     @Override
     public boolean onGameCommandAdd(GameCommand gameCommand) {
         JSONObject extMes = gameCommand.getExtMes();
-        switch (gameCommand.getGameCommendEnum()) {
+        switch (gameCommand.getGameCommend()) {
             case CHANGE_CURR_POINT:
                 record().setCurrPoint(gameCommand.getAimSite());
                 break;

@@ -53,7 +53,7 @@ public class DefaultRobot extends AbstractRobot {
         if (moveDeplete == Integer.MAX_VALUE) {
             return score;
         }
-        switch (action.getResultEnum()) {
+        switch (action.getActive()) {
             case OCCUPIED:
                 RegionInfo tile = action.getAimRegion();
                 if (tile.getType().equals(RegionEnum.CASTLE.type())) {
@@ -91,7 +91,7 @@ public class DefaultRobot extends AbstractRobot {
                 score += 0;
         }
         score = score / ((moveDeplete + 1) * 2);
-        log.info("行动 {} to {}: 评分{}", action.getResultEnum(), action.getSite(), score);
+        log.info("行动 {} to {}: 评分{}", action.getActive(), action.getSite(), score);
         return score;
     }
 
