@@ -79,28 +79,27 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     /**
-     * 配置缓存的过期时间
+     * 配置缓存
      *
      * @param connectionFactory
      * @return
      */
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-
         // 设置默认的缓存过期时间
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration
                 .defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(60));
 
         // 设置自定义的缓存时间
-        Map<String, RedisCacheConfiguration> map = new HashMap();
+        Map<String, RedisCacheConfiguration> map = new HashMap<>(16);
         // 获取所有自定义缓存时间 时间默认是 m
         Properties properties = PropertiesUtil.getProperties("catch.properties");
         properties.forEach((key, value) -> {
             // 设置用户获取可用 单位的缓存过期时间
             map.put(key.toString(), RedisCacheConfiguration
                     .defaultCacheConfig()
-                    .entryTtl(Duration.ofMinutes(Integer.valueOf(value.toString())))
+                    .entryTtl(Duration.ofMinutes(Integer.parseInt(value.toString())))
                     .disableCachingNullValues());
         });
 

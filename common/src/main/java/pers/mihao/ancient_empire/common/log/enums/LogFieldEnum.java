@@ -10,15 +10,38 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
  */
 public enum LogFieldEnum implements BaseEnum {
 
-    LOG_ID,
+    /**
+     * 日志ID
+     */
+    LOG_ID(true),
 
-    CREATE_USER_ID,
+    /**
+     * 当前操做的ID
+     */
+    TRIGGER_USER_ID(true),
 
-    CREATE_TIME,
+    CREATE_TIME(true),
 
-    EXEC_TIME,
+    EXEC_TIME(true),
 
-    SERVICE_NAME,
+    SERVICE_NAME(true),
 
-    INVOKE_METHOD;
+    REQUEST(false),
+
+    RESPONSE(false),
+
+    INVOKE_METHOD(true);
+
+    /**
+     * 是否默认支持
+     */
+    boolean defaultAdd;
+
+    LogFieldEnum(boolean defaultAdd) {
+        this.defaultAdd = defaultAdd;
+    }
+
+    public boolean isDefaultAdd() {
+        return defaultAdd;
+    }
 }

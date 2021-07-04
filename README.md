@@ -234,8 +234,8 @@ https://github.com/therNoY/ancient-empire-web/
 
 5. 控制增加单位需要admin角色权限
 
-6. 增加日志控制
-    用户登录注册
+6. 增加日志控制 ✔
+    用户登录注册 ✔
 
 
 ### 前端代码迁移到uni-app上

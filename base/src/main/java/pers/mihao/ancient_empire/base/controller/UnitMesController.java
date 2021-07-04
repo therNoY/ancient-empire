@@ -26,6 +26,7 @@ import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.vo.UnitMesVO;
+import pers.mihao.ancient_empire.common.annotation.PersistentLog;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 import pers.mihao.ancient_empire.common.vo.AeException;
@@ -146,6 +147,7 @@ public class UnitMesController {
      * @return
      */
     @DeleteMapping("/api/unitMes")
+    @PersistentLog
     public void deleteUserUnit(@RequestBody ReqIdDTO id) {
         UnitMes unitMes = unitMesService.getUnitMesById(id.getId());
         if (unitMes != null && unitMes.getCreateUserId().equals(id.getUserId())) {

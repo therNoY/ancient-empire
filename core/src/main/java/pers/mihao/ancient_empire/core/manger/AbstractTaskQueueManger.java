@@ -5,6 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import pers.mihao.ancient_empire.common.util.ThreadPoolNameUtil;
 
 /**
  * @Author mh32736
@@ -12,8 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class AbstractTaskQueueManger<T> implements TaskQueueManger<T> {
 
-    private static AtomicInteger threadIndex = new AtomicInteger(0);
-    private String threadName = "handleTask-";
+
+    private String threadName = "handleTask";
 
     /**
      * 事件处理线程池
@@ -25,7 +26,7 @@ public abstract class AbstractTaskQueueManger<T> implements TaskQueueManger<T> {
         new LinkedBlockingQueue<>(10),
         runnable -> {
             Thread thread = new Thread(runnable);
-            thread.setName(threadName + threadIndex.getAndIncrement());
+            thread.setName(ThreadPoolNameUtil.getThreadName(threadName));
             return thread;
         });
 

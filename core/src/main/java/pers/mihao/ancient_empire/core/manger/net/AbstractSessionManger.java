@@ -33,7 +33,7 @@ import pers.mihao.ancient_empire.core.manger.net.session.AbstractSession;
  */
 public abstract class AbstractSessionManger<T extends AbstractSession, E extends Event> implements SessionManger<T, E> {
 
-    protected ConcurrentHashMap<String, List<T>> sessionMap = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<String, List<T>> sessionMap = new ConcurrentHashMap<>();
 
     Logger log = LoggerFactory.getLogger(GameSessionManger.class);
 
@@ -48,11 +48,11 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
         }
         session.setSessionId(netSession.getId());
 
-        List<T> list = sessionMap.get(typeId);
-        if (list == null) {
-            list = new ArrayList<>();
-            sessionMap.put(typeId, list);
+        List<T> list;
+        synchronized (sessionMap) {
+            list = sessionMap.computeIfAbsent(typeId, k -> new ArrayList<>());
         }
+
         synchronized (list) {
             list.add(session);
             addNewSession(session, list);

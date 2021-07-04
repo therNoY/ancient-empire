@@ -10,10 +10,8 @@ public interface PersistentLogInvoke {
 
     /**
      * 持久化数据
-     * @param args
-     * @param res
      * @param log
      */
-    void doPersistLog(Object[] args, Object res, AbstractLog log);
+    void doPersistLog(AbstractLog log);
 
 }

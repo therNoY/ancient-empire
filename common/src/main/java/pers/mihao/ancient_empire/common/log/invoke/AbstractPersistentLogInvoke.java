@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.common.log.invoke;
 
+import com.alibaba.fastjson.JSONArray;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -8,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.common.annotation.LogField;
 import pers.mihao.ancient_empire.common.log.AbstractLog;
 import pers.mihao.ancient_empire.common.log.enums.LogFieldEnum;
+import pers.mihao.ancient_empire.common.util.ReflectUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.util.UidUtil;
 
@@ -22,13 +25,11 @@ public abstract class AbstractPersistentLogInvoke implements PersistentLogInvoke
     /**
      * 解析参数
      *
-     * @param args
-     * @param res
      * @param log
      */
     @Override
-    public final void doPersistLog(Object[] args, Object res, AbstractLog log) {
-        Runnable runnable = getPersistentTask(args, res, log);
+    public final void doPersistLog(AbstractLog log) {
+        Runnable runnable = getPersistentTask(log);
         if (log.isAsync()) {
             PersistentLogTaskQueue.getInstance().addTask(runnable);
         } else {
@@ -36,10 +37,8 @@ public abstract class AbstractPersistentLogInvoke implements PersistentLogInvoke
         }
     }
 
-    private Runnable getPersistentTask(Object[] args, Object res, AbstractLog log) {
+    private Runnable getPersistentTask(AbstractLog log) {
         AbstractPersistentLogTask task = getPersistentLogTask();
-        task.args = args;
-        task.res = res;
         task.log = log;
         return task;
     }
@@ -81,32 +80,43 @@ public abstract class AbstractPersistentLogInvoke implements PersistentLogInvoke
     private void getExtProperty(AbstractLog log, Map<String, String> map) {
         LogFieldEnum[] logFieldEnums = log.getExtLogField();
         if (logFieldEnums != null) {
+            JSONArray jsonArray;
             for (LogFieldEnum fieldEnum : logFieldEnums) {
                 switch (fieldEnum) {
-                    case LOG_ID:
-                        map.put(fieldEnum.type(), log.getLogId());
+                    case REQUEST:
+                        jsonArray = new JSONArray();
+                        for (Object obj : log.getArgs()) {
+                            jsonArray.add(obj);
+                        }
+                        map.put(fieldEnum.type(), jsonArray.toJSONString());
                         break;
-                    case EXEC_TIME:
-                        map.put(fieldEnum.type(), log.getExecTime().toString());
-                        break;
-                    case CREATE_USER_ID:
-                        map.put(fieldEnum.type(),
-                            log.getTriggerUserId() != null ? log.getTriggerUserId().toString() : null);
-                        break;
-                    case CREATE_TIME:
-                        map.put(fieldEnum.type(), log.getCreateTime());
-                        break;
-                    case INVOKE_METHOD:
-                        map.put(fieldEnum.type(), log.getInvokeMethod());
-                        break;
-                    case SERVICE_NAME:
-                        map.put(fieldEnum.type(), log.getServiceName());
+                    case RESPONSE:
+                        jsonArray = new JSONArray();
+                        jsonArray.add(log.getRes());
+                        map.put(fieldEnum.type(), jsonArray.toJSONString());
                         break;
                     default:
+                        map.put(fieldEnum.type(), getValue(log, fieldEnum));
                         break;
                 }
             }
         }
+    }
+
+    private String getValue(AbstractLog log, LogFieldEnum fieldEnum) {
+        Object object = null;
+        try {
+            Method getterMethod = ReflectUtil.getGetter(fieldEnum.type(), log.getClass());
+            if (getterMethod != null) {
+                object = getterMethod.invoke(log);
+            }
+        } catch (Exception e) {
+            logger.error("设置属性错误", e);
+        }
+        if (object != null) {
+            return object.toString();
+        }
+        return null;
     }
 
 
@@ -118,6 +128,13 @@ public abstract class AbstractPersistentLogInvoke implements PersistentLogInvoke
 
         @Override
         public final void run() {
+            if (log == null) {
+                logger.error("没有设置要保存的日志");
+                return;
+            }
+
+            this.res = log.getRes();
+            this.args = log.getArgs();
             Map<String, String> paramMap = new HashMap<>(16);
             try {
                 // 获取返回结果的参数

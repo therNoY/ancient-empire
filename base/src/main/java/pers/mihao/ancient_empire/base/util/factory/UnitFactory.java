@@ -7,6 +7,7 @@ import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 
 /**
@@ -24,6 +25,14 @@ public class UnitFactory {
         unitService = ApplicationContextHolder.getBean(UnitMesService.class);
     }
 
+    public static final Unit copyUnit(Unit oldUnit) {
+        Unit newUnit = new Unit();
+        BeanUtil.copyValueByGetSet(oldUnit, newUnit);
+        UnitLevelMes levelMes = levelService.getUnitLevelMes(newUnit.getTypeId(), newUnit.getLevel());
+        newUnit.setMaxLife(levelMes.getMaxLife());
+        return newUnit;
+    }
+
 
     public static final Unit createUnit(Integer id, Site site) {
         return createUnit(id, site.getRow(), site.getColumn());
@@ -37,6 +46,7 @@ public class UnitFactory {
         unit.setColumn(column);
         unit.setRow(row);
         unit.setLife(levelMes.getMaxLife());
+        unit.setMaxLife(levelMes.getMaxLife());
         unit.setExperience(0);
         unit.setDone(false);
         unit.setLevel(0);

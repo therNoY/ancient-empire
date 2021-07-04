@@ -12,13 +12,18 @@ public class ThreadPoolNameUtil {
 
     private static Map<String, AtomicInteger> map = new HashMap<>(16);
 
+    /**
+     * 获取现场的名字
+     * @param key
+     * @return
+     */
     public static String getThreadName(String key) {
         AtomicInteger integer = map.get(key);
         if (integer == null) {
             integer = new AtomicInteger(0);
             map.put(key, integer);
         }
-        return key + "-" + integer + "-" + DateUtil.getDataTime();
+        return key + "-" + integer;
     }
 
 }

@@ -60,19 +60,13 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             commandStream()
                     .toGameCommand().addCommand(GameCommendEnum.ROLLBACK_MOVE, gameContext.getStartMoveSite(), getCurrUnitIndex())
                     .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
+            changeCurrentUnitShow(gameEvent.getInitiateSite());
         }else if (stateIn(StatusMachineEnum.WILL_SUMMON)) {
             // 点击其他区域的单位就返回
             showAction(gameContext.getActions());
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         }else {
-            changeCurrPoint(gameEvent.getInitiateSite());
-
-            Pair<Integer, UnitInfo> unitMes = changeCurrUnit(gameEvent.getInitiateSite());
-
-            changeCurrBgColor(record().getArmyList().get(unitMes.getKey()).getColor());
-
-            changeCurrRegion(gameEvent.getInitiateSite());
-
+            changeCurrentUnitShow(gameEvent.getInitiateSite());
             if (gameContext.getStatusMachine().equals(StatusMachineEnum.SHOW_MOVE_AREA) ||
                     gameContext.getStatusMachine().equals(StatusMachineEnum.SHOW_MOVE_LINE)) {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
@@ -84,6 +78,5 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             gameContext.setStatusMachine(StatusMachineEnum.INIT);
         }
     }
-
 
 }

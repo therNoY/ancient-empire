@@ -16,6 +16,7 @@ import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UnitTransfer;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
@@ -226,8 +227,7 @@ public class GameContextHelperListener extends AbstractGameRunListener {
                                 isPromotion = true;
                                 unit.setLevel(unit.getLevel() + 1);
                                 unit.setExperience(unit.getExperience() - levelExp);
-                                Unit newUnit = new Unit();
-                                BeanUtil.copyValueByGetSet(unit, newUnit);
+                                Unit newUnit = UnitFactory.copyUnit(unit);
                                 newUnit.setTypeId(unitTransfer.getTransferUnitId());
                                 removeUnit(unitStatus);
                                 addNewUnit(newUnit, unitStatus.getArmyIndex());

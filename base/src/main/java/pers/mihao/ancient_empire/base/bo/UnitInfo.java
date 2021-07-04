@@ -20,6 +20,8 @@ public class UnitInfo extends Unit {
         this.unitMes = unitMes;
         this.levelMes = levelMes;
         this.abilities = abilities;
+        setType(unitMes.getType());
+        setTypeId(unitMes.getId());
     }
 
     /**

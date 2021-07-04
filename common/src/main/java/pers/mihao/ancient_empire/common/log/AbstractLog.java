@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.common.log;
 
+import java.util.Arrays;
 import pers.mihao.ancient_empire.common.log.enums.LogFieldEnum;
 import pers.mihao.ancient_empire.common.log.invoke.PersistentLogInvoke;
 import pers.mihao.ancient_empire.common.log.invoke.PersistentLogToDataBaseInvoke;
@@ -55,6 +56,9 @@ public abstract class AbstractLog {
      * 是否开启下划线
      */
     private Boolean isUnderscore;
+
+    private Object[] args;
+    private Object res;
 
     /**
      * 是否转下划线
@@ -144,6 +148,22 @@ public abstract class AbstractLog {
         this.dataSource = dataSource;
     }
 
+    public Object[] getArgs() {
+        return args;
+    }
+
+    public void setArgs(Object[] args) {
+        this.args = args;
+    }
+
+    public Object getRes() {
+        return res;
+    }
+
+    public void setRes(Object res) {
+        this.res = res;
+    }
+
     @Override
     public String toString() {
         return "AbstractLog{" +
@@ -167,7 +187,7 @@ public abstract class AbstractLog {
      * @return
      */
     public LogFieldEnum[] getExtLogField() {
-        return LogFieldEnum.values();
+        return Arrays.stream(LogFieldEnum.values()).filter(LogFieldEnum::isDefaultAdd).toArray(LogFieldEnum[]::new);
     }
 
     /**

@@ -33,6 +33,11 @@ public class Unit extends Site implements Serializable {
     private Integer[] lifeNum;
 
     /**
+     * 最大生命
+     */
+    private Integer maxLife;
+
+    /**
      * 是否死亡
      */
     private Boolean dead;
@@ -172,6 +177,14 @@ public class Unit extends Site implements Serializable {
     public void setLife(Integer life) {
         this.life = life;
         this.lifeNum = AppUtil.getArrayByInt(life);
+    }
+
+    public Integer getMaxLife() {
+        return maxLife;
+    }
+
+    public void setMaxLife(Integer maxLife) {
+        this.maxLife = maxLife;
     }
 
     @Override

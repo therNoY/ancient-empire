@@ -39,6 +39,15 @@ public class GameMonitorController {
     @Autowired
     RoomSessionManger roomSessionManger;
 
+
+    /**
+     *
+     */
+    @RequestMapping("/admin/monitor/room/list")
+    public void getGameRoomList() {
+
+    }
+
     @RequestMapping("/api/monitor")
     public Object getGameDetailById(@RequestBody MonitorDTO monitorDTO) {
         GameContext gameContext = gameCoreManger.getGameSessionById(monitorDTO.getGameId());

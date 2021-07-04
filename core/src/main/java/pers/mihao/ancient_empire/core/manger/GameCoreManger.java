@@ -32,6 +32,7 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.common.util.ThreadPoolNameUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
@@ -70,7 +71,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     /* 线程池的计数器 */
     private AtomicInteger threadIndex = new AtomicInteger(0);
     /* 哨兵的名字 */
-    private static final String START_GAME_SENTINEL = "gameContextSentinel-";
+    private static final String START_GAME_SENTINEL = "gameContextSentinel";
     /* 哨兵监视等待最大时长 */
     private static final int SENTINEL_TIME = 60;
     /* 加入游戏等待最大时长 */
@@ -92,7 +93,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         new SynchronousQueue(),
         runnable -> {
             Thread thread = new Thread(runnable);
-            thread.setName(START_GAME_SENTINEL + threadIndex.getAndIncrement());
+            thread.setName(ThreadPoolNameUtil.getThreadName(START_GAME_SENTINEL));
             return thread;
         });
 

@@ -54,7 +54,9 @@ public class PersistentLogAspect {
             log.setInvokeMethod(method.getName());
             log.setServiceName(joinPoint.getThis().toString());
             log.setTriggerUserId(CurrUserIdHolder.getUserId());
-            ReflectUtil.getSingleton(log.getInvoke()).doPersistLog(joinPoint.getArgs(), res, log);
+            log.setArgs(joinPoint.getArgs());
+            log.setRes(res);
+            ReflectUtil.getSingleton(log.getInvoke()).doPersistLog(log);
             return res;
         }else {
             return joinPoint.proceed();

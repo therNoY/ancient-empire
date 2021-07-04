@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.common.annotation.Manger;
+import pers.mihao.ancient_empire.common.util.ThreadPoolNameUtil;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 import pers.mihao.ancient_empire.core.robot.factory.DefaultRobotFactory;
@@ -20,7 +21,7 @@ import pers.mihao.ancient_empire.core.robot.factory.DefaultRobotFactory;
 public class RobotManger {
 
     private AtomicInteger threadIndex = new AtomicInteger(0);
-    private String threadName = "robot-";
+    private String threadName = "robot";
 
     @Autowired
     GameCoreManger gameCoreManger;
@@ -35,7 +36,7 @@ public class RobotManger {
         new SynchronousQueue<>(),
         runnable -> {
             Thread thread = new Thread(runnable);
-            thread.setName(threadName + threadIndex.getAndIncrement());
+            thread.setName(ThreadPoolNameUtil.getThreadName(threadName));
             return thread;
         });
 
