@@ -6,7 +6,7 @@ import pers.mihao.ancient_empire.core.robot.AbstractRobot;
 
 /**
  * 机器人工厂接口
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/9 20:31
  */
 public interface RobotFactory {

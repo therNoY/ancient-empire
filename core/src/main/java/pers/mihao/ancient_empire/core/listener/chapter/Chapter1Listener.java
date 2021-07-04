@@ -8,7 +8,7 @@ import pers.mihao.ancient_empire.core.listener.chapter.enums.TriggerTypeEnum;
 
 /**
  * 第一章监听处理类
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/1 9:20
  */
 public class Chapter1Listener extends AbstractChapterListener {

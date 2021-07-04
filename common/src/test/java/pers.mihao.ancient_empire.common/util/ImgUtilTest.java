@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import org.junit.Test;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/2 19:35
  */
 public class ImgUtilTest {

@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.dto;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/9 18:24
  */
 public class UserMapIdDTO extends ApiRequestDTO {

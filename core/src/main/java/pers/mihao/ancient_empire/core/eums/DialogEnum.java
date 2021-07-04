@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.eums;
 import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/6 15:05
  */
 public enum DialogEnum implements BaseEnum {

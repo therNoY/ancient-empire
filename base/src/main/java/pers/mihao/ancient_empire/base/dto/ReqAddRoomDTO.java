@@ -4,7 +4,7 @@ import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
 /**
  * 请求创建房间
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/3/3 9:33
  */
 public class ReqAddRoomDTO extends ApiRequestDTO {

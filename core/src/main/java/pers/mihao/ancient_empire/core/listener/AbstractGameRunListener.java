@@ -21,7 +21,7 @@ import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
 import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/1 9:16
  */
 public abstract class AbstractGameRunListener extends CommonHandler implements GameRunListener {

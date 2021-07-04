@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.core.eums;
 
 /**
  * 游戏状态枚举
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/11 21:55
  */
 public enum GameStatusEnum {

@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/3/11 9:39
  */
 public class ReqRoomIdDTO extends ApiRequestDTO {

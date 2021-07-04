@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.core.listener.chapter.enums;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/20 13:08
  */
 public enum  TriggerTypeEnum {

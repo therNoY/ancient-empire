@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.mybatis_plus_helper;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/29 22:27
  */
 public interface ComplexKeyService<T> extends IService<T> {

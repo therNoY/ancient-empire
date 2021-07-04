@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 
 /**
  * 基础命令实现类
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/10 17:43
  */
 public abstract class AbstractCommand implements Command {

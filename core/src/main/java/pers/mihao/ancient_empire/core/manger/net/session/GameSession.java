@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.auth.entity.User;
 /**
  * 用户连接gameSession
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/15 13:00
  */
 public class GameSession extends AbstractSession {

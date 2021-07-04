@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
-import static pers.mihao.ancient_empire.common.constant.CatchKey.MAP_MAX_VERSION;
-import static pers.mihao.ancient_empire.common.constant.CatchKey.USER_MAP;
+import static pers.mihao.ancient_empire.common.constant.CacheKey.MAP_MAX_VERSION;
+import static pers.mihao.ancient_empire.common.constant.CacheKey.USER_MAP;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.auth.enums.UserEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.BaseUnit;
@@ -36,7 +35,7 @@ import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -247,7 +246,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
      * @param uuid
      * @return
      */
-    @Cacheable(CatchKey.USER_MAP)
+    @Cacheable(CacheKey.USER_MAP)
     @Override
     public UserMap getUserMapById(String uuid) {
         return userMapDAO.selectById(uuid);
@@ -314,7 +313,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
     }
 
     @Override
-    @Cacheable(CatchKey.MAP_MAX_VERSION)
+    @Cacheable(CacheKey.MAP_MAX_VERSION)
     public UserMap getMaxVersionMapByMapType(String mapType) {
         Integer version = userMapDAO.getMaxVersionByMapType(mapType);
         QueryWrapper<UserMap> queryWrapper = new QueryWrapper<>();
@@ -397,7 +396,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
     public void removeMaxVersionCatch(String type){}
 
     @Override
-    @CacheEvict(CatchKey.ENCOUNTER_MAP)
+    @CacheEvict(CacheKey.ENCOUNTER_MAP)
     public void delEncounterMapsCatch(){}
 
 

@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.core.manger.status_machine;
 
 /**
  * 状态机变换接口
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/11/2 9:36
  */
 public interface GameStatusMachine {

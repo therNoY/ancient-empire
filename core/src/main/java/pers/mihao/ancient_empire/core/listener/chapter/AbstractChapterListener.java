@@ -28,7 +28,7 @@ import pers.mihao.ancient_empire.core.listener.chapter.enums.TriggerTypeEnum;
 /**
  * 章节监听抽象处理类
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/7 9:55
  */
 public abstract class AbstractChapterListener extends AbstractGameRunListener {
@@ -232,7 +232,6 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
 
     void changeUnitPoint(ArmyUnitIndexDTO attachIndex) {
         Unit unit = getUnitByIndex(attachIndex);
-        changeCurrBgColor(record().getArmyList().get(attachIndex.getArmyIndex()).getColor());
         changeCurrPoint(unit);
         changeCurrUnit(unit);
     }

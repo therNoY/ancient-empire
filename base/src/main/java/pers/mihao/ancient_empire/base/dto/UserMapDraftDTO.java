@@ -4,7 +4,7 @@ import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
 /**
  * 用户草稿地图DTO
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/10 17:58
  */
 public class UserMapDraftDTO extends ApiRequestDTO {

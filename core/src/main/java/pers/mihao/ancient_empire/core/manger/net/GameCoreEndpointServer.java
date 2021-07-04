@@ -26,7 +26,7 @@ import pers.mihao.ancient_empire.core.manger.net.session.AbstractSession;
 /**
  * 管理游戏连接统一连接的端点 基础校验,分派
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/10 13:26
  */
 @Component

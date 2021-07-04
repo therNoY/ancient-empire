@@ -16,7 +16,7 @@ import pers.mihao.ancient_empire.core.robot.RobotActiveEnum;
 /**
  * 第一章监听处理类
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/1 9:20
  */
 public class Chapter8Listener extends AbstractChapterListener {

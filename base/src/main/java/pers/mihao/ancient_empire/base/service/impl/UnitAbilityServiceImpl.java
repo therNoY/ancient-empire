@@ -14,7 +14,7 @@ import pers.mihao.ancient_empire.common.annotation.redis.NotGenerator;
 
 import java.util.List;
 
-import static pers.mihao.ancient_empire.common.constant.CatchKey.UNIT_ABILITY;
+import static pers.mihao.ancient_empire.common.constant.CacheKey.UNIT_ABILITY;
 
 /**
  * <p>

@@ -5,7 +5,7 @@ import javax.websocket.Session;
 import pers.mihao.ancient_empire.auth.entity.User;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/3/4 18:17
  */
 public class RoomSession extends AbstractSession {

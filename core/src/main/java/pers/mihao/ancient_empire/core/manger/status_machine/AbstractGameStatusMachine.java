@@ -4,7 +4,7 @@ import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/11/2 9:46
  */
 public abstract class AbstractGameStatusMachine implements GameStatusMachine {

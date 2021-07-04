@@ -28,7 +28,7 @@ import pers.mihao.ancient_empire.core.manger.net.session.AbstractSession;
 /**
  * 提供基础功能的session管理
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/16 9:40
  */
 public abstract class AbstractSessionManger<T extends AbstractSession, E extends Event> implements SessionManger<T, E> {

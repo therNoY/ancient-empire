@@ -15,7 +15,7 @@ import pers.mihao.ancient_empire.core.util.GameCoreUtil;
 /**
  * 发送给前端处理的任务
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/17 16:26
  */
 public class GameCommand extends AbstractCommand {

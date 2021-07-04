@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
 /**
  * 前端反映给后台的游戏内事件枚举
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/10 16:24
  */
 public enum GameEventEnum implements BaseEnum {

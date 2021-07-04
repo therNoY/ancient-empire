@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 
@@ -38,9 +38,9 @@ public class RedisTest {
 //        System.out.println(o);
 //       User user = redisHelper.getObject(CatchKey.getKey(CatchKey.USER_RECORD) + "ther2", User.class);
 //        System.out.println(user.getName());
-        System.out.println(RedisUtil.isHaveKey(CatchKey.getKey(CatchKey.USER_RECORD) + "ther2"));
-        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_RECORD) + "ther2");
-        System.out.println(RedisUtil.isHaveKey(CatchKey.getKey(CatchKey.USER_RECORD) + "ther2"));
+        System.out.println(RedisUtil.isHaveKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2"));
+        RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2");
+        System.out.println(RedisUtil.isHaveKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2"));
     }
 
     @Test

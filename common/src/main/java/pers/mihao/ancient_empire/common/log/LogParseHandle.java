@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.log;
 import java.util.Map;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 10:14
  */
 public interface LogParseHandle {

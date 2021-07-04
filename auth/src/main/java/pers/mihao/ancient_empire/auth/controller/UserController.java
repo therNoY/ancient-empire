@@ -23,8 +23,7 @@ import pers.mihao.ancient_empire.auth.dto.WeChatSourceInfoDTO;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.WeChatUtil;
-import pers.mihao.ancient_empire.common.annotation.PersistentLog;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.email.EmailService;
@@ -155,7 +154,7 @@ public class UserController {
         User user = userService.getById(pwdDto.getUserId());
         // 验证密码是否正确
         if (passwordEncoder.matches(pwdDto.getOldPassword(), user.getPassword())) {
-            RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO) + user.getName());
+            RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_INFO) + user.getName());
             user.setPassword(passwordEncoder.encode(pwdDto.getNewPassword()));
             userService.updateById(user);
             return JwtTokenUtil.generateToken(user.getId().toString());

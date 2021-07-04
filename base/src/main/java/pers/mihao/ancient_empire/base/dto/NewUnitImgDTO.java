@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.dto;
 import java.io.Serializable;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/2 17:55
  */
 public class NewUnitImgDTO implements Serializable {

@@ -36,7 +36,7 @@ import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.base.vo.UnitMesVO;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
@@ -125,7 +125,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      * @return
      */
     @Override
-    @Cacheable(value = CatchKey.ENABLE_UNIT)
+    @Cacheable(value = CacheKey.ENABLE_UNIT)
     public List<UnitMes> getEnableUnitByTempId(String tempId) {
         log.info(">>>>用户从数据库中获取可用单位<<<<");
         List<UnitMes> unitMes = unitMesDao.getEnableUnitByTempId(tempId);
@@ -134,7 +134,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
 
 
     @Override
-    @Cacheable(CatchKey.UNIT_MES)
+    @Cacheable(CacheKey.UNIT_MES)
     public UnitMes getUnitMesById(Integer id) {
         return getById(id);
     }
@@ -147,7 +147,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      * @return
      */
     @Override
-    @Cacheable(CatchKey.UNIT_INFO)
+    @Cacheable(CacheKey.UNIT_INFO)
     public UnitInfo getUnitInfo(Integer id, Integer level) {
         UnitMes unitMes = getById(id);
         UnitLevelMes unitLevelMesMes = unitLevelMesService.getUnitLevelMes(id, level);
@@ -162,7 +162,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      * @return
      */
     @Override
-    @Cacheable(CatchKey.TEMPLATE_CAN_BUY_UNITS)
+    @Cacheable(CacheKey.TEMPLATE_CAN_BUY_UNITS)
     public List<UnitMes> getCanBuyUnit(Integer templateId) {
         List<UnitMes> list = unitMesDao.selectCanTradeUnit(templateId);
         return list;
@@ -256,7 +256,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     }
 
     @Override
-    @Cacheable(CatchKey.UNIT_MAX_VERSION)
+    @Cacheable(CacheKey.UNIT_MAX_VERSION)
     public UnitMes getMaxVersionUnitByType(String type) {
         Integer version = unitMesDao.getMaxVersionByType(type);
         QueryWrapper<UnitMes> wrapper = new QueryWrapper<>();
@@ -265,7 +265,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     }
 
     @Override
-    @CacheEvict(CatchKey.UNIT_MAX_VERSION)
+    @CacheEvict(CacheKey.UNIT_MAX_VERSION)
     public void delMaxVersionCatch(String type) {
     }
 

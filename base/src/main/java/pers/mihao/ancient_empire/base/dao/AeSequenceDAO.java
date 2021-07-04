@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.dao;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/9 10:07
  */
 @Mapper

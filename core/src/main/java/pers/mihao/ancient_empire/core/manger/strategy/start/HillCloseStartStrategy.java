@@ -6,7 +6,7 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/2/3 12:49
  */
 public class HillCloseStartStrategy extends StartStrategy{

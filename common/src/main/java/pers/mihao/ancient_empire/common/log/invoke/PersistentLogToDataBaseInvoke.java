@@ -12,7 +12,7 @@ import pers.mihao.ancient_empire.common.util.StringUtil;
 /**
  * 持久化数据到表中
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 13:40
  */
 public class PersistentLogToDataBaseInvoke extends AbstractPersistentLogInvoke {

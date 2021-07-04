@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * 购买单位处理类
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/17 16:04
  */
 public class ClickBuyActionHandler extends CommonHandler {
@@ -41,7 +41,6 @@ public class ClickBuyActionHandler extends CommonHandler {
 
         // 更新军队信息
         ArmyStatusInfoDTO armyStatusInfoDTO = new ArmyStatusInfoDTO();
-
         armyStatusInfoDTO.setMoney(currArmy().getMoney() - newUnitInfo.getUnitMes().getPrice());
         armyStatusInfoDTO.setPop(currArmy().getPop() + newUnitInfo.getUnitMes().getPopulation());
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_ARMY_INFO, ExtMes.ARMY_INFO, armyStatusInfoDTO);
@@ -57,7 +56,7 @@ public class ClickBuyActionHandler extends CommonHandler {
             gameContext.setStatusMachine(StatusMachineEnum.MAST_MOVE);
             gameContext.setSubStatusMachine(SubStatusMachineEnum.MAST_MOVE);
         }
-
+        newUnitInfo.setColor(currArmy().getColor());
         changeCurrUnit(newUnitInfo);
     }
 }

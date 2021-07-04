@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.common.log.enums.LogFieldEnum;
 
 /**
  * 记录请求参数和返回参数的日志
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/2 13:04
  */
 public class RecordRequestAndResponseLog extends AbstractLog{

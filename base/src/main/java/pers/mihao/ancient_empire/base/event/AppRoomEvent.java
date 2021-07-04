@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.event;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/3/17 9:32
  */
 public class AppRoomEvent extends ApplicationEvent {

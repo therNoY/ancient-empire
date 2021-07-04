@@ -21,7 +21,7 @@ import pers.mihao.ancient_empire.common.vo.AeException;
 /**
  * 微信认证服务
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/22 22:45
  */
 public class WeChatUtil {

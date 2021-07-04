@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.base.service;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/9 10:14
  */
 public interface AeSequenceService {

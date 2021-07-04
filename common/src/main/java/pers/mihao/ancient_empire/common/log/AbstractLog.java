@@ -6,7 +6,7 @@ import pers.mihao.ancient_empire.common.log.invoke.PersistentLogInvoke;
 import pers.mihao.ancient_empire.common.log.invoke.PersistentLogToDataBaseInvoke;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 9:57
  */
 public abstract class AbstractLog {

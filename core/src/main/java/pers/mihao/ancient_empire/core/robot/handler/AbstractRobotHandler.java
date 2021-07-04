@@ -20,7 +20,7 @@ import pers.mihao.ancient_empire.core.robot.RobotCommonHandler;
 /**
  * 基础机器人行动处理类
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/11/10 21:05
  */
 public abstract class AbstractRobotHandler extends RobotCommonHandler {

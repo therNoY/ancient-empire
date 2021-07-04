@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.log.invoke;
 import pers.mihao.ancient_empire.common.log.AbstractLog;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 13:42
  */
 public interface PersistentLogInvoke {

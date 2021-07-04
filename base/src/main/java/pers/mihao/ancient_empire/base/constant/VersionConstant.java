@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.base.constant;
 
 /**
  * 版本管理常量
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/6 10:23
  */
 public class VersionConstant {

@@ -31,7 +31,7 @@ import pers.mihao.ancient_empire.core.util.GameCoreUtil;
 /**
  * 回合结束事件处理器 也是回合开始处理器  当一个回合结束时处理
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/17 9:51
  */
 public class RoundEndHandler extends CommonHandler {

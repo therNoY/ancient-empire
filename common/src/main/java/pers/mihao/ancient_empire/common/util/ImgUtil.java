@@ -15,7 +15,7 @@ import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/1/18 10:03
  */
 public class ImgUtil {

@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.common.util;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 14:26
  */
 public class CurrUserIdHolder {

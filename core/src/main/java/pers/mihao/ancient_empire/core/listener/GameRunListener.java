@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
  * 游戏运行时的监听
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/3/31 20:38
  */
 public interface GameRunListener {

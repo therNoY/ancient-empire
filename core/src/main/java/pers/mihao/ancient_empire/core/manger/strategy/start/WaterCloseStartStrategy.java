@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  * 水之子 回学
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/2/3 12:49
  */
 public class WaterCloseStartStrategy extends StartStrategy{

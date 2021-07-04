@@ -26,7 +26,7 @@ import pers.mihao.ancient_empire.core.manger.net.session.RoomSession;
 
 /**
  * 房间session管理
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/16 9:39
  */
 @Manger

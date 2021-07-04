@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.common.constant;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/9 10:18
  */
 public class CommonConstant {

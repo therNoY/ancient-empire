@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.base.dao.AbilityDAO;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.service.AbilityService;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 
 /**
  * <p>
@@ -25,7 +25,7 @@ public class AbilityServiceImpl extends ServiceImpl<AbilityDAO, Ability> impleme
     @Autowired
     AbilityDAO abilityDao;
 
-    @Cacheable(CatchKey.UNIT_ABILITY)
+    @Cacheable(CacheKey.UNIT_ABILITY)
     @Override
     public List<Ability> getUnitAbilityList(Integer id) {
         return abilityDao.getUnitAbilityList(id);
@@ -36,7 +36,7 @@ public class AbilityServiceImpl extends ServiceImpl<AbilityDAO, Ability> impleme
      * @param type
      * @return
      */
-    @Cacheable(CatchKey.UNIT_ABILITY)
+    @Cacheable(CacheKey.UNIT_ABILITY)
     @Override
     public List<Ability> getUnitAbilityListByType(String type) {
         return abilityDao.getUnitAbilityListByType(type);

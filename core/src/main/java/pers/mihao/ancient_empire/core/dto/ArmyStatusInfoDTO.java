@@ -2,11 +2,13 @@ package pers.mihao.ancient_empire.core.dto;
 
 /**
  * 单位状态变换
- * @Author mh32736
+ *
+ * @Author mihao
  * @Date 2020/11/3 20:04
  */
 public class ArmyStatusInfoDTO {
 
+    private String color;
     /**
      * 资金
      */
@@ -31,5 +33,22 @@ public class ArmyStatusInfoDTO {
 
     public void setPop(Integer pop) {
         this.pop = pop;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    @Override
+    public String toString() {
+        return "ArmyStatusInfoDTO{" +
+            "color='" + color + '\'' +
+            ", money=" + money +
+            ", pop=" + pop +
+            '}';
     }
 }

@@ -9,11 +9,6 @@ package pers.mihao.ancient_empire.core.constans;
  */
 public class ExtMes {
 
-    /**
-     * 背景颜色
-     */
-    public static final String BG_COLOR = "bg_color";
-
     public static final String COLOR = "color";
 
     /**

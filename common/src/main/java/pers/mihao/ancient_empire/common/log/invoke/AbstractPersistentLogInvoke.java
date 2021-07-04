@@ -15,7 +15,7 @@ import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.util.UidUtil;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 13:40
  */
 public abstract class AbstractPersistentLogInvoke implements PersistentLogInvoke {

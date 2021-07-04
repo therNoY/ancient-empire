@@ -4,7 +4,7 @@ import java.io.Serializable;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/2 20:15
  */
 public class ReqIdDTO extends ApiRequestDTO {

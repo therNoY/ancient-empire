@@ -51,7 +51,7 @@ import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 /**
  * 分发事件 处理事件 生成结果 处理结果
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/10 13:37
  */
 public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
@@ -231,7 +231,6 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 gameContext.setUserRecord(userRecord);
                 gameContext.setUserTemplate(userTemplateService.getById(userRecord.getTemplateId()));
                 gameContext.setPlayerCount(playCount);
-                gameContext.setBgColor(userRecord.getCurrColor());
 
                 CyclicBarrier cyclicBarrier = new CyclicBarrier(playCount + 1);
                 gameContext.setStartGame(cyclicBarrier);

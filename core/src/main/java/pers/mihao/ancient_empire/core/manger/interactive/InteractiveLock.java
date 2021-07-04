@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.core.manger.interactive;
 
 /**
  * 控制交互的锁
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/27 14:56
  */
 public class InteractiveLock {

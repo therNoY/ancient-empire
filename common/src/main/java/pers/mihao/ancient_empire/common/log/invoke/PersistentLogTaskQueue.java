@@ -8,7 +8,7 @@ import pers.mihao.ancient_empire.common.log.AbstractLog;
 import pers.mihao.ancient_empire.common.util.ThreadPoolNameUtil;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 19:40
  */
 public class PersistentLogTaskQueue {

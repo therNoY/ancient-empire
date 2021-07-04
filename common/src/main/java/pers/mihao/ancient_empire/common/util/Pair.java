@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.util;
 import java.io.Serializable;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/17 23:22
  */
 public class Pair<K, V> implements Serializable {

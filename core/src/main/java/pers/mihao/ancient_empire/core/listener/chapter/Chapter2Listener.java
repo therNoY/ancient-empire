@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/1 9:20
  */
 public class Chapter2Listener extends AbstractChapterListener {

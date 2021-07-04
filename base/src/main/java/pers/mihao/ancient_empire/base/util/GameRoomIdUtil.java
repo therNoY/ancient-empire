@@ -6,7 +6,7 @@ import pers.mihao.ancient_empire.common.util.IntegerUtil;
 /**
  * 管理生成房间Id的类 房间号由四位号码生成
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/3/2 20:51
  */
 public class GameRoomIdUtil {

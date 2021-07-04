@@ -26,7 +26,7 @@ import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
 import pers.mihao.ancient_empire.auth.enums.LoginTypeEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.annotation.PersistentLog;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
@@ -59,7 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     UserRoleRelationDao userRoleRelationDao;
 
     @Override
-    @Cacheable(CatchKey.USER_INFO)
+    @Cacheable(CacheKey.USER_INFO)
     public User getUserByNameOrEmail(String username) {
         log.info("查询用户 {} 登录信息", username);
         return userDao.getUserByNameOrEmail(username);
@@ -116,7 +116,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return userDao.selectOne(wrapper);
     }
 
-    @Cacheable(CatchKey.USER)
+    @Cacheable(CacheKey.USER)
     @Override
     public User getUserById(Integer id) {
         return super.getById(id);
@@ -156,7 +156,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Override
     public String updateUserInfo(ReqUserDTO user) {
         // 清除缓存
-        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_INFO) + userDao.selectById(user.getUserId()).getName());
+        RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_INFO) + userDao.selectById(user.getUserId()).getName());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.updateByReqUserDto(user.getUserName(), user.getPassword(), user.getUserId());
         return JwtTokenUtil.generateToken(user.getUserName());

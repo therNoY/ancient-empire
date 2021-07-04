@@ -236,6 +236,9 @@ https://github.com/therNoY/ancient-empire-web/
 
 6. 增加日志控制 ✔
     用户登录注册 ✔
+    
+    
+7. 断线游戏中情况
 
 
 ### 前端代码迁移到uni-app上

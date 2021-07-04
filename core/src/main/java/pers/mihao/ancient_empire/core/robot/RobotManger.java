@@ -14,7 +14,7 @@ import pers.mihao.ancient_empire.core.robot.factory.DefaultRobotFactory;
 
 /**
  * 构造人机 处理人机行动
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/10 8:39
  */
 @Manger

@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.auth.entity.User;
 
 /**
  * 事件类
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/10 13:30
  */
 public interface Event {

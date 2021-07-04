@@ -27,7 +27,7 @@ import pers.mihao.ancient_empire.core.manger.strategy.move_path.MovePathStrategy
 /**
  * 具体选择行动的策略实现类
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/9 20:37
  */
 public class DefaultRobot extends AbstractRobot {

@@ -3,8 +3,12 @@ package pers.mihao.ancient_empire.common.constant;
 import java.util.HashMap;
 import java.util.Map;
 
-/*redis key 常量*/
-public class CatchKey {
+/**
+ * 缓存的常量
+ *
+ * @author hspcadmin
+ */
+public class CacheKey {
 
     private static Map<String, String> map = new HashMap<>();
 
@@ -58,6 +62,8 @@ public class CatchKey {
 
     // 模板可以购买的单位
     public static final String TEMPLATE_CAN_BUY_UNITS = "templateCanBuyUnits";
+
+    public static final String BUFF = "buff";
 
 
     /* 用户模板 */

@@ -17,7 +17,7 @@ import pers.mihao.ancient_empire.core.manger.command.Command;
 /**
  *
  * 基础session
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/3/4 18:13
  */
 public abstract class AbstractSession implements Serializable {

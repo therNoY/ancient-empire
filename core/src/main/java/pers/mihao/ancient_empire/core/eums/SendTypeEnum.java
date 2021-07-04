@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.eums;
 /**
  * 发送命令的模式
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/17 16:27
  */
 public enum SendTypeEnum {

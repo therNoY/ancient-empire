@@ -30,7 +30,7 @@ import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 /**
  * 上下文处理监听 每一个上下文都会有一个这个类
  * 监听命令变化可以保证gameContext中的 userRecord 数据一致性 handle中不需要处理userRecord
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/2 11:30
  */
 public class GameContextHelperListener extends AbstractGameRunListener {
@@ -111,9 +111,6 @@ public class GameContextHelperListener extends AbstractGameRunListener {
                 break;
             case CHANGE_CURR_UNIT:
                 record().setCurrUnit((UnitInfo) extMes.get(ExtMes.UNIT_INFO));
-                break;
-            case CHANGE_CURR_BG_COLOR:
-                gameContext.setBgColor(extMes.getString(ExtMes.BG_COLOR));
                 break;
             case CHANGE_ARMY_INFO:
                 ArmyStatusInfoDTO armyStatusInfoDTO = (ArmyStatusInfoDTO) extMes.get(ExtMes.ARMY_INFO);

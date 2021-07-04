@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.bean;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/15 9:31
  */
 public interface UserLanguageSet {

@@ -4,7 +4,7 @@ import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/16 13:49
  */
 public class FlyMovePathStrategy extends MovePathStrategy {

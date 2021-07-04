@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.dto;
 import pers.mihao.ancient_empire.base.bo.Site;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/25 21:57
  */
 public class Anim extends Site {

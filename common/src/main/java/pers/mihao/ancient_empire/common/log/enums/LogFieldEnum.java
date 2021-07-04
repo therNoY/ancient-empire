@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
 /**
  * 支持的扩展字段
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/1 10:45
  */
 public enum LogFieldEnum implements BaseEnum {

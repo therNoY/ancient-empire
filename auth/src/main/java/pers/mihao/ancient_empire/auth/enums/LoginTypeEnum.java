@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.auth.enums;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/23 11:58
  */
 public enum  LoginTypeEnum {

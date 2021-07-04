@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.auth.dto;
 import java.io.Serializable;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/23 11:19
  */
 public class WeChatSourceInfoDTO implements Serializable {

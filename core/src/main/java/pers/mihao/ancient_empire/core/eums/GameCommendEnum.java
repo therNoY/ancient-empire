@@ -4,7 +4,7 @@ import pers.mihao.ancient_empire.common.enums.BaseEnum;
 
 /**
  * 后端通知前端渲染的命令枚举
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/10 17:27
  */
 public enum GameCommendEnum implements BaseEnum {
@@ -12,10 +12,6 @@ public enum GameCommendEnum implements BaseEnum {
      * 改变当前指针
      */
     CHANGE_CURR_POINT,
-    /**
-     * 改变展示面板的背景颜色
-     */
-    CHANGE_CURR_BG_COLOR,
     /**
      * 改变当前单位
      */
@@ -156,7 +152,6 @@ public enum GameCommendEnum implements BaseEnum {
     /**
      * 改变记录信息
      */
-    CHANGE_RECORD_INFO,
-    ;
+    CHANGE_RECORD_INFO;
 
 }

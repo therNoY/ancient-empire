@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.core.manger.status_machine;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/11/2 11:41
  */
 public class MoveDoneMachine extends AbstractGameStatusMachine{

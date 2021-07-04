@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/6 13:35
  */
 public class UserTemplateVO extends UserTemplate {

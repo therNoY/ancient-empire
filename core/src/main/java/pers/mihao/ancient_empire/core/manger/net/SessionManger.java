@@ -8,7 +8,7 @@ import pers.mihao.ancient_empire.core.manger.net.session.AbstractSession;
 
 /**
  * 管理Session 处理 事件
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/16 9:39
  */
 public interface SessionManger<T extends AbstractSession, E extends Event> {

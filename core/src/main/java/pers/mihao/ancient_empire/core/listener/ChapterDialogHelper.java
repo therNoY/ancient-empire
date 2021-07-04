@@ -9,7 +9,7 @@ import pers.mihao.ancient_empire.common.util.PropertiesUtil;
 import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/1 17:37
  */
 public class ChapterDialogHelper {

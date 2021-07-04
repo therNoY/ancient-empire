@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.dto;
 import java.util.List;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/2/24 8:49
  */
 public class MovePathDTO {

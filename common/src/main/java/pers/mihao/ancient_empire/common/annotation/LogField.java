@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * 数据库需要设置的log字段
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 22:43
  */
 @Target(ElementType.FIELD)

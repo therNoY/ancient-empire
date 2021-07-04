@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.common.log.DefaultLog;
 
 /**
  * 记录日志的注解 和LogField配套使用
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/6/30 9:49
  */
 @Target(ElementType.METHOD)

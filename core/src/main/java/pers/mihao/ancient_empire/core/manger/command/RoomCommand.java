@@ -4,7 +4,7 @@ import pers.mihao.ancient_empire.core.eums.RoomCommendEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/17 16:26
  */
 public class RoomCommand extends AbstractCommand{

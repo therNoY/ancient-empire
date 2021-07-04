@@ -19,7 +19,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 /**
  * 游戏事件处理类 对于每个处理都是一个线程池中的线程执行 执行命令过程中产生command集合 返回给前端
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/16 18:57
  */
 public abstract class AbstractGameEventHandler extends GameContextBaseHandler implements GameHandler {

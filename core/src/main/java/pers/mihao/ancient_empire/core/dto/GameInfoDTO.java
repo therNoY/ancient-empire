@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.core.dto;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/11/3 20:33
  */
 public class GameInfoDTO {

@@ -2,7 +2,6 @@ package pers.mihao.ancient_empire.base.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,7 @@ import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class UnitLevelMesServiceImpl extends ComplexKeyServiceImpl<UnitLevelMesD
 
 
     @Override
-    @Cacheable(CatchKey.UNIT_LEVEL_MES)
+    @Cacheable(CacheKey.UNIT_LEVEL_MES)
     public UnitLevelMes getUnitLevelMes(Integer id, Integer level) {
         return unitLevelMesDao.getUnitLevelMes(id, level);
     }

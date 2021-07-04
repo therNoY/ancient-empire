@@ -18,7 +18,7 @@ import pers.mihao.ancient_empire.core.robot.RobotManger;
 
 /**
  * 基础能力类
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/2/3 13:07
  */
 public abstract class BaseHandler implements Handler {

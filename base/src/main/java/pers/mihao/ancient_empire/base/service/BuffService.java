@@ -13,4 +13,10 @@ import pers.mihao.ancient_empire.base.entity.Buff;
  */
 public interface BuffService extends IService<Buff> {
 
+    /**
+     * 获取buff详情
+     * @param type
+     * @return
+     */
+    Buff getByType(String type);
 }

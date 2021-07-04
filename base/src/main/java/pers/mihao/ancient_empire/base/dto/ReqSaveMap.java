@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.dto;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/5/10 21:41
  */
 public class ReqSaveMap extends UserMap {

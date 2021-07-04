@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.util;
 import java.util.UUID;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/1 11:16
  */
 public class UidUtil {

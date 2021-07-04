@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 召唤坟墓事件 产生坟墓消失命令，出现单位命令，更新军队信息命令(单位数量）
  * {@link pers.mihao.ancient_empire.core.eums.GameEventEnum.SUMMON_TOMB}
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/17 16:07
  */
 public class ClickSummonActionHandler extends CommonHandler {

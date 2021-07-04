@@ -14,7 +14,7 @@ import pers.mihao.ancient_empire.common.util.IntegerUtil;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/8 20:46
  */
 public class GameCoreHelper {

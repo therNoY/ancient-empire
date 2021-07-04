@@ -26,7 +26,7 @@ import pers.mihao.ancient_empire.base.service.UnitTemplateRelationService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 
 import java.util.List;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
@@ -62,7 +62,7 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
     @Autowired
     UnitMesService unitMesService;
 
-    @Cacheable(CatchKey.USER_TEMP)
+    @Cacheable(CacheKey.USER_TEMP)
     @Override
     public UserTemplate getTemplateById(Integer id) {
         return getById(id);
@@ -197,7 +197,7 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
     }
 
     @Override
-    @Cacheable(CatchKey.TEMPLATE_MAX_VERSION)
+    @Cacheable(CacheKey.TEMPLATE_MAX_VERSION)
     public UserTemplate getMaxTemplateByType(String templateType) {
         Integer version  = userTemplateDAO.getMaxVersionByType(templateType);
         QueryWrapper<UserTemplate> queryWrapper = new QueryWrapper<>();
@@ -208,7 +208,7 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
 
     @Override
     public void delTemplateCatch(UserTemplate userTemplate) {
-        RedisUtil.delKey(CatchKey.getKey(CatchKey.TEMPLATE_MAX_VERSION) + userTemplate.getTemplateType());
-        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_TEMP) + userTemplate.getId());
+        RedisUtil.delKey(CacheKey.getKey(CacheKey.TEMPLATE_MAX_VERSION) + userTemplate.getTemplateType());
+        RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_TEMP) + userTemplate.getId());
     }
 }

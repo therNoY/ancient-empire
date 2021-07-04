@@ -6,7 +6,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/11 22:40
  */
 @Configuration

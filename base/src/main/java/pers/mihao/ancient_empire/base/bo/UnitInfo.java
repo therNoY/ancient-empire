@@ -41,6 +41,11 @@ public class UnitInfo extends Unit {
      */
     private RegionInfo regionInfo;
 
+    /**
+     * 单位颜色
+     */
+    private String color;
+
     public UnitMes getUnitMes() {
         return unitMes;
     }
@@ -71,6 +76,14 @@ public class UnitInfo extends Unit {
 
     public void setRegionInfo(RegionInfo regionInfo) {
         this.regionInfo = regionInfo;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     @Override

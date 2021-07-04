@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.dto;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/29 20:07
  */
 public class ApiOrderDTO extends ApiConditionDTO {

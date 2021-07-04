@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.base.vo;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/29 20:14
  */
 public class UnitMesVO extends UnitMes {

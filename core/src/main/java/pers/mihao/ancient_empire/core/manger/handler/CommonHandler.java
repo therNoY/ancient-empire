@@ -221,6 +221,7 @@ public class CommonHandler extends AbstractGameEventHandler {
     public Pair<Integer, UnitInfo> changeCurrUnit(Site site) {
         // 设置当前单位
         Pair<Integer, UnitInfo> unitInfoPair = getUnitInfoFromMapBySite(site);
+        unitInfoPair.getValue().setColor(record().getArmyList().get(unitInfoPair.getKey()).getColor());
         changeCurrUnit(unitInfoPair.getValue());
         return unitInfoPair;
     }
@@ -414,17 +415,6 @@ public class CommonHandler extends AbstractGameEventHandler {
         gameContext.setStatusMachine(StatusMachineEnum.INIT);
     }
 
-    /**
-     * 改变当前颜色
-     *
-     * @param color
-     */
-    public void changeCurrBgColor(String color) {
-        // 设置前端执行指令
-        commandStream()
-            .toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_BG_COLOR, ExtMes.BG_COLOR, color);
-    }
-
     public void changeUnitStatus(UnitStatusInfoDTO unitStatusInfoDTOS) {
         changeUnitStatusInfo(unitStatusInfoDTOS);
     }
@@ -470,7 +460,6 @@ public class CommonHandler extends AbstractGameEventHandler {
     public Pair<Integer, UnitInfo> changeCurrentUnitShow(Site site) {
         changeCurrPoint(site);
         Pair<Integer, UnitInfo> unitMes = changeCurrUnit(site);
-        changeCurrBgColor(record().getArmyList().get(unitMes.getKey()).getColor());
         changeCurrRegion(site);
         return unitMes;
     }

@@ -28,7 +28,7 @@ import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
  * 一局游戏的上下文，一局游戏一个context
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/9/9 20:53
  */
 public class GameContext extends UserTemplateHelper {
@@ -67,10 +67,6 @@ public class GameContext extends UserTemplateHelper {
      */
     private Integer playerCount;
 
-    /**
-     * 展示的背景颜色
-     */
-    private String bgColor;
 
     /**
      * 开始游戏控制器
@@ -197,14 +193,6 @@ public class GameContext extends UserTemplateHelper {
 
     public void setGameId(String gameId) {
         this.gameId = gameId;
-    }
-
-    public String getBgColor() {
-        return bgColor;
-    }
-
-    public void setBgColor(String bgColor) {
-        this.bgColor = bgColor;
     }
 
     public GameTypeEnum getGameType() {

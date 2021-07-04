@@ -7,7 +7,7 @@ import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
  * 森林之子 回合开始回血
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/2/3 12:49
  */
 public class ForestCloseStartStrategy extends StartStrategy{

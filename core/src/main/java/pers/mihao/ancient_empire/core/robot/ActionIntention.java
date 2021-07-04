@@ -6,7 +6,7 @@ import pers.mihao.ancient_empire.base.bo.UnitInfo;
 
 /**
  * robot的行动意向
- * @Author mh32736
+ * @Author mihao
  * @Date 2020/11/7 14:10
  */
 public class ActionIntention {

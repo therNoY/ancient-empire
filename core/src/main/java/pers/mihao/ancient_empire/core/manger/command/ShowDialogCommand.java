@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.manger.command;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/4/6 11:32
  */
 public class ShowDialogCommand extends AbstractCommand{

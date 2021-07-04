@@ -9,7 +9,7 @@ import pers.mihao.ancient_empire.auth.dao.UserSettingDAO;
 import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.auth.service.UserSettingService;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
-import pers.mihao.ancient_empire.common.constant.CatchKey;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 
@@ -28,7 +28,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     UserSettingDAO userSettingDao;
 
     @Override
-    @Cacheable(CatchKey.USER_SETTING)
+    @Cacheable(CacheKey.USER_SETTING)
     public UserSetting getUserSettingById(Integer id) {
         UserSetting userSetting = userSettingDao.selectById(id);
         if (StringUtil.isBlack(userSetting.getMapInitRegionType())) {
@@ -40,7 +40,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     @Override
     public void updateByUserId(UserSetting userSetting) {
         // 删除缓存
-        RedisUtil.delKey(CatchKey.getKey(CatchKey.USER_SETTING) + LoginUserHolder.getUserId());
+        RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_SETTING) + LoginUserHolder.getUserId());
         QueryWrapper<UserSetting> wrapper = new QueryWrapper();
         wrapper.eq("user_id", userSetting.getUserId());
         userSettingDao.update(userSetting, wrapper);
