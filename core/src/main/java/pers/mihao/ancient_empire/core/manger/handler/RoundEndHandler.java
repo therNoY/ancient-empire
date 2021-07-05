@@ -41,6 +41,9 @@ public class RoundEndHandler extends CommonHandler {
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
 
+        // 结束回合先获取锁
+        gameContext.getRecordLock().lock();
+
         gameContext.onRoundEnd(currArmy(), this);
 
         // 1.开始新的回合
@@ -56,6 +59,8 @@ public class RoundEndHandler extends CommonHandler {
         if (currArmy().getPlayer() == null) {
             robotManger.startRobot(gameContext);
         }
+
+        gameContext.getRecordLock().unlock();
     }
 
     /**

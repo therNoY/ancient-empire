@@ -29,7 +29,7 @@ public interface SessionManger<T extends AbstractSession, E extends Event> {
      * @param typeId
      * @param netSession
      */
-    void removeSession(String typeId, Session netSession);
+    void onSessionClose(String typeId, Session netSession);
 
     /**
      * 给系统发送消息

@@ -50,7 +50,7 @@ public class GameMonitorController {
 
     @RequestMapping("/api/monitor")
     public Object getGameDetailById(@RequestBody MonitorDTO monitorDTO) {
-        GameContext gameContext = gameCoreManger.getGameSessionById(monitorDTO.getGameId());
+        GameContext gameContext = gameCoreManger.getGameContextById(monitorDTO.getGameId());
         if (StringUtil.isBlack(monitorDTO.getGameId())) {
             gameContext = gameCoreManger.getOneGame();
         }

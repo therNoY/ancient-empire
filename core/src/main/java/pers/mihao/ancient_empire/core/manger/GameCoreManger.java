@@ -28,6 +28,7 @@ import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
+import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
@@ -54,6 +55,7 @@ import pers.mihao.ancient_empire.core.util.GameCoreHelper;
  * @Author mihao
  * @Date 2020/9/10 13:37
  */
+@Manger
 public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     private Logger log = LoggerFactory.getLogger(GameCoreManger.class);
@@ -68,14 +70,16 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     @Autowired
     RobotManger robotManger;
 
-    /* 线程池的计数器 */
-    private AtomicInteger threadIndex = new AtomicInteger(0);
     /* 哨兵的名字 */
     private static final String START_GAME_SENTINEL = "gameContextSentinel";
     /* 哨兵监视等待最大时长 */
     private static final int SENTINEL_TIME = 60;
     /* 加入游戏等待最大时长 */
     private static final int JOIN_TIME = 20;
+    /**
+     * 是否开发备份数据
+     */
+    boolean rollBackGame = false;
 
     /* 初始化注册是事件处理器 */
     private Map<GameEventEnum, Class<GameHandler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
@@ -122,7 +126,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             gameContext.onClickTip();
             return;
         }
-        boolean rollBackGame = false;
+
         // 备份内存数据
         GameContext cloneContext = null;
         if (rollBackGame) {
@@ -329,7 +333,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         contextMap.remove(recordId);
     }
 
-    public GameContext getGameSessionById(String uuid) {
+    public GameContext getGameContextById(String uuid) {
         return contextMap.get(uuid);
     }
 
@@ -341,4 +345,31 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         }
     }
 
+    /**
+     * 处理玩家离开record
+     * @param userId
+     * @param recordId
+     */
+    public void handleUserLevelGame(User user, String recordId) {
+        String userId = user.getId().toString();
+        // 修改离开的玩家改成机器人操做
+        GameContext gameContext = getGameContextById(recordId);
+        // 这里可能会有线程问题 比如这里判断离开的玩家不是当前回合玩家 掉过结束回合 但是此时刚好执行到结束回合所以需要加记录锁
+        gameContext.getRecordLock().lock();
+        for (Army army : gameContext.getUserRecord().getArmyList()) {
+            if (userId.equals(army.getPlayer())) {
+                // 后面是机器人操做
+                army.setPlayer(null);
+                break;
+            }
+        }
+        if (userId.equals(gameContext.getUserRecord().getCurrPlayer())) {
+            GameEvent roundEndGameEvent = new GameEvent();
+            roundEndGameEvent.setEvent(GameEventEnum.ROUND_END);
+            roundEndGameEvent.setUser(user);
+            roundEndGameEvent.setId(recordId);
+            handelTask(roundEndGameEvent);
+        }
+        gameContext.getRecordLock().unlock();
+    }
 }

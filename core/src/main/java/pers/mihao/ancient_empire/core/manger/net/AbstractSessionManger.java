@@ -62,7 +62,7 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
 
 
     @Override
-    public final void removeSession(String typeId, Session session) {
+    public final void onSessionClose(String typeId, Session session) {
         List<T> sessionList = sessionMap.get(typeId);
         if (sessionList == null) {
             return;

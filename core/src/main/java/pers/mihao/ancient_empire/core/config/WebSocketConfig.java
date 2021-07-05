@@ -16,10 +16,4 @@ public class WebSocketConfig {
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
     }
-
-    @Bean
-    public GameCoreManger gameCoreManger(){
-        return new GameCoreManger();
-    }
-
 }

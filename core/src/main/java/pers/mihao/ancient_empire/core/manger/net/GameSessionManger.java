@@ -1,5 +1,7 @@
 package pers.mihao.ancient_empire.core.manger.net;
 
+import com.alibaba.fastjson.JSONObject;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,8 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.common.annotation.Manger;
+import pers.mihao.ancient_empire.core.constans.ExtMes;
+import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.net.session.GameSession;
 
@@ -52,6 +59,22 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
         playerCount.decrementAndGet();
         log.info("玩家:{}从游戏:{}中离开,游戏剩余:{}", tSession.getUser(), tSession.getRecordId(),
             lastSession.size());
+
+        // 给游戏中的玩家发送消息
+        String userLevelMessage = "";
+        GameCommand gameCommand = new GameCommand();
+        gameCommand.setGameCommend(GameCommendEnum.SHOW_GAME_NEWS);
+        JSONObject extData = new JSONObject(2);
+        extData.put(ExtMes.MESSAGE, userLevelMessage);
+        gameCommand.setExtMes(extData);
+        try {
+            for (GameSession session : lastSession) {
+                session.sendCommand(gameCommand);
+            }
+        } catch (IOException e) {
+            log.error("", e);
+        }
+        gameCoreManger.handleUserLevelGame(tSession.getUser(), tSession.getRecordId());
     }
 
     @Override

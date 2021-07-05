@@ -126,7 +126,7 @@ public class GameCoreEndpointServer {
     @OnClose
     public void onClose(@PathParam("id") String id, Session session) {
         log.info("玩家{}离开：{}", connectUser.getName(), id);
-        getSessionManger().removeSession(id ,session);
+        getSessionManger().onSessionClose(id ,session);
     }
 
     /**

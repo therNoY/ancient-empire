@@ -34,6 +34,8 @@ public class EndRobotHandler extends AbstractRobotHandler{
 
     @Override
     protected void doClickActionEvent(ActionIntention intention) {
+        gameContext.getRecordLock().lock();
         handleRobotEvent(GameEventEnum.CLICK_END_ACTION);
+        gameContext.getRecordLock().unlock();
     }
 }

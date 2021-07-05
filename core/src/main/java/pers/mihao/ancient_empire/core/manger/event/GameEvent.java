@@ -11,8 +11,6 @@ import pers.mihao.ancient_empire.core.eums.GameEventEnum;
  */
 public class GameEvent extends AbstractEvent {
 
-
-
     /**
      * 发起行动的位置
      */

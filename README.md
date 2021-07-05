@@ -218,6 +218,8 @@ https://github.com/therNoY/ancient-empire-web/
 
 9. 注册用户userSetting不创建 后续会报错
 
+10. 
+
 
 ### 还需要完成功能
 1. 单位模板和地图增加版本控制, 模板使用的是一个版本的单位 地图使用的是一个版本的模板 
@@ -238,7 +240,8 @@ https://github.com/therNoY/ancient-empire-web/
     用户登录注册 ✔
     
     
-7. 断线游戏中情况
+7. 多人游戏有人断线 游戏中情况
+   
 
 
 ### 前端代码迁移到uni-app上
@@ -247,7 +250,10 @@ https://github.com/therNoY/ancient-empire-web/
 3. 战役 
 4. 遭遇战 ✔
 5. 单位管理 ✔
-6. 模板管理 ✔
+6. 模板管理 
+7. 读取游戏
+8. 地图管理
+9. 编辑地图
 
 
 ### 导出相应的脚本,采购服务器,发布游戏, 开始公测

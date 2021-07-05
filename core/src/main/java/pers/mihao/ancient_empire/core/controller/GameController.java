@@ -221,7 +221,7 @@ public class GameController {
      */
     @GetMapping("/unitInfo/list")
     public List<UnitInfo> getUnitInfoList(@RequestParam String uuid) {
-        GameContext context = gameCoreManger.getGameSessionById(uuid);
+        GameContext context = gameCoreManger.getGameContextById(uuid);
         UserRecord record = context.getUserRecord();
         if (record == null) {
             throw new AeException(40010);

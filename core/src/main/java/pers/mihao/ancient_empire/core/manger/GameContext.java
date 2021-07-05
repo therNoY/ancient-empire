@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.core.manger;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Region;
@@ -130,6 +132,9 @@ public class GameContext extends UserTemplateHelper {
      */
     @JSONField(serialize = false)
     private InteractiveLock interactiveLock = new InteractiveLock();
+
+    @JSONField(serialize = false)
+    private Lock recordLock = new ReentrantLock();
 
     public GameContext() {
     }
@@ -288,6 +293,10 @@ public class GameContext extends UserTemplateHelper {
 
     public List<GameRunListener> getGameRunListeners() {
         return gameRunListeners;
+    }
+
+    public Lock getRecordLock() {
+        return recordLock;
     }
 
     public void setGameRunListeners(List<GameRunListener> gameRunListeners) {

@@ -26,6 +26,7 @@ import pers.mihao.ancient_empire.common.util.StringUtil;
 public class UserRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @TableId(value = "uuid", type = IdType.UUID)
     private String uuid;
     /**

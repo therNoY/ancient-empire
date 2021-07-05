@@ -110,6 +110,7 @@ public abstract class AbstractRobotHandler extends RobotCommonHandler {
 
     /**
      * 点击行动事件
+     * @param intention
      */
     protected abstract void doClickActionEvent(ActionIntention intention);
 
