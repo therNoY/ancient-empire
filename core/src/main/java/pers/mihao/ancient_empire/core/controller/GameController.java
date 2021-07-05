@@ -23,6 +23,7 @@ import pers.mihao.ancient_empire.base.enums.ColorEnum;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.base.service.*;
 import pers.mihao.ancient_empire.base.util.AppUtil;
+import pers.mihao.ancient_empire.common.util.CurrUserIdHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
@@ -272,6 +273,16 @@ public class GameController {
             default:
                 break;
         }
+    }
+
+    /**
+     * 获取可以重连的record 只能重新连接多人游戏的
+     * @return
+     */
+    @GetMapping("/api/record/canReConnect")
+    public String getCanReConnectRecord(){
+        Integer userId = LoginUserHolder.getUserId();
+        return gameSessionManger.getReConnectRecord(userId);
     }
 
 }

@@ -55,6 +55,11 @@ public class CommonConstant {
     public static final String UNDER_LINE = "_";
 
     /**
+     * 中划线连接符
+     */
+    public static final String JOINER = "-";
+
+    /**
      * 空串
      */
     public static final String NULL = "";

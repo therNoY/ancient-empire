@@ -4,21 +4,23 @@ import com.alibaba.fastjson.JSONObject;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.websocket.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.auth.entity.User;
-import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
-import pers.mihao.ancient_empire.core.manger.GameContext;
+import pers.mihao.ancient_empire.core.eums.JoinGameEnum;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.net.session.GameSession;
+import pers.mihao.ancient_empire.core.util.GameCoreUtil;
 
 /**
  * 游戏session管理
@@ -31,6 +33,11 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
     @Autowired
     private GameCoreManger gameCoreManger;
 
+    /**
+     * 可以重连的map
+     */
+    Map<Integer, String> reConnectRecord = new ConcurrentHashMap<>(16);
+
     Logger log = LoggerFactory.getLogger(GameSessionManger.class);
     /**
      * 记录当前游戏的人数
@@ -42,6 +49,19 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
         playerCount.incrementAndGet();
         log.info("将玩家：{} 加入到游戏：{}中, sessionId:{}, 此局游戏目前{}人", session.getUser().getName(), session.getRecordId(), session.getSession().getId(),
             sessionList.size());
+        JoinGameEnum joinGame = gameCoreManger.joinGame(session.getUserId(), session.getRecordId());
+        GameCommand gameCommand = new GameCommand();
+        gameCommand.setGameCommend(GameCommendEnum.SHOW_GAME_NEWS);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ExtMes.MESSAGE, GameCoreUtil.getMessage("message." + joinGame.type(), session.getUser().getName()));
+        gameCommand.setExtMes(jsonObject);
+        try {
+            for (GameSession gameSession : sessionList) {
+                gameSession.sendCommand(gameCommand);
+            }
+        } catch (IOException e) {
+            log.error("", e);
+        }
     }
 
     @Override
@@ -75,11 +95,22 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
             log.error("", e);
         }
         gameCoreManger.handleUserLevelGame(tSession.getUser(), tSession.getRecordId());
+        reConnectRecord.put(tSession.getUser().getId(), tSession.getRecordId());
     }
 
     @Override
     void removeGroup(String typeId) {
         gameCoreManger.allUserLevel(typeId);
+        reConnectRecord.entrySet().removeIf(entry -> entry.getValue().equals(typeId));
+    }
+
+    /**
+     * 获取可以重连的记录
+     * @param userId
+     * @return
+     */
+    public String getReConnectRecord(Integer userId) {
+        return reConnectRecord.get(userId);
     }
 
 

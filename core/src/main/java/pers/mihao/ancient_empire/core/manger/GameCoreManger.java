@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.core.manger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +35,7 @@ import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.util.ThreadPoolNameUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
+import pers.mihao.ancient_empire.core.eums.JoinGameEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
 import pers.mihao.ancient_empire.core.listener.ChapterDialogHelper;
@@ -343,6 +344,11 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         }
     }
 
+    public List<GameContext> getAllGameContextList(){
+        GameContext[] gameContext = new GameContext[contextMap.size()];
+        return Arrays.stream(contextMap.entrySet().toArray(gameContext)).collect(Collectors.toList());
+    }
+
     /**
      * 处理玩家离开record
      * @param userId
@@ -356,8 +362,8 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         gameContext.getRecordLock().lock();
         for (Army army : gameContext.getUserRecord().getArmyList()) {
             if (userId.equals(army.getPlayer())) {
-                // 后面是机器人操做
-                army.setPlayer(null);
+                // 后面是机器人操做 玩家断线使用连接符操做
+                army.setPlayer(CommonConstant.JOINER + army.getPlayer());
                 break;
             }
         }
@@ -369,5 +375,27 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             handelTask(roundEndGameEvent);
         }
         gameContext.getRecordLock().unlock();
+    }
+
+    /**
+     * 判断当前用户是否参与玩家
+     * @param userId
+     * @param recordId
+     */
+    public JoinGameEnum joinGame(Integer userId, String recordId) {
+        GameContext context = getGameContextById(recordId);
+        List<Army> armies = context.getUserRecord().getArmyList();
+        for (Army army : armies) {
+            if (army.getPlayer() != null) {
+                if (army.getPlayer().equals(userId.toString())) {
+                    return JoinGameEnum.JOIN;
+                } else if (army.getPlayer().equals(CommonConstant.JOINER + userId.toString())) {
+                    // 重新设置成玩家
+                    army.setPlayer(army.getPlayer().substring(1));
+                    return JoinGameEnum.RECONNECT;
+                }
+            }
+        }
+        return JoinGameEnum.TOURIST;
     }
 }

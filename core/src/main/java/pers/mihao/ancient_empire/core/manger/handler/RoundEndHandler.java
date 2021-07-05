@@ -15,6 +15,7 @@ import pers.mihao.ancient_empire.base.enums.ColorEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.config.AppConfig;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
@@ -56,7 +57,7 @@ public class RoundEndHandler extends CommonHandler {
         gameContext.beforeRoundStart(currArmy(), this);
 
         // 3.判断下局游戏是否是机器人
-        if (currArmy().getPlayer() == null) {
+        if (currArmy().getPlayer() == null || currArmy().getPlayer().startsWith(CommonConstant.JOINER)) {
             robotManger.startRobot(gameContext);
         }
 
