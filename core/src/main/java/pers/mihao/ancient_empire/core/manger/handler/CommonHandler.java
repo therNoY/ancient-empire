@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.common.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,6 +191,16 @@ public class CommonHandler extends AbstractGameEventHandler {
     public void changeCurrPoint(Site site) {
         // 设置当前点
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_POINT, site);
+    }
+
+    /**
+     * 改变当前点发送给单个用户
+     *
+     * @param site
+     */
+    public void changeCurrPoint2User(Site site) {
+        // 设置当前点
+        commandStream().toUserCommand().addCommand(GameCommendEnum.CHANGE_CURR_POINT, site);
     }
 
     /**
@@ -458,7 +469,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param site
      */
     public Pair<Integer, UnitInfo> changeCurrentUnitShow(Site site) {
-        changeCurrPoint(site);
+        changeCurrPoint2User(site);
         Pair<Integer, UnitInfo> unitMes = changeCurrUnit(site);
         changeCurrRegion(site);
         return unitMes;
@@ -553,6 +564,27 @@ public class CommonHandler extends AbstractGameEventHandler {
 
     @Override
     public void handlerGameEvent(GameEvent gameEvent) {
+        if (gameContext.isOtherUserEvent()) {
+            handlerOtherUserGameEvent(gameEvent, gameEvent.getUser());
+        } else {
+            handlerCurrentUserGameEvent(gameEvent);
+        }
+    }
+
+
+    /**
+     * 处理当前用户触发的事件
+     * @param gameEvent
+     */
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
+    }
+
+    /**
+     * 处理其他用户触发的事件
+     * @param gameEvent
+     * @param user
+     */
+    public void handlerOtherUserGameEvent(GameEvent gameEvent, User user) {
     }
 
 }

@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
-import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
@@ -18,7 +17,7 @@ import java.util.Set;
 public class ClickPointHandler extends CommonHandler{
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
         // 点前是准备移动阶段 目标还在当前点 不移动
         if (stateIn(StatusMachineEnum.SHOW_MOVE_AREA)) {
             // 原地行动

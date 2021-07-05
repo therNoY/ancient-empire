@@ -4,7 +4,6 @@ import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
-import pers.mihao.ancient_empire.core.manger.GameContextBaseHandler;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 
@@ -19,7 +18,7 @@ import java.util.List;
 public class ClickSummonActionHandler extends CommonHandler {
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
         List<Site> attachArea = AttachStrategy.getInstance().getAttachArea(currUnit().getUnitMes(), currSite(), gameMap());
         commandStream()
             .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION)

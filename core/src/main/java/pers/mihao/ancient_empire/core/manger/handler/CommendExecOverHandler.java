@@ -11,7 +11,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 public class CommendExecOverHandler extends CommonHandler {
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
         log.info("收到前端顺序命令交互完毕事件");
         if (gameContext.getInteractiveLock().isExecutionIng()) {
             gameContext.getInteractiveLock().executionOK();

@@ -1,7 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
 import pers.mihao.ancient_empire.base.bo.Region;
-import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
 /**
@@ -13,7 +12,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 public class ClickOccupiedActionHandler extends CommonHandler{
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
         currUnit().setColumn(currSite().getColumn());
         currUnit().setRow(currSite().getRow());
         Region region = new Region();

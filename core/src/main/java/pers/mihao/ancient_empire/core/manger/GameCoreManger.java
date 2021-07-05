@@ -112,10 +112,8 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         User user = event.getUser();
         GameContext.setUser(user);
         GameContext gameContext = contextMap.get(event.getId());
-        String player = gameContext.getUserRecord().getArmyList().get(gameContext.getUserRecord().getCurrArmyIndex())
-            .getPlayer();
-        if (StringUtil.isNotBlack(player) && !player.equals(user.getId().toString())) {
-            // 不是当前回合用户触发的事件不处理
+        if (gameContext.isOtherUserEvent() && !event.getEvent().isOtherUserHandle()) {
+            // 不是当前回合用户触发的事件 并且不支持其他用户事件处理 不处理
             return;
         }
 

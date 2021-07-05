@@ -39,7 +39,7 @@ public class ClickChoosePointHandler extends CommonHandler {
      * @param gameEvent
      */
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
 
         // 此时相当于已经确定了行动 先更新单位的位置
         currUnit().setRow(currSite().getRow());

@@ -1,8 +1,8 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
+import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.base.bo.RegionInfo;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
@@ -17,7 +17,8 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 public class ClickRegionHandler extends CommonHandler {
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
+
         // 如果现在状态是二次移动 直接返回false
         if (stateIn(StatusMachineEnum.SECOND_MOVE, StatusMachineEnum.MAST_MOVE)) {
             return;
@@ -30,7 +31,7 @@ public class ClickRegionHandler extends CommonHandler {
             return;
         }
 
-        changeCurrPoint(getSiteByRegionIndex(gameEvent.getRegionIndex()));
+        changeCurrPoint2User(getSiteByRegionIndex(gameEvent.getRegionIndex()));
         RegionInfo currRegion = changeCurrRegion(gameEvent.getRegionIndex());
 
         if (subStateIn(SubStatusMachineEnum.MAST_MOVE, SubStatusMachineEnum.SECOND_MOVE)) {
@@ -57,5 +58,11 @@ public class ClickRegionHandler extends CommonHandler {
 
         gameContext.setStatusMachine(StatusMachineEnum.INIT);
 
+    }
+
+    @Override
+    public void handlerOtherUserGameEvent(GameEvent gameEvent, User user) {
+        changeCurrPoint2User(getSiteByRegionIndex(gameEvent.getRegionIndex()));
+        changeCurrRegion(gameEvent.getRegionIndex());
     }
 }

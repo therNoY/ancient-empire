@@ -39,7 +39,7 @@ public class RoundEndHandler extends CommonHandler {
     private static String POISON = "state.poison.decrease";
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
 
         // 结束回合先获取锁
         gameContext.getRecordLock().lock();

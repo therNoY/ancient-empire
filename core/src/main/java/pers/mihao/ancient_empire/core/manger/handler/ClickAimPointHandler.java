@@ -1,10 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
-import com.alibaba.fastjson.JSONObject;
-import java.util.List;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
-import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
@@ -24,7 +20,7 @@ import java.util.Set;
 public class ClickAimPointHandler extends CommonHandler{
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
 
         if (subStateIn(SubStatusMachineEnum.SECOND_MOVE)) {
             // 二次移动直接结束单位的移动

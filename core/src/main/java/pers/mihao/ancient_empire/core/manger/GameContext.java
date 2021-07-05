@@ -11,7 +11,6 @@ import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
-import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
 import pers.mihao.ancient_empire.core.listener.GameRunListener;
-import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
@@ -341,7 +339,8 @@ public class GameContext extends UserTemplateHelper {
 
     public boolean onGameCommandAdd(GameCommand command, CommonHandler handler) {
         boolean res = true;
-        if (gameRunListeners != null) {
+        if (gameRunListeners != null && !isOtherUserEvent()) {
+            // 只处理当前回合用户的命令
             for (GameRunListener listener : gameRunListeners) {
                 res = res && listener.onGameCommandAdd(command);
             }
@@ -405,5 +404,17 @@ public class GameContext extends UserTemplateHelper {
             }
         }
         return actionIntention;
+    }
+
+    /**
+     * 是否来自其他回合用户操做
+     * @return
+     */
+    public boolean isOtherUserEvent(){
+        return getUser() != null && getUser().getId().toString().equals(getCurrentRoundUser());
+    }
+
+    private String getCurrentRoundUser() {
+        return getUserRecord().getArmyList().get(getUserRecord().getCurrArmyIndex()).getPlayer();
     }
 }

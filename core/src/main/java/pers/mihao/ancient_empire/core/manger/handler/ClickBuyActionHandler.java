@@ -24,7 +24,7 @@ import java.util.List;
 public class ClickBuyActionHandler extends CommonHandler {
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
 
         // 验证军队资金
         UnitInfo newUnitInfo = unitMesService.getUnitInfo(gameEvent.getUnitId(), 0);

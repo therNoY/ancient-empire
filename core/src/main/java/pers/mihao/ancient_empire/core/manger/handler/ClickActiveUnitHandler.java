@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
+import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.common.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +8,6 @@ import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
@@ -36,7 +36,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
      * @param gameEvent
      */
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
 
         if (stateIn(StatusMachineEnum.SECOND_MOVE, StatusMachineEnum.MAST_MOVE)) {
             // 如果状态是二次移动 或者 必须移动状态 直接返回
@@ -84,4 +84,9 @@ public class ClickActiveUnitHandler extends CommonHandler {
         }
     }
 
+
+    @Override
+    public void handlerOtherUserGameEvent(GameEvent gameEvent, User user) {
+        changeCurrentUnitShow(gameEvent.getInitiateSite());
+    }
 }

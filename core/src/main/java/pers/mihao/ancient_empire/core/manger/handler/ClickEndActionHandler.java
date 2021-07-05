@@ -1,7 +1,5 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
-import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
-import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
 /**
@@ -13,7 +11,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 public class ClickEndActionHandler extends CommonHandler{
 
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
         currUnit().setRow(currSite().getRow());
         currUnit().setColumn(currSite().getColumn());
         // 单位结束移动

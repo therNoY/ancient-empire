@@ -1,8 +1,5 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
-import pers.mihao.ancient_empire.common.util.Pair;
-import pers.mihao.ancient_empire.base.bo.Unit;
-import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
@@ -15,7 +12,7 @@ import pers.mihao.ancient_empire.core.manger.event.GameEvent;
  */
 public class ClickTombHandler extends CommonHandler{
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
         if (gameContext.getStatusMachine().equals(StatusMachineEnum.WILL_SUMMON)) {
             // 如果此时状态是准备攻击 判断是否是准备攻击单位
             if (siteInArea(gameEvent.getInitiateSite(), gameContext.getWillAttachArea())) {

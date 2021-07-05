@@ -24,7 +24,7 @@ public class ClickAttachActionHandler extends CommonHandler {
      * @param gameEvent
      */
     @Override
-    public void handlerGameEvent(GameEvent gameEvent) {
+    public void handlerCurrentUserGameEvent(GameEvent gameEvent) {
         List<Site> attachArea = AttachStrategy.getInstance().getAttachArea(currUnit().getUnitMes(), currSite(), gameMap());
         commandStream().toGameCommand().addCommand(GameCommendEnum.SHOW_ATTACH_AREA, ExtMes.ATTACH_AREA, attachArea)
                 .toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_ACTION);
