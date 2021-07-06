@@ -26,6 +26,7 @@ import pers.mihao.ancient_empire.base.enums.ArmyEnum;
 import pers.mihao.ancient_empire.base.event.AppRoomEvent;
 import pers.mihao.ancient_empire.base.service.GameRoomService;
 import pers.mihao.ancient_empire.base.service.UserJoinRoomService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.GameRoomIdUtil;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
@@ -173,7 +174,8 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
             AppRoomEvent appRoomEvent = new AppRoomEvent(AppRoomEvent.CHANG_CTL, gameRoom.getRoomId());
             appRoomEvent.setLevelArmy(userJoinRoom.getJoinArmy());
             appRoomEvent.setPlayer(id);
-            appRoomEvent.setSysMessage("玩家【" + userService.getById(id).getName() + "】离开");
+            appRoomEvent
+                .setSysMessage(AppUtil.getSystemMessagePrefix() + "玩家" + userService.getById(id).getName() + "离开");
             applicationContext.publishEvent(appRoomEvent);
         }
     }

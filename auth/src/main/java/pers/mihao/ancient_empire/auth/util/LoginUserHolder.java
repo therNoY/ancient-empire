@@ -41,7 +41,8 @@ public class LoginUserHolder {
     }
 
     public static LanguageEnum getLanguage() {
-        return UserLanguageSet.getLanguage();
+        LanguageEnum languageEnum = UserLanguageSet.getLanguage();
+        return languageEnum == null ? LanguageEnum.ZH : languageEnum;
     }
 
     public static void setLanguage(LanguageEnum languageEnum) {

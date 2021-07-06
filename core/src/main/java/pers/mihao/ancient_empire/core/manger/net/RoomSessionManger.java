@@ -13,6 +13,7 @@ import pers.mihao.ancient_empire.base.dto.ReqRoomIdDTO;
 import pers.mihao.ancient_empire.base.entity.GameRoom;
 import pers.mihao.ancient_empire.base.event.AppRoomEvent;
 import pers.mihao.ancient_empire.base.service.GameRoomService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
@@ -58,7 +59,7 @@ public class RoomSessionManger extends AbstractSessionManger<RoomSession, RoomEv
                 break;
             case AppRoomEvent.PUBLIC_MESSAGE:
                 roomCommand.setRoomCommend(RoomCommendEnum.SEND_MESSAGE);
-                roomCommand.setMessage("【" + player.getName() + "】: " + roomCommand.getMessage());
+                roomCommand.setMessage(AppUtil.getMessagePrefix(player.getName()) + roomCommand.getMessage());
                 break;
             case AppRoomEvent.CHANG_ROOM_OWNER:
                 roomCommand.setRoomCommend(RoomCommendEnum.CHANG_ROOM_OWNER);
@@ -67,7 +68,7 @@ public class RoomSessionManger extends AbstractSessionManger<RoomSession, RoomEv
                 break;
         }
         if (StringUtil.isNotBlack(appRoomEvent.getSysMessage())) {
-            roomCommand.setMessage("【系统消息】" + appRoomEvent.getSysMessage());
+            roomCommand.setMessage(AppUtil.getSystemMessagePrefix() + appRoomEvent.getSysMessage());
         } else if (StringUtil.isNotBlack(appRoomEvent.getMessage())) {
             roomCommand.setMessage(appRoomEvent.getMessage());
         }
@@ -154,12 +155,12 @@ public class RoomSessionManger extends AbstractSessionManger<RoomSession, RoomEv
         switch (roomEvent.getEventType()) {
             case SEND_MESSAGE:
                 roomCommand.setRoomCommend(RoomCommendEnum.SEND_MESSAGE);
-                roomCommand.setMessage("【" + roomEvent.getUser().getName() + "】: " + roomEvent.getMessage());
+                roomCommand.setMessage(AppUtil.getMessagePrefix(roomEvent.getUser().getName()) + roomEvent.getMessage());
                 break;
             case JOIN_ROOM:
                 roomCommand.setJoinArmy(roomEvent.getArmyColor());
                 roomCommand.setRoomCommend(RoomCommendEnum.ARMY_CHANGE);
-                roomCommand.setMessage("【" + roomEvent.getUser().getName() + "】: " + "加入房间");
+                roomCommand.setMessage(AppUtil.getMessagePrefix(roomEvent.getUser().getName()) + "加入房间");
                 break;
             default:
                 break;

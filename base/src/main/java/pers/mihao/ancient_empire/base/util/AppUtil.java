@@ -1,24 +1,17 @@
 package pers.mihao.ancient_empire.base.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.UnitEnum;
-import pers.mihao.ancient_empire.common.util.IntegerUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 和业务有关的工具类 方便修改
  */
 public class AppUtil {
-
-    static Logger log = LoggerFactory.getLogger(LoginUserHolder.class);
 
     /**
      * 根据地图的 region 的index 和map的column 获取position
@@ -53,17 +46,6 @@ public class AppUtil {
         return cArmy;
     }
 
-    /**
-     * 根据Record 和 color  获取当前军队
-     *
-     * @param record
-     * @param index
-     * @return
-     */
-    public static Army getArmyByIndex(UserRecord record, Integer index) {
-        return record.getArmyList().get(index);
-    }
-
 
     /**
      * 通过行列获取地图上的位置
@@ -85,37 +67,6 @@ public class AppUtil {
         return new Position(cUnit.getRow(), cUnit.getColumn());
     }
 
-
-    /**
-     * 获取第几个单位
-     *
-     * @param record
-     * @param index
-     * @return
-     */
-    public static Unit getUnitByIndex(UserRecord record, Integer index) {
-        Army army = getCurrentArmy(record);
-        return army.getUnits().get(index);
-    }
-
-
-    /**
-     * 获取当前的军队 index
-     *
-     * @param userRecord
-     * @return
-     */
-    public static Integer getCurrentArmyIndex(UserRecord userRecord) {
-        List<Army> armyList = userRecord.getArmyList();
-        Army cArmy = null;
-        for (int i = 0; i < armyList.size(); i++) {
-            cArmy = armyList.get(i);
-            if (userRecord.getCurrColor().equals(cArmy.getColor())) {
-                return i;
-            }
-        }
-        throw new AeException("错误的军队状态");
-    }
 
     /**
      * 获取当前的军队
@@ -156,27 +107,6 @@ public class AppUtil {
     }
 
     /**
-     * 得到不在指定阵营的单位
-     *
-     * @param record
-     * @param site
-     * @param camp
-     * @return
-     */
-    public static Unit getUnitByPositionNotIn(UserRecord record, Site site, Integer camp) {
-        Unit unit = null;
-        for (Army army : record.getArmyList()) {
-            if (!army.getCamp().equals(camp)) {
-                unit = getUnitByPosition(army, site);
-                if (unit != null) {
-                    return unit;
-                }
-            }
-        }
-        return unit;
-    }
-
-    /**
      * 从军队中找给出位置的单位
      *
      * @param army
@@ -190,17 +120,6 @@ public class AppUtil {
             }
         }
         return null;
-    }
-
-    /**
-     * 获取单位的攻击（大于最小 小于最大）
-     */
-    public static int getAttachNum(UnitLevelMes levelMes) {
-        int min = levelMes.getMinAttack();
-        int max = levelMes.getMaxAttack();
-        int att = IntegerUtil.getRandomIn(min, max);
-        log.info("获取{} 和 {} 攻击的中间值 {}", min, max, att);
-        return att;
     }
 
 
@@ -270,9 +189,6 @@ public class AppUtil {
         return false;
     }
 
-    public static int getLength(Unit s1, Unit s2) {
-        return Math.abs(s1.getRow() - s2.getRow()) + Math.abs(s1.getColumn() - s2.getColumn());
-    }
 
     public static int getLength(Site s1, Unit s2) {
         return Math.abs(s1.getRow() - s2.getRow()) + Math.abs(s1.getColumn() - s2.getColumn());
@@ -298,10 +214,6 @@ public class AppUtil {
     }
 
 
-    public static int getRegionIndex(UserRecord record, Site region) {
-        return getRegionIndex(record.getGameMap(), region);
-    }
-
     public static int getRegionIndex(GameMap map, Site region) {
         return getRegionIndex(map.getColumn(), region);
     }
@@ -309,23 +221,6 @@ public class AppUtil {
     public static int getRegionIndex(Integer mapColumn, Site region) {
         int index = (region.getRow() - 1) * mapColumn + region.getColumn() - 1;
         return index;
-    }
-
-    /**
-     * 获取同盟的所有颜色
-     *
-     * @param record
-     * @return
-     */
-    public static List<String> getCampColors(UserRecord record) {
-        List<String> strings = new ArrayList<>();
-        Army cArmy = getCurrentArmy(record);
-        for (Army army : record.getArmyList()) {
-            if (army.getCamp().equals(cArmy.getCamp())) {
-                strings.add(army.getColor());
-            }
-        }
-        return strings;
     }
 
     /**
@@ -343,17 +238,6 @@ public class AppUtil {
         return false;
     }
 
-    public static Integer getUnitIndex(Unit unit, Army army) {
-
-        for (int i = 0; i < army.getUnits().size(); i++) {
-            if (unit.getId().equals(army.getUnits().get(i).getId())) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
     public static Unit getUnitId(UserRecord record, String uuid) {
         Army army = AppUtil.getCurrentArmy(record);
         for (Unit unit : army.getUnits()) {
@@ -364,19 +248,34 @@ public class AppUtil {
         return null;
     }
 
-    public static boolean unitsContentSite(List<Unit> units, Site site) {
-        for (Unit u : units) {
-            if (u.getRow().equals(site.getRow()) && u.getColumn().equals(site.getColumn())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // ****************************************新的方法***********************************************
 
-    // 比较位置是否相等
+    /**
+     * 比较位置是否相等
+     * @param Site
+     * @param site
+     * @return
+     */
     public static boolean siteEquals(Site Site, Site site) {
         return Site.getRow().equals(site.getRow()) && Site.getColumn().equals(site.getColumn());
+    }
+
+    /**
+     * 获取系统消息前缀
+     * @return
+     */
+    public static String getSystemMessagePrefix(){
+        switch (LoginUserHolder.getLanguage()) {
+            case EN:
+                return getMessagePrefix("System Message");
+            case ZH:
+            default:
+                return getMessagePrefix("系统消息");
+        }
+
+    }
+
+    public static String getMessagePrefix(String message){
+        return "【" + message + "】";
     }
 }

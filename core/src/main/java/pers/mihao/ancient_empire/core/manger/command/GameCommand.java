@@ -6,6 +6,7 @@ import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
@@ -123,9 +124,10 @@ public class GameCommand extends AbstractCommand {
             String oldMes = getGlobalization(gameCommand.getExtMes().getString(ExtMes.MESSAGE), lang);
             if (LoginUserHolder.getLoginUser() != null) {
                 gameCommand.getExtMes()
-                    .put(ExtMes.SEND_MESSAGE, "【" + LoginUserHolder.getLoginUser().getUsername() + "】: " + oldMes);
+                    .put(ExtMes.SEND_MESSAGE,
+                        AppUtil.getMessagePrefix(LoginUserHolder.getLoginUser().getUsername()) + oldMes);
             } else {
-                gameCommand.getExtMes().put(ExtMes.SEND_MESSAGE, "【系统消息】" + oldMes);
+                gameCommand.getExtMes().put(ExtMes.SEND_MESSAGE, AppUtil.getSystemMessagePrefix() + oldMes);
             }
         } else if (gameCommand.getGameCommend().equals(GameCommendEnum.SHOW_SYSTEM_NEWS)) {
             String message = getGlobalization(gameCommand.getExtMes().getString(ExtMes.MESSAGE), lang);
