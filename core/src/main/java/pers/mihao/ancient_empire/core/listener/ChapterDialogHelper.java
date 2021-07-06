@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.core.listener;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.mihao.ancient_empire.common.bean.UserLanguageSet;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.common.util.PropertiesUtil;
 import pers.mihao.ancient_empire.core.listener.chapter.AbstractChapterListener;
@@ -24,7 +24,7 @@ public class ChapterDialogHelper {
 
 
     public static AbstractChapterListener getChapterClass(String mapName) {
-        LanguageEnum lang = UserLanguageSet.LANG.get();
+        LanguageEnum lang = LoginUserHolder.getLanguage();
         if (lang == null) {
             lang = LanguageEnum.ZH;
         }
@@ -43,10 +43,7 @@ public class ChapterDialogHelper {
     }
 
     public static String getMessage(String key) {
-        LanguageEnum lang = UserLanguageSet.LANG.get();
-        if (lang == null) {
-            lang = LanguageEnum.ZH;
-        }
+        LanguageEnum lang = LoginUserHolder.getLanguage();
         return getMessageByLang(key, dialogMap.get(lang.type()));
     }
 

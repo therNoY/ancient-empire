@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.websocket.Session;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 
@@ -26,6 +27,11 @@ public abstract class AbstractSession implements Serializable {
      * 用户信息
      */
     protected User user;
+
+    /**
+     * 用户设置
+     */
+    protected UserSetting userSetting;
 
     /**
      * sessionId
@@ -86,6 +92,14 @@ public abstract class AbstractSession implements Serializable {
 
     public void setLevelDate(Date levelDate) {
         this.levelDate = levelDate;
+    }
+
+    public UserSetting getUserSetting() {
+        return userSetting;
+    }
+
+    public void setUserSetting(UserSetting userSetting) {
+        this.userSetting = userSetting;
     }
 
     @KnowledgePoint("session并发高会报错 The remote endpoint was in state [TEXT_FULL_WRITING]")

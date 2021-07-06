@@ -7,7 +7,6 @@ import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
-import pers.mihao.ancient_empire.common.util.EnumUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.util.GameCoreUtil;
@@ -119,8 +118,9 @@ public class GameCommand extends AbstractCommand {
 
     private void setMessagePrefix(Command command, User user) {
         GameCommand gameCommand = (GameCommand) command;
+        LanguageEnum lang = LoginUserHolder.getLanguage();
         if (gameCommand.getGameCommend().equals(GameCommendEnum.SHOW_GAME_NEWS)) {
-            String oldMes = gameCommand.getExtMes().getString(ExtMes.MESSAGE);
+            String oldMes = getGlobalization(gameCommand.getExtMes().getString(ExtMes.MESSAGE), lang);
             if (LoginUserHolder.getLoginUser() != null) {
                 gameCommand.getExtMes()
                     .put(ExtMes.SEND_MESSAGE, "【" + LoginUserHolder.getLoginUser().getUsername() + "】: " + oldMes);
@@ -128,13 +128,20 @@ public class GameCommand extends AbstractCommand {
                 gameCommand.getExtMes().put(ExtMes.SEND_MESSAGE, "【系统消息】" + oldMes);
             }
         } else if (gameCommand.getGameCommend().equals(GameCommendEnum.SHOW_SYSTEM_NEWS)) {
-            GameCoreUtil.Globalization globalization = gameCommand.getExtMes()
-                .getObject(ExtMes.MESSAGE, GameCoreUtil.Globalization.class);
-            LanguageEnum languageEnum = EnumUtil
-                .valueOf(LanguageEnum.class, getUserSettingService().getUserSettingById(user.getId()).getLanguage());
-            String message = GameCoreUtil.getMessageByLang(globalization, languageEnum);
+            String message = getGlobalization(gameCommand.getExtMes().getString(ExtMes.MESSAGE), lang);
             gameCommand.getExtMes().put(ExtMes.SEND_MESSAGE, message);
         }
+    }
+
+    private String getGlobalization(String mes, LanguageEnum languageEnum){
+        GameCoreUtil.Globalization globalization = null;
+        try {
+            globalization = JSONObject.parseObject(mes, GameCoreUtil.Globalization.class);
+        } catch (Exception e) {
+            return mes;
+        }
+        String message = GameCoreUtil.getMessageByLang(globalization, languageEnum);
+        return message;
     }
 
     @Override

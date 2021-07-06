@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
@@ -67,6 +68,7 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
             gameContext.setStatusMachine(StatusMachineEnum.MOVE_DONE);
         }else {
             changeCurrentUnitShow(gameEvent.getInitiateSite());
+            commandList.forEach(command -> command.setSendType(SendTypeEnum.SEND_TO_USER));
             if (gameContext.getStatusMachine().equals(StatusMachineEnum.SHOW_MOVE_AREA) ||
                     gameContext.getStatusMachine().equals(StatusMachineEnum.SHOW_MOVE_LINE)) {
                 commandStream().toGameCommand().addCommand(GameCommendEnum.DIS_SHOW_MOVE_AREA);
@@ -81,6 +83,8 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
 
     @Override
     public void handlerOtherUserGameEvent(GameEvent gameEvent, User user) {
-        changeCurrentUnitShow(gameEvent.getInitiateSite());
+        if (inCanMoveStatus()) {
+            changeCurrentUnitShow(gameEvent.getInitiateSite());
+        }
     }
 }

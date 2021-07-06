@@ -411,7 +411,7 @@ public class GameContext extends UserTemplateHelper {
      * @return
      */
     public boolean isOtherUserEvent(){
-        return getUser() != null && getUser().getId().toString().equals(getCurrentRoundUser());
+        return getUser() != null && !getUser().getId().toString().equals(getCurrentRoundUser());
     }
 
     private String getCurrentRoundUser() {

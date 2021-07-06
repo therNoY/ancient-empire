@@ -10,6 +10,7 @@ import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
@@ -65,6 +66,7 @@ public class ClickActiveUnitHandler extends CommonHandler {
         } else {
             Pair<Integer, UnitInfo> unitMes = changeCurrentUnitShow(gameEvent.getInitiateSite());
             UnitInfo unitInfo = unitMes.getValue();
+            commandList.forEach(command -> command.setSendType(SendTypeEnum.SEND_TO_USER));
             // 判断展示移动区域还是展示行动
             if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())
                 && RegionEnum.CASTLE.type().equals(getRegionBySite(unitInfo).getType())) {
@@ -87,6 +89,8 @@ public class ClickActiveUnitHandler extends CommonHandler {
 
     @Override
     public void handlerOtherUserGameEvent(GameEvent gameEvent, User user) {
-        changeCurrentUnitShow(gameEvent.getInitiateSite());
+        if (inCanMoveStatus()) {
+            changeCurrentUnitShow(gameEvent.getInitiateSite());
+        }
     }
 }

@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.manger.event;
 import pers.mihao.ancient_empire.auth.entity.User;
 
 import java.util.Date;
+import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 
 /**
  * 抽象事件
@@ -20,6 +21,8 @@ public abstract class AbstractEvent implements Event{
      * 登录人ID
      */
     private User user;
+
+    private LanguageEnum language;
 
     protected Date createTime;
 
@@ -48,5 +51,14 @@ public abstract class AbstractEvent implements Event{
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    public LanguageEnum getLanguage() {
+        return language;
+    }
+
+    @Override
+    public void setLanguage(LanguageEnum language) {
+        this.language = language;
     }
 }

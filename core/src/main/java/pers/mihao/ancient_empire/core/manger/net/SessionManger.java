@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.core.manger.net;
 
 import javax.websocket.Session;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.event.Event;
 import pers.mihao.ancient_empire.core.manger.net.session.AbstractSession;
@@ -62,8 +63,9 @@ public interface SessionManger<T extends AbstractSession, E extends Event> {
      * @param message
      * @param typeId
      * @param user
+     * @param userSetting
      */
-    void handleMessage(String message, String typeId, User user);
+    void handleMessage(String message, String typeId, User user, UserSetting userSetting);
 
     /**
      * 获取加入成功的命令

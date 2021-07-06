@@ -2,6 +2,8 @@ package pers.mihao.ancient_empire.auth.util;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import pers.mihao.ancient_empire.auth.dto.MyUserDetails;
+import pers.mihao.ancient_empire.common.bean.UserLanguageSet;
+import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.common.util.CurrUserIdHolder;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
 
@@ -10,7 +12,7 @@ import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
  *
  * @author hspcadmin
  */
-public class LoginUserHolder extends CurrUserIdHolder {
+public class LoginUserHolder {
 
     private static ThreadLocal<MyUserDetails> userDetailsThreadLocal = new ThreadLocal<>();
 
@@ -34,6 +36,15 @@ public class LoginUserHolder extends CurrUserIdHolder {
         "每次使用完都清除掉，不然线程回收了，但是保存的对象没有回收，会造成内存泄漏")
     public static void clear() {
         CurrUserIdHolder.clean();
+        UserLanguageSet.clean();
         userDetailsThreadLocal.remove();
+    }
+
+    public static LanguageEnum getLanguage() {
+        return UserLanguageSet.getLanguage();
+    }
+
+    public static void setLanguage(LanguageEnum languageEnum) {
+        UserLanguageSet.setLanguage(languageEnum);
     }
 }

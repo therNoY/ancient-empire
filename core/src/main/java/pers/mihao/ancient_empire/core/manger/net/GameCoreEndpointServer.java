@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
@@ -49,6 +50,8 @@ public class GameCoreEndpointServer {
      * 连接用户
      */
     private User connectUser;
+
+    private UserSetting userSetting;
 
     /**
      * 连接的ID
@@ -91,6 +94,7 @@ public class GameCoreEndpointServer {
             AbstractSession warpSession = sessionManger.addNewSession(session, id, connectUser);
             if (warpSession != null) {
                 warpSession.sendCommand(sessionManger.getJoinSuccessCommon(id));
+                this.userSetting = warpSession.getUserSetting();
             } else {
                 closeSession(session);
             }
@@ -111,7 +115,8 @@ public class GameCoreEndpointServer {
         // 校验session状态
         checkSessionStatus(session);
         try {
-            getSessionManger().handleMessage(message, id, connectUser);
+
+            getSessionManger().handleMessage(message, id, connectUser, userSetting);
         } catch (Exception e) {
             log.error("", e);
         }

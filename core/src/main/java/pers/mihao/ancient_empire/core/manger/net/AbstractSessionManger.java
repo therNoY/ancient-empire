@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.auth.service.UserService;
+import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
@@ -161,13 +163,14 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
     }
 
     @Override
-    public final void handleMessage(String message, String typeId, User user) {
+    public final void handleMessage(String message, String typeId, User user, UserSetting userSetting) {
         ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
         // 返回表示此类型实际类型参数的 Type 对象的数组()，想要获取第二个泛型的Class，所以索引写1
         Class<E> eClass = (Class) type.getActualTypeArguments()[1];
         Event event = JSON.parseObject(message, eClass);
         event.setId(typeId);
         event.setUser(user);
+        event.setLanguage(userSetting == null ? LanguageEnum.ZH : LanguageEnum.valueOf(userSetting.getLanguage()));
         event.setCreateTime(new Date());
         E e = (E) event;
         handleEvent(e);

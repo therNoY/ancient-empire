@@ -2,6 +2,7 @@ package pers.mihao.ancient_empire.core.manger.event;
 
 import java.util.Date;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 
 /**
  * 事件类
@@ -27,5 +28,12 @@ public interface Event {
      * @param createTime
      */
     void setCreateTime(Date createTime);
+
+    /**
+     * 国际化
+     * @param languageEnum
+     * @return
+     */
+    void setLanguage(LanguageEnum languageEnum);
 
 }

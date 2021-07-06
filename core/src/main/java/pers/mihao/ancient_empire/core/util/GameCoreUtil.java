@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.util;
 
+import java.io.Serializable;
 import java.util.Map;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.common.util.PropertiesUtil;
@@ -36,7 +37,7 @@ public class GameCoreUtil {
         return new Globalization(proper, args);
     }
 
-    public static class Globalization {
+    public static class Globalization implements Serializable {
 
         private String proper;
 

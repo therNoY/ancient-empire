@@ -34,7 +34,6 @@ public class UserJoinRoom implements Serializable {
     /**
      * 加入的军队 为空表示观战
      */
-
     @TableField(strategy = FieldStrategy.IGNORED)
     private String joinArmy;
 

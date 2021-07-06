@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.service.UserSettingService;
 import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
@@ -32,6 +33,9 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
 
     @Autowired
     private GameCoreManger gameCoreManger;
+
+    @Autowired
+    UserSettingService userSettingService;
 
     /**
      * 可以重连的map
@@ -71,7 +75,9 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
             log.error("加入游戏失败：{}", typeId);
             return null;
         }
-        return new GameSession(typeId, user, session, new Date());
+        GameSession gameSession = new GameSession(typeId, user, session, new Date());
+        gameSession.setUserSetting(userSettingService.getUserSettingById(user.getId()));
+        return gameSession;
     }
 
     @Override
@@ -81,12 +87,11 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
             lastSession.size());
 
         // 给游戏中的玩家发送消息
-        String userLevelMessage = "";
         GameCommand gameCommand = new GameCommand();
         gameCommand.setGameCommend(GameCommendEnum.SHOW_GAME_NEWS);
-        JSONObject extData = new JSONObject(2);
-        extData.put(ExtMes.MESSAGE, userLevelMessage);
-        gameCommand.setExtMes(extData);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ExtMes.MESSAGE, GameCoreUtil.getMessage("message.break", tSession.getUser().getName()));
+        gameCommand.setExtMes(jsonObject);
         try {
             for (GameSession session : lastSession) {
                 session.sendCommand(gameCommand);

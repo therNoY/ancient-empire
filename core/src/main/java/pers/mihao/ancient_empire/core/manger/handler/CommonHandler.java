@@ -26,6 +26,7 @@ import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.*;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
@@ -469,7 +470,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param site
      */
     public Pair<Integer, UnitInfo> changeCurrentUnitShow(Site site) {
-        changeCurrPoint2User(site);
+        changeCurrPoint(site);
         Pair<Integer, UnitInfo> unitMes = changeCurrUnit(site);
         changeCurrRegion(site);
         return unitMes;
@@ -566,9 +567,15 @@ public class CommonHandler extends AbstractGameEventHandler {
     public void handlerGameEvent(GameEvent gameEvent) {
         if (gameContext.isOtherUserEvent()) {
             handlerOtherUserGameEvent(gameEvent, gameEvent.getUser());
+            commandList.forEach(command -> command.setSendType(SendTypeEnum.SEND_TO_USER));
         } else {
             handlerCurrentUserGameEvent(gameEvent);
         }
+    }
+
+    public boolean inCanMoveStatus(){
+        return stateIn(StatusMachineEnum.INIT, StatusMachineEnum.SHOW_MOVE_AREA, StatusMachineEnum.SHOW_ACTION,
+            StatusMachineEnum.MOVE_DONE);
     }
 
 

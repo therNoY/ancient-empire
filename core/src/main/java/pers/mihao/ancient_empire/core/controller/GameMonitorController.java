@@ -15,6 +15,7 @@ import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.ReflectUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
+import pers.mihao.ancient_empire.core.controller.dto.GetMonitorInDTO;
 import pers.mihao.ancient_empire.core.dto.MonitorDTO;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
@@ -92,6 +93,18 @@ public class GameMonitorController {
         jsonObject.put("gameSession", gameSessionMap);
         jsonObject.put("roomSessionMap", roomSessionMap);
         return jsonObject;
+    }
+
+
+    /**
+     *
+     * @return
+     */
+    @RequestMapping("/admin/monitor/record/list")
+    public List getRunningRecord(@RequestBody GetMonitorInDTO getMonitorInDTO){
+        // 当前活跃的全部游戏
+        List<GameContext> list = gameCoreManger.getAllGameContextList();
+        return list;
     }
 
 }

@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
@@ -112,6 +113,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     public void handelTask(GameEvent event) {
         User user = event.getUser();
         GameContext.setUser(user);
+        LoginUserHolder.setLanguage(event.getLanguage());
         GameContext gameContext = contextMap.get(event.getId());
         if (gameContext.isOtherUserEvent() && !event.getEvent().isOtherUserHandle()) {
             // 不是当前回合用户触发的事件 并且不支持其他用户事件处理 不处理
@@ -151,6 +153,8 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 contextMap.put(event.getId(), cloneContext);
             }
         } finally {
+            // 清除三个线程上下文
+            LoginUserHolder.clear();
             GameContext.clear();
             GameCoreHelper.removeContext();
         }
@@ -261,6 +265,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                     log.info("开始检测上下文：{} 如果没有完成 就会撤销", userRecord.getUuid());
                     cyclicBarrier.await(10, TimeUnit.SECONDS);
                     onGameStart(gameContext);
+                    gameContext.setStartGame(null);
                 } catch (InterruptedException | BrokenBarrierException e) {
                     log.error("", e);
                 } catch (TimeoutException e) {
@@ -305,6 +310,9 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         GameContext gameContext = contextMap.get(recordId);
         if (gameContext != null) {
             CyclicBarrier cyclicBarrier = gameContext.getStartGame();
+            if (cyclicBarrier == null) {
+                return true;
+            }
             try {
                 // 等待其他玩家加入
                 cyclicBarrier.await(20, TimeUnit.SECONDS);

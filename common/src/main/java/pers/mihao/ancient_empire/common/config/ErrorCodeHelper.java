@@ -23,7 +23,7 @@ public class ErrorCodeHelper {
 
 
     public static String getErrorMes(Integer errorCode) {
-        LanguageEnum lang = UserLanguageSet.LANG.get();
+        LanguageEnum lang = UserLanguageSet.getLanguage();
         if (lang == null) {
             lang = LanguageEnum.ZH;
         }

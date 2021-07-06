@@ -6,16 +6,20 @@ import pers.mihao.ancient_empire.common.enums.LanguageEnum;
  * @Author mihao
  * @Date 2021/5/15 9:31
  */
-public interface UserLanguageSet {
+public class UserLanguageSet {
 
-    ThreadLocal<LanguageEnum> LANG = new ThreadLocal<>();
+    private static ThreadLocal<LanguageEnum> language = new ThreadLocal<>();
 
-    /**
-     * 获取当前用户的语言设置
-     *
-     * @param userId
-     * @return
-     */
-    LanguageEnum getLanguageByUserId(String userId);
+    public static LanguageEnum getLanguage() {
+        return language.get();
+    }
+
+    public static void setLanguage(LanguageEnum userId){
+        language.set(userId);
+    }
+
+    public static void clean(){
+        language.remove();
+    }
 
 }
