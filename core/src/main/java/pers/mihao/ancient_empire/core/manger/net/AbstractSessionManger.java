@@ -170,7 +170,8 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
         Event event = JSON.parseObject(message, eClass);
         event.setId(typeId);
         event.setUser(user);
-        event.setLanguage(userSetting == null ? LanguageEnum.ZH : LanguageEnum.valueOf(userSetting.getLanguage()));
+        event.setLanguage(
+            userSetting == null ? LanguageEnum.ZH : LanguageEnum.valueOf(userSetting.getLanguage().toUpperCase()));
         event.setCreateTime(new Date());
         E e = (E) event;
         handleEvent(e);

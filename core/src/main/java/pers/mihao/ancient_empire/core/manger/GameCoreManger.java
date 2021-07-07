@@ -354,7 +354,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     public List<GameContext> getAllGameContextList(){
         GameContext[] gameContext = new GameContext[contextMap.size()];
-        return Arrays.stream(contextMap.entrySet().toArray(gameContext)).collect(Collectors.toList());
+        return Arrays.stream(contextMap.values().toArray(gameContext)).collect(Collectors.toList());
     }
 
     /**
@@ -362,16 +362,18 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
      * @param userId
      * @param recordId
      */
-    public void handleUserLevelGame(User user, String recordId) {
+    public boolean handleUserLevelGame(User user, String recordId) {
         String userId = user.getId().toString();
         // 修改离开的玩家改成机器人操做
         GameContext gameContext = getGameContextById(recordId);
+        boolean isPlayer = false;
         // 这里可能会有线程问题 比如这里判断离开的玩家不是当前回合玩家 掉过结束回合 但是此时刚好执行到结束回合所以需要加记录锁
         gameContext.getRecordLock().lock();
         for (Army army : gameContext.getUserRecord().getArmyList()) {
             if (userId.equals(army.getPlayer())) {
                 // 后面是机器人操做 玩家断线使用连接符操做
                 army.setPlayer(CommonConstant.JOINER + army.getPlayer());
+                isPlayer = true;
                 break;
             }
         }
@@ -383,6 +385,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             handelTask(roundEndGameEvent);
         }
         gameContext.getRecordLock().unlock();
+        return isPlayer;
     }
 
     /**

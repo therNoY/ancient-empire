@@ -240,7 +240,7 @@ https://github.com/therNoY/ancient-empire-web/
     用户登录注册 ✔
     
     
-7. 多人游戏有人断线 游戏中情况
+7. 多人游戏有人断线 游戏中情况 ✔
    
 
 

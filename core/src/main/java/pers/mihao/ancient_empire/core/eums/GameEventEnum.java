@@ -103,7 +103,7 @@ public enum GameEventEnum implements BaseEnum {
     /**
      * 命令执行完毕
      */
-    COMMEND_EXEC_OVER(false);
+    COMMEND_EXEC_OVER(true);
 
     /**
      * 是否支持非当前回合处理

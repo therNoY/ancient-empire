@@ -6,16 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.ReflectUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.controller.dto.GetMonitorInDTO;
+import pers.mihao.ancient_empire.core.controller.dto.GetMonitorOutDTO;
 import pers.mihao.ancient_empire.core.dto.MonitorDTO;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
@@ -101,10 +104,45 @@ public class GameMonitorController {
      * @return
      */
     @RequestMapping("/admin/monitor/record/list")
-    public List getRunningRecord(@RequestBody GetMonitorInDTO getMonitorInDTO){
+    public List<GetMonitorOutDTO> getRunningRecord(@RequestBody ApiConditionDTO apiConditionDTO){
         // 当前活跃的全部游戏
         List<GameContext> list = gameCoreManger.getAllGameContextList();
-        return list;
+        if (StringUtil.isNotBlack(apiConditionDTO.getCondition())) {
+            // 条件过滤
+            list = list.stream()
+                .filter(gameContext -> gameContext.getGameId().contains(apiConditionDTO.getCondition())
+                    || gameContext.getUserRecord().getCreateUserId().toString().contains(apiConditionDTO.getCondition())
+                    || gameContext.getUserRecord().getCurrPlayer().contains(apiConditionDTO.getCondition())
+                    || gameContext.getUserRecord().getRecordName().contains(apiConditionDTO.getCondition()))
+                .collect(Collectors.toList());
+        }
+        // 分页
+        if (list != null && list.size() > apiConditionDTO.getLimitStart()) {
+            int count = Math.min(apiConditionDTO.getLimitCount(), list.size() - apiConditionDTO.getLimitStart());
+            list = list.subList(apiConditionDTO.getLimitStart(), count);
+        } else {
+            list = new ArrayList<>();
+        }
+
+        List<GetMonitorOutDTO> res = new ArrayList<>();
+
+        for (GameContext gameContext : list) {
+            GetMonitorOutDTO getMonitorOutDTO = new GetMonitorOutDTO();
+            getMonitorOutDTO.setRecordName(gameContext.getUserRecord().getRecordName());
+            getMonitorOutDTO.setUuid(gameContext.getUserRecord().getUuid());
+            getMonitorOutDTO.setCreateTime(gameContext.getUserRecord().getCreateTime());
+            getMonitorOutDTO.setCreateUserId(gameContext.getUserRecord().getCreateUserId());
+            getMonitorOutDTO.setStatusMachine(gameContext.getStatusMachine());
+            getMonitorOutDTO.setSubStatusMachine(gameContext.getSubStatusMachine());
+            res.add(getMonitorOutDTO);
+        }
+        return res;
+    }
+
+    @RequestMapping("/api/runRecord/{uuid}")
+    public UserRecord getOneRunningRecord(@PathVariable("uuid") String uuid){
+        GameContext gameContext = gameCoreManger.getGameContextById(uuid);
+        return gameContext.getUserRecord();
     }
 
 }

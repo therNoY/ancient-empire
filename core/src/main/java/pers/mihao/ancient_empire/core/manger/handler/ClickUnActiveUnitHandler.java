@@ -83,7 +83,7 @@ public class ClickUnActiveUnitHandler extends CommonHandler {
 
     @Override
     public void handlerOtherUserGameEvent(GameEvent gameEvent, User user) {
-        if (inCanMoveStatus()) {
+        if (inOtherPlayCanRunState()) {
             changeCurrentUnitShow(gameEvent.getInitiateSite());
         }
     }

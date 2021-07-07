@@ -64,7 +64,7 @@ public class ClickRegionHandler extends CommonHandler {
 
     @Override
     public void handlerOtherUserGameEvent(GameEvent gameEvent, User user) {
-        if (inCanMoveStatus()) {
+        if (inOtherPlayCanRunState()) {
             changeCurrPoint(getSiteByRegionIndex(gameEvent.getRegionIndex()));
             changeCurrRegion(gameEvent.getRegionIndex());
         }

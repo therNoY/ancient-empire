@@ -59,13 +59,7 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(ExtMes.MESSAGE, GameCoreUtil.getMessage("message." + joinGame.type(), session.getUser().getName()));
         gameCommand.setExtMes(jsonObject);
-        try {
-            for (GameSession gameSession : sessionList) {
-                gameSession.sendCommand(gameCommand);
-            }
-        } catch (IOException e) {
-            log.error("", e);
-        }
+        sendMessageToGroup(gameCommand, session.getRecordId());
     }
 
     @Override
@@ -92,15 +86,11 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(ExtMes.MESSAGE, GameCoreUtil.getMessage("message.break", tSession.getUser().getName()));
         gameCommand.setExtMes(jsonObject);
-        try {
-            for (GameSession session : lastSession) {
-                session.sendCommand(gameCommand);
-            }
-        } catch (IOException e) {
-            log.error("", e);
+        sendMessageToGroup(gameCommand, tSession.getRecordId());
+        boolean isPlayer = gameCoreManger.handleUserLevelGame(tSession.getUser(), tSession.getRecordId());
+        if (isPlayer) {
+            reConnectRecord.put(tSession.getUser().getId(), tSession.getRecordId());
         }
-        gameCoreManger.handleUserLevelGame(tSession.getUser(), tSession.getRecordId());
-        reConnectRecord.put(tSession.getUser().getId(), tSession.getRecordId());
     }
 
     @Override

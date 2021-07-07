@@ -567,15 +567,21 @@ public class CommonHandler extends AbstractGameEventHandler {
     public void handlerGameEvent(GameEvent gameEvent) {
         if (gameContext.isOtherUserEvent()) {
             handlerOtherUserGameEvent(gameEvent, gameEvent.getUser());
-            commandList.forEach(command -> command.setSendType(SendTypeEnum.SEND_TO_USER));
+            if (commandList != null) {
+                commandList.forEach(command -> command.setSendType(SendTypeEnum.SEND_TO_USER));
+            }
         } else {
             handlerCurrentUserGameEvent(gameEvent);
         }
     }
 
-    public boolean inCanMoveStatus(){
+    /**
+     * 是否是其他玩家可以执行的状态
+     * @return
+     */
+    public boolean inOtherPlayCanRunState(){
         return stateIn(StatusMachineEnum.INIT, StatusMachineEnum.SHOW_MOVE_AREA, StatusMachineEnum.SHOW_ACTION,
-            StatusMachineEnum.MOVE_DONE);
+            StatusMachineEnum.MOVE_DONE, StatusMachineEnum.SECOND_MOVE);
     }
 
 

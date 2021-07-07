@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
+import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 
 /**
@@ -16,5 +17,10 @@ public class CommendExecOverHandler extends CommonHandler {
         if (gameContext.getInteractiveLock().isExecutionIng()) {
             gameContext.getInteractiveLock().executionOK();
         }
+    }
+
+    @Override
+    public void handlerOtherUserGameEvent(GameEvent gameEvent, User user) {
+        this.handlerCurrentUserGameEvent(gameEvent);
     }
 }
