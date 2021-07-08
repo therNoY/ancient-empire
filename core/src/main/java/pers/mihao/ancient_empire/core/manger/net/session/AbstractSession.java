@@ -13,6 +13,7 @@ import javax.websocket.Session;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.common.annotation.KnowledgePoint;
+import pers.mihao.ancient_empire.core.eums.NetConnectTypeEnum;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 
 /**
@@ -42,6 +43,11 @@ public abstract class AbstractSession implements Serializable {
      * WS session
      */
     protected Session session;
+
+    /**
+     * 连接类型
+     */
+    private NetConnectTypeEnum connectType;
 
     /**
      * 加入游戏日期
@@ -100,6 +106,14 @@ public abstract class AbstractSession implements Serializable {
 
     public void setUserSetting(UserSetting userSetting) {
         this.userSetting = userSetting;
+    }
+
+    public NetConnectTypeEnum getConnectType() {
+        return connectType;
+    }
+
+    public void setConnectType(NetConnectTypeEnum connectType) {
+        this.connectType = connectType;
     }
 
     @KnowledgePoint("session并发高会报错 The remote endpoint was in state [TEXT_FULL_WRITING]")

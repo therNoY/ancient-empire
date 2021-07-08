@@ -218,7 +218,6 @@ https://github.com/therNoY/ancient-empire-web/
 
 9. 注册用户userSetting不创建 后续会报错
 
-10. 
 
 
 ### 还需要完成功能

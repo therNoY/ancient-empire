@@ -369,13 +369,20 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         boolean isPlayer = false;
         // 这里可能会有线程问题 比如这里判断离开的玩家不是当前回合玩家 掉过结束回合 但是此时刚好执行到结束回合所以需要加记录锁
         gameContext.getRecordLock().lock();
+        // 本局游戏是否还有连接的玩家 不算观战
+        boolean hasActiveUser = true;
         for (Army army : gameContext.getUserRecord().getArmyList()) {
             if (userId.equals(army.getPlayer())) {
                 // 后面是机器人操做 玩家断线使用连接符操做
                 army.setPlayer(CommonConstant.JOINER + army.getPlayer());
                 isPlayer = true;
-                break;
             }
+            if (StringUtil.isNotBlack(army.getPlayer()) && !army.getPlayer().startsWith(CommonConstant.JOINER)) {
+                hasActiveUser = hasActiveUser && gameSessionManger.checkConnect(recordId, army.getPlayer());
+            }
+        }
+        if (!hasActiveUser) {
+            gameSessionManger.deleteAllSession(recordId);
         }
         if (userId.equals(gameContext.getUserRecord().getCurrPlayer())) {
             GameEvent roundEndGameEvent = new GameEvent();

@@ -3,6 +3,7 @@ package pers.mihao.ancient_empire.core.manger.net;
 import javax.websocket.Session;
 import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.entity.UserSetting;
+import pers.mihao.ancient_empire.core.eums.NetConnectTypeEnum;
 import pers.mihao.ancient_empire.core.manger.command.Command;
 import pers.mihao.ancient_empire.core.manger.event.Event;
 import pers.mihao.ancient_empire.core.manger.net.session.AbstractSession;
@@ -22,7 +23,7 @@ public interface SessionManger<T extends AbstractSession, E extends Event> {
      * @param user
      * @return
      */
-    T addNewSession(Session netSession, String typeId, User user);
+    T addNewSession(Session netSession, String typeId, User user, NetConnectTypeEnum connectType);
 
     /**
      * 移除一个session

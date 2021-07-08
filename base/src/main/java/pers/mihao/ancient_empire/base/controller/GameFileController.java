@@ -134,7 +134,7 @@ public class GameFileController {
         int width = image.getWidth();
         int height = image.getHeight();
         if (width != IMG_SIZE || height != IMG_SIZE) {
-            throw new AeException("图片的宽或者高度需要是" + IMG_SIZE + "px");
+//            throw new AeException("图片的宽或者高度需要是" + IMG_SIZE + "px");
         }
 
         try {

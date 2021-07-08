@@ -91,7 +91,7 @@ public class GameCoreEndpointServer {
             this.netConnectType = EnumUtil.valueOf(NetConnectTypeEnum.class, type);
             SessionManger sessionManger = getSessionManger();
             // 添加session
-            AbstractSession warpSession = sessionManger.addNewSession(session, id, connectUser);
+            AbstractSession warpSession = sessionManger.addNewSession(session, id, connectUser, this.netConnectType);
             if (warpSession != null) {
                 warpSession.sendCommand(sessionManger.getJoinSuccessCommon(id));
                 this.userSetting = warpSession.getUserSetting();

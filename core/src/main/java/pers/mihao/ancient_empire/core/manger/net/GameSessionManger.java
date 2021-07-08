@@ -17,6 +17,7 @@ import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.JoinGameEnum;
+import pers.mihao.ancient_empire.core.eums.NetConnectTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
@@ -75,6 +76,20 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
     }
 
     @Override
+    void beforeCloseByRemove(GameSession gameSession) {
+        GameCommand gameCommand = new GameCommand();
+        gameCommand.setGameCommend(GameCommendEnum.SHOW_SYSTEM_NEWS);
+        JSONObject beCloseTip = new JSONObject();
+        beCloseTip.put(ExtMes.MESSAGE, GameCoreUtil.getMessage("tip.allPlayLevel"));
+        gameCommand.setExtMes(beCloseTip);
+        try {
+            gameSession.sendCommand(gameCommand);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     void removeSessionFromGroup(GameSession tSession, List<GameSession> lastSession) {
         playerCount.decrementAndGet();
         log.info("玩家:{}从游戏:{}中离开,游戏剩余:{}", tSession.getUser(), tSession.getRecordId(),
@@ -88,7 +103,7 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
         gameCommand.setExtMes(jsonObject);
         sendMessageToGroup(gameCommand, tSession.getRecordId());
         boolean isPlayer = gameCoreManger.handleUserLevelGame(tSession.getUser(), tSession.getRecordId());
-        if (isPlayer) {
+        if (isPlayer && tSession.getConnectType().equals(NetConnectTypeEnum.NET_GAME) && lastSession.size() > 1) {
             reConnectRecord.put(tSession.getUser().getId(), tSession.getRecordId());
         }
     }
@@ -125,4 +140,8 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
         gameCoreManger.addTask(gameEvent);
     }
 
+    public boolean checkConnect(String recordId, String player) {
+        return sessionMap.get(recordId).stream()
+            .anyMatch(gameSession -> player.equals(gameSession.getUserId().toString()));
+    }
 }

@@ -128,6 +128,11 @@ public class RoomSessionManger extends AbstractSessionManger<RoomSession, RoomEv
     }
 
     @Override
+    void beforeCloseByRemove(RoomSession session) {
+
+    }
+
+    @Override
     void addNewSession(RoomSession session, List<RoomSession> sessionList) {
         RoomEvent roomEvent;
         if (StringUtil.isNotBlack(session.getJoinGameCtlArmyColor())) {

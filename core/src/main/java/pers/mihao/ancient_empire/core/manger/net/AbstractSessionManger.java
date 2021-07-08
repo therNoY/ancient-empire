@@ -20,6 +20,7 @@ import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
 import pers.mihao.ancient_empire.common.vo.AeException;
+import pers.mihao.ancient_empire.core.eums.NetConnectTypeEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.command.Command;
@@ -43,8 +44,9 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
     public UserService userService;
 
     @Override
-    public final T addNewSession(Session netSession, String typeId, User user) {
+    public final T addNewSession(Session netSession, String typeId, User user, NetConnectTypeEnum netConnectTyp) {
         T session = createSession(netSession, typeId, user);
+        session.setConnectType(netConnectTyp);
         if (session == null) {
             return null;
         }
@@ -362,4 +364,19 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
      */
     abstract T createSession(Session session, String typeId, User user);
 
+    /**
+     * 移除所有其他的session
+     * @param recordId
+     */
+    public void deleteAllSession(String recordId) {
+        for (T session : sessionMap.get(recordId)) {
+            beforeCloseByRemove(session);
+            session.closeSession();
+        }
+    }
+
+    /**
+     * session被移除
+     */
+    abstract void beforeCloseByRemove(T session);
 }
