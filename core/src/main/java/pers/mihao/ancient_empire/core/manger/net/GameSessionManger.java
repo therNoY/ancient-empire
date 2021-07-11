@@ -140,8 +140,5 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
         gameCoreManger.addTask(gameEvent);
     }
 
-    public boolean checkConnect(String recordId, String player) {
-        return sessionMap.get(recordId).stream()
-            .anyMatch(gameSession -> player.equals(gameSession.getUserId().toString()));
-    }
+
 }

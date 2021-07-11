@@ -78,6 +78,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 LanguageEnum languageEnum = EnumUtil
                     .valueOf(LanguageEnum.class, userSettingService.getUserSettingById(LoginUserHolder.getUserId()).getLanguage());
                 LoginUserHolder.setLanguage(languageEnum);
+
+                // TODO 判断过期时间 重新设置TOKEN
+
             }
         } else {
             response.setCharacterEncoding("UTF-8");

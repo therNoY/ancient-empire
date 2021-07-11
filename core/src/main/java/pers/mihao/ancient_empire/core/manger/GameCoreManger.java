@@ -382,6 +382,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             }
         }
         if (!hasActiveUser) {
+            // 没有玩家全部移除
             gameSessionManger.deleteAllSession(recordId);
         }
         if (userId.equals(gameContext.getUserRecord().getCurrPlayer())) {

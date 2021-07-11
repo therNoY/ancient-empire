@@ -375,6 +375,11 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
         }
     }
 
+    public boolean checkConnect(String typeId, String player) {
+        return sessionMap.get(typeId).stream()
+            .anyMatch(gameSession -> player.equals(gameSession.getUser().getId().toString()));
+    }
+
     /**
      * session被移除
      */

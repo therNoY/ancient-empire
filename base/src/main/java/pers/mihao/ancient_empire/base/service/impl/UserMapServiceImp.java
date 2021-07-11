@@ -130,12 +130,10 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
                 // 优化周围的海洋
                 optimizationAroundSea(simpleDrawings, index, column, regionList);
             }
-            return simpleDrawings;
         } else if (type.startsWith(BRIDGE)) {
 
         } else {
             optimizationAroundSea(simpleDrawings, index, column, regionList);
-            return simpleDrawings;
         }
         return simpleDrawings;
     }
@@ -414,7 +412,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
         // 1. 判断上面的地形
         int up = index - column;
         // 判断 1 号
-        if (up > 0) {
+        if (up >= 0) {
             // 有上
             if (isSea(regionList.get(up).getType())) {
                 // 如果上面的是海洋

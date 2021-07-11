@@ -67,7 +67,8 @@ public class GameFileController {
     @Value("${file.img.upload.path}")
     String filePathHead;
 
-    String fontPath = "font\\aeFont.ttf";
+    String stylePath = "style\\";
+
 
     /**
      * 模板的文件夹
@@ -274,14 +275,27 @@ public class GameFileController {
         }
     }
 
-    @RequestMapping("/font/download/aeFont.ttf")
-    public void downloadFontFile(HttpServletResponse response, HttpServletRequest request) throws IOException {
-        File file = new File(StringUtil.joinWith(File.separator, filePathHead, fontPath));
+    @RequestMapping("/style/download/{fileName}")
+    public void downloadFontFile(HttpServletResponse response, @PathVariable("fileName") String fileName) throws IOException {
+        String path = stylePath + fileName;
+        String responseType = getResponseTypeByFile(fileName);
+        File file = new File(StringUtil.joinWith(File.separator, filePathHead, path));
         Map<String, String> map = new HashMap<>(16);
-        map.put("Content-Type", "font/ttf");
+        map.put("Content-Type", responseType);
         map.put("Content-Disposition", "attachment;" + URLEncoder.encode(file.getName(), "UTF-8"));
         returnFile(response, file, map);
     }
+
+    private String getResponseTypeByFile(String fileName) {
+        if (fileName.endsWith("ttf")) {
+            return "font/ttf";
+        } else if (fileName.endsWith("css")) {
+            return "text/css";
+        } else {
+            return "text/json";
+        }
+    }
+
 
     @RequestMapping("/api/unitMes/img/create")
     @ResponseBody
