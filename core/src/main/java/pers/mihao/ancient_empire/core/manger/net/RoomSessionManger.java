@@ -15,7 +15,7 @@ import pers.mihao.ancient_empire.base.event.AppRoomEvent;
 import pers.mihao.ancient_empire.base.service.GameRoomService;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.annotation.Manger;
-import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.eums.RoomCommendEnum;
@@ -87,7 +87,7 @@ public class RoomSessionManger extends AbstractSessionManger<RoomSession, RoomEv
         String joinGameCtlArmyColor;
         if (gameRoom == null) {
             // 首次加入
-            gameRoom = RedisUtil.getObjectFromJson(BaseConstant.AE_ROOM + typeId, GameRoom.class);
+            gameRoom = CatchUtil.getObjectFromJson(BaseConstant.AE_ROOM + typeId, GameRoom.class);
             if (gameRoom != null) {
                 log.info("首次加入房间 获取房间信息缓存成功{}", gameRoom);
                 gameRoomService.save(gameRoom);
@@ -102,7 +102,7 @@ public class RoomSessionManger extends AbstractSessionManger<RoomSession, RoomEv
                 }
                 // 处理创建一定能成功 不能就是有问题
                 log.info("玩家加入房间成功");
-                RedisUtil.delKey(BaseConstant.AE_ROOM + typeId);
+                CatchUtil.delKey(BaseConstant.AE_ROOM + typeId);
                 RoomSession roomSession = new RoomSession(typeId, user, session);
                 roomSession.setJoinGameCtlArmyColor(joinGameCtlArmyColor);
                 roomSession.setFirstJoinRoom(true);

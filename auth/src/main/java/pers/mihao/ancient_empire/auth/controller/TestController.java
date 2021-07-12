@@ -1,8 +1,10 @@
 package pers.mihao.ancient_empire.auth.controller;
 
 
+import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
+import pers.mihao.ancient_empire.common.util.IntegerUtil;
 import pers.mihao.ancient_empire.common.vo.test_dto.Dog;
 
 @RestController
@@ -20,7 +24,10 @@ public class TestController {
 
     @GetMapping("/get/{id}")
     public void getTest(@PathVariable String id) {
+        CatchUtil.set(id, new Dog(IntegerUtil.getRandomIn(10), id));
         log.info("get id: {}", id);
+        CatchUtil.get(id);
+        CatchUtil.getObject(id, Dog.class);
     }
 
     @PostMapping("/post")

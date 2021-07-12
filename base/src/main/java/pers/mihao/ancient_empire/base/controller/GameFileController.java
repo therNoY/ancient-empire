@@ -291,6 +291,8 @@ public class GameFileController {
             return "font/ttf";
         } else if (fileName.endsWith("css")) {
             return "text/css";
+        } else if (fileName.endsWith("png")) {
+            return "image/png";
         } else {
             return "text/json";
         }

@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.startup.config.security;
+package pers.mihao.ancient_empire.auth.config;
 
 import com.alibaba.fastjson.JSON;
 import java.io.IOException;

@@ -11,7 +11,7 @@ import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
-import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -26,7 +26,7 @@ public class RedisTest {
 
     @Test
     public void name() {
-       Object object = RedisUtil.get("f09fbc8d-93d2-4344-b8a6-f3769a644e31");
+       Object object = CatchUtil.get("f09fbc8d-93d2-4344-b8a6-f3769a644e31");
         RegisterDTO registerDto = JSON.parseObject(object.toString(), RegisterDTO.class);
        System.out.println(object.toString());
     }
@@ -38,16 +38,16 @@ public class RedisTest {
 //        System.out.println(o);
 //       User user = redisHelper.getObject(CatchKey.getKey(CatchKey.USER_RECORD) + "ther2", User.class);
 //        System.out.println(user.getName());
-        System.out.println(RedisUtil.isHaveKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2"));
-        RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2");
-        System.out.println(RedisUtil.isHaveKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2"));
+        System.out.println(CatchUtil.isHaveKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2"));
+        CatchUtil.delKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2");
+        System.out.println(CatchUtil.isHaveKey(CacheKey.getKey(CacheKey.USER_RECORD) + "ther2"));
     }
 
     @Test
     public void name3() {
-        RedisUtil.set("222", "vvv");
-        System.out.println(RedisUtil.get("222"));
-        RedisUtil.hSet("111", "key1", "value2", 100);
+        CatchUtil.set("222", "vvv");
+        System.out.println(CatchUtil.get("222"));
+        CatchUtil.hSet("111", "key1", "value2", 100);
 //        redisTemplate.opsForValue().set("222","vvv");
 //        System.out.println(redisTemplate.hasKey("222"));
     }

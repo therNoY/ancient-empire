@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.startup.config.websocket;
+package pers.mihao.ancient_empire.core.config;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;

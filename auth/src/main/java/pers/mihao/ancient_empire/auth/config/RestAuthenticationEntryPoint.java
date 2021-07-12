@@ -1,17 +1,16 @@
-package pers.mihao.ancient_empire.startup.config.security;
+package pers.mihao.ancient_empire.auth.config;
 
 import com.alibaba.fastjson.JSON;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import pers.mihao.ancient_empire.common.util.RespUtil;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 当未登录或者token失效访问接口时，自定义的返回结果

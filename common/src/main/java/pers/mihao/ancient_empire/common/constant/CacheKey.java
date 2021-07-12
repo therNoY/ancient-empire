@@ -1,17 +1,11 @@
 package pers.mihao.ancient_empire.common.constant;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 缓存的常量
  *
  * @author hspcadmin
  */
 public class CacheKey {
-
-    private static Map<String, String> map = new HashMap<>();
-
 
     public static final String ENABLE_UNIT = "enableUnit";
 
@@ -70,13 +64,7 @@ public class CacheKey {
     public static final String USER_TEMP = "userTemp";
 
     public static String getKey(String key) {
-        String res;
-        if ((res = map.get(key)) == null) {
-            res = key + "::";
-            map.put(key, res);
-        }
-        return res;
-
+        return key + "::";
     }
 
 }

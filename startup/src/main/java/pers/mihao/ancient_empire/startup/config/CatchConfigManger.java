@@ -1,11 +1,27 @@
 package pers.mihao.ancient_empire.startup.config;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -13,21 +29,19 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import pers.mihao.ancient_empire.common.annotation.redis.NotGenerator;
+import pers.mihao.ancient_empire.common.base_catch.local.LocalCatch;
+import pers.mihao.ancient_empire.common.base_catch.local.LocalCatchManger;
 import pers.mihao.ancient_empire.common.util.PropertiesUtil;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * redis 配置
+ * Spring的缓存配置
+ *
+ * @author mihao
  */
 @Configuration
 @EnableCaching
-public class RedisConfig extends CachingConfigurerSupport {
+public class CatchConfigManger extends CachingConfigurerSupport {
 
     private static Map<Method, Set<Integer>> notGenerateKeyIndexCatch = new ConcurrentHashMap<>(16);
 
@@ -85,11 +99,12 @@ public class RedisConfig extends CachingConfigurerSupport {
      * @return
      */
     @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+    @ConditionalOnProperty(name = "spring.catch.manger", havingValue = "redis")
+    public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
         // 设置默认的缓存过期时间
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration
-                .defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(60));
+            .defaultCacheConfig()
+            .entryTtl(Duration.ofMinutes(60));
 
         // 设置自定义的缓存时间
         Map<String, RedisCacheConfiguration> map = new HashMap<>(16);
@@ -98,36 +113,33 @@ public class RedisConfig extends CachingConfigurerSupport {
         properties.forEach((key, value) -> {
             // 设置用户获取可用 单位的缓存过期时间
             map.put(key.toString(), RedisCacheConfiguration
-                    .defaultCacheConfig()
-                    .entryTtl(Duration.ofMinutes(Integer.parseInt(value.toString())))
-                    .disableCachingNullValues());
+                .defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(Integer.parseInt(value.toString())))
+                .disableCachingNullValues());
         });
 
         return RedisCacheManager
-                .builder(connectionFactory)
-                .cacheDefaults(defaultCacheConfig)
-                .withInitialCacheConfigurations(map)
-                .transactionAware().build();
+            .builder(connectionFactory)
+            .cacheDefaults(defaultCacheConfig)
+            .withInitialCacheConfigurations(map)
+            .transactionAware().build();
     }
 
 
-    /**
-     * 自定义 redis 的序列化规则
-     *
-     * @param factory
-     * @return
-     */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
-        redisTemplate.setConnectionFactory(factory);
-        Jackson2JsonRedisSerializer jrs = new Jackson2JsonRedisSerializer(Object.class);
-        StringRedisSerializer stringSerializer = new StringRedisSerializer();
-        //序列化设置 ，这样计算是正常显示的数据，也能正常存储和获取
-        redisTemplate.setKeySerializer(stringSerializer);
-        redisTemplate.setValueSerializer(jrs);
-        redisTemplate.setHashKeySerializer(stringSerializer);
-        redisTemplate.setHashValueSerializer(jrs);
-        return redisTemplate;
+    @ConditionalOnProperty(name = "spring.catch.manger", havingValue = "local")
+    public LocalCatch localCatch(){
+        return new LocalCatch(true, 60);
     }
+
+
+    @Bean
+    @ConditionalOnProperty(name = "spring.catch.manger", havingValue = "local")
+    public CacheManager localCacheManager(LocalCatch localCatch) {
+        LocalCatchManger localCatchManger = new LocalCatchManger();
+        localCatchManger.setCache(localCatch);
+        return localCatchManger;
+    }
+
+
 }

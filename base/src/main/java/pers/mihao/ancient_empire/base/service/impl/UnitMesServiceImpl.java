@@ -125,7 +125,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
      * @return
      */
     @Override
-    @Cacheable(value = CacheKey.ENABLE_UNIT)
+    @Cacheable(CacheKey.ENABLE_UNIT)
     public List<UnitMes> getEnableUnitByTempId(String tempId) {
         log.info(">>>>用户从数据库中获取可用单位<<<<");
         List<UnitMes> unitMes = unitMesDao.getEnableUnitByTempId(tempId);

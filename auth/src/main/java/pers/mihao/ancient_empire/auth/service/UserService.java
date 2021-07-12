@@ -34,6 +34,11 @@ public interface UserService extends IService<User> {
 
     User getUserByName(String userName);
 
+    /**
+     * 获取用户信息
+     * @param id
+     * @return
+     */
     User getUserById(Integer id);
 
     User getUserByEmail(String email);

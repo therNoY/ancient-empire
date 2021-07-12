@@ -10,7 +10,7 @@ import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.auth.service.UserSettingService;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
 import pers.mihao.ancient_empire.common.constant.CacheKey;
-import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 
 
@@ -40,7 +40,7 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
     @Override
     public void updateByUserId(UserSetting userSetting) {
         // 删除缓存
-        RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_SETTING) + LoginUserHolder.getUserId());
+        CatchUtil.delKey(CacheKey.getKey(CacheKey.USER_SETTING) + LoginUserHolder.getUserId());
         QueryWrapper<UserSetting> wrapper = new QueryWrapper();
         wrapper.eq("user_id", userSetting.getUserId());
         userSettingDao.update(userSetting, wrapper);

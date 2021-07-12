@@ -30,7 +30,7 @@ import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.util.GameRoomIdUtil;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
-import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.common.util.DateUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -86,7 +86,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomDAO, GameRoom> impl
         gameRoom.setJoinCount(0);
         gameRoom.setPlayerCount(reqAddRoomDTO.getPlayerCount());
         // 只缓存 不入库 缓存十分钟
-        RedisUtil.setJsonString(BaseConstant.AE_ROOM + gameRoom.getRoomId(), gameRoom, (long) (60 * 60 * 10));
+        CatchUtil.setJsonString(BaseConstant.AE_ROOM + gameRoom.getRoomId(), gameRoom, (long) (60 * 60 * 10));
         return gameRoom;
     }
 

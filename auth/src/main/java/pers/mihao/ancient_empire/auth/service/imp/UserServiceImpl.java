@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
-import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
 
 /**
  * <p>
@@ -57,6 +58,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     PasswordEncoder passwordEncoder;
     @Autowired
     UserRoleRelationDao userRoleRelationDao;
+    @Autowired
+    UserService userService;
 
     @Override
     @Cacheable(CacheKey.USER_INFO)
@@ -80,7 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @PersistentLog(tableName = "user_login_log")
     public RespAuthDAO login(LoginDto loginDto) {
         String token;
-        User loginUser = getUserByNameOrEmail(loginDto.getUserName());
+        User loginUser = userService.getUserByNameOrEmail(loginDto.getUserName());
         if (loginUser != null && passwordEncoder.matches(loginDto.getPassword(), loginUser.getPassword())) {
             token = JwtTokenUtil.generateToken(loginUser.getId().toString());
             log.info("给用户：{}生成token", loginDto);
@@ -156,7 +159,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Override
     public String updateUserInfo(ReqUserDTO user) {
         // 清除缓存
-        RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_INFO) + userDao.selectById(user.getUserId()).getName());
+        CatchUtil.delKey(CacheKey.getKey(CacheKey.USER_INFO) + userDao.selectById(user.getUserId()).getName());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.updateByReqUserDto(user.getUserName(), user.getPassword(), user.getUserId());
         return JwtTokenUtil.generateToken(user.getUserName());

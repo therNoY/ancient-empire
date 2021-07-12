@@ -29,7 +29,7 @@ import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
 import pers.mihao.ancient_empire.common.constant.CacheKey;
 
 import java.util.List;
-import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 
 /**
@@ -208,7 +208,7 @@ public class UserTemplateServiceImpl extends ServiceImpl<UserTemplateDAO, UserTe
 
     @Override
     public void delTemplateCatch(UserTemplate userTemplate) {
-        RedisUtil.delKey(CacheKey.getKey(CacheKey.TEMPLATE_MAX_VERSION) + userTemplate.getTemplateType());
-        RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_TEMP) + userTemplate.getId());
+        CatchUtil.delKey(CacheKey.getKey(CacheKey.TEMPLATE_MAX_VERSION) + userTemplate.getTemplateType());
+        CatchUtil.delKey(CacheKey.getKey(CacheKey.USER_TEMP) + userTemplate.getId());
     }
 }

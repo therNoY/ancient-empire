@@ -27,7 +27,7 @@ import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.dto.LoginDto;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.email.EmailService;
-import pers.mihao.ancient_empire.common.jdbc.redis.RedisUtil;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -120,7 +120,7 @@ public class UserController {
             // 2.发送邮件
             emailService.sendRegisterEmail(registerDto, uuid);
             // 3.放到缓存中 key email+_REGISTER 时间60s
-            RedisUtil.set(uuid, registerDto, 600L);
+            CatchUtil.set(uuid, registerDto, 600L);
             return null;
         }
     }
@@ -132,7 +132,7 @@ public class UserController {
     @GetMapping("/register")
     public ModelAndView registerCallback(@RequestParam String token) {
         RegisterDTO registerDto = null;
-        if ((registerDto = RedisUtil.getObject(token, RegisterDTO.class)) != null) {
+        if ((registerDto = CatchUtil.getObject(token, RegisterDTO.class)) != null) {
             userService.save(registerDto);
             return new ModelAndView("registerSuccess");
         } else {
@@ -154,7 +154,7 @@ public class UserController {
         User user = userService.getById(pwdDto.getUserId());
         // 验证密码是否正确
         if (passwordEncoder.matches(pwdDto.getOldPassword(), user.getPassword())) {
-            RedisUtil.delKey(CacheKey.getKey(CacheKey.USER_INFO) + user.getName());
+            CatchUtil.delKey(CacheKey.getKey(CacheKey.USER_INFO) + user.getName());
             user.setPassword(passwordEncoder.encode(pwdDto.getNewPassword()));
             userService.updateById(user);
             return JwtTokenUtil.generateToken(user.getId().toString());
