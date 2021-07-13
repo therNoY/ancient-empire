@@ -67,6 +67,9 @@ public class GameFileController {
     @Value("${file.img.upload.path}")
     String filePathHead;
 
+    /**
+     * 文件风格前缀
+     */
     String stylePath = "style\\";
 
 
