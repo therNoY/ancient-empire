@@ -5,25 +5,28 @@
   <parent>
     <artifactId>ancient-empire-server</artifactId>
     <groupId>pers.mihao.ancient-empire</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>pers.mihao.ancient-empire</groupId>
   <artifactId>auth</artifactId>
 
   <dependencies>
     <dependency>
       <groupId>pers.mihao.ancient-empire</groupId>
       <artifactId>common</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <!-- 解密微信小程序 -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.56</version>
     </dependency>
   </dependencies>
 
