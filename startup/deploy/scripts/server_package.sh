@@ -44,8 +44,8 @@ if [ -f ./startup/target/${fileName} ]; then
     cd ~/runtime
     tar -xzf ./${fileName}
     sleep 5
-    dos2unix ./server_start.sh
-    /bin/bash ./server_start.sh
+    dos2unix ./scripts/server_stratup.sh
+    /bin/bash ./scripts/server_stratup.sh
 else
     echo "=========打包失败文件不存在" >>~/runtime/log/ae.server.start.log &2>>1
 fi
