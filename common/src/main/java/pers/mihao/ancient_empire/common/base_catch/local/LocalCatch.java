@@ -114,12 +114,12 @@ public class LocalCatch extends AbstractValueAdaptingCache implements BaseCatch 
 
     @Override
     public void set(String key, Object value) {
-        stringMap.put(key, new ExpireValue<>(value));
+        stringMap.put(key, value == null ? null : new ExpireValue<>(value));
     }
 
     @Override
     public void setAndExpire(String key, Object value, Long time) {
-        stringMap.put(key, new ExpireValue<>(value, time));
+        stringMap.put(key, value == null ? null : new ExpireValue<>(value, time));
     }
 
     @Override
