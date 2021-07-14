@@ -15,11 +15,12 @@ import pers.mihao.ancient_empire.base.entity.Ability;
  */
 public interface AbilityDAO extends BaseMapper<Ability> {
 
-    @Select("SELECT a.* FROM `ability` a , unit_ability ua , unit_mes u " +
-            "WHERE u.id = ua.unit_id and ua.ability_id = a.id and u.id = #{id}")
+    /**
+     * 获取单位能力
+     *
+     * @param id
+     * @return
+     */
     List<Ability> getUnitAbilityList(Integer id);
 
-    @Select("SELECT a.* FROM `ability` a , unit_ability ua , unit_mes u " +
-            "WHERE u.id = ua.unit_id and ua.ability_id = a.id and u.type = #{type}")
-    List<Ability> getUnitAbilityListByType(String type);
 }

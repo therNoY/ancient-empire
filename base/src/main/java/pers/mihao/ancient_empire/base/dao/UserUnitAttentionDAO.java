@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author mihao
  * @since 2021-04-29
  */
-public interface UserUnitAttentionDao extends BaseMapper<UserUnitAttention> {
+public interface UserUnitAttentionDAO extends BaseMapper<UserUnitAttention> {
 
 }

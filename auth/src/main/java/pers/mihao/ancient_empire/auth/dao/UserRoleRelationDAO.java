@@ -11,6 +11,6 @@ import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
  * @author mihao
  * @since 2019-08-10
  */
-public interface UserRoleRelationDao extends BaseMapper<UserRoleRelation> {
+public interface UserRoleRelationDAO extends BaseMapper<UserRoleRelation> {
 
 }

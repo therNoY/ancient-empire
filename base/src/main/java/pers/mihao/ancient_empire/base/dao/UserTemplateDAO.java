@@ -1,13 +1,12 @@
 package pers.mihao.ancient_empire.base.dao;
 
-import pers.mihao.ancient_empire.base.bo.Unit;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import pers.mihao.ancient_empire.base.dto.ReqUserTemplateDTO;
 import pers.mihao.ancient_empire.base.dto.TemplateIdDTO;
 import pers.mihao.ancient_empire.base.entity.UnitMes;
 import pers.mihao.ancient_empire.base.entity.UserTemplate;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
-import java.util.List;
 import pers.mihao.ancient_empire.base.vo.UserTemplateVO;
 
 /**
@@ -34,7 +33,7 @@ public interface UserTemplateDAO extends BaseMapper<UserTemplate> {
      * @param id
      * @param status
      */
-    void updateUserTemplateStatusById(Integer userId, String id, int status);
+    void updateUserTemplateStatusById(@Param("userId") Integer userId, @Param("id") String id, @Param("status") int status);
 
     /**
      * 查询用户最大版本的模板

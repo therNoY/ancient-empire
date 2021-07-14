@@ -33,11 +33,6 @@ public class UnitLevelMesServiceImpl extends ComplexKeyServiceImpl<UnitLevelMesD
     @Autowired
     UnitLevelMesDAO unitLevelMesDao;
 
-    @Override
-    public IPage<RespUnitLevelDto> getUnitLevelMesList(Page page) {
-        return unitLevelMesDao.getUnitLevelMesList(page);
-    }
-
     /**
      * 用于修改单位等级信息
      *

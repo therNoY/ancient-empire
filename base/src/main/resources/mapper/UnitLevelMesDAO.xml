@@ -4,7 +4,6 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.base.entity.UnitLevelMes">
-        <id column="id" property="id" />
         <result column="unit_id" property="unitId" />
         <result column="level" property="level" />
         <result column="min_attack" property="minAttack" />
@@ -16,8 +15,13 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, unit_id, level, min_attack, max_attack, physical_defense, magic_defense, speed
+        unit_id, level, min_attack, max_attack, physical_defense, magic_defense, speed
     </sql>
+
+    <select id="getUnitLevelMes" resultMap="BaseResultMap">
+        SELECT ulm.* from unit_level_mes ulm
+        WHERE ulm.level = #{level} and ulm.unit_id = #{id}
+    </select>
 
     <select id="getAllUnitLevelInfoByTempId" parameterType="int" resultMap="BaseResultMap">
         select * from unit_level_mes ulm left join unit_template_relation utr on ulm.unit_id = utr.unit_id

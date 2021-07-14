@@ -11,6 +11,6 @@ import pers.mihao.ancient_empire.auth.entity.Role;
  * @author mihao
  * @since 2019-08-10
  */
-public interface RoleDao extends BaseMapper<Role> {
+public interface RoleDAO extends BaseMapper<Role> {
 
 }

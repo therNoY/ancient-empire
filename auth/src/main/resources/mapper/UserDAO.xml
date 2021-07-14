@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="pers.mihao.ancient_empire.auth.dao.UserDao">
+<mapper namespace="pers.mihao.ancient_empire.auth.dao.UserDAO">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.auth.entity.User">
@@ -19,6 +19,10 @@
     <sql id="Base_Column_List">
         id, name, password, icon, email, note, create_time, login_time, status, phone, login_type
     </sql>
+
+    <update id="updateByReqUserDto">
+        update user u set u.name= #{name}, u.password=#{pwd} where u.id = #{id}
+    </update>
 
 
     <select id="getUserByNameOrEmail" parameterType="string" resultMap="BaseResultMap">

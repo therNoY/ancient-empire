@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.auth.service.imp;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.auth.dao.UserRoleRelationDao;
+import pers.mihao.ancient_empire.auth.dao.UserRoleRelationDAO;
 import pers.mihao.ancient_empire.auth.entity.UserRoleRelation;
 import pers.mihao.ancient_empire.auth.service.UserRoleRelationService;
 
@@ -15,6 +15,6 @@ import pers.mihao.ancient_empire.auth.service.UserRoleRelationService;
  * @since 2019-08-10
  */
 @Service
-public class UserRoleRelationServiceImpl extends ServiceImpl<UserRoleRelationDao, UserRoleRelation> implements UserRoleRelationService {
+public class UserRoleRelationServiceImpl extends ServiceImpl<UserRoleRelationDAO, UserRoleRelation> implements UserRoleRelationService {
 
 }

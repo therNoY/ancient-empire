@@ -20,8 +20,6 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyService;
  */
 public interface UnitLevelMesService extends ComplexKeyService<UnitLevelMes> {
 
-    IPage<RespUnitLevelDto> getUnitLevelMesList(Page page);
-
     /**
      * 保存单位等级信息
      * @param unitLevelMes

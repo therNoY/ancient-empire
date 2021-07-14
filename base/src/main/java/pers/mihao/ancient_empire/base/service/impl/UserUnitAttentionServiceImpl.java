@@ -2,7 +2,7 @@ package pers.mihao.ancient_empire.base.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import pers.mihao.ancient_empire.base.entity.UserUnitAttention;
-import pers.mihao.ancient_empire.base.dao.UserUnitAttentionDao;
+import pers.mihao.ancient_empire.base.dao.UserUnitAttentionDAO;
 import pers.mihao.ancient_empire.base.service.UserUnitAttentionService;
 import org.springframework.stereotype.Service;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
@@ -16,11 +16,11 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImp
  * @since 2021-04-29
  */
 @Service
-public class UserUnitAttentionServiceImpl extends ComplexKeyServiceImpl<UserUnitAttentionDao, UserUnitAttention> implements
+public class UserUnitAttentionServiceImpl extends ComplexKeyServiceImpl<UserUnitAttentionDAO, UserUnitAttention> implements
     UserUnitAttentionService {
 
     @Autowired
-    UserUnitAttentionDao userUnitAttentionDao;
+    UserUnitAttentionDAO userUnitAttentionDao;
 
     @Override
     public void deleteUserDownloadUnit(Integer userId, Integer id) {

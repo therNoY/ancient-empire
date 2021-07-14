@@ -14,10 +14,20 @@ import pers.mihao.ancient_empire.auth.entity.User;
  * @author mihao
  * @since 2019-08-10
  */
-public interface UserDao extends BaseMapper<User> {
+public interface UserDAO extends BaseMapper<User> {
 
-    @Update("update user u set u.name= #{name}, u.password=#{pwd} where u.id = #{id}")
+    /**
+     * 更新用户信息
+     * @param userName
+     * @param password
+     * @param id
+     */
     void updateByReqUserDto(@Param("name") String userName, @Param("pwd") String password, @Param("id") Integer id);
 
+    /**
+     * 获取用户信息
+     * @param username
+     * @return
+     */
     User getUserByNameOrEmail(String username);
 }

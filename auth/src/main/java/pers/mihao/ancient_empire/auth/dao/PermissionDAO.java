@@ -15,9 +15,12 @@ import java.util.List;
  * @author mihao
  * @since 2019-08-10
  */
-public interface PermissionDao extends BaseMapper<Permission> {
+public interface PermissionDAO extends BaseMapper<Permission> {
 
-    @Select("select name,value from permission p,role_permission_relation rp WHERE p.id = rp.permission_id and rp.role_id in" +
-            "(SELECT r.id from role r,user_role_relation ur where r.id = ur.role_id and ur.user_id = #{id})")
+    /**
+     * 获取用户权限
+     * @param id
+     * @return
+     */
     List<Permission> getPermissionByUserId(Integer id);
 }

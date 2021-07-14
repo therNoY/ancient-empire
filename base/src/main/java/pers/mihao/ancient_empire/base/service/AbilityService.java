@@ -20,12 +20,4 @@ public interface AbilityService extends IService<Ability> {
      * @return
      */
     List<Ability> getUnitAbilityList(Integer id);
-
-    /**
-     * 通过类型获取 弃用
-     * @param type
-     * @return
-     */
-    @Deprecated
-    List<Ability> getUnitAbilityListByType(String type);
 }

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="pers.mihao.ancient_empire.auth.dao.RolePermissionRelationDao">
+<mapper namespace="pers.mihao.ancient_empire.auth.dao.UserRoleRelationDAO">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.auth.entity.RolePermissionRelation">
+    <resultMap id="BaseResultMap" type="pers.mihao.ancient_empire.auth.entity.UserRoleRelation">
         <id column="id" property="id" />
+        <result column="user_id" property="userName" />
         <result column="role_id" property="roleId" />
-        <result column="permission_id" property="permissionId" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, role_id, permission_id
+        id, user_id, role_id
     </sql>
 
 </mapper>

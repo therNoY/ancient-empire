@@ -9,8 +9,17 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AeSequenceDAO {
 
+    /**
+     * 获取一个新的序列ID
+     * @param tableName
+     * @return
+     */
     int getNewId(String tableName);
 
+    /**
+     * 自增
+     * @param tableName
+     */
     void increase(String tableName);
 
 }

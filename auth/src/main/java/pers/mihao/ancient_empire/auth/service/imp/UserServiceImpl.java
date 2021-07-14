@@ -15,9 +15,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pers.mihao.ancient_empire.auth.dao.PermissionDao;
-import pers.mihao.ancient_empire.auth.dao.UserDao;
-import pers.mihao.ancient_empire.auth.dao.UserRoleRelationDao;
+import pers.mihao.ancient_empire.auth.dao.PermissionDAO;
+import pers.mihao.ancient_empire.auth.dao.UserDAO;
+import pers.mihao.ancient_empire.auth.dao.UserRoleRelationDAO;
 import pers.mihao.ancient_empire.auth.dto.ReqUserDTO;
 import pers.mihao.ancient_empire.auth.dto.RespAuthDAO;
 import pers.mihao.ancient_empire.auth.entity.Permission;
@@ -41,7 +41,7 @@ import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
  * @since 2019-08-10
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserDAO, User> implements UserService {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -50,13 +50,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     @Autowired
     UserDetailsService userDetailsService;
     @Autowired
-    UserDao userDao;
+    UserDAO userDao;
     @Autowired
-    PermissionDao permissionDao;
+    PermissionDAO permissionDao;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
-    UserRoleRelationDao userRoleRelationDao;
+    UserRoleRelationDAO userRoleRelationDao;
     @Autowired
     UserService userService;
 

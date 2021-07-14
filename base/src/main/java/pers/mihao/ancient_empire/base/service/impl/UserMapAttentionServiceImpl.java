@@ -1,10 +1,9 @@
 package pers.mihao.ancient_empire.base.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pers.mihao.ancient_empire.base.dao.UserMapAttentionDao;
+import pers.mihao.ancient_empire.base.dao.UserMapAttentionDAO;
 import pers.mihao.ancient_empire.base.dto.UserMapIdDTO;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.entity.UserMapAttention;
@@ -21,10 +20,10 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImp
  * @since 2021-04-26
  */
 @Service
-public class UserMapAttentionServiceImpl extends ComplexKeyServiceImpl<UserMapAttentionDao, UserMapAttention> implements UserMapAttentionService {
+public class UserMapAttentionServiceImpl extends ComplexKeyServiceImpl<UserMapAttentionDAO, UserMapAttention> implements UserMapAttentionService {
 
     @Autowired
-    UserMapAttentionDao userMapAttentionDao;
+    UserMapAttentionDAO userMapAttentionDao;
 
     @Autowired
     UserMapService userMapService;

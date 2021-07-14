@@ -12,6 +12,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @author mihao
  * @since 2019-08-10
  */
-public interface RolePermissionRelationDao extends BaseMapper<RolePermissionRelation> {
+public interface RolePermissionRelationDAO extends BaseMapper<RolePermissionRelation> {
 
 }

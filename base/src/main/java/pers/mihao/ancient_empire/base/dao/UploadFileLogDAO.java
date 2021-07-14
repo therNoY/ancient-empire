@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author mihao
  * @since 2021-01-06
  */
-public interface UploadFileLogDao extends BaseMapper<UploadFileLog> {
+public interface UploadFileLogDAO extends BaseMapper<UploadFileLog> {
 
 }

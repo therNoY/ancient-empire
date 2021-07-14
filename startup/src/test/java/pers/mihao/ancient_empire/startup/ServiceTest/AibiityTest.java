@@ -21,11 +21,5 @@ public class AibiityTest {
 
     @Test
     public void getMoveArea() {
-        List<Ability> abilityList = abilityService.getUnitAbilityListByType(UnitEnum.LORD.type());
-
-        boolean t1 = abilityList.contains(AbilityEnum.VILLAGE_GET.ability());
-        boolean t2 = abilityList.contains(new Ability(AbilityEnum.VILLAGE_GET.type()));
-
-        System.out.println(t1 + " " + t2);
     }
 }

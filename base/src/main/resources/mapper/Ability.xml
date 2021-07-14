@@ -16,4 +16,10 @@
         id, type, name, description, buff_id
     </sql>
 
+    <select id="getUnitAbilityList" resultMap="BaseResultMap">
+        SELECT a.* FROM `ability` a , unit_ability ua , unit_mes u
+        WHERE u.id = ua.unit_id and ua.ability_id = a.id and u.id = #{id}
+    </select>
+
+
 </mapper>

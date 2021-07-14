@@ -24,7 +24,7 @@ import pers.mihao.ancient_empire.base.bo.BaseUnit;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.constant.VersionConstant;
-import pers.mihao.ancient_empire.base.dao.UserMapAttentionDao;
+import pers.mihao.ancient_empire.base.dao.UserMapAttentionDAO;
 import pers.mihao.ancient_empire.base.dao.UserMapDAO;
 import pers.mihao.ancient_empire.base.dto.CountSumDTO;
 import pers.mihao.ancient_empire.base.dto.ReqSaveMap;
@@ -58,7 +58,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
     @Autowired
     UserService userService;
     @Autowired
-    UserMapAttentionDao userMapAttentionDao;
+    UserMapAttentionDAO userMapAttentionDao;
     @Autowired
     UserTemplateService userTemplateService;
 

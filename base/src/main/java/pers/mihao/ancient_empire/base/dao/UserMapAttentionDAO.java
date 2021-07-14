@@ -15,7 +15,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author mihao
  * @since 2021-04-26
  */
-public interface UserMapAttentionDao extends BaseMapper<UserMapAttention> {
+public interface UserMapAttentionDAO extends BaseMapper<UserMapAttention> {
 
     /**
      * 分页查询用户下载地图

@@ -20,11 +20,13 @@ import java.util.List;
  */
 public interface UnitLevelMesDAO extends BaseMapper<UnitLevelMes> {
 
-    @Select("SELECT um.type, ulm.* from unit_mes um left JOIN unit_level_mes ulm on um.id = ulm.unit_id ")
-    IPage<RespUnitLevelDto> getUnitLevelMesList(Page page);
 
-    @Select("SELECT ulm.* from unit_level_mes ulm" +
-            " WHERE ulm.level = #{level} and ulm.unit_id = #{id}")
+    /**
+     * 获取单位的等级信息
+     * @param id
+     * @param level
+     * @return
+     */
     UnitLevelMes getUnitLevelMes(@Param("id")Integer id, @Param("level")Integer level);
 
 
