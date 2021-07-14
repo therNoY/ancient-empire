@@ -114,12 +114,12 @@ public class LocalCatch extends AbstractValueAdaptingCache implements BaseCatch 
 
     @Override
     public void set(String key, Object value) {
-        stringMap.put(key, value == null ? null : new ExpireValue<>(value));
+        stringMap.put(key, new ExpireValue<>(value));
     }
 
     @Override
     public void setAndExpire(String key, Object value, Long time) {
-        stringMap.put(key, value == null ? null : new ExpireValue<>(value, time));
+        stringMap.put(key, new ExpireValue<>(value, time));
     }
 
     @Override
@@ -161,7 +161,7 @@ public class LocalCatch extends AbstractValueAdaptingCache implements BaseCatch 
     @Override
     public long getExpire(String key) {
         ExpireValue expireValue = stringMap.get(key);
-        return stringMap == null ? 0 : expireValue.expire;
+        return expireValue == null ? 0 : expireValue.expire;
     }
 
     @Override
@@ -243,8 +243,8 @@ public class LocalCatch extends AbstractValueAdaptingCache implements BaseCatch 
         }
 
         public ExpireValue(T value) {
-            this.value = dataSerializable.serialObj(value);
-            this.tClass = value.getClass();
+            this.value = value == null ? null : dataSerializable.serialObj(value);
+            this.tClass = value == null ? null : value.getClass();
             this.expire = System.currentTimeMillis() + defaultTtlTime * 1000;
         }
 
@@ -259,7 +259,7 @@ public class LocalCatch extends AbstractValueAdaptingCache implements BaseCatch 
         }
 
         public T getValue() {
-            return (T) dataSerializable.unSerialObj(this.value, this.tClass);
+            return value == null ? null : (T) dataSerializable.unSerialObj(this.value, this.tClass);
         }
     }
 }

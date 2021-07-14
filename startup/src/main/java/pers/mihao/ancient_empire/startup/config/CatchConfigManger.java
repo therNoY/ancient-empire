@@ -120,7 +120,8 @@ public class CatchConfigManger extends CachingConfigurerSupport {
     @Bean
     @ConditionalOnProperty(name = "spring.catch.manger", havingValue = "local")
     public LocalCatch localCatch(){
-        return new LocalCatch(true, 60);
+        // 设置缓存默认过期1小时
+        return new LocalCatch(true, 60 * 60);
     }
 
 
