@@ -70,7 +70,7 @@ public class GameFileController {
     /**
      * 文件风格前缀
      */
-    String stylePath = "style\\";
+    String stylePath = "style" + File.separator;
 
 
     /**
