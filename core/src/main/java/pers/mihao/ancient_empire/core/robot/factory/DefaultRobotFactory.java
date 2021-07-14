@@ -19,6 +19,7 @@ public class DefaultRobotFactory extends AbstractRobotFactory{
 
     @Override
     public AbstractRobot create(GameContext gameContext) {
+        // 可以根据游戏难度选择不同的机器人
         AbstractRobot abstractRobot = new DefaultRobot(gameContext);
         return abstractRobot;
     }

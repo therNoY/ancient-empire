@@ -15,9 +15,11 @@ import pers.mihao.ancient_empire.base.bo.Tomb;
 import pers.mihao.ancient_empire.base.bo.Unit;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UnitTransfer;
+import pers.mihao.ancient_empire.base.entity.UserTemplate;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
+import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.core.constans.ExtMes;
 import pers.mihao.ancient_empire.core.dto.ArmyStatusInfoDTO;
@@ -128,7 +130,7 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     }
 
     private void updateUnitInfo(UnitStatusInfoDTO unitStatus) {
-        if (isInvalidCommand(unitStatus)) {
+        if (isEffectiveCommand(unitStatus)) {
             Unit unit = getUnitByIndex(unitStatus);
             updateUnitInfo(unit, unitStatus);
             if (Boolean.TRUE.equals(unitStatus.getUpdateCurr())) {
@@ -149,11 +151,11 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     }
 
     /**
-     * 判断是否无效的命令
+     * 判断是否有效的命令
      * @param unitStatusInfoDTO
      * @return
      */
-    private boolean isInvalidCommand(UnitStatusInfoDTO unitStatusInfoDTO) {
+    private boolean isEffectiveCommand(UnitStatusInfoDTO unitStatusInfoDTO) {
         return unitStatusInfoDTO != null &&
             (StringUtil.isNotBlack(unitStatusInfoDTO.getStatus())
                 || (unitStatusInfoDTO.getExperience()) != null
@@ -178,37 +180,35 @@ public class GameContextHelperListener extends AbstractGameRunListener {
         }
     }
 
-    private void handlerLevelUp(UnitStatusInfoDTO unitStatus, Stream stream) {
-        if (!isInvalidCommand(unitStatus)) {
+    private void handlerLevelUp(UnitStatusInfoDTO unitStatusChangeInfo, Stream stream) {
+        if (!isEffectiveCommand(unitStatusChangeInfo)) {
             return;
         }
-        // 更新单位的状态
-        Unit unit = getUnitByIndex(unitStatus);
+        Unit unit = getUnitByIndex(unitStatusChangeInfo);
         // 判断是否升级
         Integer levelExp = gameContext.getLevelExp(unit.getLevel());
-        if (unitStatus.getExperience() != null && unitStatus.getExperience() >= levelExp) {
+        if (unitStatusChangeInfo.getExperience() != null && unitStatusChangeInfo.getExperience() >= levelExp) {
             // 可以升级
             int maxLevel = gameContext.getUserTemplate().getUnitMaxLevel();
             if (maxLevel == unit.getLevel()) {
                 // 设置最大经验值 不升级
-                unitStatus.setExperience(levelExp);
+                log.info("单位：{}达到最大等级不升级", unit);
+                unitStatusChangeInfo.setExperience(levelExp);
             } else {
-                // 升级
+                log.info("单位：{}准备升级", unit);
+                // 是否晋升
                 boolean isPromotion = false;
-                if ((UserTemplateHelper.COMMON.equals(gameContext.getUserTemplate().getPromotionMode())
-                    || UserTemplateHelper.RANDOM.equals(gameContext.getUserTemplate().getPromotionMode()))
-                    && unit.getLevel() + 1 > gameContext.getUserTemplate().getPromotionLevel()) {
+                if (isCanPromotion(unit, gameContext.getUserTemplate())) {
                     // 开启晋升模式 同一个兵种的最大晋级数量1
-                    Army army = record().getArmyList().get(unitStatus.getArmyIndex());
-                    int count = 0;
-                    int typeCount = 0;
+                    Army army = record().getArmyList().get(unitStatusChangeInfo.getArmyIndex());
+                    // 所有晋升过的总数量和 该类型兵种晋升的总数量
+                    int count = 0, typeCount = 0;
                     for (Unit u : army.getUnits()) {
                         if (Boolean.TRUE.equals(u.getPromotion())) {
                             if (u.getTypeId().equals(unit.getTypeId())) {
                                 typeCount++;
-                            } else {
-                                count++;
                             }
+                            count++;
                         }
                     }
                     // 最大晋升数量 和类型晋升数量都小于模板最大数量才能晋级
@@ -216,27 +216,24 @@ public class GameContextHelperListener extends AbstractGameRunListener {
                         typeCount < gameContext.getTypePromotionCount()) {
                         if (gameContext.getRandomPromotionChance()) {
                             log.info("准备晋升");
-                            QueryWrapper<UnitTransfer> queryWrapper = new QueryWrapper<>();
-                            queryWrapper.eq("unitId", unit.getTypeId())
-                                .eq("order", 1);
-                            UnitTransfer unitTransfer = unitTransferService.getOne(queryWrapper);
-                            if (unitTransfer != null) {
+                            List<UnitTransfer> unitTransfers= unitTransferService.getTransferByUnitId(unit.getTypeId());
+                            if (CollectionUtil.isNotEmpty(unitTransfers)) {
+                                UnitTransfer unitTransfer = unitTransfers.get(0);
+                                // 这里才真正的晋升
                                 isPromotion = true;
                                 unit.setLevel(unit.getLevel() + 1);
                                 unit.setExperience(unit.getExperience() - levelExp);
                                 Unit newUnit = UnitFactory.copyUnit(unit);
                                 newUnit.setTypeId(unitTransfer.getTransferUnitId());
-                                removeUnit(unitStatus);
-                                addNewUnit(newUnit, unitStatus.getArmyIndex());
+                                removeUnit(unitStatusChangeInfo);
+                                addNewUnit(newUnit, unitStatusChangeInfo.getArmyIndex());
                             }
-
                         }
-
                     }
                 }
                 if (!isPromotion) {
-                    unitStatus.setLevel(unit.getLevel() + 1);
-                    unitStatus.setExperience(unitStatus.getExperience() - levelExp);
+                    unitStatusChangeInfo.setLevel(unit.getLevel() + 1);
+                    unitStatusChangeInfo.setExperience(unitStatusChangeInfo.getExperience() - levelExp);
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put(ExtMes.LEVEL_UP_INFO, gameContext.getLevelUpImg());
                     jsonObject.put(ExtMes.SITE, unit);
@@ -244,5 +241,17 @@ public class GameContextHelperListener extends AbstractGameRunListener {
                 }
             }
         }
+    }
+
+    /**
+     * 是否达到晋升的条件
+     * @param unit
+     * @param template
+     * @return
+     */
+    private boolean isCanPromotion(Unit unit, UserTemplate template) {
+        return (UserTemplateHelper.COMMON.equals(template.getPromotionMode())
+            || UserTemplateHelper.RANDOM.equals(template.getPromotionMode()))
+            && unit.getLevel() + 1 > template.getPromotionLevel();
     }
 }

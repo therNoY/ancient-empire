@@ -65,7 +65,7 @@ public interface UserRecordService extends IService<UserRecord> {
      * 移除缓存
      * @param id
      */
-    void removeCatch(String id);
+    void removeCatchByProxy(String id);
 
     /**
      * 删除其他为保存的单机记录 一个用户只能保存一个单机

@@ -29,11 +29,11 @@ public class ClickBuyActionHandler extends CommonHandler {
         // 验证军队资金
         UnitInfo newUnitInfo = unitMesService.getUnitInfo(gameEvent.getUnitId(), 0);
         if (currArmy().getMoney() < newUnitInfo.getUnitMes().getPrice()) {
-            throw new AeException("军队购买 资金不足");
+            throw new AeException(21000);
         }
         // 验证军队人口
         if (currArmy().getPop() + newUnitInfo.getUnitMes().getPopulation() > record().getMaxPop()) {
-            throw new AeException("军队购买 超过最大人口");
+            throw new AeException(21001);
         }
         // 更新
         Unit newUnit = UnitFactory.createUnit(gameEvent.getUnitId(), currSite());

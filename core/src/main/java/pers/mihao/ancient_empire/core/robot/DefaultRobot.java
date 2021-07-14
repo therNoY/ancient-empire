@@ -57,14 +57,14 @@ public class DefaultRobot extends AbstractRobot {
             case OCCUPIED:
                 RegionInfo tile = action.getAimRegion();
                 if (tile.getType().equals(RegionEnum.CASTLE.type())) {
-                    score += 5000;
+                    score += 6000;
                 }
                 if (tile.getType().equals(RegionEnum.TOWN.type())) {
-                    score += 3500;
+                    score += 4500;
                 }
                 break;
             case REPAIR:
-                score += 2000;
+                score += 2500;
                 break;
             case SUMMON:
                 score += 3000;
@@ -74,7 +74,7 @@ public class DefaultRobot extends AbstractRobot {
                     + target.getLevelMes().getSpeed() * 5);
                 break;
             case ATTACH:
-                score += target.getUnitMes().getPrice() + getAttackScore(target);
+                score += (target.getUnitMes().getPrice() + getAttackScore(target));
                 break;
             case DEFENSIVE:
                 if (isThreatened(action.getSite())) {
@@ -235,7 +235,7 @@ public class DefaultRobot extends AbstractRobot {
         int score = 0;
         int lastLeft = beAttach.getLife();
         int left = currUnit().getLife();
-        if (beAttach.getType().equals(UnitEnum.LORD.type())) {
+        if (beAttach.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())) {
             score += (beAttach.getLevelMes().getMaxLife() * 6) / lastLeft * beAttach.getUnitMes().getPrice() * (beAttach.getLevel() + 1);
         } else {
             score += (beAttach.getLevelMes().getMaxLife() * 3) / lastLeft * beAttach.getUnitMes().getPrice() * (beAttach.getLevel() + 1);

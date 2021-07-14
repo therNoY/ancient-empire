@@ -2,6 +2,10 @@ package pers.mihao.ancient_empire.base.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -10,13 +14,8 @@ import pers.mihao.ancient_empire.base.dao.UnitLevelMesDAO;
 import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 import pers.mihao.ancient_empire.base.service.UnitLevelMesService;
-import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.constant.CacheKey;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImpl;
 
 /**
@@ -28,15 +27,15 @@ import pers.mihao.ancient_empire.common.mybatis_plus_helper.ComplexKeyServiceImp
  * @since 2019-08-11
  */
 @Service
-public class UnitLevelMesServiceImpl extends ComplexKeyServiceImpl<UnitLevelMesDAO, UnitLevelMes> implements UnitLevelMesService {
+public class UnitLevelMesServiceImpl extends ComplexKeyServiceImpl<UnitLevelMesDAO, UnitLevelMes> implements
+    UnitLevelMesService {
 
     @Autowired
     UnitLevelMesDAO unitLevelMesDao;
 
     @Override
     public IPage<RespUnitLevelDto> getUnitLevelMesList(Page page) {
-        IPage iPage = unitLevelMesDao.getUnitLevelMesList(page);
-        return iPage;
+        return unitLevelMesDao.getUnitLevelMesList(page);
     }
 
     /**
@@ -62,7 +61,7 @@ public class UnitLevelMesServiceImpl extends ComplexKeyServiceImpl<UnitLevelMesD
     public Map<String, UnitLevelMes> getAllUnitLevelInfoByTempId(Integer userId) {
         List<UnitLevelMes> levelMesList = unitLevelMesDao.getAllUnitLevelInfoByTempId(userId);
         Map<String, UnitLevelMes> levelMesMap = levelMesList.stream()
-                .collect(Collectors.toMap(l -> l.getUnitId() + CommonConstant.COMMA + l.getLevel(), Function.identity()));
+            .collect(Collectors.toMap(l -> l.getUnitId() + CommonConstant.COMMA + l.getLevel(), Function.identity()));
         return levelMesMap;
     }
 

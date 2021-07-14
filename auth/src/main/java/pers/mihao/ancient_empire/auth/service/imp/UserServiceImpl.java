@@ -93,23 +93,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         return null;
     }
 
-    /**
-     * 管理员登录
-     * FIXME 改成不需要管理员的
-     * @param loginDto
-     * @return
-     */
-    @Override
-    public String adminLogin(LoginDto loginDto) {
-        User loginUser = getUserByNameOrEmail(loginDto.getUserName());
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getUserName());
-//        for (GrantedAuthority author : userDetails.getAuthorities()) {
-//            if (author.toString().equals(RoleEnum.ADMIN.type())) {
-//                return JwtTokenUtil.generateToken(userDetails.getUsername());
-//            }
-//        }
-        return JwtTokenUtil.generateToken(loginUser.getId().toString());
-    }
 
     @Override
     public User getUserByName(String userName) {

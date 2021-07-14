@@ -63,6 +63,11 @@ public class CacheKey {
     /* 用户模板 */
     public static final String USER_TEMP = "userTemp";
 
+    /**
+     * 单位晋升
+     */
+    public static final String UNIT_TRANSFER = "unitTransfer";
+
     public static String getKey(String key) {
         return key + "::";
     }

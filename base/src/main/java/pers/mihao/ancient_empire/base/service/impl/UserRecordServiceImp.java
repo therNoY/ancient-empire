@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
@@ -36,6 +37,7 @@ import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserRecordService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
 import pers.mihao.ancient_empire.base.util.factory.UnitFactory;
+import pers.mihao.ancient_empire.common.constant.CacheKey;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.StringUtil;
@@ -216,12 +218,13 @@ public class UserRecordServiceImp extends ServiceImpl<UserRecordDAO, UserRecord>
         return IPageHelper.toPage(records, apiConditionDTO);
     }
 
-    @Override
-    public void removeCatch(String id) {
-        removeCatchByProxy(id);
+
+    private void removeCatch(String id) {
+        userRecordService.removeCatchByProxy(id);
     }
 
-//    @CacheEvict(CatchKey.USER_RECORD)
+    @Override
+    @CacheEvict(CacheKey.USER_RECORD)
     public void removeCatchByProxy(String id) {
     }
 

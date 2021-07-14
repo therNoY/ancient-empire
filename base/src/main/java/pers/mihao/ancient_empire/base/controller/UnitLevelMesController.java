@@ -53,15 +53,4 @@ public class UnitLevelMesController {
     public Map<String, UnitLevelMes> getAllUnitLevelByTemp(@PathVariable("tempId") Integer tempId) {
         return unitLevelMesService.getAllUnitLevelInfoByTempId(tempId);
     }
-
-    @GetMapping("/root/unitLevel")
-    public IPage<RespUnitLevelDto> getUnitLevelMesList(@RequestParam Long pageSize, @RequestParam Long pageNow) {
-        Page page = new Page<>(pageNow, pageSize);
-        return unitLevelMesService.getUnitLevelMesList(page);
-    }
-
-    @PutMapping("/root/unitLevel")
-    public void saveUnitLevelMesList(@RequestBody @Validated UnitLevelMes unitLevelMes, BindingResult result) {
-        unitLevelMesService.saveUnitLevelMesList(unitLevelMes);
-    }
 }

@@ -30,7 +30,6 @@ public interface UserService extends IService<User> {
      */
     RespAuthDAO login(LoginDto loginDto);
 
-    String adminLogin(LoginDto loginDto);
 
     User getUserByName(String userName);
 

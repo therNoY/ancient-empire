@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author mihao
  * @since 2020-10-24
  */
-public interface UnitTransferDao extends BaseMapper<UnitTransfer> {
+public interface UnitTransferDAO extends BaseMapper<UnitTransfer> {
 
 }

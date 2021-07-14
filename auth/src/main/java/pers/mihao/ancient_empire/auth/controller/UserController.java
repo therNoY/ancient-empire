@@ -74,20 +74,6 @@ public class UserController {
         return respAuthDao;
     }
 
-    /**
-     * 用户登录
-     *
-     * @param loginDto
-     * @return
-     */
-    @PostMapping("/admin/login")
-    public String adminLogin(@RequestBody LoginDto loginDto) {
-        String token = userService.adminLogin(loginDto);
-        if (token == null) {
-            throw new AeException(40011);
-        }
-        return token;
-    }
 
     /**
      * 用户请求注册
@@ -204,23 +190,23 @@ public class UserController {
         if (StringUtil.isBlack(codeSessionKey)) {
             throw new AeException(40016);
         }
-        WeChatInfoDTO phoneInfo = WeChatUtil
+        WeChatInfoDTO weChatInfoDTO = WeChatUtil
             .decrypt(codeSessionKey, weChatSourceInfoDTO.getEncryptedData(), weChatSourceInfoDTO.getIv());
 
-        User user = userService.getUserByPhone(phoneInfo.getPhoneNumber());
+        User user = userService.getUserByPhone(weChatInfoDTO.getPhoneNumber());
         if (user != null) {
             // 用户属于老用户
-            phoneInfo.setUserName(user.getName());
+            weChatInfoDTO.setUserName(user.getName());
             String token = JwtTokenUtil.generateToken(user.getId().toString());
-            phoneInfo.setToken(token);
-            phoneInfo.setUserId(user.getId().toString());
+            weChatInfoDTO.setToken(token);
+            weChatInfoDTO.setUserId(user.getId().toString());
         } else {
             // 新用户
             WeChatInfoDTO userInfo = WeChatUtil.decrypt(codeSessionKey, weChatSourceInfoDTO.getUserInfoEncrypted(),
                 weChatSourceInfoDTO.getUserInfoIv());
-            BeanUtil.copyValueByGetSet(userInfo, phoneInfo);
+            BeanUtil.copyValueByGetSet(userInfo, weChatInfoDTO);
         }
-        return phoneInfo;
+        return weChatInfoDTO;
     }
 
 }
