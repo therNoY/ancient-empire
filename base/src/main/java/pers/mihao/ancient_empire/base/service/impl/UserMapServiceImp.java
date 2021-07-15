@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -211,7 +212,7 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
         if (userMap == null) {
             return null;
         }
-        Set<String> colors = new HashSet<>();
+        Set<String> colors = new LinkedHashSet<>();
         List<Region> regions = userMap.getRegions();
         List<BaseUnit> units = userMap.getUnits();
         units.forEach(unit -> {

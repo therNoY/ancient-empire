@@ -1,5 +1,6 @@
 package pers.mihao.ancient_empire.common.base_catch;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -15,7 +16,7 @@ public class DataSerializableByJson<T> implements DataSerializable<T> {
     }
 
     @Override
-    public Object unSerialObj(Object obj, Class clazz) {
-        return JSONObject.parseObject(obj.toString(), clazz);
+    public Object unSerialObj(Object obj, Class clazz, boolean isArray) {
+        return isArray ? JSONArray.parseArray(obj.toString(), clazz) : JSONObject.parseObject(obj.toString(), clazz);
     }
 }

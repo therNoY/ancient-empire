@@ -19,7 +19,9 @@ public interface DataSerializable<T> {
      * 反序列化
      *
      * @param obj
+     * @param clazz
+     * @param isArray
      * @return
      */
-    Object unSerialObj(Object obj, Class clazz);
+    Object unSerialObj(Object obj, Class clazz, boolean isArray);
 }

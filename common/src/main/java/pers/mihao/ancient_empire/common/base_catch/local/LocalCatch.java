@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.common.base_catch.local;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -239,18 +240,28 @@ public class LocalCatch extends AbstractValueAdaptingCache implements BaseCatch 
 
         Class tClass;
 
+        boolean isCollection;
+
         public ExpireValue() {
         }
 
         public ExpireValue(T value) {
-            this.value = value == null ? null : dataSerializable.serialObj(value);
-            this.tClass = value == null ? null : value.getClass();
-            this.expire = System.currentTimeMillis() + defaultTtlTime * 1000;
+            this(value, defaultTtlTime);
         }
 
         public ExpireValue(T value, Long expire) {
-            this.value = dataSerializable.serialObj(value);
-            this.tClass = value.getClass();
+            this.value = value == null ? null : dataSerializable.serialObj(value);
+            this.isCollection = (value instanceof Collection);
+            if (isCollection) {
+                Collection collection = (Collection) value;
+                if (collection.size() > 0) {
+                    this.tClass = collection.iterator().next().getClass();
+                } else {
+                    this.tClass = Object.class;
+                }
+            } else {
+                this.tClass = value == null ? null : value.getClass();
+            }
             this.expire = System.currentTimeMillis() + expire * 1000;
         }
 
@@ -259,7 +270,7 @@ public class LocalCatch extends AbstractValueAdaptingCache implements BaseCatch 
         }
 
         public T getValue() {
-            return value == null ? null : (T) dataSerializable.unSerialObj(this.value, this.tClass);
+            return value == null ? null : (T) dataSerializable.unSerialObj(this.value, this.tClass, isCollection);
         }
     }
 }

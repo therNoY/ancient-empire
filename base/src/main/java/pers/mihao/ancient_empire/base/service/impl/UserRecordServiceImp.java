@@ -92,7 +92,7 @@ public class UserRecordServiceImp extends ServiceImpl<UserRecordDAO, UserRecord>
         userRecord.setTemplateId(userMap.getTemplateId());
         userRecord.setMapId(userMap.getUuid());
         // 4.保存记录
-        saveOrUpdate(userRecord);
+        save(userRecord);
         delOtherUnSaveStandRecord(userRecord.getUuid(), initMapDTO.getUserId());
         return userRecord;
     }
