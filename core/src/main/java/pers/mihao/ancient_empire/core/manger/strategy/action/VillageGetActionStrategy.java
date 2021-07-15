@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * @author mihao
+ */
 public class VillageGetActionStrategy extends ActionStrategy {
 
     private static VillageGetActionStrategy actionHandle = null;

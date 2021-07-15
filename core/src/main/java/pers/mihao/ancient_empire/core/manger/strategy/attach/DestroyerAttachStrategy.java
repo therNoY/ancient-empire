@@ -7,6 +7,9 @@ import pers.mihao.ancient_empire.core.dto.AttributesPower;
 
 import pers.mihao.ancient_empire.core.manger.GameContext;
 
+/**
+ * @author mihao
+ */
 public class DestroyerAttachStrategy extends AttachStrategy {
 
     private String DESTROYER = "unitMes.destroyer.buff";
@@ -22,7 +25,8 @@ public class DestroyerAttachStrategy extends AttachStrategy {
      * @return
      */
     @Override
-    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo, AttributesPower attributesPower) {
+    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo,
+        AttributesPower attributesPower) {
         RegionInfo region = beAttachUnitInfo.getRegionInfo();
         if (region.getType().equals(RegionEnum.TOWN.type())) {
             attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(DESTROYER)));

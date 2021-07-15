@@ -91,7 +91,7 @@ public interface UserMapService extends IService<UserMap> {
     /**
      * 获取系统遭遇战地图
      *
-     * @param uuid
+     * @param apiConditionDTO
      * @return
      */
     IPage<BaseMapInfoVO> getEncounterMaps(ApiConditionDTO apiConditionDTO);

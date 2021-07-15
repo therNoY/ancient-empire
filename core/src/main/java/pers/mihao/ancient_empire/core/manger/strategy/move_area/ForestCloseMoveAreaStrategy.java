@@ -6,11 +6,15 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 
 import java.util.List;
 
+/**
+ * @author mihao
+ */
 public class ForestCloseMoveAreaStrategy extends MoveAreaStrategy {
 
 
     /**
      * 判断如果是森林就返回1
+     *
      * @param row
      * @param column
      * @return
@@ -20,9 +24,10 @@ public class ForestCloseMoveAreaStrategy extends MoveAreaStrategy {
         int mapColumn = gameMap.getColumn();
         List<Region> regionList = gameMap.getRegions();
         int index = (row - 1) * mapColumn + column - 1;
-        if (regionList.get(index).getType().equals(RegionEnum.FOREST.type()) || regionList.get(index).getType().equals(RegionEnum.GROVE.type())) {
+        if (regionList.get(index).getType().equals(RegionEnum.FOREST.type()) || regionList.get(index).getType()
+            .equals(RegionEnum.GROVE.type())) {
             return 1;
-        }else {
+        } else {
             return super.getRegionDeplete(gameMap, row, column);
         }
     }

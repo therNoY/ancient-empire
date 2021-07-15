@@ -6,13 +6,17 @@ import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.core.dto.AttributesPower;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 
+/**
+ * @author mihao
+ */
 public class RemoteDefenseStrategy extends DefenseStrategy {
 
     private static String REMOTE_DEFENSE = "unitMes.remoteDefense.buff";
 
     /**
      * 获取远程防御的防御
-     *  @param type
+     *
+     * @param type
      * @param record
      * @param unit
      * @param levelMes
@@ -22,7 +26,8 @@ public class RemoteDefenseStrategy extends DefenseStrategy {
      * @return
      */
     @Override
-    public AttributesPower getDefensePower(GameContext gameContext, UnitInfo attachUnitInfo, UnitInfo beAttachUnitInfo, AttributesPower attributesPower) {
+    public AttributesPower getDefensePower(GameContext gameContext, UnitInfo attachUnitInfo, UnitInfo beAttachUnitInfo,
+        AttributesPower attributesPower) {
         if (!isReach(attachUnitInfo, beAttachUnitInfo)) {
             Float addition = Float.valueOf(AppConfig.get(REMOTE_DEFENSE));
             if (attributesPower.getAddition() != null) {

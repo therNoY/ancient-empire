@@ -6,7 +6,7 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
- * 水之子 回学
+ * 水之子 回血
  * @Author mihao
  * @Date 2021/2/3 12:49
  */

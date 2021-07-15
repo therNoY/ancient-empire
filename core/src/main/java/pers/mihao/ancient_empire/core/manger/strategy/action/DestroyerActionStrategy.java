@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * @author mihao
+ */
 public class DestroyerActionStrategy extends ActionStrategy {
 
     private static DestroyerActionStrategy actionHandle = null;

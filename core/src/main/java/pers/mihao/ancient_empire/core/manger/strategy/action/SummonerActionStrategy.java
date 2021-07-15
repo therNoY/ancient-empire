@@ -1,18 +1,16 @@
 package pers.mihao.ancient_empire.core.manger.strategy.action;
 
+import java.util.ArrayList;
+import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Site;
 import pers.mihao.ancient_empire.base.bo.Tomb;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.core.eums.ActionEnum;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 召唤师 判断有能力召唤
+ * @author mihao
  */
-
-
 public class SummonerActionStrategy extends ActionStrategy {
 
     private static SummonerActionStrategy actionHandle = null;

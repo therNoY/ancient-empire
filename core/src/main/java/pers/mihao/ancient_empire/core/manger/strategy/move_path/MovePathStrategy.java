@@ -17,6 +17,8 @@ import java.util.List;
 
 /**
  * 移动路径计算 计算两点之间的最短移动路径 核心迪杰斯特拉算法
+ *
+ * @author mihao
  */
 public class MovePathStrategy extends AbstractStrategy<MovePathStrategy> {
 
@@ -63,7 +65,8 @@ public class MovePathStrategy extends AbstractStrategy<MovePathStrategy> {
 //            }
             // 2. update 更新新加入的节点 相连的点 更新最短路径
             if (lastAddIndex >= column) {
-                updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex - column, unitInfo, record, endIndex);
+                updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex - column, unitInfo, record,
+                    endIndex);
                 // 更新上面的节点
             }
             if (lastAddIndex % column > 0) {
@@ -76,7 +79,8 @@ public class MovePathStrategy extends AbstractStrategy<MovePathStrategy> {
             }
             if (graphSize - lastAddIndex > column) {
                 // 更新下面边的点
-                updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex + column, unitInfo, record, endIndex);
+                updateIndexValue(visitPath, lastVisitIndex, lastAddIndex, lastAddIndex + column, unitInfo, record,
+                    endIndex);
             }
 
             // 3. scan 从未访问过的节点找到最小的路径
@@ -148,7 +152,7 @@ public class MovePathStrategy extends AbstractStrategy<MovePathStrategy> {
         if (endIndex == compareIndex) {
             // 如果该点就是目标点 就是0
             deplete = 0;
-        }else {
+        } else {
             deplete = getDepleteByIndex(unitInfo, record, compareIndex);
         }
         // 更新上面的节点
@@ -166,7 +170,7 @@ public class MovePathStrategy extends AbstractStrategy<MovePathStrategy> {
     protected int getRegionDeplete(GameMap gameMap, int index) {
         // 获取上面地形的type
         String type = gameMap.getRegions().get(index).getType();
-        RegionMes regionMes  = regionMesService.getRegionByTypeFromLocalCatch(type);
+        RegionMes regionMes = regionMesService.getRegionByTypeFromLocalCatch(type);
         return regionMes.getDeplete();
     }
 

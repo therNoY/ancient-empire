@@ -7,11 +7,12 @@ import pers.mihao.ancient_empire.core.dto.AttributesPower;
 
 import pers.mihao.ancient_empire.core.manger.GameContext;
 
+/**
+ * @author mihao
+ */
 public class HillCloseAttachStrategy extends AttachStrategy {
 
-    private  String HILL = "unitMes.hillClose.buff";
-
-
+    private String HILL = "unitMes.hillClose.buff";
 
     /**
      * 获取山头的攻击
@@ -24,7 +25,8 @@ public class HillCloseAttachStrategy extends AttachStrategy {
      * @return
      */
     @Override
-    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo, AttributesPower attributesPower) {
+    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo,
+        AttributesPower attributesPower) {
         RegionInfo region = attachInfo.getRegionInfo();
         if (region.getType().equals(RegionEnum.STONE.type())) {
             attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(HILL)));

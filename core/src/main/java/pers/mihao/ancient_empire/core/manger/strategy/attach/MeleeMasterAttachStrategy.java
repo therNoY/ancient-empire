@@ -7,14 +7,17 @@ import pers.mihao.ancient_empire.core.dto.AttributesPower;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 
 
+/**
+ * @author mihao
+ */
 public class MeleeMasterAttachStrategy extends AttachStrategy {
 
-    private  String MELEE_MASTER = "unitMes.meleeMaster.buff";
-
+    private String MELEE_MASTER = "unitMes.meleeMaster.buff";
 
 
     /**
      * 获取近战大师攻击
+     *
      * @param record
      * @param unit
      * @param levelMes
@@ -23,7 +26,8 @@ public class MeleeMasterAttachStrategy extends AttachStrategy {
      * @return
      */
     @Override
-    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo, AttributesPower attributesPower) {
+    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo,
+        AttributesPower attributesPower) {
         if (isReach(attachInfo, beAttachUnitInfo)) {
             Float addition = Float.valueOf(AppConfig.get(MELEE_MASTER));
             if (attributesPower.getAddition() != null) {

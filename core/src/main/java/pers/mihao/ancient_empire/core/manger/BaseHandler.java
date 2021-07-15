@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.core.manger;
 
-import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.GameMap;
 import pers.mihao.ancient_empire.base.bo.Site;

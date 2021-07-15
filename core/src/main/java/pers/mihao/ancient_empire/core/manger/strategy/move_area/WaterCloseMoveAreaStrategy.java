@@ -6,10 +6,14 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 
 import java.util.List;
 
+/**
+ * @author mihao
+ */
 public class WaterCloseMoveAreaStrategy extends MoveAreaStrategy {
 
     /**
      * 判断如果是水就返回 1
+     *
      * @param row
      * @param column
      * @return
@@ -22,7 +26,7 @@ public class WaterCloseMoveAreaStrategy extends MoveAreaStrategy {
         String type = regionList.get(index).getType();
         if (type.startsWith(RegionEnum.SEA.type()) || type.startsWith(RegionEnum.BANK.type())) {
             return 1;
-        }else {
+        } else {
             return super.getRegionDeplete(gameMap, row, column);
         }
     }

@@ -24,6 +24,8 @@ import java.util.List;
 
 /**
  * 返回净化光环的handle
+ *
+ * @author mihao
  */
 public class PurifyEndStrategy extends EndStrategy {
 
@@ -39,10 +41,7 @@ public class PurifyEndStrategy extends EndStrategy {
 
 
     /**
-     * 净化光环的效果
-     * 1. 亡灵军队 减少血量
-     * 2. 友军不是满血 就加血
-     * 3. 友军状态如果有负面 就清除
+     * 净化光环的效果 1. 亡灵军队 减少血量 2. 友军不是满血 就加血 3. 友军状态如果有负面 就清除
      *
      * @param affectUnits
      * @param endUnitDTO
@@ -50,7 +49,8 @@ public class PurifyEndStrategy extends EndStrategy {
      * @return
      */
     @Override
-    protected EndUnitDTO warpEndResult(List<Pair<Integer, Integer>> affectUnits, EndUnitDTO endUnitDTO, UserRecord record) {
+    protected EndUnitDTO warpEndResult(List<Pair<Integer, Integer>> affectUnits, EndUnitDTO endUnitDTO,
+        UserRecord record) {
         Unit unit;
         Army army;
         Integer armyIndex;
@@ -69,8 +69,8 @@ public class PurifyEndStrategy extends EndStrategy {
             boolean isChange = false;
             // 解除deBuff
             if (unit.getStatus() != null
-                    && army.getCamp().equals(record.getCurrCamp())
-                    && EnumUtil.valueOf(StateEnum.class, unit.getStatus()).isDeBuff) {
+                && army.getCamp().equals(record.getCurrCamp())
+                && EnumUtil.valueOf(StateEnum.class, unit.getStatus()).isDeBuff) {
                 isChange = true;
                 statusInfoDTO.setStatus(StateEnum.NORMAL.type());
             }
@@ -88,7 +88,7 @@ public class PurifyEndStrategy extends EndStrategy {
                     isChange = true;
                     statusInfoDTO.setLife(life - buff);
                 }
-            }else if (army.getCamp().equals(record.getCurrCamp())) {
+            } else if (army.getCamp().equals(record.getCurrCamp())) {
                 // 残血友军回血
                 levelMes = levelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
                 int unitLife = unit.getLife();

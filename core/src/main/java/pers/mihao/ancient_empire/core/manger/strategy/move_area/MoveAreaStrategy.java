@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author mihao
+ */
 public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
@@ -33,7 +36,7 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
     /**
      * 虚弱剩余move力
      */
-    private static final Integer WEAK_LAST_SPEED =  AppConfig.getInt("unitMes.weak.buff.lastSpeed");
+    private static final Integer WEAK_LAST_SPEED = AppConfig.getInt("unitMes.weak.buff.lastSpeed");
 
 
     /**
@@ -53,7 +56,8 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         for (MoveAreaStrategy moveAreaStrategy : getAbilityStrategy(unitInfo.getAbilities())) {
             isVisit = new int[userRecord.getGameMap().getRow() + 1][userRecord.getGameMap().getColumn() + 1];
             if (moveAreaStrategy != null) {
-                moveAreaStrategy.getMoveSite(isVisit, unitInfo.getRow(), unitInfo.getColumn(), speed, userRecord, sites);
+                moveAreaStrategy
+                    .getMoveSite(isVisit, unitInfo.getRow(), unitInfo.getColumn(), speed, userRecord, sites);
             }
         }
         if (sites.size() == 0) {
@@ -66,6 +70,7 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
 
     /**
      * 获取二次移动区域
+     *
      * @param userRecord
      * @param unit
      * @param path
@@ -80,7 +85,8 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
             if (ability.getType().equals(AbilityEnum.ASSAULT.type())) {
                 // 是可以进行二次移动
                 levelMes = unit.getLevelMes();
-                int lastSpeed = levelMes.getSpeed() - getMoveUseSpeed(userRecord.getGameMap(), path, unit.getAbilities());
+                int lastSpeed =
+                    levelMes.getSpeed() - getMoveUseSpeed(userRecord.getGameMap(), path, unit.getAbilities());
                 if (lastSpeed > 0) {
                     levelMes.setSpeed(lastSpeed);
                     sites = getMoveArea(userRecord, unit);
@@ -108,7 +114,6 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
     }
 
     /**
-     *
      * @param p1
      * @param p2
      * @return
@@ -119,9 +124,11 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         if (p1.getRow().equals(p2.getRow())) {
             int minC, maxC;
             if (p1.getColumn() < p2.getColumn()) {
-                minC = p1.getColumn(); maxC = p2.getColumn();
-            }else {
-                minC = p2.getColumn(); maxC = p1.getColumn();
+                minC = p1.getColumn();
+                maxC = p2.getColumn();
+            } else {
+                minC = p2.getColumn();
+                maxC = p1.getColumn();
             }
             int minDeplete, temDep;
             for (int i = maxC; i > minC; i--) {
@@ -132,12 +139,14 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
                 }
                 sum += minDeplete;
             }
-        }else {
+        } else {
             int minR, maxR;
             if (p1.getRow() < p2.getRow()) {
-                minR = p1.getRow(); maxR = p2.getRow();
-            }else {
-                minR = p2.getRow(); maxR = p1.getRow();
+                minR = p1.getRow();
+                maxR = p2.getRow();
+            } else {
+                minR = p2.getRow();
+                maxR = p1.getRow();
             }
             int minDeplete, temDep;
             for (int i = maxR; i > minR; i--) {
@@ -157,7 +166,8 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
      * @param isVisit   初始为-1 值为表示上次访问的时候剩余的移动力
      * @param lastSpeed
      */
-    public void getMoveSite(int[][] isVisit, int row, int column, int lastSpeed, UserRecord userRecord, List<Site> sites) {
+    public void getMoveSite(int[][] isVisit, int row, int column, int lastSpeed, UserRecord userRecord,
+        List<Site> sites) {
         GameMap gameMap = userRecord.getGameMap();
         if ((isVisit[row][column] != 0 && isVisit[row][column] >= lastSpeed) || isHaveEnemy(userRecord, row, column)) {
             return;
@@ -175,16 +185,18 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         if (column - 1 > 0 && lastSpeed - (deplete = getRegionDeplete(gameMap, row, column - 1)) > 0) {
             getMoveSite(isVisit, row, column - 1, lastSpeed - deplete, userRecord, sites);
         }
-        if (column + 1 <= gameMap.getColumn() && lastSpeed - (deplete = getRegionDeplete(gameMap, row, column + 1)) > 0) {
+        if (column + 1 <= gameMap.getColumn()
+            && lastSpeed - (deplete = getRegionDeplete(gameMap, row, column + 1)) > 0) {
             getMoveSite(isVisit, row, column + 1, lastSpeed - deplete, userRecord, sites);
         }
     }
 
     /**
      * 获取单位在地图上的某一点需要消耗的移动力
+     *
      * @param unitInfo 信息
-     * @param map 地图
-     * @param end 目标点
+     * @param map      地图
+     * @param end      目标点
      * @return
      */
     public int getRegionDepleteByUnitInfo(UnitInfo unitInfo, GameMap map, Site end) {
@@ -202,7 +214,8 @@ public class MoveAreaStrategy extends AbstractStrategy<MoveAreaStrategy> {
         // 获取上面地形的type
         int index = (row - 1) * gameMap.getColumn() + column - 1;
         String type = gameMap.getRegions().get(index).getType();
-        RegionMes regionMes = ApplicationContextHolder.getBean(RegionMesService.class).getRegionByTypeFromLocalCatch(type);
+        RegionMes regionMes = ApplicationContextHolder.getBean(RegionMesService.class)
+            .getRegionByTypeFromLocalCatch(type);
         if (regionMes == null) {
             throw new AeException("服务器错误");
         }

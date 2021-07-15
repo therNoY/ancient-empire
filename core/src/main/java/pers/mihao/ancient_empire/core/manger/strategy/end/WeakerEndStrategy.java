@@ -14,12 +14,15 @@ import java.util.List;
 
 /**
  * 虚弱光环
+ *
+ * @author mihao
  */
 public class WeakerEndStrategy extends EndStrategy {
 
 
     @Override
-    protected EndUnitDTO warpEndResult(List<Pair<Integer, Integer>> affectUnits, EndUnitDTO endUnitDTO, UserRecord record) {
+    protected EndUnitDTO warpEndResult(List<Pair<Integer, Integer>> affectUnits, EndUnitDTO endUnitDTO,
+        UserRecord record) {
         Unit unit;
         Army army;
         Integer armyIndex;

@@ -19,6 +19,8 @@ import java.util.List;
 
 /**
  * 单位行动结束后的handle
+ *
+ * @author mihao
  */
 public class EndStrategy extends AbstractStrategy<EndStrategy> {
 
@@ -39,10 +41,11 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
 
     /**
      * 获取结束移动的结果
+     *
      * @param record
      * @return
      */
-    public EndUnitDTO getEndUnitResult(CommonHandler commonHandler){
+    public EndUnitDTO getEndUnitResult(CommonHandler commonHandler) {
         UserRecord record = commonHandler.record();
         List<Pair<Integer, Integer>> affectUnits = getAffectUnit(commonHandler.record());
         EndUnitDTO endUnitDTO = new EndUnitDTO();
@@ -51,7 +54,7 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
         endUnitDTO.setUnitStatusInfoDTOS(new ArrayList<>());
 
         getAbilityStrategy(record.getCurrUnit().getAbilities())
-                .forEach(endStrategy -> endStrategy.warpEndResult(affectUnits, endUnitDTO, record));
+            .forEach(endStrategy -> endStrategy.warpEndResult(affectUnits, endUnitDTO, record));
 
 //        poissonEndDesLife(commonHandler, record, endUnitDTO);
 
@@ -60,6 +63,7 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
 
     /**
      * 中毒者回合结束掉血
+     *
      * @param commonHandler
      * @param record
      * @param endUnitDTO
@@ -68,13 +72,14 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
         if (StateEnum.POISON.type().equals(record.getCurrUnit().getStatus())) {
             int descLife = commonHandler.getGameContext().getPoisonDesLife();
             log.info("单位中毒需要减少生命:{}", descLife);
-            endUnitDTO.getLifeChangeList().add(new LifeChangeDTO(AppUtil.getArrayByInt(-1, descLife), record.getCurrUnit()));
+            endUnitDTO.getLifeChangeList()
+                .add(new LifeChangeDTO(AppUtil.getArrayByInt(-1, descLife), record.getCurrUnit()));
             int lastLife = record.getCurrUnit().getLife();
             if (lastLife < descLife) {
                 log.info("当前中毒单位死亡");
                 UnitDeadDTO unitDeadDTO = new UnitDeadDTO(commonHandler.currUnitArmyIndex());
                 endUnitDTO.getUnitDeadDTOList().add(unitDeadDTO);
-            }else {
+            } else {
                 UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(commonHandler.currUnitArmyIndex());
                 unitStatusInfoDTO.setUpdateCurr(true).setLife(lastLife - descLife);
                 endUnitDTO.getUnitStatusInfoDTOS().add(unitStatusInfoDTO);
@@ -85,10 +90,11 @@ public class EndStrategy extends AbstractStrategy<EndStrategy> {
 
     /**
      * 获取军队的index 和 单位的index
+     *
      * @param record
      * @return
      */
-    public List<Pair<Integer, Integer>> getAffectUnit(UserRecord record){
+    public List<Pair<Integer, Integer>> getAffectUnit(UserRecord record) {
         List<Pair<Integer, Integer>> affectUnits = new ArrayList<>();
         for (int j = 0; j < record.getArmyList().size(); j++) {
             Army army = record.getArmyList().get(j);

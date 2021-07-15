@@ -48,7 +48,6 @@ import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.GameHandler;
 import pers.mihao.ancient_empire.core.manger.net.GameSessionManger;
-import pers.mihao.ancient_empire.core.robot.RobotManger;
 import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 
 /**
@@ -69,8 +68,6 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     UserRecordService userRecordService;
     @Autowired
     UserTemplateService userTemplateService;
-    @Autowired
-    RobotManger robotManger;
 
     /* 哨兵的名字 */
     private static final String START_GAME_SENTINEL = "gameContextSentinel";

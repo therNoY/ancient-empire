@@ -10,6 +10,8 @@ import pers.mihao.ancient_empire.core.manger.strategy.AbstractStrategy;
 
 /**
  * 根据不同的能力判断防御力加成
+ *
+ * @author mihao
  */
 public class DefenseStrategy extends AbstractStrategy<DefenseStrategy> {
 
@@ -33,15 +35,18 @@ public class DefenseStrategy extends AbstractStrategy<DefenseStrategy> {
 
     /**
      * 获取单位的攻击力
+     *
      * @param gameContext
      * @param attachUnitInfo
      * @param beAttachUnitInfo
      * @return
      */
-    public AttributesPower getUnitDefenseInfo(GameContext gameContext, UnitInfo attachUnitInfo, UnitInfo beAttachUnitInfo){
+    public AttributesPower getUnitDefenseInfo(GameContext gameContext, UnitInfo attachUnitInfo,
+        UnitInfo beAttachUnitInfo) {
         AttributesPower attributesPower = new AttributesPower();
         getDefensePower(gameContext, attachUnitInfo, beAttachUnitInfo, attributesPower);
-        log.info("{} 攻击 {} >>> 基础防御力是{}", attachUnitInfo.getType(), beAttachUnitInfo.getType(), attributesPower.getNum());
+        log.info("{} 攻击 {} >>> 基础防御力是{}", attachUnitInfo.getType(), beAttachUnitInfo.getType(),
+            attributesPower.getNum());
         getAbilityStrategy(beAttachUnitInfo.getAbilities()).forEach(attachStrategy -> {
             attachStrategy.getDefensePower(gameContext, attachUnitInfo, beAttachUnitInfo, attributesPower);
         });
@@ -50,13 +55,15 @@ public class DefenseStrategy extends AbstractStrategy<DefenseStrategy> {
 
     /**
      * 获取单位单位的初始防御 根据等级获得
+     *
      * @param gameContext
      * @param attachUnitInfo
      * @param beAttachUnitInfo
      * @param attributesPower
      * @return
      */
-    public AttributesPower getDefensePower(GameContext gameContext, UnitInfo attachUnitInfo, UnitInfo beAttachUnitInfo, AttributesPower attributesPower) {
+    public AttributesPower getDefensePower(GameContext gameContext, UnitInfo attachUnitInfo, UnitInfo beAttachUnitInfo,
+        AttributesPower attributesPower) {
         // 不为空在设
         if (attributesPower.getNum() == null) {
             int defense;

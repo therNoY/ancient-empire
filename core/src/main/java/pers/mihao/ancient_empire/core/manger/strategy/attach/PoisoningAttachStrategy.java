@@ -8,9 +8,12 @@ import pers.mihao.ancient_empire.core.dto.AttributesPower;
 
 import pers.mihao.ancient_empire.core.manger.GameContext;
 
+/**
+ * @author mihao
+ */
 public class PoisoningAttachStrategy extends AttachStrategy {
 
-    private  String POISONING = "unitMes.poisoning.buff";
+    private String POISONING = "unitMes.poisoning.buff";
 
 
     /**
@@ -24,7 +27,8 @@ public class PoisoningAttachStrategy extends AttachStrategy {
      * @return
      */
     @Override
-    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo, AttributesPower attributesPower) {
+    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo,
+        AttributesPower attributesPower) {
         if (!StringUtil.isBlack(beAttachUnitInfo.getStatus())) {
             if (beAttachUnitInfo.getStatus().equals(StateEnum.EXCITED.type())) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(POISONING)));

@@ -6,6 +6,9 @@ import pers.mihao.ancient_empire.common.config.AppConfig;
 import pers.mihao.ancient_empire.core.dto.AttributesPower;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 
+/**
+ * @author mihao
+ */
 public class WaterDefenseStrategy extends DefenseStrategy {
 
     private static String WATER = "unitMes.waterClose.buff";
@@ -14,7 +17,8 @@ public class WaterDefenseStrategy extends DefenseStrategy {
      * 获取水之子的攻击加成
      */
     @Override
-    public AttributesPower getDefensePower(GameContext gameContext, UnitInfo attachUnitInfo, UnitInfo beAttachUnitInfo, AttributesPower attributesPower) {
+    public AttributesPower getDefensePower(GameContext gameContext, UnitInfo attachUnitInfo, UnitInfo beAttachUnitInfo,
+        AttributesPower attributesPower) {
         String regionType = beAttachUnitInfo.getRegionInfo().getType();
 
         if (regionType.startsWith(RegionEnum.SEA.type()) || regionType.startsWith(RegionEnum.BANK.type())) {

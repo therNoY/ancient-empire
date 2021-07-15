@@ -12,8 +12,8 @@ import java.util.List;
 
 /**
  * 修理者能力者 判断是否有可以修理的房子
+ * @author mihao
  */
-
 public class RepairActionStrategy extends ActionStrategy {
 
     private static RepairActionStrategy actionHandle = null;

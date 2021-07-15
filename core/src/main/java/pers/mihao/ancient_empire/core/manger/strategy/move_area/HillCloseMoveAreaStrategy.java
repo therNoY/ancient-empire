@@ -6,10 +6,14 @@ import pers.mihao.ancient_empire.base.enums.RegionEnum;
 
 import java.util.List;
 
+/**
+ * @author mihao
+ */
 public class HillCloseMoveAreaStrategy extends MoveAreaStrategy {
 
     /**
      * 判断如果是山就返回 1
+     *
      * @param row
      * @param column
      * @return
@@ -21,7 +25,7 @@ public class HillCloseMoveAreaStrategy extends MoveAreaStrategy {
         int index = (row - 1) * mapColumn + column - 1;
         if (regionList.get(index).getType().equals(RegionEnum.STONE.type())) {
             return 1;
-        }else {
+        } else {
             return super.getRegionDeplete(gameMap, row, column);
         }
     }

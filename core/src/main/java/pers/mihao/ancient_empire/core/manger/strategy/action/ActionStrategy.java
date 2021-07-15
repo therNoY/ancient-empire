@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 获取单位到达 目标点可以进行的action {@link ActionEnum}
- * 基础的行动处理类
- * 除了 攻击 还有 召唤 占领 破坏 加血 dly
+ * 获取单位到达 目标点可以进行的action {@link ActionEnum} 基础的行动处理类 除了 攻击 还有 召唤 占领 破坏 加血 dly
+ *
+ * @author mihao
  */
-
 public class ActionStrategy extends AbstractStrategy<ActionStrategy> {
 
     public static ActionStrategy actionStrategy = null;
@@ -33,17 +32,18 @@ public class ActionStrategy extends AbstractStrategy<ActionStrategy> {
 
     /**
      * 获取单位action
+     *
      * @param positions 攻击范围
      * @param record
      * @param aimPoint
      * @return
      */
-    public Set<String> getActionList(List<Site> positions, UserRecord record, Site aimPoint){
+    public Set<String> getActionList(List<Site> positions, UserRecord record, Site aimPoint) {
         /**
          * 致盲只能移动结束
          */
         Set<String> actionSet = new HashSet<>();
-        if (StateEnum.BLIND.type().equals(record.getCurrUnit().getStatus())){
+        if (StateEnum.BLIND.type().equals(record.getCurrUnit().getStatus())) {
             actionSet.add(ActionEnum.END.type());
             return actionSet;
         }
@@ -64,16 +64,17 @@ public class ActionStrategy extends AbstractStrategy<ActionStrategy> {
 
     /**
      * 获取单位的基础行为
+     *
      * @param unitIndex
-     * @param sites 攻击范围
+     * @param sites     攻击范围
      * @param record
      * @param aimSite
      * @return
      */
     protected List<String> getAction(List<Site> sites, UserRecord record, Site aimSite) {
         List<String> actions = new ArrayList<>();
-        List<Army> ArmyList = record.getArmyList();
-        for (Army army : ArmyList) {
+        List<Army> armyList = record.getArmyList();
+        for (Army army : armyList) {
             if (!army.getCamp().equals(record.getCurrCamp())) {
                 List<Unit> units = army.getUnits();
                 for (Unit unit : units) {

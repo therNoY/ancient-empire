@@ -8,9 +8,12 @@ import pers.mihao.ancient_empire.core.dto.AttributesPower;
 
 import pers.mihao.ancient_empire.core.manger.GameContext;
 
+/**
+ * @author mihao
+ */
 public class ShooterAttachStrategy extends AttachStrategy {
 
-    private  String SHOOTER = "unitMes.shooter.buff";
+    private String SHOOTER = "unitMes.shooter.buff";
 
 
     /**
@@ -24,7 +27,8 @@ public class ShooterAttachStrategy extends AttachStrategy {
      * @return
      */
     @Override
-    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo, AttributesPower attributesPower) {
+    public AttributesPower getAttachPower(GameContext gameContext, UnitInfo attachInfo, UnitInfo beAttachUnitInfo,
+        AttributesPower attributesPower) {
         for (Ability ability : beAttachUnitInfo.getAbilities()) {
             if (ability.getType().equals(AbilityEnum.FLY.type())) {
                 attributesPower.setNum(attributesPower.getNum() + Integer.valueOf(AppConfig.get(SHOOTER)));

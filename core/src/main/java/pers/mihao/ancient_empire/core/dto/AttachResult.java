@@ -4,17 +4,37 @@ import java.io.Serializable;
 
 /**
  * 攻击结果
+ *
+ * @author mihao
  */
-public class AttachResult  implements Serializable {
+public class AttachResult implements Serializable {
 
-    private Integer[] attach; // 被攻击者受到伤害
-    private Boolean dead; // 被攻击者是否死
+    /**
+     * 被攻击者受到伤害
+     */
+    private Integer[] attach;
+    /**
+     * 被攻击者是否死
+     */
+    private Boolean dead;
 
-    private Integer lastLife; // 被攻击者剩余血量
-    private String endStatus; // 被攻击者的状态 可能会中毒
+    /**
+     * 被攻击者剩余血量
+     */
+    private Integer lastLife;
+    /**
+     * 被攻击者的状态 可能会中毒
+     */
+    private String endStatus;
 
-    private Integer endExperience; // 攻击者结束时的经验
-    private Boolean leaveUp; // 攻击者是否升级
+    /**
+     * 攻击者结束时的经验
+     */
+    private Integer endExperience;
+    /**
+     * 攻击者是否升级
+     */
+    private Boolean leaveUp;
 
     public Integer[] getAttach() {
         return attach;
