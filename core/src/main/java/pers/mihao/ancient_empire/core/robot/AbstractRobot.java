@@ -1,6 +1,8 @@
 package pers.mihao.ancient_empire.core.robot;
 
 import java.util.*;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -86,12 +88,15 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
             }
 
             activeUnits(canMoveUnit.lessThanHalf);
-
-            handleRobotEvent(GameEventEnum.ROUND_END);
-
             log.info("================机器人行动结束===============");
         } catch (Exception e) {
-            log.error("机器人行动出错：", e);
+            log.error("机器人行动出错", e);
+        } finally {
+            try {
+                handleRobotEvent(GameEventEnum.ROUND_END);
+            } catch (Exception e) {
+                log.error("机器人结束回合出错", e);
+            }
         }
     }
 
@@ -125,16 +130,15 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         // 1.获取目前能买的单位
         List<UnitInfo> canBuyUnitMes;
         java.util.stream.Stream<UnitInfo> canBuyUnitMesStream = unitMesService.getCanBuyUnit(record.getTemplateId())
-                .stream().map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 1))
-                .filter(unitInfo -> (unitInfo.getUnitMes().getPrice() <= army.getMoney() &&
-                        unitInfo.getUnitMes().getPopulation() <= record.getMaxPop() - army.getPop()));
-
+            .stream().map(unitMes -> unitMesService.getUnitInfo(unitMes.getId(), 1))
+            .filter(unitInfo -> (unitInfo.getUnitMes().getPrice() <= army.getMoney() &&
+                unitInfo.getUnitMes().getPopulation() <= record.getMaxPop() - army.getPop()));
 
         if (hasLoad) {
             canBuyUnitMes = canBuyUnitMesStream
-                    .filter(unitInfo -> !unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability()))
-                    .collect(Collectors.toList());
-        }else {
+                .filter(unitInfo -> !unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability()))
+                .collect(Collectors.toList());
+        } else {
             canBuyUnitMes = canBuyUnitMesStream.collect(Collectors.toList());
         }
 
@@ -190,8 +194,9 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         }
         List<Site> sites = gameContext.getWillMoveArea();
         // 可以结束的点
-        List<Site> canStandBySite = sites.stream().filter(site -> !isHaveFriend(record(), site.getRow(), site.getColumn()))
-                .collect(Collectors.toList());
+        List<Site> canStandBySite = sites.stream()
+            .filter(site -> !isHaveFriend(record(), site.getRow(), site.getColumn()))
+            .collect(Collectors.toList());
         List<Site> canEffectSite = getUnitAttachArea(canStandBySite);
 
         // 2.没有可以进行的行动 在选择其他行动
@@ -203,7 +208,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
     /**
      * 获取单位的所有的可以行动的可能
      *
-     * @param unit 单位
+     * @param unit          单位
      * @param canEffectSite 单位当前回合可以作用的点
      * @return
      */
@@ -243,7 +248,8 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
         if (unitAble.hasHealer && (friendUnit = getAllFriendUnits()) != null) {
             // 治疗友军
             for (UnitInfo unitInfo : friendUnit) {
-                int maxLife = unitLevelMesService.getUnitLevelMes(unitInfo.getTypeId(), unitInfo.getLevel()).getMaxLife();
+                int maxLife = unitLevelMesService.getUnitLevelMes(unitInfo.getTypeId(), unitInfo.getLevel())
+                    .getMaxLife();
                 if (unitInfo.getLife() < maxLife) {
                     log.info("{} 可以进行 治疗 操作目标单位:{} 血量：{}", unit.getType(), unitInfo.getType(), unitInfo.getLife());
                     actionList.add(new ActionIntention(RobotActiveEnum.HEAL, unitInfo, unitInfo));
@@ -293,6 +299,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
 
     /**
      * 判断这一点是否是当前可以作用到行动的点
+     *
      * @param intention
      * @param site
      */
@@ -302,7 +309,8 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
             case ATTACH:
             case HEAL:
             case SUMMON:
-                List<Site> effectArea = AttachStrategy.getInstance().getAttachArea(currUnit().getUnitMes(), site, gameMap());
+                List<Site> effectArea = AttachStrategy.getInstance()
+                    .getAttachArea(currUnit().getUnitMes(), site, gameMap());
                 isCanEffect = effectArea != null && effectArea.contains(intention.getSite());
                 break;
             case OCCUPIED:
@@ -446,6 +454,7 @@ public abstract class AbstractRobot extends RobotCommonHandler implements Runnab
 
     /**
      * 从不在攻击目标的单位中选择单位 默认血量最少 可以实现其他策略
+     *
      * @param otherCanAttachUnit
      * @return
      */

@@ -126,11 +126,14 @@ public class GameContext extends UserTemplateHelper {
     private List<GameRunListener> gameRunListeners;
 
     /**
-     * 帮助实现交互的
+     * 交互锁 帮助实现交互
      */
     @JSONField(serialize = false)
     private InteractiveLock interactiveLock = new InteractiveLock();
 
+    /**
+     * 重入锁 用来锁定当前记录
+     */
     @JSONField(serialize = false)
     private Lock recordLock = new ReentrantLock();
 

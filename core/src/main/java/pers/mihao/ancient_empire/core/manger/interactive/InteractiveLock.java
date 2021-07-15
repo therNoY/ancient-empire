@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.core.manger.interactive;
 
 /**
- * 控制交互的锁
+ * 控制交互的锁 主要为了方便人机可以再一个动画执行完毕之后执行下一个动作
  * @Author mihao
  * @Date 2021/4/27 14:56
  */

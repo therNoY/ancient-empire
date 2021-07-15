@@ -60,6 +60,7 @@ import pers.mihao.ancient_empire.core.util.GameCoreHelper;
 public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     private Logger log = LoggerFactory.getLogger(GameCoreManger.class);
+
     @Autowired
     GameSessionManger gameSessionManger;
     @Autowired
@@ -69,18 +70,22 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     @Autowired
     UserTemplateService userTemplateService;
 
-    /* 哨兵的名字 */
-    private static final String START_GAME_SENTINEL = "gameContextSentinel";
-    /* 哨兵监视等待最大时长 */
+    /**
+     * 哨兵监视等待最大时长
+     */
     private static final int SENTINEL_TIME = 60;
-    /* 加入游戏等待最大时长 */
+    /**
+     * 加入游戏等待最大时长
+     */
     private static final int JOIN_TIME = 20;
     /**
      * 是否开发备份数据
      */
     boolean rollBackGame = false;
 
-    /* 初始化注册是事件处理器 */
+    /**
+     * 初始化注册是事件处理器
+     */
     private Map<GameEventEnum, Class<GameHandler>> handlerMap = new HashMap<>(GameEventEnum.values().length);
 
     /**
@@ -89,8 +94,9 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     private Map<String, GameContext> contextMap = new ConcurrentHashMap<>(16);
 
     /**
-     * 注册哨兵线程池
+     * 异步注册上下文线程池 不会突然有很多人连接 使用SynchronousQueue
      */
+    private static final String START_GAME_SENTINEL = "gameContextSentinel";
     private Executor sentinelPool = new ThreadPoolExecutor(
         0, Integer.MAX_VALUE, 30, TimeUnit.SECONDS,
         new SynchronousQueue(),
@@ -349,13 +355,14 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         }
     }
 
-    public List<GameContext> getAllGameContextList(){
+    public List<GameContext> getAllGameContextList() {
         GameContext[] gameContext = new GameContext[contextMap.size()];
         return Arrays.stream(contextMap.values().toArray(gameContext)).collect(Collectors.toList());
     }
 
     /**
      * 处理玩家离开record
+     *
      * @param userId
      * @param recordId
      */
@@ -395,6 +402,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
 
     /**
      * 判断当前用户是否参与玩家
+     *
      * @param userId
      * @param recordId
      */

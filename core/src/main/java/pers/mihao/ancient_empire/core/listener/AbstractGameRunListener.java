@@ -29,7 +29,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     private static GameSessionManger gameSessionManger;
 
     /**
-     * 标记当前上线问是否还有效
+     * 标记当前上下文是否还有效
      */
     private boolean isEffective = true;
 
@@ -49,12 +49,10 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
 
     @Override
     public void onGameStart() {
-
     }
 
     @Override
     public void onClickTip() {
-
     }
 
     @Override

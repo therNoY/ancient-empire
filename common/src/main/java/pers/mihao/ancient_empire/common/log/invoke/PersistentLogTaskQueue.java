@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import pers.mihao.ancient_empire.common.log.AbstractLog;
 import pers.mihao.ancient_empire.common.util.ThreadPoolNameUtil;
 
 /**
@@ -15,6 +14,9 @@ public class PersistentLogTaskQueue {
 
     private static PersistentLogTaskQueue taskQueue;
 
+    /**
+     * 异步写日志线程池
+     */
     private ExecutorService invokePersistentLogPoll;
 
     private PersistentLogTaskQueue() {
