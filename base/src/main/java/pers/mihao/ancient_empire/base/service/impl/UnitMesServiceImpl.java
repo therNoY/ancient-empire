@@ -158,7 +158,7 @@ public class UnitMesServiceImpl extends ServiceImpl<UnitMesDAO, UnitMes> impleme
     /**
      * 获取当前模板单位可以购买的单位
      *
-     * @param templateId 领主是否还存活 存活就无法购买
+     * @param templateId
      * @return
      */
     @Override

@@ -65,55 +65,48 @@ public class UserRecordServiceImp extends ServiceImpl<UserRecordDAO, UserRecord>
      * @param initMapDTO
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public UserRecord initMapRecord(InitMapDTO initMapDTO, UserMap userMap) {
         UserRecord userRecord = new UserRecord();
+        // 1.获取地图
+        // 2.设置初始化军队 完善军队信息
+        List<ArmyConfig> reqArmies = initMapDTO.getArmyList();
+        GameMap map = new GameMap(userMap.getRow(), userMap.getColumn(), userMap.getRegions());
+        List<Army> armyList = new ArrayList<>();
+        Army army;
+        for (ArmyConfig armyConfig : reqArmies) {
+            if (armyConfig.getType().equals(ArmyEnum.NO.type())) {
+                filterNoUseArmyRegion(map, armyConfig.getColor());
+            } else {
+                army = getActiveArmy(initMapDTO, userMap, armyConfig);
+                if (army.getOrder() == 1) {
+                    userRecord.setCurrPlayer(army.getPlayer());
+                }
+                armyList.add(army);
+            }
+        }
+        userRecord.setGameMap(map);
+        userRecord.setArmyList(armyList);
+        setInitUserRecord(initMapDTO, userRecord);
+        userRecord.setTemplateId(userMap.getTemplateId());
+        userRecord.setMapId(userMap.getUuid());
+        // 4.保存记录
+        saveOrUpdate(userRecord);
+        delOtherUnSaveStandRecord(userRecord.getUuid(), initMapDTO.getUserId());
+        return userRecord;
+    }
+
+    /**
+     * 设置初始化用户记录
+     * @param initMapDTO
+     * @param userRecord
+     */
+    private void setInitUserRecord(InitMapDTO initMapDTO, UserRecord userRecord) {
         userRecord.setType(initMapDTO.getGameType());
         userRecord.setMaxPop(initMapDTO.getMaxPop());
         userRecord.setRecordName("系统保存");
-        // 1.获取地图
-        // 1.设置初始化地图
-        GameMap map = new GameMap(userMap.getRow(), userMap
-            .getColumn(), userMap.getRegions());
-        userRecord.setGameMap(map);
-        // 2.设置初始化军队 完善军队信息
-        List<ArmyConfig> reqArmies = initMapDTO.getArmyList();
-        List<Army> armyList = new ArrayList<>();
-        for (int i = 0; i < reqArmies.size(); i++) {
-            ArmyConfig armyConfig = reqArmies.get(i);
-            if (armyConfig.getType().equals(ArmyEnum.NO.type())) {
-                continue;
-            }
-            Army army = new Army();
-            BeanUtils.copyProperties(armyConfig, army);
-            army.setId(i);
-            List<Unit> units = new ArrayList<>();
-            String color = army.getColor();
-            AtomicInteger pop = new AtomicInteger();
-            userMap.getUnits().stream()
-                .filter(baseUnit -> baseUnit.getColor().equals(color))
-                .forEach(baseUnit -> {
-                    Unit unit = UnitFactory.createUnit(baseUnit.getTypeId(), baseUnit.getRow(), baseUnit.getColumn());
-                    unit.setTypeId(baseUnit.getTypeId());
-                    UnitMes unitMes = unitMesService.getById(unit.getTypeId());
-                    pop.set(pop.get() + unitMes.getPopulation());
-                    units.add(unit);
-                });
-            army.setUnits(units);
-            army.setPop(pop.get());
-            army.setMoney(initMapDTO.getMoney());
-            if (armyConfig.getType().equals(ArmyEnum.USER.type())) {
-                army.setPlayer(initMapDTO.getPlayer().getOrDefault(color, initMapDTO.getUserId().toString()));
-            }
-            if (army.getOrder() == 1) {
-                userRecord.setCurrPlayer(army.getPlayer());
-            }
-            armyList.add(army);
-        }
-        userRecord.setArmyList(armyList);
-        String uuid = StringUtil.getUUID();
-        userRecord.setUuid(uuid);
+        userRecord.setUuid(StringUtil.getUUID());
         userRecord.setCurrentRound(1);
         userRecord.setCurrPoint(new Site(1, 1));
         userRecord.setCreateUserId(initMapDTO.getUserId());
@@ -129,20 +122,58 @@ public class UserRecordServiceImp extends ServiceImpl<UserRecordDAO, UserRecord>
         regionInfo.setIndex(0);
         userRecord.setCurrRegion(regionInfo);
         // 设置当前军队信息
-        for (int i = 0; i < armyList.size(); i++) {
-            Army army = armyList.get(i);
+        Army army;
+        for (int i = 0; i < userRecord.getArmyList().size(); i++) {
+            army = userRecord.getArmyList().get(i);
             if (army.getOrder() == 1) {
                 userRecord.setCurrArmyIndex(i);
                 break;
             }
         }
+    }
 
-        userRecord.setTemplateId(userMap.getTemplateId());
-        userRecord.setMapId(userMap.getUuid());
-        // 4.保存记录
-        saveOrUpdate(userRecord);
-        delOtherUnSaveStandRecord(userRecord.getUuid(), initMapDTO.getUserId());
-        return userRecord;
+    /**
+     * 设置没有用到的军队地形为空
+     * @param map
+     */
+    private void filterNoUseArmyRegion(GameMap map, String color) {
+        for (Region region : map.getRegions()) {
+            if (color.equals(region.getColor())) {
+                region.setColor(null);
+            }
+        }
+    }
+
+    /**
+     * 获取有校的army
+     * @param initMapDTO
+     * @param userMap
+     * @param armyConfig
+     * @return
+     */
+    private Army getActiveArmy(InitMapDTO initMapDTO, UserMap userMap, ArmyConfig armyConfig) {
+        Army army = new Army();
+        BeanUtils.copyProperties(armyConfig, army);
+        army.setId(armyConfig.getId());
+        List<Unit> units = new ArrayList<>();
+        String color = army.getColor();
+        AtomicInteger pop = new AtomicInteger();
+        userMap.getUnits().stream()
+            .filter(baseUnit -> baseUnit.getColor().equals(color))
+            .forEach(baseUnit -> {
+                Unit unit = UnitFactory.createUnit(baseUnit.getTypeId(), baseUnit.getRow(), baseUnit.getColumn());
+                unit.setTypeId(baseUnit.getTypeId());
+                UnitMes unitMes = unitMesService.getById(unit.getTypeId());
+                pop.set(pop.get() + unitMes.getPopulation());
+                units.add(unit);
+            });
+        army.setUnits(units);
+        army.setPop(pop.get());
+        army.setMoney(initMapDTO.getMoney());
+        if (armyConfig.getType().equals(ArmyEnum.USER.type())) {
+            army.setPlayer(initMapDTO.getPlayer().getOrDefault(color, initMapDTO.getUserId().toString()));
+        }
+        return army;
     }
 
     /**

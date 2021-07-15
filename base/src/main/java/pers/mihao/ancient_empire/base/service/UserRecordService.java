@@ -10,6 +10,7 @@ import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 /**
  * 用户存档接口
+ * @author mihao
  */
 public interface UserRecordService extends IService<UserRecord> {
     /**
@@ -19,7 +20,6 @@ public interface UserRecordService extends IService<UserRecord> {
      * @return
      */
     UserRecord initMapRecord(InitMapDTO initMapDTO, UserMap userMap);
-
 
     /**
      * 根据id获取地图

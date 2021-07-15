@@ -9,8 +9,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import pers.mihao.ancient_empire.base.dto.ReqSaveMap;
 import pers.mihao.ancient_empire.base.dto.ReqDoPaintingDTO;
 import pers.mihao.ancient_empire.base.entity.UserMap;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
+import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
 import pers.mihao.ancient_empire.base.util.IPageHelper;
@@ -208,24 +211,21 @@ public class UserMapServiceImp extends ServiceImpl<UserMapDAO, UserMap> implemen
         if (userMap == null) {
             return null;
         }
-        List<String> colors = new ArrayList<>();
+        Set<String> colors = new HashSet<>();
         List<Region> regions = userMap.getRegions();
         List<BaseUnit> units = userMap.getUnits();
         units.forEach(unit -> {
-            if (!colors.contains(unit.getColor())) {
-                colors.add(unit.getColor());
+            colors.add(unit.getColor());
+        });
+        String castleType = RegionEnum.CASTLE.type(), townType = RegionEnum.TOWN.type();
+        regions.forEach(baseSquare -> {
+            if ((castleType.equals(baseSquare.getType()) || townType.equals(baseSquare.getType()))) {
+                if (Strings.isNotBlank(baseSquare.getColor())) {
+                    colors.add(baseSquare.getColor());
+                }
             }
         });
-        if (colors.size() < maxArmy) {
-            regions.forEach(baseSquare -> {
-                if ((baseSquare.getType().equals("castle") || baseSquare.getType().equals("town")) && !colors.contains(baseSquare.getColor())) {
-                    if (Strings.isNotBlank(baseSquare.getColor())) {
-                        colors.add(baseSquare.getColor());
-                    }
-                }
-            });
-        }
-        return colors;
+        return new ArrayList<>(colors);
     }
 
     @Override

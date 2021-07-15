@@ -220,7 +220,7 @@ public class GameController {
     /**
      * 获取可购买的所有的单位的详细信息
      */
-    @GetMapping("/unitInfo/canBuy")
+    @GetMapping("/unitInfo/armyCanBuyUnit")
     public List<UnitInfo> getUnitInfoList(@RequestParam String uuid) {
         GameContext context = gameCoreManger.getGameContextById(uuid);
         UserRecord record = context.getUserRecord();
