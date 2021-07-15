@@ -3,11 +3,9 @@ package pers.mihao.ancient_empire.base.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,7 +84,7 @@ public class UserRecordController {
      * 保存地图
      */
     @PostMapping("/api/record")
-    public void saveRecord(@RequestBody @Validated ReqSaveRecordDTO saveRecordDto, BindingResult result) {
+    public void saveRecord(@RequestBody ReqSaveRecordDTO saveRecordDto) {
         // 判断是否存在
         boolean isSave = userRecordService.saveRecord(saveRecordDto);
         if (isSave) {

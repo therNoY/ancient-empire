@@ -79,7 +79,6 @@ public class UserController {
      * 用户请求注册
      *
      * @param registerDto
-     * @param result
      * @return
      */
     @PostMapping("/user/register")

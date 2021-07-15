@@ -117,19 +117,18 @@ public class UnitMesController {
      * @return
      */
     @PutMapping("/api/unitMes")
-    public void saveUnitMes(@RequestBody @Validated ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
+    public void saveUnitMes(@RequestBody ReqSaveUnitMesDTO reqSaveUnitMesDTO) {
         unitMesService.saveUnitInfo(reqSaveUnitMesDTO);
     }
 
     /**
      * 获取一个单位详细信息
      *
-     * @param idLevelInfo 单位和等级
+     * @param idLevelInfo 单位和等级用中划线分隔
      * @return
      */
     @GetMapping("/unitInfo")
     public UnitInfo getUnitInfo(@RequestParam String idLevelInfo) {
-
         int index = idLevelInfo.lastIndexOf("_");
         if (index == 0) {
             throw new AeException(40010);

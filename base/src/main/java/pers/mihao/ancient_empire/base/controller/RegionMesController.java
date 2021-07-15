@@ -4,7 +4,6 @@ package pers.mihao.ancient_empire.base.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,11 +42,10 @@ public class RegionMesController {
     /**
      * 保存Region
      * @param regionMes
-     * @param result
      * @return
      */
     @PutMapping("/root/region")
-    public void saveRegion(@RequestBody @Validated RegionMes regionMes, BindingResult result) {
+    public void saveRegion(@RequestBody RegionMes regionMes) {
         regionMesService.saveUnitMes(regionMes);
     }
 

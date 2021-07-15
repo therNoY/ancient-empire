@@ -10,8 +10,6 @@ import java.util.Arrays;
  */
 public class Unit extends Site implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     private String id;
     /**
      * 类型
@@ -148,10 +146,6 @@ public class Unit extends Site implements Serializable {
 
     public void setExperience(Integer experience) {
         this.experience = experience;
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
     }
 
     public Integer getStatusPresenceNum() {

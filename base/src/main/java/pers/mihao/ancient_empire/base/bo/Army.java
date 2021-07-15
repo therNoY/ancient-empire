@@ -1,8 +1,5 @@
 package pers.mihao.ancient_empire.base.bo;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,23 +11,30 @@ public class Army implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    // 颜色
-    @NotEmpty(message = "颜色不能为空")
+    /**
+     * 颜色
+     */
     private String color;
     private Integer money;
-    // 所有的单位地图信息
+    /**
+     * 所有的单位地图信息
+     */
     private List<Unit> units;
-    // 军队的阵营
-    @NotNull(message = "阵营不能为空")
-    @DecimalMin("0")
+    /**
+     * 军队的阵营
+     */
     private Integer camp;
-    // 军队的先行顺序
-    @NotNull(message = "顺序不能为空")
-    @DecimalMin("0")
+    /**
+     * 军队的先行顺序
+     */
     private Integer order;
-    // 当前的人口
+    /**
+     * 当前的人口
+     */
     private Integer pop;
-    // 玩家 为空时是AI
+    /**
+     * 玩家 为空时是AI
+     */
     private String player;
 
     public Integer getId() {
