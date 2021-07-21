@@ -1,8 +1,9 @@
-package pers.mihao.ancient_empire.common.util.reflact;
+package pers.mihao.ancient_empire.base.reflact;
 
 import java.util.UUID;
 import org.junit.Test;
 import pers.mihao.ancient_empire.common.annotation.redis.NotGenerator;
+import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
 
 /**
  * @version 1.0
@@ -16,7 +17,8 @@ public class ReflectUtilTest {
         System.out.println(UUID.randomUUID());
     }
 
-    public void testMethod(@NotGenerator String id){
-
+    @Test
+    public void testMethod(){
+        ApiConditionDTO.class.getDeclaredMethods();
     }
 }

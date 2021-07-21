@@ -19,20 +19,26 @@ import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
+import pers.mihao.ancient_empire.common.task.Listener;
 import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.util.EnumUtil;
+import pers.mihao.ancient_empire.common.util.Pair;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
+import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.GameCoreManger;
+import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.handler.CommonHandler;
 import pers.mihao.ancient_empire.core.manger.strategy.attach.AttachStrategy;
 import pers.mihao.ancient_empire.core.manger.strategy.move_area.MoveAreaStrategy;
+import pers.mihao.ancient_empire.core.robot.task.RobotCommendTaskHandler;
+import pers.mihao.ancient_empire.core.robot.task.RobotGroupCommend;
 
 /**
  * 分析当前游戏
  *
- * @version 1.0
  * @author mihao
+ * @version 1.0
  * @date 2020\11\8 0008 15:38
  */
 public abstract class RobotCommonHandler extends CommonHandler {
@@ -42,9 +48,11 @@ public abstract class RobotCommonHandler extends CommonHandler {
     private List<RegionInfo> threatenedRegion;
 
     protected static GameCoreManger gameCoreManger;
+    protected static RobotCommendTaskHandler robotCommendTaskHandler;
 
     static {
         gameCoreManger = ApplicationContextHolder.getBean(GameCoreManger.class);
+        robotCommendTaskHandler = ApplicationContextHolder.getBean(RobotCommendTaskHandler.class);
     }
 
     /**
@@ -244,35 +252,40 @@ public abstract class RobotCommonHandler extends CommonHandler {
 
     /**
      * 获取所有的可以修复的区域
+     *
      * @return
      */
     protected List<RegionInfo> getAllCanRepairRegion() {
         return getAllSiteByType(RegionEnum.RUINS).stream()
-                .filter(regionInfo -> !isHaveUnit(record(), regionInfo.getRow(), regionInfo.getColumn()))
-                .collect(Collectors.toList());
+            .filter(regionInfo -> !isHaveUnit(record(), regionInfo.getRow(), regionInfo.getColumn()))
+            .collect(Collectors.toList());
     }
 
     /**
      * 获取所有的可以占领的城镇
+     *
      * @return
      */
     protected List<RegionInfo> getAllCanOccupyVillage() {
         return getAllSiteByType(RegionEnum.TOWN).stream()
-                .filter(regionInfo -> !colorIsCamp(regionInfo.getColor()) && !isHaveUnit(record(), regionInfo.getRow(), regionInfo.getColumn()))
-                .collect(Collectors.toList());
+            .filter(regionInfo -> !colorIsCamp(regionInfo.getColor()) && !isHaveUnit(record(), regionInfo.getRow(),
+                regionInfo.getColumn()))
+            .collect(Collectors.toList());
     }
 
     /**
      * 获取所有的可以占领的城堡
+     *
      * @return
      */
     protected List<RegionInfo> getAllCanOccupyCastle() {
         return getAllSiteByType(RegionEnum.CASTLE).stream()
-                .filter(regionInfo -> !colorIsCamp(regionInfo.getColor()) && !isHaveUnit(record(), regionInfo.getRow(), regionInfo.getColumn()))
-                .collect(Collectors.toList());
+            .filter(regionInfo -> !colorIsCamp(regionInfo.getColor()) && !isHaveUnit(record(), regionInfo.getRow(),
+                regionInfo.getColumn()))
+            .collect(Collectors.toList());
     }
 
-    private List<RegionInfo> getAllSiteByType(RegionEnum regionEnum){
+    private List<RegionInfo> getAllSiteByType(RegionEnum regionEnum) {
         List<RegionInfo> regionInfos = new ArrayList<>();
         for (int i = 0; i < gameMap().getRegions().size(); i++) {
             Region region = gameMap().getRegions().get(i);
@@ -285,6 +298,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
 
     /**
      * 根据移动区域获取单位的攻击区域
+     *
      * @param moveArea
      * @return
      */
@@ -300,6 +314,7 @@ public abstract class RobotCommonHandler extends CommonHandler {
 
     /**
      * 获取单位的移动区域
+     *
      * @return
      */
     protected List<Site> getUnitMoveArea() {
@@ -379,8 +394,10 @@ public abstract class RobotCommonHandler extends CommonHandler {
         @Override
         public String toString() {
             return "CanMoveUnit{" +
-                "moreThanHalf=" + moreThanHalf.stream().map(unitInfo -> unitInfo.simpleInfoShow()).collect(Collectors.toList()) +
-                ", lessThanHalf=" + lessThanHalf.stream().map(unitInfo -> unitInfo.simpleInfoShow()).collect(Collectors.toList()) +
+                "moreThanHalf=" + moreThanHalf.stream().map(unitInfo -> unitInfo.simpleInfoShow())
+                .collect(Collectors.toList()) +
+                ", lessThanHalf=" + lessThanHalf.stream().map(unitInfo -> unitInfo.simpleInfoShow())
+                .collect(Collectors.toList()) +
                 '}';
         }
     }
@@ -407,10 +424,11 @@ public abstract class RobotCommonHandler extends CommonHandler {
 
     /**
      * 生成机器人处理事件
+     *
      * @param eventEnum
      * @param initiateSite
      */
-    protected void handleRobotEvent(GameEventEnum eventEnum, Site initiateSite){
+    protected void handleRobotEvent(GameEventEnum eventEnum, Site initiateSite) {
         GameEvent event = new GameEvent();
         event.setId(gameContext.getGameId());
         event.setEvent(eventEnum);
@@ -420,10 +438,11 @@ public abstract class RobotCommonHandler extends CommonHandler {
 
     /**
      * 生成机器人处理事件
+     *
      * @param eventEnum
      * @param initiateSite
      */
-    protected void handleRobotEvent(GameEventEnum eventEnum, Site initiateSite, Site aimSite){
+    protected void handleRobotEvent(GameEventEnum eventEnum, Site initiateSite, Site aimSite) {
         GameEvent event = new GameEvent();
         event.setId(gameContext.getGameId());
         event.setEvent(eventEnum);
@@ -444,27 +463,49 @@ public abstract class RobotCommonHandler extends CommonHandler {
     }
 
 
-    protected void handleRobotEvent(GameEventEnum gameEventEnum){
+    protected void handleRobotEvent(GameEventEnum gameEventEnum) {
         GameEvent gameEvent = new GameEvent();
         gameEvent.setEvent(gameEventEnum);
         gameEvent.setId(gameContext.getGameId());
         handleRobotEvent(gameEvent);
     }
 
-    protected void handleRobotEvent(GameEvent event){
-        gameCoreManger.handelTask(event);
+    protected void handleRobotEvent(GameEvent event) {
         int wait = RobotWaitTimeCatch.getInstance().getLockTimeByEvent(event.getEvent());
-        if (gameContext.getInteractiveLock().isExecutionIng()) {
-            log.info("发送命令：{}完成 准备lock:{}ms之后重新运行", event, wait);
-            gameContext.getInteractiveLock().untilExecutionOk(3000, wait);
-            log.info("休眠完成 准备重新执行任务");
+        int maxWait = RobotWaitTimeCatch.getInstance().getMaxLockTimeByEvent(event.getEvent());
+        if (robotCommendTaskHandler != null) {
+            Pair<GameContext, List<GameCommand>> pair = gameCoreManger.getHandleEventCommand(event);
+            GameContext context = pair.getKey();
+            List<GameCommand> gameCommands = pair.getValue();
+            if (gameCommands.size() > 0) {
+
+                RobotGroupCommend commend = new RobotGroupCommend(gameCommands, context, wait, maxWait);
+                if (gameCommands.stream().anyMatch(gameCommand -> gameCommand.getOrder() != null)) {
+                    commend.setDelay(System.currentTimeMillis() + maxWait);
+                } else {
+                    commend.setDelay(System.currentTimeMillis() + wait);
+                }
+
+                Listener listener = robotCommendTaskHandler.submitTask(commend.getGameContext().getGameId(), commend);
+                if (context.getInteractiveLock().getListener() == null) {
+                    context.getInteractiveLock().setListener(listener);
+                }
+            }
         } else {
-            try {
-                Thread.sleep(wait);
-            } catch (InterruptedException e) {
-                log.error("", e);
+            gameCoreManger.handelTask(event);
+            if (gameContext.getInteractiveLock().isExecutionIng()) {
+                log.info("发送命令：{}完成 准备lock:{}ms之后重新运行", event, wait);
+                gameContext.getInteractiveLock().untilExecutionOk(3000, wait);
+                log.info("休眠完成 准备重新执行任务");
+            } else {
+                try {
+                    Thread.sleep(wait);
+                } catch (InterruptedException e) {
+                    log.error("", e);
+                }
             }
         }
+
 
     }
 }

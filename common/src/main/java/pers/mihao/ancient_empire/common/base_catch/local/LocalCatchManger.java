@@ -8,7 +8,7 @@ import org.springframework.cache.support.AbstractCacheManager;
 
 /**
  * 本地缓存
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/12 13:47
  */
 public class LocalCatchManger extends AbstractCacheManager {

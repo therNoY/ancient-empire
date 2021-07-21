@@ -12,7 +12,7 @@ import pers.mihao.ancient_empire.common.base_catch.BaseCatch;
 
 /**
  * 当缓存使用redis时生效
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/12 11:34
  */
 @Component

@@ -33,6 +33,7 @@ import pers.mihao.ancient_empire.common.annotation.Manger;
 import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.util.BeanUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
+import pers.mihao.ancient_empire.common.util.Pair;
 import pers.mihao.ancient_empire.common.util.StringUtil;
 import pers.mihao.ancient_empire.common.util.ThreadPoolNameUtil;
 import pers.mihao.ancient_empire.core.eums.GameEventEnum;
@@ -116,11 +117,19 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
     public void handelTask(GameEvent event) {
         User user = event.getUser();
         GameContext.setUser(user);
+        Pair<GameContext, List<GameCommand>> commands = getHandleEventCommand(event);
+        if (commands.getValue().size() > 0) {
+            handleCommand(commands.getValue(), commands.getKey());
+        }
+        GameContext.clear();
+    }
+
+    public Pair<GameContext, List<GameCommand>> getHandleEventCommand(GameEvent event) {
         LoginUserHolder.setLanguage(event.getLanguage());
         GameContext gameContext = contextMap.get(event.getId());
         if (gameContext.isOtherUserEvent() && !event.getEvent().isOtherUserHandle()) {
             // 不是当前回合用户触发的事件 并且不支持其他用户事件处理 不处理
-            return;
+            return null;
         }
 
         // 过滤事件
@@ -128,7 +137,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
             && StatusMachineEnum.DIALOG.equals(gameContext.getStatusMachine())) {
             // 准备阶段 事件改成处理点击屏幕事件 直接返回
             gameContext.onClickTip();
-            return;
+            return null;
         }
 
         // 备份内存数据
@@ -146,8 +155,7 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
                 GameHandler gameHandler = (GameHandler) clazz.newInstance();
                 gameHandler.setGameContext(gameContext);
                 List<GameCommand> commands = gameHandler.handler(event);
-                // 处理任务返回 处理任务结果
-                handleCommand(commands, gameContext);
+                return new Pair<>(gameContext, commands);
             }
         } catch (Exception e) {
             log.error("执行任务出错: {}, 回退", event, e);
@@ -158,9 +166,9 @@ public class GameCoreManger extends AbstractTaskQueueManger<GameEvent> {
         } finally {
             // 清除三个线程上下文
             LoginUserHolder.clear();
-            GameContext.clear();
             GameCoreHelper.removeContext();
         }
+        return null;
     }
 
     /**

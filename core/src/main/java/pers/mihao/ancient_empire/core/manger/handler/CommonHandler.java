@@ -254,7 +254,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param unit             死亡单位
      * @param armyUnitIndexDTO 单位的index
      */
-    public void sendUnitDeadCommend(UnitInfo unit, ArmyUnitIndexDTO armyUnitIndexDTO) {
+    public void addUnitDeadCommend(UnitInfo unit, ArmyUnitIndexDTO armyUnitIndexDTO) {
         // 获取展示单位死亡的动画
         ShowAnimDTO showAnimDTO = getShowAnim(unit, gameContext.getUserTemplate().getDeadAnimation());
         JSONObject showAnim = new JSONObject();
@@ -372,7 +372,7 @@ public class CommonHandler extends AbstractGameEventHandler {
         UnitInfo deadUnitInfo;
         for (UnitDeadDTO deadDTO : endUnitDTO.getUnitDeadDTOList()) {
             deadUnitInfo = getUnitInfoByIndex(deadDTO);
-            sendUnitDeadCommend(deadUnitInfo, deadDTO);
+            addUnitDeadCommend(deadUnitInfo, deadDTO);
             gameContext.onUnitDead(deadDTO.getArmyIndex(), deadUnitInfo, this);
         }
 
@@ -404,7 +404,7 @@ public class CommonHandler extends AbstractGameEventHandler {
                         log.info("非亡灵单位摧毁坟墓 血量不够死亡");
                         desLift = changeLifeByDestroyTomb - currUnit().getLife();
                         unitDead = true;
-                        sendUnitDeadCommend(currUnit(), currUnitArmyIndex());
+                        addUnitDeadCommend(currUnit(), currUnitArmyIndex());
                         gameContext.onUnitDead(currUnitArmyIndex().getArmyIndex(), currUnit(), this);
                     } else {
                         unitStatusInfoDTO.setLife(unitInfo.getLife() - changeLifeByDestroyTomb);

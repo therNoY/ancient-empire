@@ -122,7 +122,7 @@ public class ClickChoosePointHandler extends CommonHandler {
         // 判断攻击是否死亡
         if (attachResult.getAttachResult().getDead()) {
             // 发送单位死亡命令
-            sendUnitDeadCommend(beAttachUnit, beAttachArmyUnitIndex);
+            addUnitDeadCommend(beAttachUnit, beAttachArmyUnitIndex);
             deadUnits.add(new Pair<>(beAttachArmyUnitIndex, beAttachUnit));
         } else {
             // 没有死亡
@@ -144,7 +144,7 @@ public class ClickChoosePointHandler extends CommonHandler {
         }
         if (attachResult.getAntiAttack() && attachResult.getAntiAttackResult().getDead()) {
             // 发送单位死亡命令
-            sendUnitDeadCommend(currUnit(), currUnitArmyIndex());
+            addUnitDeadCommend(currUnit(), currUnitArmyIndex());
             deadUnits.add(new Pair<>(currUnitArmyIndex(), currUnit()));
             gameContext.setSubStatusMachine(SubStatusMachineEnum.INIT);
             gameContext.setStatusMachine(StatusMachineEnum.INIT);

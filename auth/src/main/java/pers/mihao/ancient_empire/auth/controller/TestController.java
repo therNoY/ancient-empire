@@ -2,6 +2,8 @@ package pers.mihao.ancient_empire.auth.controller;
 
 
 import java.util.Random;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,6 +30,25 @@ public class TestController {
         log.info("get id: {}", id);
         CatchUtil.get(id);
         CatchUtil.getObject(id, Dog.class);
+    }
+
+    @GetMapping("/testDontReturn")
+    public void testDontReturn(HttpServletRequest request, HttpServletResponse response) {
+
+        new Thread(()->{
+
+            for (int i = 0; i < 10; i++) {
+                log.info("劫持request:{}{}", i, request.getParameterMap());
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }).start();
+        response.setStatus(200);
+        return;
     }
 
     @PostMapping("/post")

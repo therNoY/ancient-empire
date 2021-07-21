@@ -35,8 +35,14 @@ public final class ReflectUtil {
      */
     private static Map<Class, Object> singletonMap = new HashMap<>(16);
 
+    private Map<Class, List<String>> classSelfMethod = new HashMap<>(16);
+
 
     private ReflectUtil() {
+    }
+
+    public static boolean classHasSelfMethod(Class clazz, String method) {
+        return true;
     }
 
     /**
@@ -186,7 +192,7 @@ public final class ReflectUtil {
     public static Map<String, GetSetDTO> getAllGetSetMethod(Class clazz) {
         Map<String, GetSetDTO> all;
         if ((all = getSetMap.get(clazz)) == null) {
-            all = new HashMap<>();
+            all = new HashMap<>(16);
             List<Field> fs = listFields(clazz);
             Method[] methods = clazz.getMethods();
             String getName, setName;

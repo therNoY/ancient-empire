@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.common.util.reflact;
+package pers.mihao.ancient_empire.base.reflact;
 
 import org.junit.Test;
 import pers.mihao.ancient_empire.common.util.ValidateUtil;

@@ -5,7 +5,7 @@ import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/6 17:17
  */
 public class GetMonitorOutDTO extends UserRecord {

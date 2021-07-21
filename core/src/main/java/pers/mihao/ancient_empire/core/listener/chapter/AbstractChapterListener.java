@@ -146,7 +146,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
 
         // 判断是否死亡
         if (lastLife == 0) {
-            sendUnitDeadCommend(getUnitInfoByUnit(unit), getArmyUnitIndexByUnitId(unit.getId()));
+            addUnitDeadCommend(getUnitInfoByUnit(unit), getArmyUnitIndexByUnitId(unit.getId()));
         }
     }
 

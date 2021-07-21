@@ -1,4 +1,4 @@
-package pers.mihao.ancient_empire.common.util;
+package pers.mihao.ancient_empire.base;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

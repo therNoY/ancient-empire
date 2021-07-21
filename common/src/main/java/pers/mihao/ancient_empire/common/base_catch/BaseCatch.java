@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * 缓存的能力
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/12 11:32
  */
 public interface BaseCatch {

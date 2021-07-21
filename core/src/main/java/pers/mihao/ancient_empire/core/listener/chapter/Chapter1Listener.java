@@ -36,7 +36,7 @@ public class Chapter1Listener extends AbstractChapterListener {
         sendCommandNow();
         // 生成攻击事件
         showAttachAnim(AppUtil.getArrayByInt(-1, 100), attachIndex, beAttchIndex);
-        sendUnitDeadCommend(getUnitInfoByIndex(beAttchIndex), beAttchIndex);
+        addUnitDeadCommend(getUnitInfoByIndex(beAttchIndex), beAttchIndex);
         sendCommandNow();
         waitExecutionOk(5000);
         // 对话

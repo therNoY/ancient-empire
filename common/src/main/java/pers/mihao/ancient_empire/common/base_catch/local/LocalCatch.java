@@ -16,7 +16,7 @@ import pers.mihao.ancient_empire.common.base_catch.DataSerializableByJson;
 /**
  * 实现java本地缓存能力
  *
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/12 11:35
  */
 public class LocalCatch extends AbstractValueAdaptingCache implements BaseCatch {

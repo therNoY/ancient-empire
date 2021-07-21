@@ -1,7 +1,7 @@
 package pers.mihao.ancient_empire.common.base_catch;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/12 15:44
  */
 public interface DataSerializable<T> {

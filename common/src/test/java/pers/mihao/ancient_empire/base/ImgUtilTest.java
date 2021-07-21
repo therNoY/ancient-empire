@@ -1,10 +1,11 @@
-package pers.mihao.ancient_empire.common.util;
+package pers.mihao.ancient_empire.base;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.junit.Test;
+import pers.mihao.ancient_empire.common.util.ImgUtil;
 
 /**
  * @Author mihao

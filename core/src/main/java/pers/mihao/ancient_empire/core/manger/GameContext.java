@@ -129,7 +129,7 @@ public class GameContext extends UserTemplateHelper {
      * 交互锁 帮助实现交互
      */
     @JSONField(serialize = false)
-    private InteractiveLock interactiveLock = new InteractiveLock();
+    private InteractiveLock interactiveLock = new InteractiveLock(this);
 
     /**
      * 重入锁 用来锁定当前记录
@@ -419,5 +419,14 @@ public class GameContext extends UserTemplateHelper {
 
     private String getCurrentRoundUser() {
         return getUserRecord().getArmyList().get(getUserRecord().getCurrArmyIndex()).getPlayer();
+    }
+
+    @Override
+    public String toString() {
+        return "GameContext{" +
+            "gameId='" + gameId + '\'' +
+            ", statusMachine=" + statusMachine +
+            ", subStatusMachine=" + subStatusMachine +
+            '}';
     }
 }

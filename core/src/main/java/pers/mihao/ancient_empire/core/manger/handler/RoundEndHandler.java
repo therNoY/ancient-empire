@@ -200,7 +200,7 @@ public class RoundEndHandler extends CommonHandler {
             if (isDead) {
                 // 单位死亡
                 UnitInfo deadUnit = getUnitInfoByUnit(unit);
-                sendUnitDeadCommend(deadUnit, new ArmyUnitIndexDTO(record().getCurrArmyIndex(), i));
+                addUnitDeadCommend(deadUnit, new ArmyUnitIndexDTO(record().getCurrArmyIndex(), i));
                 gameContext.onUnitDead(record().getCurrArmyIndex(), deadUnit, this);
             }
 

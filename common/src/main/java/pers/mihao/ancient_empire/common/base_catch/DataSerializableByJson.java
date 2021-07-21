@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * @Author mh32736
+ * @Author mihao
  * @Date 2021/7/12 15:43
  */
 public class DataSerializableByJson<T> implements DataSerializable<T> {

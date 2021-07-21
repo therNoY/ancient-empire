@@ -21,7 +21,10 @@ public class RobotWaitTimeCatch {
 
 
     public int getLockTimeByEvent(GameEventEnum eventEnum) {
-        return 500;
+        return 300;
     }
 
+    public int getMaxLockTimeByEvent(GameEventEnum event) {
+        return 3000;
+    }
 }
