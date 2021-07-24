@@ -43,6 +43,7 @@ import pers.mihao.ancient_empire.base.service.UnitMesService;
 import pers.mihao.ancient_empire.base.service.UserMapService;
 import pers.mihao.ancient_empire.auth.service.UserSettingService;
 import pers.mihao.ancient_empire.base.service.UserTemplateService;
+import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.base.vo.BaseMapInfoVO;
 import pers.mihao.ancient_empire.common.annotation.PersistentLog;
 import pers.mihao.ancient_empire.common.dto.ApiConditionDTO;
@@ -255,7 +256,12 @@ public class UserMapController {
      */
     @GetMapping("/map/store/list")
     public List<UserMap> getStoreMapList() {
-        return userMapService.getStoreMapList();
+        int limit = 1;
+        if (LoginUserHolder.getUserId() != null) {
+            UserSetting setting = userSettingService.getUserSettingById(LoginUserHolder.getUserId());
+            limit = setting.getMaxChapter();
+        }
+        return userMapService.getStoreMapList().subList(0, limit);
     }
 
     /**

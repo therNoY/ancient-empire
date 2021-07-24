@@ -15,8 +15,6 @@ import pers.mihao.ancient_empire.core.manger.GameCoreManger;
 @ConditionalOnProperty(name = "robot.handle.task", havingValue = "eventLoop")
 public class RobotCommendTaskHandler extends AbstractGroupTaskHandler<RobotGroupCommend> {
 
-
-
     @Autowired
     GameCoreManger gameCoreManger;
 

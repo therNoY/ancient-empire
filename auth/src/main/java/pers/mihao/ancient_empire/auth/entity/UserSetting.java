@@ -57,6 +57,21 @@ public class UserSetting implements Serializable {
      */
     private String language;
 
+    /**
+     * 游戏内图片大小
+     */
+    private String imgSize;
+
+    /**
+     * 移动端风格
+     */
+    private String pcStyle;
+
+    /**
+     * 最大章节
+     */
+    private Integer maxChapter;
+
     public Integer getUserId() {
         return userId;
     }
@@ -114,6 +129,30 @@ public class UserSetting implements Serializable {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getImgSize() {
+        return imgSize;
+    }
+
+    public void setImgSize(String imgSize) {
+        this.imgSize = imgSize;
+    }
+
+    public String getPcStyle() {
+        return pcStyle;
+    }
+
+    public void setPcStyle(String pcStyle) {
+        this.pcStyle = pcStyle;
+    }
+
+    public Integer getMaxChapter() {
+        return maxChapter;
+    }
+
+    public void setMaxChapter(Integer maxChapter) {
+        this.maxChapter = maxChapter;
     }
 
     @Override

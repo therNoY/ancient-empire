@@ -56,7 +56,6 @@ public class Chapter2Listener extends AbstractChapterListener {
         addDialogAndWait(DialogEnum.LOADER_GREEN, "CAMPAIGN_AEII_STAGE_2_MESSAGE_7");
         changeCurrPoint(new Site(6, 4));
         sendCommandNow();
-        waitExecutionOk(5000);
 
         addDialogAndWait(DialogEnum.LOADER_GREEN, "CAMPAIGN_AEII_STAGE_2_MESSAGE_8");
         addDialogAndWait(DialogEnum.WIN_CONDITION, "CAMPAIGN_AEII_STAGE_2_OBJECTIVE");
@@ -75,4 +74,6 @@ public class Chapter2Listener extends AbstractChapterListener {
         }
         return 50;
     }
+
+
 }

@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.auth.service.UserService;
+import pers.mihao.ancient_empire.auth.service.UserSettingService;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.Site;
@@ -24,6 +27,7 @@ import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.listener.AbstractGameRunListener;
 import pers.mihao.ancient_empire.core.listener.chapter.enums.TriggerTypeEnum;
+import pers.mihao.ancient_empire.core.manger.GameContext;
 
 /**
  * 章节监听抽象处理类
@@ -50,9 +54,11 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
     private static final String ENEMY_BLACK = ColorEnum.BLACK.type();
 
     protected static UserService userService;
+    protected static UserSettingService userSettingService;
 
     static {
         userService = ApplicationContextHolder.getBean(UserService.class);
+        userSettingService = ApplicationContextHolder.getBean(UserSettingService.class);
     }
 
     protected int stage = 0;
@@ -171,8 +177,29 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
     protected final void onGameWin() {
         StatusMachineEnum preStatus = gameContext.getStatusMachine();
         gameContext.setStatusMachine(StatusMachineEnum.DIALOG);
+        updateUserSetting();
         onChapterGameWin();
         gameContext.setStatusMachine(preStatus);
+    }
+
+    private void updateUserSetting() {
+        User user = GameContext.getUser();
+        if (user != null) {
+            UserSetting setting = userSettingService.getUserSettingById(user.getId());
+            if (getCurrentChapter() == setting.getMaxChapter()) {
+                setting.setMaxChapter(setting.getMaxChapter() + 1);
+                userSettingService.updateByUserId(setting);
+            }
+        }
+    }
+
+    /**
+     * 当前章节
+     *
+     * @return
+     */
+    protected int getCurrentChapter() {
+        return Integer.valueOf(this.getClass().getName().charAt(7) + "");
     }
 
     @Override

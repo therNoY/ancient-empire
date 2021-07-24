@@ -25,14 +25,26 @@ import pers.mihao.ancient_empire.common.util.StringUtil;
 @Service
 public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSetting> implements UserSettingService {
     @Autowired
-    UserSettingDAO userSettingDao;
+    UserSettingDAO userSettingDAO;
 
     @Override
     @Cacheable(CacheKey.USER_SETTING)
     public UserSetting getUserSettingById(Integer id) {
-        UserSetting userSetting = userSettingDao.selectById(id);
-        if (StringUtil.isBlack(userSetting.getMapInitRegionType())) {
-            userSetting.setMapInitRegionType("sea");
+        UserSetting userSetting = userSettingDAO.selectById(id);
+        if (userSetting == null) {
+            UserSetting newUserSetting = new UserSetting();
+            newUserSetting.setMapInitColumn(20);
+            newUserSetting.setMapInitRow(20);
+            newUserSetting.setMapInitTempId(1);
+            newUserSetting.setMapInitRegionType("sea");
+            newUserSetting.setImgSize("stand");
+            newUserSetting.setLanguage("zh");
+            newUserSetting.setMaxChapter(1);
+            newUserSetting.setPcStyle("pc");
+            newUserSetting.setUserId(id);
+            newUserSetting.setSimpleDrawing(true);
+            userSettingDAO.insert(newUserSetting);
+            userSetting = newUserSetting;
         }
         return userSetting;
     }
@@ -43,6 +55,6 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingDAO, UserSett
         CatchUtil.delKey(CacheKey.getKey(CacheKey.USER_SETTING) + LoginUserHolder.getUserId());
         QueryWrapper<UserSetting> wrapper = new QueryWrapper();
         wrapper.eq("user_id", userSetting.getUserId());
-        userSettingDao.update(userSetting, wrapper);
+        userSettingDAO.update(userSetting, wrapper);
     }
 }

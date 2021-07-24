@@ -105,6 +105,10 @@ public class UserRecordServiceImp extends ServiceImpl<UserRecordDAO, UserRecord>
     private void setInitUserRecord(InitMapDTO initMapDTO, UserRecord userRecord) {
         userRecord.setType(initMapDTO.getGameType());
         userRecord.setMaxPop(initMapDTO.getMaxPop());
+        if (userRecord.getMaxPop() == null) {
+            // 直接取最大值
+            userRecord.setMaxPop(50);
+        }
         userRecord.setRecordName("系统保存");
         userRecord.setUuid(StringUtil.getUUID());
         userRecord.setCurrentRound(1);
@@ -170,6 +174,9 @@ public class UserRecordServiceImp extends ServiceImpl<UserRecordDAO, UserRecord>
         army.setUnits(units);
         army.setPop(pop.get());
         army.setMoney(initMapDTO.getMoney());
+        if (army.getMoney() == null) {
+            army.setMoney(0);
+        }
         if (armyConfig.getType().equals(ArmyEnum.USER.type())) {
             army.setPlayer(initMapDTO.getPlayer().getOrDefault(color, initMapDTO.getUserId().toString()));
         }

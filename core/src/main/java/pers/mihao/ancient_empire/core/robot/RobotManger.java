@@ -29,7 +29,7 @@ public class RobotManger {
      */
     ExecutorService robotPool = new ThreadPoolExecutor(
         1,
-        Runtime.getRuntime().availableProcessors() * 10,
+        Runtime.getRuntime().availableProcessors() * 30,
         30, TimeUnit.MINUTES,
         new SynchronousQueue<>(),
         runnable -> {
