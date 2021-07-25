@@ -12,7 +12,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 @Service
 public class EmailService {
@@ -28,11 +30,19 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String from;
 
+    @Value("${spring.mail.sendMailGap:60}")
+    private Long sendMailGap;
+
     /**
      * 发送注册邮件
+     *
      * @param registerDto
      */
     public void sendRegisterEmail(RegisterDTO registerDto, String token) {
+        if (CatchUtil.get(registerDto.getEmail()) != null) {
+            throw new AeException(40017);
+        }
+        CatchUtil.set(registerDto.getEmail(), "1", sendMailGap);
         String url = registerUrl + token;
         String temp = EmailHelper.getRegisterTemp(url);
         String title = "注册确认";
@@ -41,6 +51,7 @@ public class EmailService {
 
     /**
      * 发送文本邮件
+     *
      * @param to
      * @param subject
      * @param content
@@ -62,6 +73,7 @@ public class EmailService {
 
     /**
      * 发送html邮件
+     *
      * @param to
      * @param subject
      * @param content
@@ -87,12 +99,13 @@ public class EmailService {
 
     /**
      * 发送带附件的邮件
+     *
      * @param to
      * @param subject
      * @param content
      * @param filePath
      */
-    public void sendAttachmentsMail(String to, String subject, String content, String filePath){
+    public void sendAttachmentsMail(String to, String subject, String content, String filePath) {
         MimeMessage message = mailSender.createMimeMessage();
 
         try {
@@ -117,13 +130,14 @@ public class EmailService {
 
     /**
      * 发送正文中有静态资源（图片）的邮件
+     *
      * @param to
      * @param subject
      * @param content
      * @param rscPath
      * @param rscId
      */
-    public void sendInlineResourceMail(String to, String subject, String content, String rscPath, String rscId){
+    public void sendInlineResourceMail(String to, String subject, String content, String rscPath, String rscId) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);

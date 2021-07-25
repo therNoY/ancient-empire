@@ -6,7 +6,7 @@ import pers.mihao.ancient_empire.auth.dto.ReqUserDTO;
 import pers.mihao.ancient_empire.auth.dto.RespAuthDAO;
 import pers.mihao.ancient_empire.auth.entity.Permission;
 import pers.mihao.ancient_empire.auth.entity.User;
-import pers.mihao.ancient_empire.common.dto.LoginDto;
+import pers.mihao.ancient_empire.common.dto.LoginDTO;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 
 /**
@@ -19,6 +19,11 @@ import pers.mihao.ancient_empire.common.dto.RegisterDTO;
  */
 public interface UserService extends IService<User> {
 
+    /**
+     * 根据用户名邮箱 手机号登录
+     * @param username
+     * @return
+     */
     User getUserByNameOrEmail(String username);
 
     List<Permission> getPermissionList(Integer id);
@@ -28,7 +33,7 @@ public interface UserService extends IService<User> {
      * @param loginDto
      * @return
      */
-    RespAuthDAO login(LoginDto loginDto);
+    RespAuthDAO login(LoginDTO loginDto);
 
 
     User getUserByName(String userName);

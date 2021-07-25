@@ -28,7 +28,7 @@
     <select id="getUserByNameOrEmail" parameterType="string" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from `user` u where u.name = #{name} or u.email = #{name}
+        from `user` u where u.name = #{name} or u.email = #{name} or u.phone = #{name}
     </select>
 
 </mapper>

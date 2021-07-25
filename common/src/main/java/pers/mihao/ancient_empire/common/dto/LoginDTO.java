@@ -3,7 +3,7 @@ package pers.mihao.ancient_empire.common.dto;
 import javax.validation.constraints.NotBlank;
 import pers.mihao.ancient_empire.common.annotation.LogField;
 
-public class LoginDto {
+public class LoginDTO {
 
     @NotBlank(message = "用户名/邮箱不能为空")
     @LogField

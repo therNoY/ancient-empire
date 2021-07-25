@@ -24,7 +24,7 @@ import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.auth.util.WeChatUtil;
 import pers.mihao.ancient_empire.common.constant.CacheKey;
-import pers.mihao.ancient_empire.common.dto.LoginDto;
+import pers.mihao.ancient_empire.common.dto.LoginDTO;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.email.EmailService;
 import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
@@ -66,7 +66,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/login")
-    public RespAuthDAO login(@RequestBody LoginDto loginDto) {
+    public RespAuthDAO login(@RequestBody LoginDTO loginDto) {
         RespAuthDAO respAuthDao = userService.login(loginDto);
         if (respAuthDao == null) {
             throw new AeException(40011);

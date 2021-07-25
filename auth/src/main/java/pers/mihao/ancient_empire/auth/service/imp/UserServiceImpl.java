@@ -27,7 +27,7 @@ import pers.mihao.ancient_empire.auth.enums.LoginTypeEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.annotation.PersistentLog;
 import pers.mihao.ancient_empire.common.constant.CacheKey;
-import pers.mihao.ancient_empire.common.dto.LoginDto;
+import pers.mihao.ancient_empire.common.dto.LoginDTO;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
 import pers.mihao.ancient_empire.common.base_catch.CatchUtil;
@@ -80,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserDAO, User> implements UserS
      */
     @Override
     @PersistentLog(tableName = "user_login_log")
-    public RespAuthDAO login(LoginDto loginDto) {
+    public RespAuthDAO login(LoginDTO loginDto) {
         String token;
         User loginUser = userService.getUserByNameOrEmail(loginDto.getUserName());
         if (loginUser != null && passwordEncoder.matches(loginDto.getPassword(), loginUser.getPassword())) {
