@@ -12,6 +12,7 @@ import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
 import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.dto.ArmyUnitIndexDTO;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
+import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.DialogEnum;
 import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
@@ -71,7 +72,7 @@ public abstract class AbstractGameRunListener extends CommonHandler implements G
     }
 
     @Override
-    public void onUnitStatusChange(GameCommand command, Stream stream) {
+    public void onUnitStatusChange(List<UnitStatusInfoDTO> unitStatusInfoDTOS, Stream stream) {
     }
 
     @Override

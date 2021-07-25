@@ -34,7 +34,7 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
      */
     private Stream stream;
 
-    private int orderIndex = 0;
+    int orderIndex = 0;
 
     @Override
     @ExecuteTime
@@ -245,6 +245,14 @@ public abstract class AbstractGameEventHandler extends GameContextBaseHandler im
             setGameCommend(gameCommendEnum);
             setExtMes(extData);
             setOrder(orderIndex++);
+            addGameCommand(this);
+            return stream;
+        }
+
+        public Stream addOrderCommand(GameCommendEnum gameCommendEnum, JSONObject extData, int order) {
+            setGameCommend(gameCommendEnum);
+            setExtMes(extData);
+            setOrder(order);
             addGameCommand(this);
             return stream;
         }

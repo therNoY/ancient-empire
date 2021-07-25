@@ -4,6 +4,7 @@ import java.util.List;
 import pers.mihao.ancient_empire.base.bo.Army;
 import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.base.bo.UnitInfo;
+import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 import pers.mihao.ancient_empire.core.manger.handler.AbstractGameEventHandler.Stream;
 import pers.mihao.ancient_empire.core.robot.ActionIntention;
@@ -59,10 +60,10 @@ public interface GameRunListener {
 
     /**
      * 处理单位可能升级
-     * @param command
+     * @param unitStatusInfoDTOS
      * @param stream
      */
-    void onUnitStatusChange(GameCommand command, Stream stream);
+    void onUnitStatusChange(List<UnitStatusInfoDTO> unitStatusInfoDTOS, Stream stream);
 
     /**
      * 过滤可以购买的单位

@@ -244,6 +244,19 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param unitInfo
      */
     public void changeCurrUnit(UnitInfo unitInfo) {
+        if (unitInfo.getArmyIndex() == null || unitInfo.getUnitIndex() == null) {
+            for (int i = 0; i < record().getArmyList().size(); i++) {
+                Army army = record().getArmyList().get(i);
+                for (int j = 0; j < army.getUnits().size(); j++) {
+                    Unit unit = army.getUnits().get(j);
+                    if (unitInfo.getId().equals(unit.getId())) {
+                        unitInfo.setArmyIndex(i);
+                        unitInfo.setUnitIndex(j);
+                        break;
+                    }
+                }
+            }
+        }
         // 设置当前单位
         commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_UNIT, ExtMes.UNIT_INFO, unitInfo);
     }
@@ -291,6 +304,9 @@ public class CommonHandler extends AbstractGameEventHandler {
         Region region = gameMap().getRegions().get(regionIndex);
         RegionInfo regionInfo = changeCurrRegion(region);
         regionInfo.setIndex(regionIndex);
+        Site site = getSiteByRegionIndex(regionIndex);
+        regionInfo.setRow(site.getRow());
+        regionInfo.setColumn(site.getColumn());
         return regionInfo;
     }
 
@@ -428,19 +444,34 @@ public class CommonHandler extends AbstractGameEventHandler {
     }
 
     public void changeUnitStatus(UnitStatusInfoDTO unitStatusInfoDTOS) {
-        changeUnitStatusInfo(unitStatusInfoDTOS);
+        List<UnitStatusInfoDTO> list = new ArrayList<>(1);
+        list.add(unitStatusInfoDTOS);
+        changeUnitStatus(list);
     }
 
     public void changeUnitStatus(List<UnitStatusInfoDTO> unitStatusInfoDTOS) {
         changeUnitStatusInfo(unitStatusInfoDTOS);
     }
 
-    private void changeUnitStatusInfo(Object obj) {
+    private void changeUnitStatusInfo(List<UnitStatusInfoDTO> unitStatusInfoDTOS) {
         JSONObject extData = new JSONObject(2);
-        extData.put(ExtMes.UNIT_STATUS, obj);
+        extData.put(ExtMes.UNIT_STATUS, unitStatusInfoDTOS);
+        gameContext.onUnitStatusChange(unitStatusInfoDTOS, commandStream());
         commandStream()
             .toGameCommand().addOrderCommand(GameCommendEnum.CHANGE_UNIT_STATUS, extData)
             .toGameCommand().addOrderCommand(GameCommendEnum.DIS_SHOW_ACTION);
+        UnitInfo unitInfo = currUnit();
+        for (UnitStatusInfoDTO unitStatus : unitStatusInfoDTOS) {
+            if (unitStatus.getLevel() != null) {
+                if (unitInfo.getArmyIndex().equals(unitStatus.getArmyIndex()) && unitInfo.getUnitIndex()
+                    .equals(unitStatus.getUnitIndex())) {
+                    // 升级重新获取当前单位信息
+                    gameContext.getUserRecord().setCurrUnit(null);
+                    commandStream().toGameCommand().addCommand(GameCommendEnum.CHANGE_CURR_UNIT, ExtMes.UNIT_INFO,
+                        gameContext.getUserRecord().getCurrUnit());
+                }
+            }
+        }
     }
 
     public void showAction(Set<String> action) {
@@ -501,6 +532,8 @@ public class CommonHandler extends AbstractGameEventHandler {
         Region region = getRegionBySite(site);
         RegionInfo regionInfo = changeCurrRegion(region);
         regionInfo.setIndex(getRegionIndexBySite(site));
+        regionInfo.setRow(site.getRow());
+        regionInfo.setColumn(site.getColumn());
         return regionInfo;
     }
 

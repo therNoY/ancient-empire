@@ -12,6 +12,7 @@ import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.entity.UserRecord;
 import pers.mihao.ancient_empire.base.enums.GameTypeEnum;
 import pers.mihao.ancient_empire.core.dto.PathPosition;
+import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.StatusMachineEnum;
 import pers.mihao.ancient_empire.core.eums.SubStatusMachineEnum;
 
@@ -28,6 +29,7 @@ import pers.mihao.ancient_empire.core.robot.ActionIntention;
 
 /**
  * 一局游戏的上下文，一局游戏一个context
+ *
  * @Author mihao
  * @Date 2020/9/9 20:53
  */
@@ -181,15 +183,15 @@ public class GameContext extends UserTemplateHelper {
         this.willAttachArea = willAttachArea;
     }
 
-    public static User getUser(){
+    public static User getUser() {
         return currHandleUser.get();
     }
 
-    public static void setUser(User u){
+    public static void setUser(User u) {
         currHandleUser.set(u);
     }
 
-    public static void clear(){
+    public static void clear() {
         currHandleUser.remove();
     }
 
@@ -360,10 +362,10 @@ public class GameContext extends UserTemplateHelper {
         }
     }
 
-    public void onUnitStatusChange(GameCommand command, Stream stream) {
+    public void onUnitStatusChange(List<UnitStatusInfoDTO> unitStatusInfoDTOS, Stream stream) {
         if (gameRunListeners != null) {
             for (GameRunListener listener : gameRunListeners) {
-                listener.onUnitStatusChange(command, stream);
+                listener.onUnitStatusChange(unitStatusInfoDTOS, stream);
             }
         }
     }
@@ -411,9 +413,10 @@ public class GameContext extends UserTemplateHelper {
 
     /**
      * 是否来自其他回合用户操做
+     *
      * @return
      */
-    public boolean isOtherUserEvent(){
+    public boolean isOtherUserEvent() {
         return getUser() != null && !getUser().getId().toString().equals(getCurrentRoundUser());
     }
 

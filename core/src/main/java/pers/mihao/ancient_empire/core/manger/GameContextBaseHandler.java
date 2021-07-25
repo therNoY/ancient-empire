@@ -434,7 +434,7 @@ public abstract class GameContextBaseHandler extends BaseHandler implements Game
      */
     protected boolean stateIn(StatusMachineEnum... enums) {
         for (StatusMachineEnum statusEnum : enums) {
-            if (gameContext.getStatusMachine().equals(statusEnum)) {
+            if (statusEnum.equals(gameContext.getStatusMachine())) {
                 return true;
             }
         }

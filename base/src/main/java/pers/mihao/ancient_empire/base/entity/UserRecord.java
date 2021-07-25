@@ -226,12 +226,18 @@ public class UserRecord implements Serializable {
 
     public UnitInfo getCurrUnit() {
         if (StringUtil.isNotBlack(currUnitUuid) && currUnit == null) {
-            for (Army army : armyList) {
-                for (Unit unit : army.getUnits()) {
+            for (int i = 0; i < armyList.size(); i++) {
+                Army army = armyList.get(i);
+                for (int j = 0; j < army.getUnits().size(); j++) {
+                    Unit unit = army.getUnits().get(j);
                     if (unit.getId().equals(currUnitUuid)) {
                         currUnit = ApplicationContextHolder.getBean(UnitMesService.class)
                             .getUnitInfo(unit.getTypeId(), unit.getLevel());
                         BeanUtil.copyValueFromParent(unit, currUnit);
+                        currUnit.setColor(army.getColor());
+                        currUnit.setArmyIndex(i);
+                        currUnit.setUnitIndex(j);
+                        break;
                     }
                 }
             }

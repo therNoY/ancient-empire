@@ -30,8 +30,8 @@ import pers.mihao.ancient_empire.core.manger.UserTemplateHelper;
 import pers.mihao.ancient_empire.core.manger.command.GameCommand;
 
 /**
- * 上下文处理监听 每一个上下文都会有一个这个类
- * 监听命令变化可以保证gameContext中的 userRecord 数据一致性 handle中不需要处理userRecord
+ * 上下文处理监听 每一个上下文都会有一个这个类 监听命令变化可以保证gameContext中的 userRecord 数据一致性 handle中不需要处理userRecord
+ *
  * @Author mihao
  * @Date 2021/4/2 11:30
  */
@@ -152,6 +152,7 @@ public class GameContextHelperListener extends AbstractGameRunListener {
 
     /**
      * 判断是否有效的命令
+     *
      * @param unitStatusInfoDTO
      * @return
      */
@@ -166,23 +167,15 @@ public class GameContextHelperListener extends AbstractGameRunListener {
     }
 
     @Override
-    public void onUnitStatusChange(GameCommand gameCommand, Stream stream) {
-        if (gameCommand.getExtMes().get(ExtMes.UNIT_STATUS) instanceof List) {
-            List unitStatusList = (List) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
-            UnitStatusInfoDTO unitStatus;
-            for (Object obj : unitStatusList) {
-                unitStatus = (UnitStatusInfoDTO) obj;
-                handlerLevelUp(unitStatus, stream);
-            }
-        } else {
-            UnitStatusInfoDTO unitStatus = (UnitStatusInfoDTO) gameCommand.getExtMes().get(ExtMes.UNIT_STATUS);
+    public void onUnitStatusChange(List<UnitStatusInfoDTO> unitStatusInfoDTOS, Stream stream) {
+        for (UnitStatusInfoDTO unitStatus : unitStatusInfoDTOS) {
             handlerLevelUp(unitStatus, stream);
         }
     }
 
-    private void handlerLevelUp(UnitStatusInfoDTO unitStatusChangeInfo, Stream stream) {
+    private boolean handlerLevelUp(UnitStatusInfoDTO unitStatusChangeInfo, Stream stream) {
         if (!isEffectiveCommand(unitStatusChangeInfo)) {
-            return;
+            return false;
         }
         Unit unit = getUnitByIndex(unitStatusChangeInfo);
         // 判断是否升级
@@ -216,7 +209,8 @@ public class GameContextHelperListener extends AbstractGameRunListener {
                         typeCount < gameContext.getTypePromotionCount()) {
                         if (gameContext.getRandomPromotionChance()) {
                             log.info("准备晋升");
-                            List<UnitTransfer> unitTransfers= unitTransferService.getTransferByUnitId(unit.getTypeId());
+                            List<UnitTransfer> unitTransfers = unitTransferService
+                                .getTransferByUnitId(unit.getTypeId());
                             if (CollectionUtil.isNotEmpty(unitTransfers)) {
                                 UnitTransfer unitTransfer = unitTransfers.get(0);
                                 // 这里才真正的晋升
@@ -237,14 +231,17 @@ public class GameContextHelperListener extends AbstractGameRunListener {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put(ExtMes.LEVEL_UP_INFO, gameContext.getLevelUpImg());
                     jsonObject.put(ExtMes.SITE, unit);
-                    stream.toGameCommand().addOrderCommand(GameCommendEnum.SHOW_LEVEL_UP, jsonObject);
+                    stream.toGameCommand().addOrderCommand(GameCommendEnum.SHOW_LEVEL_UP, jsonObject, 99);
                 }
             }
+            return true;
         }
+        return false;
     }
 
     /**
      * 是否达到晋升的条件
+     *
      * @param unit
      * @param template
      * @return

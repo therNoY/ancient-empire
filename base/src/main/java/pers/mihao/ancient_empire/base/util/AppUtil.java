@@ -140,7 +140,8 @@ public class AppUtil {
 
     /**
      * 将int 转成 Integer[] 指定前缀
-     * @param n 前缀
+     *
+     * @param n   前缀
      * @param num
      * @return
      */
@@ -163,7 +164,7 @@ public class AppUtil {
                 if (i == 0) {
                     if (life[i] == 10) {
                         continue;
-                    }else if (life[i] == -1) {
+                    } else if (life[i] == -1) {
                         multiply = -1;
                         continue;
                     }
@@ -204,8 +205,7 @@ public class AppUtil {
     }
 
     /**
-     * 判断一个单位是否在另一个单位的影响范围内
-     * 包括自己
+     * 判断一个单位是否在另一个单位的影响范围内 包括自己
      *
      * @return
      */
@@ -252,19 +252,22 @@ public class AppUtil {
 
     /**
      * 比较位置是否相等
-     * @param Site
-     * @param site
+     *
+     * @param site1
+     * @param site2
      * @return
      */
-    public static boolean siteEquals(Site Site, Site site) {
-        return Site.getRow().equals(site.getRow()) && Site.getColumn().equals(site.getColumn());
+    public static boolean siteEquals(Site site1, Site site2) {
+        return site1 != null && site2 != null && site1.getRow().equals(site2.getRow()) && site1.getColumn()
+            .equals(site2.getColumn());
     }
 
     /**
      * 获取系统消息前缀
+     *
      * @return
      */
-    public static String getSystemMessagePrefix(){
+    public static String getSystemMessagePrefix() {
         switch (LoginUserHolder.getLanguage()) {
             case EN:
                 return getMessagePrefix("System Message");
@@ -275,7 +278,7 @@ public class AppUtil {
 
     }
 
-    public static String getMessagePrefix(String message){
+    public static String getMessagePrefix(String message) {
         return "【" + message + "】";
     }
 }
