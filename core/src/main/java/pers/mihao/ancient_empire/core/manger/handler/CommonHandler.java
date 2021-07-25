@@ -372,27 +372,7 @@ public class CommonHandler extends AbstractGameEventHandler {
      * @param armyUnitIndexDTO
      */
     public void sendEndUnitCommend(UnitInfo unitInfo, ArmyUnitIndexDTO armyUnitIndexDTO) {
-        // 触发单位结束移动事件
-        EndUnitDTO endUnitDTO = EndStrategy.getInstance().getEndUnitResult(this);
-        // 处理生命值改变
-        if (endUnitDTO.getLifeChangeList().size() > 0) {
-            commandStream().toGameCommand()
-                .addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, endUnitDTO.getLifeChangeList());
-        }
-
-        // 处理单位血量变化
-        if (endUnitDTO.getUnitStatusInfoDTOS().size() > 0) {
-            changeUnitStatus(endUnitDTO.getUnitStatusInfoDTOS());
-        }
-        // 处理单位死亡
-        UnitInfo deadUnitInfo;
-        for (UnitDeadDTO deadDTO : endUnitDTO.getUnitDeadDTOList()) {
-            deadUnitInfo = getUnitInfoByIndex(deadDTO);
-            addUnitDeadCommend(deadUnitInfo, deadDTO);
-            gameContext.onUnitDead(deadDTO.getArmyIndex(), deadUnitInfo, this);
-        }
-
-        // 修改单位的状态有顺序（结束回合）
+        // 修改当前单位的状态有
         UnitStatusInfoDTO unitStatusInfoDTO = new UnitStatusInfoDTO(armyUnitIndexDTO);
 
         // 处理单位是否站在坟墓上
@@ -439,6 +419,26 @@ public class CommonHandler extends AbstractGameEventHandler {
             changeUnitStatus(unitStatusInfoDTO);
             // 回调单位结束
             gameContext.onUnitDone(unitInfo, this);
+
+            // 触发单位结束移动事件
+            EndUnitDTO endUnitDTO = EndStrategy.getInstance().getEndUnitResult(this);
+            // 处理生命值改变
+            if (endUnitDTO.getLifeChangeList().size() > 0) {
+                commandStream().toGameCommand()
+                    .addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, endUnitDTO.getLifeChangeList());
+            }
+
+            // 处理单位血量变化
+            if (endUnitDTO.getUnitStatusInfoDTOS().size() > 0) {
+                changeUnitStatus(endUnitDTO.getUnitStatusInfoDTOS());
+            }
+            // 处理单位死亡
+            UnitInfo deadUnitInfo;
+            for (UnitDeadDTO deadDTO : endUnitDTO.getUnitDeadDTOList()) {
+                deadUnitInfo = getUnitInfoByIndex(deadDTO);
+                addUnitDeadCommend(deadUnitInfo, deadDTO);
+                gameContext.onUnitDead(deadDTO.getArmyIndex(), deadUnitInfo, this);
+            }
         }
         gameContext.setStatusMachine(StatusMachineEnum.INIT);
     }
