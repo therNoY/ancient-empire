@@ -103,7 +103,7 @@ public class GameSessionManger extends AbstractSessionManger<GameSession, GameEv
         gameCommand.setExtMes(jsonObject);
         sendMessageToGroup(gameCommand, tSession.getRecordId());
         boolean isPlayer = gameCoreManger.handleUserLevelGame(tSession.getUser(), tSession.getRecordId());
-        if (isPlayer && tSession.getConnectType().equals(NetConnectTypeEnum.NET_GAME) && lastSession.size() > 1) {
+        if (isPlayer && tSession.getConnectType().equals(NetConnectTypeEnum.NET_GAME) && lastSession.size() > 0) {
             reConnectRecord.put(tSession.getUser().getId(), tSession.getRecordId());
         }
     }
