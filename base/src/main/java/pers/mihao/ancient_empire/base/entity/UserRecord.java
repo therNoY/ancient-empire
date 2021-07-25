@@ -247,6 +247,9 @@ public class UserRecord implements Serializable {
 
     public void setCurrUnit(UnitInfo currUnit) {
         this.currUnit = currUnit;
+        if (this.currUnit != null) {
+            this.currUnitUuid = this.currUnit.getId();
+        }
     }
 
     public RegionInfo getCurrRegion() {

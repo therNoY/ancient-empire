@@ -414,11 +414,6 @@ public class CommonHandler extends AbstractGameEventHandler {
         }
 
         if (!unitDead) {
-            unitStatusInfoDTO.setDone(true);
-            unitStatusInfoDTO.setUpdateCurr(true);
-            changeUnitStatus(unitStatusInfoDTO);
-            // 回调单位结束
-            gameContext.onUnitDone(unitInfo, this);
 
             // 触发单位结束移动事件
             EndUnitDTO endUnitDTO = EndStrategy.getInstance().getEndUnitResult(this);
@@ -439,6 +434,11 @@ public class CommonHandler extends AbstractGameEventHandler {
                 addUnitDeadCommend(deadUnitInfo, deadDTO);
                 gameContext.onUnitDead(deadDTO.getArmyIndex(), deadUnitInfo, this);
             }
+            unitStatusInfoDTO.setDone(true);
+            unitStatusInfoDTO.setUpdateCurr(true);
+            changeUnitStatus(unitStatusInfoDTO);
+            // 回调单位结束
+            gameContext.onUnitDone(unitInfo, this);
         }
         gameContext.setStatusMachine(StatusMachineEnum.INIT);
     }

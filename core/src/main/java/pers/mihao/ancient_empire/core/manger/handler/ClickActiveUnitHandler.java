@@ -1,6 +1,7 @@
 package pers.mihao.ancient_empire.core.manger.handler;
 
 import pers.mihao.ancient_empire.auth.entity.User;
+import pers.mihao.ancient_empire.base.bo.Region;
 import pers.mihao.ancient_empire.common.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +69,10 @@ public class ClickActiveUnitHandler extends CommonHandler {
             UnitInfo unitInfo = unitMes.getValue();
             commandList.forEach(command -> command.setSendType(SendTypeEnum.SEND_TO_USER));
             // 判断展示移动区域还是展示行动
+            Region region;
             if (unitInfo.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())
-                && RegionEnum.CASTLE.type().equals(getRegionBySite(unitInfo).getType())) {
+                && RegionEnum.CASTLE.type().equals((region = getRegionBySite(unitInfo)).getType())
+                && region.getColor().equals(record().getCurrColor())) {
                 Set<String> actions = ActionStrategy.getInstance()
                     .getActionList(getCurrUnitAttachArea(), record(), gameEvent.getInitiateSite());
                 actions.add(ActionEnum.BUY.type());

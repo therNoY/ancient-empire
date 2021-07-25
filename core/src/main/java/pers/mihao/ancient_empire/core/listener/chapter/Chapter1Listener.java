@@ -68,7 +68,7 @@ public class Chapter1Listener extends AbstractChapterListener {
      */
     public void triggerStage1() {
         // 定时一段时间
-        awaitTime(500);
+        waitExecutionOk(1000);
         addUnitAndMove(1, 2, new Site(2, 2), new Site(2, 3));
         addUnitAndMove(1, 1, new Site(11, 11), new Site(11, 10));
         sendCommandNow();

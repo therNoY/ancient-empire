@@ -19,6 +19,7 @@ import pers.mihao.ancient_empire.auth.entity.User;
 import pers.mihao.ancient_empire.auth.entity.UserSetting;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.enums.LanguageEnum;
+import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.common.vo.AeException;
 import pers.mihao.ancient_empire.core.eums.NetConnectTypeEnum;
 import pers.mihao.ancient_empire.core.eums.SendTypeEnum;
@@ -229,6 +230,9 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
     }
 
     private void sendOrderMessage2AllGroup(List<? extends Command> commandList, String typeId) {
+        if (CollectionUtil.isEmpty(commandList)) {
+            return;
+        }
         for (Map.Entry<String, List<T>> entry : sessionMap.entrySet()) {
             List<T> sessions = entry.getValue();
             T session = null;
@@ -251,6 +255,9 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
 
     private void sendOrderMessage2Group(List<? extends Command> commandList, String typeId) {
         List<T> sessionList = sessionMap.get(typeId);
+        if (CollectionUtil.isEmpty(commandList)) {
+            return;
+        }
         if (sessionList != null) {
             T session = null;
             log.info("发送数据{} 给群组：{}", commandList, typeId);
@@ -272,6 +279,9 @@ public abstract class AbstractSessionManger<T extends AbstractSession, E extends
     }
 
     private void sendOrderMessage2User(List<? extends Command> commandList, String typeId) {
+        if (CollectionUtil.isEmpty(commandList)) {
+            return;
+        }
         List<T> sessionList = sessionMap.get(typeId);
         if (sessionList != null) {
             T session = null;

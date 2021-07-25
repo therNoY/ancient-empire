@@ -199,7 +199,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
      * @return
      */
     protected int getCurrentChapter() {
-        return Integer.valueOf(this.getClass().getName().charAt(7) + "");
+        return Integer.valueOf(this.getClass().getSimpleName().charAt(7) + "");
     }
 
     @Override
@@ -245,6 +245,7 @@ public abstract class AbstractChapterListener extends AbstractGameRunListener {
      */
     private void triggerPlot() {
         awaitTime(300);
+        sendCommandNow();
         stage++;
         try {
             StatusMachineEnum preStatus = gameContext.getStatusMachine();

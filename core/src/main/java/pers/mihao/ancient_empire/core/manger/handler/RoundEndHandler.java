@@ -25,6 +25,7 @@ import pers.mihao.ancient_empire.core.dto.GameInfoDTO;
 import pers.mihao.ancient_empire.core.dto.LifeChangeDTO;
 import pers.mihao.ancient_empire.core.dto.UnitStatusInfoDTO;
 import pers.mihao.ancient_empire.core.eums.GameCommendEnum;
+import pers.mihao.ancient_empire.core.manger.GameContext;
 import pers.mihao.ancient_empire.core.manger.event.GameEvent;
 import pers.mihao.ancient_empire.core.manger.strategy.start.StartStrategy;
 import pers.mihao.ancient_empire.core.util.GameCoreUtil;
@@ -87,10 +88,12 @@ public class RoundEndHandler extends CommonHandler {
         }
 
         // 2. 开启新的回合
+
         int newArmyIndex = setNewArmy(record);
         ArmyStatusInfoDTO armyStatusInfoDTO = new ArmyStatusInfoDTO();
         record.setCurrArmyIndex(newArmyIndex);
         record.setCurrentRound(record.getCurrentRound() + 1);
+        GameContext.setUser(null);
         // 3.改变当前军队的资金
         List<Region> regions = record.getGameMap().getRegions();
         int addMoney = 0;
@@ -133,68 +136,74 @@ public class RoundEndHandler extends CommonHandler {
      * 回合开始改变单位信息
      */
     private void changeUnitStatus() {
-        List<LifeChangeDTO> lifeChanges = new ArrayList<>();
         List<UnitStatusInfoDTO> unitStatusChanges = new ArrayList<>();
         // 单位地形
         RegionInfo regionInfo;
         // 状态
         String status;
         // 生命变化
+        List<LifeChangeDTO> lifeChangeDTOList = new ArrayList<>();
         LifeChangeDTO lifeChangeDTO;
         // 单位状态变化
         UnitStatusInfoDTO unitStatusInfoDTO;
         int descLife, lastLife;
         // 保证动画顺序
-        boolean isDead = false;
+        boolean isDead = false, isCanRecoverByRegion = false;
 
         for (int i = 0; i < currArmy().getUnits().size(); i++) {
             Unit unit = currArmy().getUnits().get(i);
             status = unit.getStatus();
+            lifeChangeDTO = null;
             unitStatusInfoDTO = new UnitStatusInfoDTO();
+            unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
+            unitStatusInfoDTO.setUnitIndex(i);
             lastLife = unit.getLife();
 
             // 如果状态数 > 0 就减1
             if (unit.getStatusPresenceNum() != null && unit.getStatusPresenceNum() > 0) {
                 unit.setStatusPresenceNum(unit.getStatusPresenceNum() - 1);
                 if (unit.getStatusPresenceNum() == 0) {
-                    if (unitStatusInfoDTO.getArmyIndex() == null) {
-                        unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
-                        unitStatusInfoDTO.setUnitIndex(i);
-                    }
                     unitStatusInfoDTO.setStatus(StateEnum.NORMAL.type());
                     status = StateEnum.NORMAL.type();
                 }
             }
+
+            regionInfo = getRegionInfoBySite(unit);
             if (!StateEnum.POISON.type().equals(status)) {
                 // 没有中毒根据地形回血
-                regionInfo = getRegionInfoBySite(unit);
                 lifeChangeDTO = StartStrategy.getInstance().getStartNewRoundLifeChange(regionInfo, unit, record());
                 if (lifeChangeDTO != null) {
-                    unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
-                    unitStatusInfoDTO.setUnitIndex(i);
                     unitStatusInfoDTO.setLife(unit.getLife() + AppUtil.getIntByArray(lifeChangeDTO.getAttach()));
                 }
             } else {
-                // 中毒不能回血 只能扣血
-                descLife = AppConfig.getInt(POISON);
-                lifeChangeDTO = new LifeChangeDTO();
-                lifeChangeDTO.setRow(unit.getRow());
-                lifeChangeDTO.setColumn(unit.getColumn());
-                unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
-                unitStatusInfoDTO.setUnitIndex(i);
-                if (descLife >= lastLife) {
-                    lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, lastLife));
-                    isDead = true;
-                } else {
-                    unitStatusInfoDTO.setLife(lastLife - descLife);
-                    lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, descLife));
+                // 判断是否恢复状态
+                isCanRecoverByRegion = StartStrategy.getInstance()
+                    .getStartNewRoundStatusChange(regionInfo, unit, record());
+                if (!isCanRecoverByRegion) {
+                    // 中毒不能回血 只能扣血
+                    descLife = AppConfig.getInt(POISON);
+                    lifeChangeDTO = new LifeChangeDTO();
+                    lifeChangeDTO.setRow(unit.getRow());
+                    lifeChangeDTO.setColumn(unit.getColumn());
+                    unitStatusInfoDTO.setArmyIndex(record().getCurrArmyIndex());
+                    unitStatusInfoDTO.setUnitIndex(i);
+                    if (descLife >= lastLife) {
+                        lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, lastLife));
+                        isDead = true;
+                    } else {
+                        unitStatusInfoDTO.setLife(lastLife - descLife);
+                        lifeChangeDTO.setAttach(AppUtil.getArrayByInt(-1, descLife));
+                    }
                 }
+            }
+
+            if (isCanRecoverByRegion) {
+                unitStatusInfoDTO.setStatus(StateEnum.NORMAL.type());
             }
 
             // 如果生命有变化
             if (lifeChangeDTO != null && lifeChangeDTO.getRow() != null) {
-                commandStream().toGameCommand()
-                        .addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChangeDTO);
+                lifeChangeDTOList.add(lifeChangeDTO);
             }
 
             if (isDead) {
@@ -208,6 +217,11 @@ public class RoundEndHandler extends CommonHandler {
             if (unitStatusInfoDTO.getArmyIndex() != null) {
                 unitStatusChanges.add(unitStatusInfoDTO);
             }
+        }
+
+        if (lifeChangeDTOList.size() > 0) {
+            commandStream().toGameCommand()
+                .addOrderCommand(GameCommendEnum.LEFT_CHANGE, ExtMes.LIFE_CHANGE, lifeChangeDTOList);
         }
 
         if (unitStatusChanges.size() > 0) {

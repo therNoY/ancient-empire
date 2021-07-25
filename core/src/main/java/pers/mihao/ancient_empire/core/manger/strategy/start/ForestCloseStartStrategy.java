@@ -14,7 +14,7 @@ public class ForestCloseStartStrategy extends StartStrategy{
 
     @Override
     protected int recoverLife(RegionMes regionMes) {
-        if (regionMes.getType().equals(RegionEnum.FOREST.type()) || regionMes.getType().equals(RegionEnum.FOREST.type())) {
+        if (regionMes.getType().equals(RegionEnum.GROVE.type()) || regionMes.getType().equals(RegionEnum.FOREST.type())) {
            return GameCoreHelper.getContext().getRecoverByAbility(AbilityEnum.FOREST_CLOSE);
         }
         return 0;

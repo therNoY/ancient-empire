@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.mihao.ancient_empire.base.bo.RegionInfo;
 import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.constant.BaseConstant;
 import pers.mihao.ancient_empire.base.entity.Ability;
 import pers.mihao.ancient_empire.base.entity.RegionMes;
 import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
@@ -36,6 +37,7 @@ public class StartStrategy extends AbstractStrategy<StartStrategy> {
 
     /**
      * 获取回合开始时 不同能力的处理结果
+     *
      * @param regionInfo
      * @param unit
      * @param needRestoreLife
@@ -47,13 +49,14 @@ public class StartStrategy extends AbstractStrategy<StartStrategy> {
         int regionRestore, needRestoreLife, lastLife;
         lastLife = unit.getLife();
         // 单位等级信息
-        UnitLevelMes levelMes  = unitLevelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
+        UnitLevelMes levelMes = unitLevelMesService.getUnitLevelMes(unit.getTypeId(), unit.getLevel());
         needRestoreLife = levelMes.getMaxLife() - lastLife;
         LifeChangeDTO lifeChangeDTO = null;
         if (needRestoreLife > 0) {
             if ((regionRestore = regionInfo.getRestore()) > 0) {
                 if (colorIsCamp(record, regionInfo.getColor())
-                    || (!RegionEnum.TOWN.type().equals(regionInfo.getType()) && !RegionEnum.CASTLE.type().equals(regionInfo.getType()))){
+                    || (!RegionEnum.TOWN.type().equals(regionInfo.getType()) && !RegionEnum.CASTLE.type()
+                    .equals(regionInfo.getType()))) {
                     log.info("根据建筑物回血 需要回血：{} 地形可以回血：{}", needRestoreLife, regionRestore);
                     lifeChangeDTO = new LifeChangeDTO();
                     lifeChangeDTO.setRow(unit.getRow());
@@ -88,5 +91,26 @@ public class StartStrategy extends AbstractStrategy<StartStrategy> {
 
     protected int recoverLife(RegionMes regionMes) {
         return 0;
+    }
+
+    /**
+     * 获取回合开始
+     *
+     * @return
+     */
+    public final boolean getStartNewRoundStatusChange(RegionInfo regionInfo, Unit unit, UserRecord record) {
+        List<Ability> abilities = abilityService.getUnitAbilityList(unit.getTypeId());
+        boolean isCanReCover = getRegionCanReCover(regionInfo);
+        for (StartStrategy startStrategy : getAbilityStrategy(abilities)) {
+            if (isCanReCover) {
+                break;
+            }
+            isCanReCover = startStrategy.getRegionCanReCover(regionInfo);
+        }
+        return isCanReCover;
+    }
+
+    protected boolean getRegionCanReCover(RegionInfo regionInfo) {
+        return BaseConstant.YES.equals(regionInfo.getPurify());
     }
 }
