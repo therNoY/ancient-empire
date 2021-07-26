@@ -27,6 +27,7 @@ import pers.mihao.ancient_empire.auth.enums.LoginTypeEnum;
 import pers.mihao.ancient_empire.auth.service.UserService;
 import pers.mihao.ancient_empire.common.annotation.PersistentLog;
 import pers.mihao.ancient_empire.common.constant.CacheKey;
+import pers.mihao.ancient_empire.common.constant.CommonConstant;
 import pers.mihao.ancient_empire.common.dto.LoginDTO;
 import pers.mihao.ancient_empire.common.dto.RegisterDTO;
 import pers.mihao.ancient_empire.common.util.JwtTokenUtil;
@@ -83,7 +84,8 @@ public class UserServiceImpl extends ServiceImpl<UserDAO, User> implements UserS
     public RespAuthDAO login(LoginDTO loginDto) {
         String token;
         User loginUser = userService.getUserByNameOrEmail(loginDto.getUserName());
-        if (loginUser != null && passwordEncoder.matches(loginDto.getPassword(), loginUser.getPassword())) {
+        if (loginUser != null && (CommonConstant.YES.equals(loginDto.getFromApp()) ||
+            passwordEncoder.matches(loginDto.getPassword(), loginUser.getPassword()))) {
             token = JwtTokenUtil.generateToken(loginUser.getId().toString());
             log.info("给用户：{}生成token", loginDto);
             RespAuthDAO respAuthDao = new RespAuthDAO(loginUser.getName(), loginDto.getPassword(), token);

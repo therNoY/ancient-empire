@@ -12,6 +12,11 @@ public class LoginDTO {
     @NotBlank(message = "密码不能为空")
     private String password;
 
+    /**
+     * 免密
+     */
+    private String fromApp;
+
     public String getUserName() {
         return userName;
     }
@@ -26,5 +31,13 @@ public class LoginDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getFromApp() {
+        return fromApp;
+    }
+
+    public void setFromApp(String fromApp) {
+        this.fromApp = fromApp;
     }
 }

@@ -62,6 +62,10 @@ public class WeChatInfoDTO implements Serializable {
      */
     private String token;
 
+    /**
+     * 密码
+     */
+    private String pwd;
 
 
     public String getUserName() {
@@ -174,5 +178,13 @@ public class WeChatInfoDTO implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
     }
 }
