@@ -23,11 +23,11 @@ public class AbilityServiceImpl extends ServiceImpl<AbilityDAO, Ability> impleme
 
 
     @Autowired
-    AbilityDAO abilityDao;
+    AbilityDAO abilityDAO;
 
     @Cacheable(CacheKey.UNIT_ABILITY)
     @Override
     public List<Ability> getUnitAbilityList(Integer id) {
-        return abilityDao.getUnitAbilityList(id);
+        return abilityDAO.getUnitAbilityList(id);
     }
 }

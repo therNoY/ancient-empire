@@ -90,8 +90,7 @@ public class UserController {
         }
 
         if (StringUtil.isNotBlack(registerDto.getPhone())) {
-            RespAuthDAO respAuthDAO = userService.registerWeChatUser(registerDto);
-            return respAuthDAO;
+            return userService.registerWeChatUser(registerDto);
         } else {
             // 邮箱注册 先验证邮箱是否存在 再验证用户是否存在
             User userByEmail = userService.getUserByEmail(registerDto.getEmail());
@@ -116,7 +115,7 @@ public class UserController {
      */
     @GetMapping("/register")
     public ModelAndView registerCallback(@RequestParam String token) {
-        RegisterDTO registerDto = null;
+        RegisterDTO registerDto;
         if ((registerDto = CatchUtil.getObject(token, RegisterDTO.class)) != null) {
             userService.save(registerDto);
             return new ModelAndView("registerSuccess");

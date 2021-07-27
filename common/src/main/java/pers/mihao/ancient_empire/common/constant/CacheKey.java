@@ -12,6 +12,8 @@ public class CacheKey {
     public static final String ENABLE_REGION = "enableRegion";
     // 绑定name
     public static final String USER_INFO = "userInfo";
+    // 用户权限
+    public static final String USER_PERMISSION = "USER_PERMISSION";
     // 绑定ID
     public static final String USER = "user";
     // 用户设定

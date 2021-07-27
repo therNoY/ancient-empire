@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.base.dto;
 
-import java.io.Serializable;
 import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 
 /**

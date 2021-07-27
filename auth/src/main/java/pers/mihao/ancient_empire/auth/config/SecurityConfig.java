@@ -32,8 +32,9 @@ import pers.mihao.ancient_empire.common.vo.AeException;
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled=true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -44,33 +45,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf()// 由于使用的是JWT，我们这里不需要csrf禁止跨域保护
-                .disable()
-                .sessionManagement()// 基于token，所以不需要session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().cors()
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, // 允许对于网站静态资源的无授权访问
-                        "/",
-                        "/*.html",
-                        "/favicon.ico",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js"
-                )
-                .permitAll()
-                // 跨域请求会先进行一次options请求
-                .antMatchers(HttpMethod.OPTIONS)
-                .permitAll()
-                // 设置所有以Api 开头的要登录才能访问
-                .antMatchers("/api/**").hasAuthority("login")
-                // 设置所有以root 开头的要管理员才能访问
-                .antMatchers("/root/**").hasAuthority("admin")
-                // 设置所有以roots 开头的要超管权限才能访问
-                .antMatchers("/roots/**").hasAuthority("super_admin")
-                // 其余的全部可以直接访问
-                .antMatchers("/**")
-                .permitAll();
+            .disable()
+            .sessionManagement()// 基于token，所以不需要session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and().cors()
+            .and()
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, // 允许对于网站静态资源的无授权访问
+                "/",
+                "/*.html",
+                "/favicon.ico",
+                "/**/*.html",
+                "/**/*.css",
+                "/**/*.js"
+            )
+            .permitAll()
+            // 跨域请求会先进行一次options请求
+            .antMatchers(HttpMethod.OPTIONS)
+            .permitAll()
+            // 设置所有以Api 开头的要登录才能访问
+            .antMatchers("/api/**").hasAuthority("login")
+            // 设置所有以root 开头的要管理员才能访问
+            .antMatchers("/root/**").hasAuthority("admin")
+            // 设置所有以roots 开头的要超管权限才能访问
+            .antMatchers("/roots/**").hasAuthority("super_admin")
+            // 其余的全部可以直接访问
+            .antMatchers("/**")
+            .permitAll();
 //                .anyRequest()// 除上面外的所有请求全部需要鉴权认证
 //                .authenticated();
         // 禁用缓存
@@ -79,15 +80,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         //添加自定义未授权和未登录结果返回
         httpSecurity.exceptionHandling()
-                .accessDeniedHandler(restfulAccessDeniedHandler)
-                .authenticationEntryPoint(restAuthenticationEntryPoint);
+            .accessDeniedHandler(restfulAccessDeniedHandler)
+            .authenticationEntryPoint(restAuthenticationEntryPoint);
     }
 
-    // 该方法是为了获取一个用户
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService())
-                .passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -98,19 +97,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     @Bean
     public UserDetailsService userDetailsService() {
-        //获取登录用户信息 Lambda重写loadUserByUsername 方法 为了获取一个UserDetails 的对象
+        // 获取登录用户信息 Lambda重写loadUserByUsername 方法 为了获取一个UserDetails 的对象
         return userId -> {
-            User user = userService.getById(userId);
+            User user = userService.getUserById(Integer.valueOf(userId));
             if (user != null) {
                 List<Permission> permissionList = userService.getPermissionList(user.getId());
-                return new MyUserDetails(user,permissionList);
+                return new MyUserDetails(user, permissionList);
             }
             throw new AeException(40011);
         };
     }
 
     @Bean
-    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter(){
+    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() {
         return new JwtAuthenticationTokenFilter();
     }
 
@@ -131,7 +130,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CorsFilter(source);
     }
 
-    // 猜测可以删掉
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Position extends Site {
 
+    // 剩余的移动力
     @JsonIgnore
-    private Integer lastMove; // 剩余的移动力
+    private Integer lastMove;
     @JsonIgnore
     private Integer direction;
 

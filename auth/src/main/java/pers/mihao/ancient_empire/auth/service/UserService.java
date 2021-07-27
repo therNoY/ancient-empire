@@ -26,6 +26,11 @@ public interface UserService extends IService<User> {
      */
     User getUserByNameOrEmail(String username);
 
+    /**
+     * 获取用户权限
+     * @param id
+     * @return
+     */
     List<Permission> getPermissionList(Integer id);
 
     /**
@@ -45,6 +50,11 @@ public interface UserService extends IService<User> {
      */
     User getUserById(Integer id);
 
+    /**
+     * 邮箱不能重复
+     * @param email
+     * @return
+     */
     User getUserByEmail(String email);
 
     void save(RegisterDTO registerDto);

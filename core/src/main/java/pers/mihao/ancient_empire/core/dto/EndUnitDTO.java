@@ -13,17 +13,17 @@ public class EndUnitDTO implements Serializable {
     /**
      * 血量变化动画
      */
-    List<LifeChangeDTO> lifeChangeList;
+    private List<LifeChangeDTO> lifeChangeList;
 
     /**
      * 单位状态改变
      */
-    List<UnitStatusInfoDTO> unitStatusInfoDTOS;
+    private List<UnitStatusInfoDTO> unitStatusInfoDTOS;
 
     /**
      * 单位死亡DTO
      */
-    List<UnitDeadDTO> unitDeadDTOList;
+    private List<UnitDeadDTO> unitDeadDTOList;
 
     public List<LifeChangeDTO> getLifeChangeList() {
         return lifeChangeList;

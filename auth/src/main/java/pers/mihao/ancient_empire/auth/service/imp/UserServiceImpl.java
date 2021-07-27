@@ -53,7 +53,7 @@ public class UserServiceImpl extends ServiceImpl<UserDAO, User> implements UserS
     @Autowired
     UserDAO userDao;
     @Autowired
-    PermissionDAO permissionDao;
+    PermissionDAO permissionDAO;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -68,9 +68,11 @@ public class UserServiceImpl extends ServiceImpl<UserDAO, User> implements UserS
         return userDao.getUserByNameOrEmail(username);
     }
 
+
     @Override
+    @Cacheable(CacheKey.USER_PERMISSION)
     public List<Permission> getPermissionList(Integer id) {
-        return permissionDao.getPermissionByUserId(id);
+        return permissionDAO.getPermissionByUserId(id);
     }
 
     /**

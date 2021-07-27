@@ -18,8 +18,6 @@ public class ShowAnimDTO extends Site {
 
     /**
      * 动画过度的帧数
-     * @param site
-     * @param animList
      */
     private Integer frame;
 

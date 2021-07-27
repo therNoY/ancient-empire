@@ -1,6 +1,5 @@
 package pers.mihao.ancient_empire.core.robot.task;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import pers.mihao.ancient_empire.common.task.GroupCommend;

@@ -16,7 +16,6 @@ import pers.mihao.ancient_empire.base.bo.UnitInfo;
 import pers.mihao.ancient_empire.base.enums.AbilityEnum;
 import pers.mihao.ancient_empire.base.enums.RegionEnum;
 import pers.mihao.ancient_empire.base.enums.StateEnum;
-import pers.mihao.ancient_empire.base.enums.UnitEnum;
 import pers.mihao.ancient_empire.base.util.AppUtil;
 import pers.mihao.ancient_empire.common.util.CollectionUtil;
 import pers.mihao.ancient_empire.core.dto.MovePathDTO;
@@ -48,7 +47,8 @@ public class DefaultRobot extends AbstractRobot {
     protected int getActionScore(ActionIntention action) {
         int score = 0;
         UnitInfo target = action.getAimUnit();
-        MovePathDTO movePathDTO = MovePathStrategy.getInstance().getUnitMovePath(currUnit(), action.getSite(), record(), currUnit());
+        MovePathDTO movePathDTO = MovePathStrategy.getInstance()
+            .getUnitMovePath(currUnit(), action.getSite(), record(), currUnit());
         int moveDeplete = movePathDTO.getDeplete();
         if (moveDeplete == Integer.MAX_VALUE) {
             return score;
@@ -115,8 +115,8 @@ public class DefaultRobot extends AbstractRobot {
     }
 
     /**
-     * 机器人 选择购买单位
-     * 策略：看自己军队的数量 是否足够多
+     * 机器人 选择购买单位 策略：看自己军队的数量 是否足够多
+     *
      * @param canBuyUnitMes
      * @param needUnitType
      * @return
@@ -177,7 +177,6 @@ public class DefaultRobot extends AbstractRobot {
     }
 
 
-
     @Override
     protected Long getCastleScore(CastleRegion castle) {
         long sum = 0;
@@ -236,9 +235,11 @@ public class DefaultRobot extends AbstractRobot {
         int lastLeft = beAttach.getLife();
         int left = currUnit().getLife();
         if (beAttach.getAbilities().contains(AbilityEnum.CASTLE_GET.ability())) {
-            score += (beAttach.getLevelMes().getMaxLife() * 6) / lastLeft * beAttach.getUnitMes().getPrice() * (beAttach.getLevel() + 1);
+            score += (beAttach.getLevelMes().getMaxLife() * 6) / lastLeft * beAttach.getUnitMes().getPrice() * (
+                beAttach.getLevel() + 1);
         } else {
-            score += (beAttach.getLevelMes().getMaxLife() * 3) / lastLeft * beAttach.getUnitMes().getPrice() * (beAttach.getLevel() + 1);
+            score += (beAttach.getLevelMes().getMaxLife() * 3) / lastLeft * beAttach.getUnitMes().getPrice() * (
+                beAttach.getLevel() + 1);
         }
         if (beAttach.getStatus() == null || StateEnum.NORMAL.type().equals(beAttach.getStatus())) {
             if (beAttach.getAbilities().contains(AbilityEnum.POISONING.ability()) && beAttach.getAbilities()

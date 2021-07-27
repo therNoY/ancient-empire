@@ -1,14 +1,9 @@
 package pers.mihao.ancient_empire.base.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import pers.mihao.ancient_empire.base.dto.RespUnitLevelDto;
-import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
+import pers.mihao.ancient_empire.base.entity.UnitLevelMes;
 
 /**
  * <p>
@@ -23,15 +18,17 @@ public interface UnitLevelMesDAO extends BaseMapper<UnitLevelMes> {
 
     /**
      * 获取单位的等级信息
+     *
      * @param id
      * @param level
      * @return
      */
-    UnitLevelMes getUnitLevelMes(@Param("id")Integer id, @Param("level")Integer level);
+    UnitLevelMes getUnitLevelMes(@Param("id") Integer id, @Param("level") Integer level);
 
 
     /**
      * 获取模板所有单位的等级信息
+     *
      * @param tempId
      * @return
      */
@@ -39,6 +36,7 @@ public interface UnitLevelMesDAO extends BaseMapper<UnitLevelMes> {
 
     /**
      * 获取单位的等级信息
+     *
      * @param tempId
      * @return
      */

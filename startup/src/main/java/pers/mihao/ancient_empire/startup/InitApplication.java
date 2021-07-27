@@ -56,13 +56,14 @@ public class InitApplication implements CommandLineRunner, ApplicationContextAwa
         gameFileController.delTempFile();
 
         List<Pair<Class, String[]>> delList = new ArrayList<>();
-        delList.add(new Pair<>(UserTemplateDAO.class, new String[]{"summonAnimation", "attachAnimation", "summonAnimation", "levelupAnimation"}));
+        delList.add(new Pair<>(UserTemplateDAO.class,
+            new String[]{"summonAnimation", "attachAnimation", "summonAnimation", "levelupAnimation"}));
 //        doDel(delList);
     }
 
     private void doDel(List<Pair<Class, String[]>> delList) {
         UserTemplateDAO userTemplateDAO;
-        CompletableFuture.runAsync(()->{
+        CompletableFuture.runAsync(() -> {
             BaseMapper mapper;
             List<Object> object;
             for (Pair<Class, String[]> pair : delList) {

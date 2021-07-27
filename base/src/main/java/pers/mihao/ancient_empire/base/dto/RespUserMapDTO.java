@@ -10,7 +10,8 @@ public class RespUserMapDTO {
     public RespUserMapDTO() {
     }
 
-    public RespUserMapDTO(List<UnitMes> unitMesList, List<RegionMes> regionMes, UserMap unSaveMap, UserTemplate userTemplate) {
+    public RespUserMapDTO(List<UnitMes> unitMesList, List<RegionMes> regionMes, UserMap unSaveMap,
+        UserTemplate userTemplate) {
         this.unitMesList = unitMesList;
         this.regionMes = regionMes;
         this.unSaveMap = unSaveMap;

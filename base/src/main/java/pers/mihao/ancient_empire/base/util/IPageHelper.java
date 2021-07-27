@@ -7,13 +7,11 @@ import pers.mihao.ancient_empire.common.dto.ApiPageDTO;
 import java.util.List;
 
 /**
- * @version 1.0
  * @author mihao
+ * @version 1.0
  * @date 2021\1\14 0014 23:39
  */
 public class IPageHelper {
-
-
 
     public static <T> IPage<T> toPage(List<T> list, ApiPageDTO apiPageDTO) {
         IPage<T> page = new Page<T>();

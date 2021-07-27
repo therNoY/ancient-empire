@@ -1,12 +1,20 @@
 package pers.mihao.ancient_empire.base.util;
 
-import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
-import pers.mihao.ancient_empire.base.bo.*;
-import pers.mihao.ancient_empire.base.entity.UserRecord;
-import pers.mihao.ancient_empire.base.enums.UnitEnum;
-import pers.mihao.ancient_empire.common.vo.AeException;
-
 import java.util.List;
+import pers.mihao.ancient_empire.auth.util.LoginUserHolder;
+import pers.mihao.ancient_empire.base.bo.Army;
+import pers.mihao.ancient_empire.base.bo.BaseSquare;
+import pers.mihao.ancient_empire.base.bo.GameMap;
+import pers.mihao.ancient_empire.base.bo.Position;
+import pers.mihao.ancient_empire.base.bo.Region;
+import pers.mihao.ancient_empire.base.bo.Site;
+import pers.mihao.ancient_empire.base.bo.Unit;
+import pers.mihao.ancient_empire.base.entity.Ability;
+import pers.mihao.ancient_empire.base.entity.UserRecord;
+import pers.mihao.ancient_empire.base.enums.AbilityEnum;
+import pers.mihao.ancient_empire.base.service.AbilityService;
+import pers.mihao.ancient_empire.common.util.ApplicationContextHolder;
+import pers.mihao.ancient_empire.common.vo.AeException;
 
 /**
  * 和业务有关的工具类 方便修改
@@ -230,8 +238,11 @@ public class AppUtil {
      * @return
      */
     public static boolean hasLoad(Army army) {
+        AbilityService unitAbilityService = ApplicationContextHolder.getBean(AbilityService.class);
+        List<Ability> abilities;
         for (Unit unit : army.getUnits()) {
-            if (unit.getType().equals(UnitEnum.LORD.type())) {
+            abilities = unitAbilityService.getUnitAbilityList(unit.getTypeId());
+            if (abilities.contains(AbilityEnum.CASTLE_GET.ability())) {
                 return true;
             }
         }

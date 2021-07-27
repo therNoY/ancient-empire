@@ -5,12 +5,16 @@ import pers.mihao.ancient_empire.common.dto.ApiRequestDTO;
 import javax.validation.constraints.NotBlank;
 
 
+/**
+ * 修改密码
+ */
 public class ChangePwdDTO extends ApiRequestDTO {
-    @NotBlank(message = "确认密码不能为空")
+
+    @NotBlank(message = "确认密码")
     private String surePassword;
-    @NotBlank(message = "新密码不能为空")
+    @NotBlank(message = "新密码")
     private String newPassword;
-    @NotBlank(message = "原密码不能为空")
+    @NotBlank(message = "原密码")
     private String oldPassword;
 
     public String getSurePassword() {
